@@ -1,5 +1,12 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronRight, CheckCircle2, Circle, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import {
+  CheckCircle2,
+  ChevronDown,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Circle,
+} from 'lucide-react';
 
 const leftPanelStyles = `
   .fg-left,
@@ -9,15 +16,13 @@ const leftPanelStyles = `
 
   .fg-left {
     width: 100%;
-    height: 100vh;
-    min-height: 100vh;
+    height: 100%;
+    min-height: 0;
     display: flex;
     flex-direction: column;
-    flex-shrink: 0;
-    align-self: stretch;
     border-right: 1px solid #dde6f1;
     background: #fdfdfd;
-    transition: width 0.3s ease;
+    overflow: hidden;
   }
 
   .fg-left__header {
@@ -31,6 +36,7 @@ const leftPanelStyles = `
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: #62748e;
+    flex-shrink: 0;
   }
 
   .fg-left__toggle {
@@ -116,42 +122,48 @@ const leftPanelStyles = `
   }
 `;
 
-export default function LeftPanel() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [nodes, setNodes] = useState([
-    { id: '1', label: 'Chapter 1: Purity', type: 'folder', isOpen: true, depth: 0 },
-    { id: '1.1', label: '1.1 Types of Water', type: 'file', status: 'done', depth: 1 },
-    { id: '1.2', label: '1.2 Ablution (Wudu)', type: 'file', status: 'done', depth: 1 },
-    { id: '1.3', label: '1.3 Ghusl', type: 'file', status: 'active', depth: 1 },
-    { id: '1.4', label: '1.4 Tayammum', type: 'file', status: 'pending', depth: 1 },
-    { id: '2', label: 'Chapter 2: Prayer', type: 'folder', isOpen: true, depth: 0 },
-    { id: '2.1', label: '2.1 Times of Prayer', type: 'file', status: 'pending', depth: 1 },
-    { id: '2.2', label: '2.2 Conditions', type: 'file', status: 'pending', depth: 1 },
-    { id: '2.3', label: "2.3 Jumu'ah", type: 'file', status: 'pending', depth: 1 },
-    { id: '3', label: 'Chapter 3: Fasting', type: 'folder', isOpen: false, depth: 0 },
-  ]);
+const initialNodes = [
+  { id: '1', label: 'Chapter 1: Purity', type: 'folder', isOpen: true, depth: 0 },
+  { id: '1.1', label: '1.1 Types of Water', type: 'file', status: 'done', depth: 1 },
+  { id: '1.2', label: '1.2 Ablution (Wudu)', type: 'file', status: 'done', depth: 1 },
+  { id: '1.3', label: '1.3 Ghusl', type: 'file', status: 'active', depth: 1 },
+  { id: '1.4', label: '1.4 Tayammum', type: 'file', status: 'pending', depth: 1 },
+  { id: '2', label: 'Chapter 2: Prayer', type: 'folder', isOpen: true, depth: 0 },
+  { id: '2.1', label: '2.1 Times of Prayer', type: 'file', status: 'pending', depth: 1 },
+  { id: '2.2', label: '2.2 Conditions', type: 'file', status: 'pending', depth: 1 },
+  { id: '2.3', label: "2.3 Jumu'ah", type: 'file', status: 'pending', depth: 1 },
+  { id: '3', label: 'Chapter 3: Fasting', type: 'folder', isOpen: false, depth: 0 },
+];
+
+export default function LeftPanel({
+  isCollapsed = false,
+  isPreviewExpanded = false,
+  onToggleCollapse,
+  onHoverStart,
+  onHoverEnd,
+} = {}) {
+  const [nodes, setNodes] = useState(initialNodes);
+  const isExpanded = !isCollapsed || isPreviewExpanded;
 
   const toggleFolder = (id) => {
     setNodes((currentNodes) =>
-      currentNodes.map((node) =>
-        node.id === id ? { ...node, isOpen: !node.isOpen } : node
-      )
+      currentNodes.map((node) => (node.id === id ? { ...node, isOpen: !node.isOpen } : node))
     );
   };
 
   return (
     <>
       <style>{leftPanelStyles}</style>
-      <div className="fg-left" style={{ width: isCollapsed ? 76 : '100%' }}>
+      <div className="fg-left" onMouseEnter={onHoverStart} onMouseLeave={onHoverEnd}>
         <div
           className="fg-left__header"
-          style={{ justifyContent: isCollapsed ? 'center' : 'space-between' }}
+          style={{ justifyContent: isExpanded ? 'space-between' : 'center' }}
         >
-          {!isCollapsed && <span>Segments</span>}
+          {isExpanded && <span>Segments</span>}
           <button
             className="fg-left__toggle"
             type="button"
-            onClick={() => setIsCollapsed(!isCollapsed)}
+            onClick={onToggleCollapse}
             aria-label={isCollapsed ? 'Expand segments' : 'Collapse segments'}
           >
             {isCollapsed ? <ChevronsRight size={16} /> : <ChevronsLeft size={16} />}
@@ -171,8 +183,8 @@ export default function LeftPanel() {
 
               const isFolder = node.type === 'folder';
               const isActive = node.status === 'active';
-              const paddingLeft = node.depth * (isCollapsed ? 16 : 16) + (isCollapsed ? 10 : 16);
-              const labelText = isCollapsed && !isFolder ? node.label.split(' ')[0] : node.label;
+              const paddingLeft = isExpanded ? node.depth * 16 + 16 : node.depth * 18 + 12;
+              const collapsedLabel = isFolder ? node.id : node.label.split(' ')[0];
 
               return (
                 <div
@@ -185,7 +197,7 @@ export default function LeftPanel() {
                   }}
                   style={{
                     paddingLeft,
-                    paddingRight: isCollapsed ? 8 : 18,
+                    paddingRight: isExpanded ? 18 : 10,
                   }}
                 >
                   {isActive && <div className="fg-left__activeBar" />}
@@ -194,9 +206,9 @@ export default function LeftPanel() {
                     {isFolder ? (
                       <span className="fg-left__iconWrap">
                         {node.isOpen ? (
-                          <ChevronDown size={isCollapsed ? 13 : 15} strokeWidth={1.9} />
+                          <ChevronDown size={isExpanded ? 15 : 13} strokeWidth={1.9} />
                         ) : (
-                          <ChevronRight size={isCollapsed ? 13 : 15} strokeWidth={1.9} />
+                          <ChevronRight size={isExpanded ? 15 : 13} strokeWidth={1.9} />
                         )}
                       </span>
                     ) : (
@@ -216,10 +228,10 @@ export default function LeftPanel() {
                       style={{
                         fontWeight: isFolder ? 600 : isActive ? 500 : 400,
                         color: isFolder ? '#1d293d' : isActive ? '#1447e6' : '#45556c',
-                        fontSize: isCollapsed ? 12 : isFolder ? 14.5 : 15,
+                        fontSize: isExpanded ? (isFolder ? 14.5 : 15) : 12,
                       }}
                     >
-                      {isFolder && isCollapsed ? node.id : labelText}
+                      {isExpanded ? node.label : collapsedLabel}
                     </span>
                   </div>
                 </div>

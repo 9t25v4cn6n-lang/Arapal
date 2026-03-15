@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Award, Book, Info, Maximize2, ScrollText, Sparkles, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Award, Book, ChevronsLeft, ChevronsRight, Info, Maximize2, Minimize2, ScrollText, Sparkles, X } from 'lucide-react';
 
 const rightPanelStyles = `
   .fg-right,
@@ -20,19 +20,237 @@ const rightPanelStyles = `
     border-left: 1px solid #dde6f1;
     background: #fbfcfe;
     overflow-x: hidden;
+    overflow-y: hidden;
+  }
+
+  .fg-right__header {
+    height: 52px;
+    padding: 0 14px 0 16px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #62748e;
+    flex-shrink: 0;
+    background: #fbfcfe;
+  }
+
+  .fg-right__toggle {
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s ease;
+  }
+
+  .fg-right__toggle:hover {
+    color: #1e293b;
+  }
+
+  .fg-right__body {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .fg-right__rail {
+    width: 100%;
+    height: 100%;
+    padding: 16px 10px 18px;
+    position: relative;
+  }
+
+  .fg-right__railScroll {
+    width: 100%;
+    height: 100%;
     overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+  }
+
+  .fg-right__railScroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .fg-right__railList {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20px;
+    gap: 14px;
+  }
+
+  .fg-right__railIcon {
+    width: 100%;
+    min-height: var(--rail-height, 88px);
+    border: 1px solid #dfe8f4;
+    border-radius: 12px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .fg-right__railIcon:hover {
+    background: #f8fbff;
+    border-color: #c7d8ee;
+  }
+
+  .fg-right__railFade {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    height: 20px;
+    pointer-events: none;
+    z-index: 2;
+    transition: opacity 0.2s ease;
+  }
+
+  .fg-right__railFade--top {
+    top: 16px;
+    background: linear-gradient(180deg, rgba(251, 252, 254, 0.96) 0%, rgba(251, 252, 254, 0) 100%);
+  }
+
+  .fg-right__railFade--bottom {
+    bottom: 18px;
+    background: linear-gradient(0deg, rgba(251, 252, 254, 0.96) 0%, rgba(251, 252, 254, 0) 100%);
+  }
+
+  .fg-right__railIndicator {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid #dfe8f4;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+  }
+
+  .fg-right__railIndicator--top {
+    top: 16px;
+  }
+
+  .fg-right__railIndicator--bottom {
+    bottom: 18px;
+  }
+
+  .fg-right__floating {
+    position: fixed;
+    z-index: 40;
+    width: 360px;
+    min-width: 320px;
+    max-width: min(360px, calc(100vw - 120px));
+    min-height: 220px;
+    max-height: min(78vh, 760px);
+    border: 1px solid #dfe8f4;
+    border-radius: 18px;
+    background: #ffffff;
+    overflow: auto;
+    box-shadow: 0 18px 42px rgba(15, 23, 42, 0.16), 0 6px 18px rgba(15, 23, 42, 0.08);
+    resize: both;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .fg-right__floatingHeader {
+    min-height: 52px;
+    padding: 0 16px 0 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--panel-border, #e2e8f0);
+    background: var(--panel-bg, #f8fafc);
+    cursor: grab;
+  }
+
+  .fg-right__floatingHeader:active {
+    cursor: grabbing;
+  }
+
+  .fg-right__floatingActions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .fg-right__floatingPin {
+    border: none;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.84);
+    color: #475569;
+    min-height: 28px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .fg-right__floatingPin:hover {
+    background: #ffffff;
+    color: #0f172a;
+  }
+
+  .fg-right__floatingClose {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.84);
+    color: #64748b;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .fg-right__floatingClose:hover {
+    background: #ffffff;
+    color: #0f172a;
+  }
+
+  .fg-right__floatingBody {
+    flex: 1;
+    min-height: 0;
+    padding: 18px 18px 32px;
+    background: #ffffff;
+    overflow: auto;
   }
 
   .fg-right__content {
+    height: 100%;
     padding: 22px 18px 34px;
     display: flex;
     flex-direction: column;
     gap: 22px;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
   }
 
   .fg-right__card {
     margin-top: 0;
     position: relative;
+    flex-shrink: 0;
     z-index: 1;
     border: 1px solid #dfe8f4;
     border-radius: 18px;
@@ -79,7 +297,7 @@ const rightPanelStyles = `
   }
 
   .fg-right__cardBody {
-    padding: 18px 18px 20px;
+    padding: 18px 18px 32px;
   }
 
   .fg-right__centered {
@@ -326,6 +544,52 @@ const rightPanelStyles = `
     color: #45556c;
   }
 
+  .fg-right__scrollFrame {
+    max-height: var(--scroll-max-height, none);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+    padding-bottom: 18px;
+    scrollbar-gutter: stable;
+  }
+
+  .fg-right__scrollFrame--soft {
+    padding-right: 10px;
+  }
+
+  .fg-right__meta {
+    margin: 0 0 18px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #64748b;
+  }
+
+  .fg-right__meta strong {
+    color: #1f2937;
+  }
+
+  .fg-right__emptyBlock {
+    padding: 16px 18px;
+    border: 1px dashed #dbe4ef;
+    border-radius: 14px;
+    background: rgba(248, 250, 252, 0.72);
+  }
+
+  .fg-right__emptyTitle {
+    margin: 0 0 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+  }
+
+  .fg-right__emptyText {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #94a3b8;
+  }
+
   .fg-right__modalBackdrop {
     position: fixed;
     inset: 0;
@@ -370,6 +634,12 @@ const rightPanelStyles = `
     font-size: 18px;
     font-weight: 700;
     color: #111827;
+  }
+
+  .fg-right__modalActions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   .fg-right__close {
@@ -602,7 +872,7 @@ function toneVars(tone) {
   };
 }
 
-function PanelCard({ tone, icon, title, expandLabel, onExpand, children }) {
+function PanelCard({ tone, icon, title, expandLabel, onExpand, children, bodyStyle }) {
   return (
     <div className={`fg-right__card fg-right__variant--${title.toLowerCase().split(' ')[0]}`}>
       <div className="fg-right__cardHeader" style={toneVars(tone)}>
@@ -612,13 +882,378 @@ function PanelCard({ tone, icon, title, expandLabel, onExpand, children }) {
           <Maximize2 size={15} strokeWidth={1.9} />
         </button>
       </div>
-      <div className="fg-right__cardBody">{children}</div>
+      <div className="fg-right__cardBody" style={bodyStyle}>{children}</div>
     </div>
   );
 }
 
-export default function RightPanel({ isSubmitted = false } = {}) {
+function SummaryIcon({ color = '#059669', size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M8 7H17" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M8 11H17" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M8 15H13" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+      <rect x="4.5" y="4.5" width="13" height="15" rx="2.2" stroke={color} strokeWidth="1.8" />
+      <path d="M17.5 9.5H19.5C20.6046 9.5 21.5 10.3954 21.5 11.5V18.5C21.5 19.6046 20.6046 20.5 19.5 20.5H10.5C9.39543 20.5 8.5 19.6046 8.5 18.5V19.5" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function DiscussionIcon({ color = '#ea580c', size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M7 7.5H17" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M7 11.5H14" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M7 16.5H10.5" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M6 4.5H18C19.1046 4.5 20 5.39543 20 6.5V15.5C20 16.6046 19.1046 17.5 18 17.5H11.5L7 20.5V17.5H6C4.89543 17.5 4 16.6046 4 15.5V6.5C4 5.39543 4.89543 4.5 6 4.5Z" stroke={color} strokeWidth="1.8" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export default function RightPanel({
+  isSubmitted = false,
+  isCollapsed = false,
+  onToggleCollapse,
+} = {}) {
   const [expandedCard, setExpandedCard] = useState(null);
+  const [hoveredPreviewId, setHoveredPreviewId] = useState(null);
+  const [pinnedPreviewId, setPinnedPreviewId] = useState(null);
+  const [floatingPosition, setFloatingPosition] = useState({ x: 1040, y: 124 });
+  const [dragState, setDragState] = useState(null);
+  const [railScrollState, setRailScrollState] = useState({ canScrollUp: false, canScrollDown: false });
+  const closePreviewTimeoutRef = useRef(null);
+  const railScrollRef = useRef(null);
+  const isExpanded = !isCollapsed;
+
+  const collapsedCards = isSubmitted
+    ? [
+        { id: 'grade', tone: tones.emerald, railHeight: 104, icon: <Award size={18} color={tones.emerald.iconColor} strokeWidth={1.9} /> },
+        { id: 'takeaways', tone: tones.indigo, railHeight: 156, icon: <Sparkles size={18} color={tones.indigo.iconColor} strokeWidth={1.9} /> },
+        { id: 'lexicography', tone: tones.purple, railHeight: 186, icon: <Book size={18} color={tones.purple.iconColor} strokeWidth={1.9} /> },
+      ]
+    : [
+        { id: 'guidance', tone: tones.blue, railHeight: 132, icon: <Info size={18} color={tones.blue.iconColor} strokeWidth={1.9} /> },
+        { id: 'lexicography', tone: tones.purple, railHeight: 220, icon: <Book size={18} color={tones.purple.iconColor} strokeWidth={1.9} /> },
+        { id: 'phrasing', tone: tones.orange, railHeight: 180, icon: <ScrollText size={18} color={tones.orange.iconColor} strokeWidth={1.9} /> },
+      ];
+
+  const syncRailScrollState = () => {
+    const node = railScrollRef.current;
+    if (!node) {
+      return;
+    }
+
+    setRailScrollState({
+      canScrollUp: node.scrollTop > 6,
+      canScrollDown: node.scrollTop + node.clientHeight < node.scrollHeight - 6,
+    });
+  };
+
+  useEffect(() => {
+    if (!dragState) {
+      return undefined;
+    }
+
+    const handlePointerMove = (event) => {
+      setFloatingPosition({
+        x: Math.max(240, Math.min(window.innerWidth - 380, event.clientX - dragState.offsetX)),
+        y: Math.max(88, Math.min(window.innerHeight - 220, event.clientY - dragState.offsetY)),
+      });
+    };
+
+    const stopDragging = () => setDragState(null);
+
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', stopDragging);
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', stopDragging);
+    };
+  }, [dragState]);
+
+  useEffect(() => {
+    if (isExpanded) {
+      setHoveredPreviewId(null);
+      setPinnedPreviewId(null);
+      setDragState(null);
+    }
+  }, [isExpanded]);
+
+  useEffect(() => () => {
+    if (closePreviewTimeoutRef.current) {
+      window.clearTimeout(closePreviewTimeoutRef.current);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isExpanded) {
+      syncRailScrollState();
+      const handleResize = () => syncRailScrollState();
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+
+    return undefined;
+  }, [isExpanded, collapsedCards.length]);
+
+  const clearPendingClose = () => {
+    if (closePreviewTimeoutRef.current) {
+      window.clearTimeout(closePreviewTimeoutRef.current);
+      closePreviewTimeoutRef.current = null;
+    }
+  };
+
+  const openPreview = (cardId, anchorRect) => {
+    clearPendingClose();
+    setHoveredPreviewId(cardId);
+    if (!pinnedPreviewId) {
+      const previewWidth = cardId === 'discussion' ? 392 : cardId === 'lexicography' ? 380 : 360;
+      const previewHeight = cardId === 'discussion' ? 460 : cardId === 'lexicography' ? 420 : 360;
+      const nextLeft = anchorRect
+        ? Math.max(240, Math.min(window.innerWidth - previewWidth - 20, anchorRect.left - previewWidth - 18))
+        : Math.max(240, window.innerWidth - 456);
+      const nextTop = anchorRect
+        ? Math.max(88, Math.min(window.innerHeight - previewHeight - 24, anchorRect.top + (anchorRect.height / 2) - (previewHeight / 2)))
+        : 112;
+
+      setFloatingPosition({
+        x: nextLeft,
+        y: nextTop,
+      });
+    }
+  };
+
+  const closePreview = () => {
+    clearPendingClose();
+    if (!pinnedPreviewId) {
+      closePreviewTimeoutRef.current = window.setTimeout(() => {
+        setHoveredPreviewId(null);
+        closePreviewTimeoutRef.current = null;
+      }, 120);
+    }
+  };
+
+  const renderGuidanceBody = () => (
+    <p className="fg-right__text">
+      Focus on accurately translating the conditions for Jumu&apos;ah validity. Pay close attention to the definition of{' '}
+      <span className="fg-right__inlineArabic" dir="rtl">مصر جامع</span> (comprehensive city) and its components.
+      Distinguish between the different opinions and their attributions.
+    </p>
+  );
+
+  const renderTakeawaysBody = () => (
+    <div className="fg-right__stack" style={{ gap: 18 }}>
+      <div className="fg-right__listRow">
+        <span className="fg-right__listDot" />
+        <p className="fg-right__text">
+          The term <span className="fg-right__inlineArabic" dir="rtl">مصر جامع</span> requires careful breakdown as it
+          sets the legal precedent for Friday prayers.
+        </p>
+      </div>
+      <div className="fg-right__listRow">
+        <span className="fg-right__listDot" />
+        <p className="fg-right__text">Differing opinions (al-Karkhī vs al-Thaljī) should be clearly attributed.</p>
+      </div>
+      <div className="fg-right__listRow">
+        <span className="fg-right__listDot" />
+        <p className="fg-right__text">
+          The physical expansion of the city (<span className="fg-right__inlineArabic" dir="rtl">أفنية</span>) carries
+          the same legal weight as the center.
+        </p>
+      </div>
+    </div>
+  );
+
+  const renderLexicographyBody = () => (
+    <div
+      className="fg-right__stack fg-right__scrollFrame fg-right__scrollFrame--soft"
+      style={{ gap: 16, '--scroll-max-height': '356px' }}
+    >
+      <div className="fg-right__entry">
+        <div className="fg-right__entryRow">
+          <span className="fg-right__arabic" dir="rtl">مصر جامع</span>
+          <span className="fg-right__mono">miṣr jāmiʿ</span>
+        </div>
+        <p className="fg-right__text">Comprehensive city; a large urban center with civic amenities.</p>
+        <div className="fg-right__contextBox">
+          <strong>Context:</strong> In Hanafi fiqh, typically defined by having a judge (qadi) and a ruler (amir)
+          capable of enforcing laws.
+        </div>
+      </div>
+
+      <div className="fg-right__entry">
+        <div className="fg-right__entryRow">
+          <span className="fg-right__arabic" dir="rtl">أفنية</span>
+          <span className="fg-right__mono">afniyah</span>
+        </div>
+        <p className="fg-right__text">Outskirts, courtyards, or immediate surrounding areas attached to the city.</p>
+      </div>
+    </div>
+  );
+
+  const gradeSections = [
+    {
+      key: 'strengths',
+      title: 'Strengths',
+      titleColor: '#047857',
+      dotColor: '#059669',
+      background: '#ecfdf5',
+      border: '#d1fae5',
+      text:
+        'Excellent accuracy in translating technical terminology, particularly "miṣr jāmiʿ" and the attribution to Abū Yūsuf.',
+    },
+    {
+      key: 'improvements',
+      title: 'Areas for Improvement',
+      titleColor: '#b45309',
+      dotColor: '#d97706',
+      background: '#fffbeb',
+      border: '#fde68a',
+      text:
+        'Consider providing more context for "al-Karkhī" and "al-Thaljī" to help readers unfamiliar with Hanafi scholarship.',
+    },
+    {
+      key: 'suggestion',
+      title: 'Suggestion',
+      titleColor: '#1d4ed8',
+      dotColor: '#2563eb',
+      background: '#eff6ff',
+      border: '#dbeafe',
+      text:
+        'The phrase "meat-drying" for "تشريق" is accurate but may benefit from a brief explanatory note in brackets.',
+    },
+  ];
+
+  const renderFeedbackSection = (section, large = false) => {
+    const blockClass = large ? 'fg-right__feedbackBlockLarge' : 'fg-right__feedbackBlock';
+    const titleClass = large ? 'fg-right__feedbackTitleLarge' : 'fg-right__feedbackTitle';
+    const textClass = large ? 'fg-right__textLarge' : 'fg-right__text';
+
+    if (!section.text) {
+      return (
+        <div
+          className={blockClass}
+          style={{
+            '--feedback-bg': '#f8fafc',
+            '--feedback-border': '#dbe4ef',
+            '--feedback-title': '#64748b',
+          }}
+        >
+          <h4 className={titleClass}>{section.title}</h4>
+          <div className="fg-right__emptyBlock">
+            <p className="fg-right__emptyTitle">Nothing saved yet</p>
+            <p className="fg-right__emptyText">This section will populate once discussion feedback is generated.</p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div
+        className={blockClass}
+        style={{
+          '--feedback-bg': section.background,
+          '--feedback-border': section.border,
+          '--feedback-title': section.titleColor,
+        }}
+      >
+        <h4 className={titleClass}>
+          <span className={large ? 'fg-right__smallDot' : 'fg-right__dot'} style={{ color: section.dotColor }} />
+          {section.title}
+        </h4>
+        <p className={textClass}>{section.text}</p>
+      </div>
+    );
+  };
+
+  const renderPhrasingBody = () => (
+    <div className="fg-right__stack" style={{ gap: 16 }}>
+      <div className="fg-right__entry">
+        <div className="fg-right__entryRow">
+          <span className="fg-right__arabic" dir="rtl">لا تصح الجمعة إلا في مصر جامع</span>
+          <span className="fg-right__mono">miṣr jamiʿ</span>
+        </div>
+        <p className="fg-right__text">
+          Phrase this as a condition of validity, not a recommendation: &quot;The Friday prayer is only valid in a comprehensive
+          city.&quot;
+        </p>
+      </div>
+
+      <div className="fg-right__entry">
+        <div className="fg-right__entryRow">
+          <span className="fg-right__arabic" dir="rtl">بل تجوز في جميع أفنية المصر</span>
+          <span className="fg-right__mono">afniyat al-miṣr</span>
+        </div>
+        <p className="fg-right__text">
+          Preserve the argumentative turn here: &quot;rather, it is permissible throughout all the outskirts of the city.&quot;
+        </p>
+      </div>
+    </div>
+  );
+
+  const renderSummaryBody = () => (
+    <div className="fg-right__stack">
+      <p className="fg-right__text" style={{ color: '#6b7280', fontStyle: 'italic', paddingBottom: 6 }}>
+        Summary generation is pending for this segment.
+      </p>
+    </div>
+  );
+
+  const renderDiscussionNotesBody = () => (
+    <div
+      className="fg-right__feedbackBlock"
+      style={{
+        '--feedback-bg': '#f8fafc',
+        '--feedback-border': '#e8edf5',
+        '--feedback-title': '#64748b',
+        paddingBottom: 18,
+      }}
+    >
+      <h4 className="fg-right__feedbackTitle">Reviewer A</h4>
+      <p className="fg-right__text">
+        Ensure we consistently translate &quot;مصر&quot; as &quot;city&quot; rather than &quot;town&quot; to reflect the Hanafi stipulation
+        of size and amenities.
+      </p>
+    </div>
+  );
+
+  const renderGradeBody = () => (
+    <>
+      <div className="fg-right__centered" style={{ marginBottom: 16 }}>
+        <div className="fg-right__circleGrade">
+          <span className="fg-right__gradeValue">8.4</span>
+        </div>
+      </div>
+
+      <p className="fg-right__meta">
+        <strong>Reviewed:</strong> 15 Mar 2026
+        <br />
+        Model evaluation with a scholar-facing rubric
+      </p>
+
+      <div className="fg-right__stack">
+        {gradeSections.map((section) => (
+          <div key={section.key}>{renderFeedbackSection(section)}</div>
+        ))}
+      </div>
+    </>
+  );
+
+  const visibleCards = isSubmitted
+    ? [
+        { id: 'grade', title: 'Your Grade', tone: tones.emerald, icon: <Award size={18} color={tones.emerald.iconColor} strokeWidth={1.9} />, body: renderGradeBody() },
+        { id: 'takeaways', title: 'Key Takeaways', tone: tones.indigo, icon: <Sparkles size={18} color={tones.indigo.iconColor} strokeWidth={1.9} />, body: renderTakeawaysBody() },
+        { id: 'lexicography', title: 'Lexicography', tone: tones.purple, icon: <Book size={18} color={tones.purple.iconColor} strokeWidth={1.9} />, body: renderLexicographyBody() },
+      ]
+    : [
+        { id: 'guidance', title: 'Guidance', tone: tones.blue, icon: <Info size={18} color={tones.blue.iconColor} strokeWidth={1.9} />, body: renderGuidanceBody() },
+        { id: 'lexicography', title: 'Lexicography', tone: tones.purple, icon: <Book size={18} color={tones.purple.iconColor} strokeWidth={1.9} />, body: renderLexicographyBody() },
+        { id: 'phrasing', title: 'Phrasing', tone: tones.orange, icon: <ScrollText size={18} color={tones.orange.iconColor} strokeWidth={1.9} />, body: renderPhrasingBody() },
+      ];
+
+  const activePreviewId = pinnedPreviewId || hoveredPreviewId;
+  const previewCard = visibleCards.find((card) => card.id === activePreviewId);
 
   const renderExpandedModal = () => {
     if (!expandedCard) {
@@ -643,62 +1278,16 @@ export default function RightPanel({ isSubmitted = false } = {}) {
               </div>
             </div>
 
+            <p className="fg-right__meta" style={{ marginBottom: 28 }}>
+              <strong>Reviewed:</strong> 15 Mar 2026
+              <br />
+              Model evaluation with a scholar-facing rubric
+            </p>
+
             <div className="fg-right__stack" style={{ gap: 24, maxWidth: 960, margin: '0 auto' }}>
-              <div
-                className="fg-right__feedbackBlockLarge"
-                style={{
-                  '--feedback-bg': '#ecfdf5',
-                  '--feedback-border': '#d1fae5',
-                  '--feedback-title': '#047857',
-                }}
-              >
-                <h4 className="fg-right__feedbackTitleLarge">
-                  <span className="fg-right__smallDot" style={{ color: '#059669' }} />
-                  Strengths
-                </h4>
-                <p className="fg-right__textLarge">
-                  Excellent accuracy in translating technical terminology, particularly &quot;miṣr jāmiʿ&quot; and the
-                  attribution to Abū Yūsuf. The structure flows very naturally in English while maintaining strict
-                  fidelity to the original Arabic syntax.
-                </p>
-              </div>
-
-              <div
-                className="fg-right__feedbackBlockLarge"
-                style={{
-                  '--feedback-bg': '#fffbeb',
-                  '--feedback-border': '#fde68a',
-                  '--feedback-title': '#b45309',
-                }}
-              >
-                <h4 className="fg-right__feedbackTitleLarge">
-                  <span className="fg-right__smallDot" style={{ color: '#d97706' }} />
-                  Areas for Improvement
-                </h4>
-                <p className="fg-right__textLarge">
-                  Consider providing more context for &quot;al-Karkhī&quot; and &quot;al-Thaljī&quot; to help readers
-                  unfamiliar with Hanafi scholarship. Adding brief biographical footnotes or dates would elevate the
-                  scholarly utility of the translation.
-                </p>
-              </div>
-
-              <div
-                className="fg-right__feedbackBlockLarge"
-                style={{
-                  '--feedback-bg': '#eff6ff',
-                  '--feedback-border': '#dbeafe',
-                  '--feedback-title': '#1d4ed8',
-                }}
-              >
-                <h4 className="fg-right__feedbackTitleLarge">
-                  <span className="fg-right__smallDot" style={{ color: '#2563eb' }} />
-                  Suggestion
-                </h4>
-                <p className="fg-right__textLarge">
-                  The phrase &quot;meat-drying&quot; for &quot;تشريق&quot; is accurate but may benefit from a brief
-                  explanatory note in brackets, as it refers specifically to the days of Tashreeq during Eid al-Adha.
-                </p>
-              </div>
+              {gradeSections.map((section) => (
+                <div key={section.key}>{renderFeedbackSection(section, true)}</div>
+              ))}
             </div>
           </div>
         );
@@ -953,15 +1542,26 @@ export default function RightPanel({ isSubmitted = false } = {}) {
               <h2 className="fg-right__modalTitle">{title}</h2>
             </div>
 
-            <button
-              className="fg-right__close"
-              type="button"
-              onClick={() => setExpandedCard(null)}
-              aria-label={`Close ${title}`}
-              style={toneVars(tone)}
-            >
-              <X size={20} />
-            </button>
+            <div className="fg-right__modalActions">
+              <button
+                className="fg-right__close"
+                type="button"
+                onClick={() => setExpandedCard(null)}
+                aria-label={`Minimize ${title}`}
+                style={toneVars(tone)}
+              >
+                <Minimize2 size={18} />
+              </button>
+              <button
+                className="fg-right__close"
+                type="button"
+                onClick={() => setExpandedCard(null)}
+                aria-label={`Close ${title}`}
+                style={toneVars(tone)}
+              >
+                <X size={20} />
+              </button>
+            </div>
           </div>
 
           <div className="fg-right__modalBody">{content}</div>
@@ -974,193 +1574,151 @@ export default function RightPanel({ isSubmitted = false } = {}) {
     <>
       <style>{rightPanelStyles}</style>
       <div className="fg-right">
-        <div className="fg-right__content">
-          {isSubmitted && (
-            <PanelCard
-              tone={tones.emerald}
-              icon={<Award size={18} color={tones.emerald.iconColor} strokeWidth={1.9} />}
-              title="Your Grade"
-              expandLabel="Expand Grade"
-              onExpand={() => setExpandedCard('grade')}
-            >
-              <div className="fg-right__centered" style={{ marginBottom: 16 }}>
-                <div className="fg-right__circleGrade">
-                  <span className="fg-right__gradeValue">8.4</span>
-                </div>
-              </div>
-
-              <div className="fg-right__stack">
-                <div
-                  className="fg-right__feedbackBlock"
-                  style={{
-                    '--feedback-bg': '#ecfdf5',
-                    '--feedback-border': '#d1fae5',
-                    '--feedback-title': '#047857',
-                  }}
-                >
-                  <h4 className="fg-right__feedbackTitle">
-                    <span className="fg-right__dot" style={{ color: '#059669' }} />
-                    Strengths
-                  </h4>
-                  <p className="fg-right__text">
-                    Excellent accuracy in translating technical terminology, particularly &quot;miṣr jāmiʿ&quot; and
-                    the attribution to Abū Yūsuf.
-                  </p>
-                </div>
-
-                <div
-                  className="fg-right__feedbackBlock"
-                  style={{
-                    '--feedback-bg': '#fffbeb',
-                    '--feedback-border': '#fde68a',
-                    '--feedback-title': '#b45309',
-                  }}
-                >
-                  <h4 className="fg-right__feedbackTitle">
-                    <span className="fg-right__dot" style={{ color: '#d97706' }} />
-                    Areas for Improvement
-                  </h4>
-                  <p className="fg-right__text">
-                    Consider providing more context for &quot;al-Karkhī&quot; and &quot;al-Thaljī&quot; to help readers
-                    unfamiliar with Hanafi scholarship.
-                  </p>
-                </div>
-
-                <div
-                  className="fg-right__feedbackBlock"
-                  style={{
-                    '--feedback-bg': '#eff6ff',
-                    '--feedback-border': '#dbeafe',
-                    '--feedback-title': '#1d4ed8',
-                  }}
-                >
-                  <h4 className="fg-right__feedbackTitle">
-                    <span className="fg-right__dot" style={{ color: '#2563eb' }} />
-                    Suggestion
-                  </h4>
-                  <p className="fg-right__text">
-                    The phrase &quot;meat-drying&quot; for &quot;تشريق&quot; is accurate but may benefit from a brief
-                    explanatory note in brackets.
-                  </p>
-                </div>
-              </div>
-            </PanelCard>
-          )}
-
-          {!isSubmitted && (
-            <PanelCard
-              tone={tones.blue}
-              icon={<Info size={18} color={tones.blue.iconColor} strokeWidth={1.9} />}
-              title="Guidance"
-              expandLabel="Expand Guidance"
-              onExpand={() => setExpandedCard('guidance')}
-            >
-              <p className="fg-right__text">
-                Focus on accurately translating the conditions for Jumu&apos;ah validity. Pay close attention to the
-                definition of <span className="fg-right__inlineArabic" dir="rtl">مصر جامع</span> (comprehensive city) and its
-                components. Distinguish between the different opinions and their attributions.
-              </p>
-            </PanelCard>
-          )}
-
-          {isSubmitted && (
-            <PanelCard
-              tone={tones.indigo}
-              icon={<Sparkles size={18} color={tones.indigo.iconColor} strokeWidth={1.9} />}
-              title="Key Takeaways"
-              expandLabel="Expand Key Takeaways"
-              onExpand={() => setExpandedCard('takeaways')}
-            >
-              <div className="fg-right__stack">
-                <div className="fg-right__listRow">
-                  <span className="fg-right__listDot" />
-                  <p className="fg-right__text">
-                    The term <span className="fg-right__inlineArabic" dir="rtl">مصر جامع</span> requires careful breakdown as
-                    it sets the legal precedent for Friday prayers.
-                  </p>
-                </div>
-                <div className="fg-right__listRow">
-                  <span className="fg-right__listDot" />
-                  <p className="fg-right__text">
-                    Differing opinions (al-Karkhī vs al-Thaljī) should be clearly attributed.
-                  </p>
-                </div>
-                <div className="fg-right__listRow">
-                  <span className="fg-right__listDot" />
-                  <p className="fg-right__text">
-                    The physical expansion of the city (<span className="fg-right__inlineArabic" dir="rtl">أفنية</span>)
-                    carries the same legal weight as the center.
-                  </p>
-                </div>
-              </div>
-            </PanelCard>
-          )}
-
-          <PanelCard
-            tone={tones.purple}
-            icon={<Book size={18} color={tones.purple.iconColor} strokeWidth={1.9} />}
-            title="Lexicography"
-            expandLabel="Expand Lexicography"
-            onExpand={() => setExpandedCard('lexicography')}
+        <div
+          className="fg-right__header"
+          style={{ justifyContent: isExpanded ? 'space-between' : 'center' }}
+        >
+          {isExpanded && <span>Support</span>}
+          <button
+            className="fg-right__toggle"
+            type="button"
+            onClick={onToggleCollapse}
+            aria-label={isCollapsed ? 'Expand support panels' : 'Collapse support panels'}
           >
-            <div className="fg-right__stack" style={{ gap: 16 }}>
-              <div className="fg-right__entry">
-                <div className="fg-right__entryRow">
-                  <span className="fg-right__arabic" dir="rtl">مصر جامع</span>
-                  <span className="fg-right__mono">miṣr jāmiʿ</span>
-                </div>
-                <p className="fg-right__text">Comprehensive city; a large urban center with civic amenities.</p>
-                <div className="fg-right__contextBox">
-                  <strong>Context:</strong> In Hanafi fiqh, typically defined by having a judge (qadi) and a ruler
-                  (amir) capable of enforcing laws.
-                </div>
-              </div>
+            {isCollapsed ? <ChevronsLeft size={16} /> : <ChevronsRight size={16} />}
+          </button>
+        </div>
 
-              <div className="fg-right__entry">
-                <div className="fg-right__entryRow">
-                  <span className="fg-right__arabic" dir="rtl">أفنية</span>
-                  <span className="fg-right__mono">afniyah</span>
+        <div className="fg-right__body">
+          {!isExpanded ? (
+            <div className="fg-right__rail">
+              {railScrollState.canScrollUp && (
+                <>
+                  <div className="fg-right__railFade fg-right__railFade--top" />
+                  <div className="fg-right__railIndicator fg-right__railIndicator--top">
+                    <ChevronsLeft size={14} style={{ transform: 'rotate(90deg)' }} />
+                  </div>
+                </>
+              )}
+
+              {railScrollState.canScrollDown && (
+                <>
+                  <div className="fg-right__railFade fg-right__railFade--bottom" />
+                  <div className="fg-right__railIndicator fg-right__railIndicator--bottom">
+                    <ChevronsLeft size={14} style={{ transform: 'rotate(-90deg)' }} />
+                  </div>
+                </>
+              )}
+
+              <div className="fg-right__railScroll" ref={railScrollRef} onScroll={syncRailScrollState}>
+                <div className="fg-right__railList">
+                  {collapsedCards.map((card) => (
+                    <button
+                      key={card.id}
+                      type="button"
+                      className="fg-right__railIcon"
+                      aria-label={`Open ${card.id}`}
+                      onMouseEnter={(event) => openPreview(card.id, event.currentTarget.getBoundingClientRect())}
+                      onMouseLeave={closePreview}
+                      style={{
+                        '--rail-height': `${card.railHeight}px`,
+                        background: card.tone.panelBg,
+                        borderColor: card.tone.panelBorder,
+                      }}
+                    >
+                      {card.icon}
+                    </button>
+                  ))}
                 </div>
-                <p className="fg-right__text">
-                  Outskirts, courtyards, or immediate surrounding areas attached to the city.
-                </p>
               </div>
             </div>
-          </PanelCard>
-
-          <PanelCard
-            tone={tones.orange}
-            icon={<ScrollText size={18} color={tones.orange.iconColor} strokeWidth={1.9} />}
-            title="Phrasing"
-            expandLabel="Expand Phrasing"
-            onExpand={() => setExpandedCard('phrasing')}
-          >
-            <div className="fg-right__stack" style={{ gap: 16 }}>
-              <div className="fg-right__entry">
-                <div className="fg-right__entryRow">
-                  <span className="fg-right__arabic" dir="rtl">لا تصح الجمعة إلا في مصر جامع</span>
-                  <span className="fg-right__mono">miṣr jamiʿ</span>
-                </div>
-                <p className="fg-right__text">
-                  Phrase this as a condition of validity, not a recommendation: &quot;The Friday prayer is only valid in a
-                  comprehensive city.&quot;
-                </p>
-              </div>
-
-              <div className="fg-right__entry">
-                <div className="fg-right__entryRow">
-                  <span className="fg-right__arabic" dir="rtl">بل تجوز في جميع أفنية المصر</span>
-                  <span className="fg-right__mono">afniyat al-miṣr</span>
-                </div>
-                <p className="fg-right__text">
-                  Preserve the argumentative turn here: &quot;rather, it is permissible throughout all the outskirts of
-                  the city.&quot;
-                </p>
-              </div>
+          ) : (
+            <div className="fg-right__content">
+              {visibleCards.map((card) => (
+                <PanelCard
+                  key={card.id}
+                  tone={card.tone}
+                  icon={card.icon}
+                  title={card.title}
+                  expandLabel={`Expand ${card.title}`}
+                  onExpand={() => setExpandedCard(card.id)}
+                  bodyStyle={card.id === 'grade' ? { paddingBottom: 18 } : undefined}
+                >
+                  {card.body}
+                </PanelCard>
+              ))}
             </div>
-          </PanelCard>
+          )}
         </div>
       </div>
+
+      {!isExpanded && previewCard && (
+        <div
+          className="fg-right__floating"
+          style={{
+            left: floatingPosition.x,
+            top: floatingPosition.y,
+            width: previewCard.id === 'discussion' ? 392 : previewCard.id === 'lexicography' ? 380 : 360,
+            minHeight: previewCard.id === 'discussion' ? 460 : previewCard.id === 'lexicography' ? 400 : 220,
+          }}
+          onMouseEnter={() => {
+            clearPendingClose();
+            setHoveredPreviewId(previewCard.id);
+          }}
+          onMouseLeave={() => {
+            closePreview();
+          }}
+        >
+          <div
+            className="fg-right__floatingHeader"
+            style={toneVars(previewCard.tone)}
+            onPointerDown={(event) => {
+              setDragState({
+                offsetX: event.clientX - floatingPosition.x,
+                offsetY: event.clientY - floatingPosition.y,
+              });
+            }}
+          >
+            {previewCard.icon}
+            <h3 className="fg-right__cardTitle">{previewCard.title}</h3>
+            <div className="fg-right__floatingActions">
+              <button
+                type="button"
+                className="fg-right__floatingClose"
+                aria-label={`Expand ${previewCard.title}`}
+                onClick={() => setExpandedCard(previewCard.id)}
+              >
+                <Maximize2 size={14} />
+              </button>
+              {!pinnedPreviewId && (
+                <button
+                  type="button"
+                  className="fg-right__floatingPin"
+                  onClick={() => {
+                    clearPendingClose();
+                    setPinnedPreviewId(previewCard.id);
+                  }}
+                >
+                  Keep Open
+                </button>
+              )}
+              <button
+                type="button"
+                className="fg-right__floatingClose"
+                onClick={() => {
+                  clearPendingClose();
+                  setPinnedPreviewId(null);
+                  setHoveredPreviewId(null);
+                }}
+                aria-label={`Close ${previewCard.title} preview`}
+              >
+                <X size={14} />
+              </button>
+            </div>
+          </div>
+          <div className="fg-right__floatingBody">{previewCard.body}</div>
+        </div>
+      )}
 
       {renderExpandedModal()}
     </>
