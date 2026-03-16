@@ -1,5 +1,5 @@
-import FigmaScreen from './screens/FigmaScreen'
+import ProjectsScreen from './screens/ProjectsScreen'
 
 export default function App() {
-  return <FigmaScreen />
+  return <ProjectsScreen />
 }

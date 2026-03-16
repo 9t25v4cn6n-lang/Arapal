@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  AlertCircle,
   CheckCircle2,
   ChevronDown,
   ChevronRight,
@@ -122,33 +123,31 @@ const leftPanelStyles = `
   }
 `;
 
-const initialNodes = [
-  { id: '1', label: 'Chapter 1: Purity', type: 'folder', isOpen: true, depth: 0 },
-  { id: '1.1', label: '1.1 Types of Water', type: 'file', status: 'done', depth: 1 },
-  { id: '1.2', label: '1.2 Ablution (Wudu)', type: 'file', status: 'done', depth: 1 },
-  { id: '1.3', label: '1.3 Ghusl', type: 'file', status: 'active', depth: 1 },
-  { id: '1.4', label: '1.4 Tayammum', type: 'file', status: 'pending', depth: 1 },
-  { id: '2', label: 'Chapter 2: Prayer', type: 'folder', isOpen: true, depth: 0 },
-  { id: '2.1', label: '2.1 Times of Prayer', type: 'file', status: 'pending', depth: 1 },
-  { id: '2.2', label: '2.2 Conditions', type: 'file', status: 'pending', depth: 1 },
-  { id: '2.3', label: "2.3 Jumu'ah", type: 'file', status: 'pending', depth: 1 },
-  { id: '3', label: 'Chapter 3: Fasting', type: 'folder', isOpen: false, depth: 0 },
-];
-
 export default function LeftPanel({
+  nodes = [],
+  currentSegmentId,
+  segmentRecords = {},
+  onSelectSegment,
   isCollapsed = false,
   isPreviewExpanded = false,
   onToggleCollapse,
   onHoverStart,
   onHoverEnd,
 } = {}) {
-  const [nodes, setNodes] = useState(initialNodes);
+  const [folderState, setFolderState] = useState(() =>
+    Object.fromEntries(
+      nodes
+        .filter((node) => node.type === 'folder')
+        .map((node) => [node.id, node.isOpenByDefault ?? true]),
+    ),
+  );
   const isExpanded = !isCollapsed || isPreviewExpanded;
 
   const toggleFolder = (id) => {
-    setNodes((currentNodes) =>
-      currentNodes.map((node) => (node.id === id ? { ...node, isOpen: !node.isOpen } : node))
-    );
+    setFolderState((current) => ({
+      ...current,
+      [id]: !current[id],
+    }));
   };
 
   return (
@@ -175,14 +174,14 @@ export default function LeftPanel({
             {nodes.map((node) => {
               if (node.depth > 0) {
                 const parentId = node.id.split('.')[0];
-                const parent = nodes.find((entry) => entry.id === parentId);
-                if (parent && !parent.isOpen) {
+                if (folderState[parentId] === false) {
                   return null;
                 }
               }
 
               const isFolder = node.type === 'folder';
-              const isActive = node.status === 'active';
+              const segmentState = segmentRecords[node.id]?.submissionState ?? 'draft';
+              const isActive = currentSegmentId === node.id;
               const paddingLeft = isExpanded ? node.depth * 16 + 16 : node.depth * 18 + 12;
               const collapsedLabel = isFolder ? node.id : node.label.split(' ')[0];
 
@@ -193,6 +192,8 @@ export default function LeftPanel({
                   onClick={() => {
                     if (isFolder) {
                       toggleFolder(node.id);
+                    } else {
+                      onSelectSegment?.(node.id);
                     }
                   }}
                   style={{
@@ -205,7 +206,7 @@ export default function LeftPanel({
                   <div className="fg-left__nodeInner">
                     {isFolder ? (
                       <span className="fg-left__iconWrap">
-                        {node.isOpen ? (
+                        {folderState[node.id] ? (
                           <ChevronDown size={isExpanded ? 15 : 13} strokeWidth={1.9} />
                         ) : (
                           <ChevronRight size={isExpanded ? 15 : 13} strokeWidth={1.9} />
@@ -213,10 +214,12 @@ export default function LeftPanel({
                       </span>
                     ) : (
                       <span className="fg-left__iconWrap">
-                        {node.status === 'done' ? (
+                        {segmentState === 'submitted' ? (
                           <CheckCircle2 size={14} strokeWidth={1.9} color="#16c58a" />
-                        ) : node.status === 'active' ? (
+                        ) : isActive ? (
                           <Circle size={12} strokeWidth={1.8} color="#2563eb" fill="#2563eb" />
+                        ) : segmentState === 'failed' ? (
+                          <AlertCircle size={14} strokeWidth={1.9} color="#f97316" />
                         ) : (
                           <Circle size={12} strokeWidth={1.8} color="#d6deea" />
                         )}
@@ -227,7 +230,13 @@ export default function LeftPanel({
                       className="fg-left__label"
                       style={{
                         fontWeight: isFolder ? 600 : isActive ? 500 : 400,
-                        color: isFolder ? '#1d293d' : isActive ? '#1447e6' : '#45556c',
+                        color: isFolder
+                          ? '#1d293d'
+                          : isActive
+                            ? '#1447e6'
+                            : segmentState === 'failed'
+                              ? '#c2410c'
+                              : '#45556c',
                         fontSize: isExpanded ? (isFolder ? 14.5 : 15) : 12,
                       }}
                     >

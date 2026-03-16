@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Award, Book, ChevronsLeft, ChevronsRight, Info, Maximize2, Minimize2, ScrollText, Sparkles, X } from 'lucide-react';
+import { Award, Book, ChevronsLeft, ChevronsRight, Info, Maximize2, Minimize2, Move, ScrollText, Sparkles, X } from 'lucide-react';
 
 const rightPanelStyles = `
   .fg-right,
@@ -826,6 +826,13 @@ const rightPanelStyles = `
 `;
 
 const tones = {
+  rose: {
+    panelBg: 'rgba(254, 242, 242, 0.94)',
+    panelBorder: 'rgba(252, 165, 165, 0.86)',
+    expandBg: '#fee2e2',
+    expandColor: '#dc2626',
+    iconColor: '#dc2626',
+  },
   emerald: {
     panelBg: 'rgba(236, 253, 245, 0.82)',
     panelBorder: 'rgba(167, 243, 208, 0.85)',
@@ -911,10 +918,12 @@ function DiscussionIcon({ color = '#ea580c', size = 18 }) {
 }
 
 export default function RightPanel({
-  isSubmitted = false,
+  submissionState = 'draft',
   isCollapsed = false,
   onToggleCollapse,
 } = {}) {
+  const isSubmitted = submissionState === 'submitted';
+  const isFailed = submissionState === 'failed';
   const [expandedCard, setExpandedCard] = useState(null);
   const [hoveredPreviewId, setHoveredPreviewId] = useState(null);
   const [pinnedPreviewId, setPinnedPreviewId] = useState(null);
@@ -931,6 +940,12 @@ export default function RightPanel({
         { id: 'takeaways', tone: tones.indigo, railHeight: 156, icon: <Sparkles size={18} color={tones.indigo.iconColor} strokeWidth={1.9} /> },
         { id: 'lexicography', tone: tones.purple, railHeight: 186, icon: <Book size={18} color={tones.purple.iconColor} strokeWidth={1.9} /> },
       ]
+    : isFailed
+      ? [
+          { id: 'grade', tone: tones.rose, railHeight: 120, icon: <Award size={18} color={tones.rose.iconColor} strokeWidth={1.9} /> },
+          { id: 'fixsteps', tone: tones.orange, railHeight: 176, icon: <Sparkles size={18} color={tones.orange.iconColor} strokeWidth={1.9} /> },
+          { id: 'lexicography', tone: tones.purple, railHeight: 186, icon: <Book size={18} color={tones.purple.iconColor} strokeWidth={1.9} /> },
+        ]
     : [
         { id: 'guidance', tone: tones.blue, railHeight: 132, icon: <Info size={18} color={tones.blue.iconColor} strokeWidth={1.9} /> },
         { id: 'lexicography', tone: tones.purple, railHeight: 220, icon: <Book size={18} color={tones.purple.iconColor} strokeWidth={1.9} /> },
@@ -1061,6 +1076,23 @@ export default function RightPanel({
           The physical expansion of the city (<span className="fg-right__inlineArabic" dir="rtl">أفنية</span>) carries
           the same legal weight as the center.
         </p>
+      </div>
+    </div>
+  );
+
+  const renderFixStepsBody = () => (
+    <div className="fg-right__stack" style={{ gap: 18 }}>
+      <div className="fg-right__listRow">
+        <span className="fg-right__listDot" style={{ background: '#f97316' }} />
+        <p className="fg-right__text">State the Friday prayer ruling as a condition of validity, not a recommendation.</p>
+      </div>
+      <div className="fg-right__listRow">
+        <span className="fg-right__listDot" style={{ background: '#f97316' }} />
+        <p className="fg-right__text">Clarify who holds each opinion so Abū Yūsuf and the secondary view are not blended together.</p>
+      </div>
+      <div className="fg-right__listRow">
+        <span className="fg-right__listDot" style={{ background: '#f97316' }} />
+        <p className="fg-right__text">Keep <span className="fg-right__inlineArabic" dir="rtl">أفنية</span> tied to the legal extension of the city, not just its geography.</p>
       </div>
     </div>
   );
@@ -1221,19 +1253,54 @@ export default function RightPanel({
   const renderGradeBody = () => (
     <>
       <div className="fg-right__centered" style={{ marginBottom: 16 }}>
-        <div className="fg-right__circleGrade">
-          <span className="fg-right__gradeValue">8.4</span>
+        <div
+          className="fg-right__circleGrade"
+          style={
+            isFailed
+              ? {
+                  borderColor: '#fca5a5',
+                  background: 'linear-gradient(135deg, #fee2e2 0%, #fff1f2 100%)',
+                }
+              : undefined
+          }
+        >
+          <span className="fg-right__gradeValue" style={isFailed ? { color: '#dc2626' } : undefined}>
+            {isFailed ? '4.2' : '8.4'}
+          </span>
         </div>
       </div>
 
       <p className="fg-right__meta">
         <strong>Reviewed:</strong> 15 Mar 2026
         <br />
-        Model evaluation with a scholar-facing rubric
+        {isFailed ? 'This attempt needs revision before it can pass.' : 'Model evaluation with a scholar-facing rubric'}
       </p>
 
       <div className="fg-right__stack">
-        {gradeSections.map((section) => (
+        {(isFailed
+          ? [
+              {
+                key: 'issue',
+                title: 'Why it failed',
+                titleColor: '#b91c1c',
+                dotColor: '#dc2626',
+                background: '#fef2f2',
+                border: '#fecaca',
+                text:
+                  'The legal condition is not firm enough, and the attribution of the opinions is still too loose for a passing translation.',
+              },
+              {
+                key: 'what-to-fix',
+                title: 'What to fix first',
+                titleColor: '#c2410c',
+                dotColor: '#f97316',
+                background: '#fff7ed',
+                border: '#fed7aa',
+                text:
+                  'Rewrite the opening clause and make the difference between the primary and secondary opinions explicit before resubmitting.',
+              },
+            ]
+          : gradeSections).map((section) => (
           <div key={section.key}>{renderFeedbackSection(section)}</div>
         ))}
       </div>
@@ -1246,6 +1313,12 @@ export default function RightPanel({
         { id: 'takeaways', title: 'Key Takeaways', tone: tones.indigo, icon: <Sparkles size={18} color={tones.indigo.iconColor} strokeWidth={1.9} />, body: renderTakeawaysBody() },
         { id: 'lexicography', title: 'Lexicography', tone: tones.purple, icon: <Book size={18} color={tones.purple.iconColor} strokeWidth={1.9} />, body: renderLexicographyBody() },
       ]
+    : isFailed
+      ? [
+          { id: 'grade', title: 'Your Grade', tone: tones.rose, icon: <Award size={18} color={tones.rose.iconColor} strokeWidth={1.9} />, body: renderGradeBody() },
+          { id: 'fixsteps', title: 'Fix Steps', tone: tones.orange, icon: <Sparkles size={18} color={tones.orange.iconColor} strokeWidth={1.9} />, body: renderFixStepsBody() },
+          { id: 'lexicography', title: 'Lexicography', tone: tones.purple, icon: <Book size={18} color={tones.purple.iconColor} strokeWidth={1.9} />, body: renderLexicographyBody() },
+        ]
     : [
         { id: 'guidance', title: 'Guidance', tone: tones.blue, icon: <Info size={18} color={tones.blue.iconColor} strokeWidth={1.9} />, body: renderGuidanceBody() },
         { id: 'lexicography', title: 'Lexicography', tone: tones.purple, icon: <Book size={18} color={tones.purple.iconColor} strokeWidth={1.9} />, body: renderLexicographyBody() },
@@ -1268,24 +1341,60 @@ export default function RightPanel({
     switch (expandedCard) {
       case 'grade':
         title = 'Your Grade';
-        tone = tones.emerald;
+        tone = isFailed ? tones.rose : tones.emerald;
         icon = <Award size={20} color={tone.iconColor} />;
         content = (
           <div className="fg-right__modalSection">
             <div className="fg-right__centered" style={{ marginBottom: 32 }}>
-              <div className="fg-right__circleGradeLarge">
-                <span className="fg-right__gradeValueLarge">8.4</span>
+              <div
+                className="fg-right__circleGradeLarge"
+                style={
+                  isFailed
+                    ? {
+                        borderColor: '#fca5a5',
+                        background: 'linear-gradient(135deg, #fee2e2 0%, #fff1f2 100%)',
+                        boxShadow: '0 18px 32px rgba(220, 38, 38, 0.16)',
+                      }
+                    : undefined
+                }
+              >
+                <span className="fg-right__gradeValueLarge" style={isFailed ? { color: '#dc2626' } : undefined}>
+                  {isFailed ? '4.2' : '8.4'}
+                </span>
               </div>
             </div>
 
             <p className="fg-right__meta" style={{ marginBottom: 28 }}>
               <strong>Reviewed:</strong> 15 Mar 2026
               <br />
-              Model evaluation with a scholar-facing rubric
+              {isFailed ? 'This attempt needs revision before it can pass.' : 'Model evaluation with a scholar-facing rubric'}
             </p>
 
             <div className="fg-right__stack" style={{ gap: 24, maxWidth: 960, margin: '0 auto' }}>
-              {gradeSections.map((section) => (
+              {(isFailed
+                ? [
+                    {
+                      key: 'issue-large',
+                      title: 'Why it failed',
+                      titleColor: '#b91c1c',
+                      dotColor: '#dc2626',
+                      background: '#fef2f2',
+                      border: '#fecaca',
+                      text:
+                        'The translation still softens a legal condition into a general statement and does not cleanly separate the attributed views.',
+                    },
+                    {
+                      key: 'fix-large',
+                      title: 'Fix first',
+                      titleColor: '#c2410c',
+                      dotColor: '#f97316',
+                      background: '#fff7ed',
+                      border: '#fed7aa',
+                      text:
+                        'Strengthen the opening condition, then clarify attribution before expanding the ruling to the outskirts of the city.',
+                    },
+                  ]
+                : gradeSections).map((section) => (
                 <div key={section.key}>{renderFeedbackSection(section, true)}</div>
               ))}
             </div>
@@ -1329,11 +1438,37 @@ export default function RightPanel({
         break;
 
       case 'takeaways':
-        title = 'Key Takeaways';
-        tone = tones.indigo;
+      case 'fixsteps':
+        title = isFailed ? 'Fix Steps' : 'Key Takeaways';
+        tone = isFailed ? tones.orange : tones.indigo;
         icon = <Sparkles size={20} color={tone.iconColor} />;
         content = (
           <div className="fg-right__modalSection" style={{ maxWidth: 960, margin: '0 auto' }}>
+            {isFailed ? (
+              <div className="fg-right__takeawayList">
+                <div className="fg-right__takeawayItem">
+                  <div className="fg-right__takeawayNumber" style={{ background: '#ffedd5', color: '#c2410c' }}>1</div>
+                  <div>
+                    <h4 className="fg-right__takeawayTitle">Reframe the rule</h4>
+                    <p className="fg-right__takeawayText">Make the first sentence read like a legal condition of validity, not an observation.</p>
+                  </div>
+                </div>
+                <div className="fg-right__takeawayItem">
+                  <div className="fg-right__takeawayNumber" style={{ background: '#ffedd5', color: '#c2410c' }}>2</div>
+                  <div>
+                    <h4 className="fg-right__takeawayTitle">Separate the views</h4>
+                    <p className="fg-right__takeawayText">Show that the main position and the secondary opinion are distinct, and attribute both clearly.</p>
+                  </div>
+                </div>
+                <div className="fg-right__takeawayItem">
+                  <div className="fg-right__takeawayNumber" style={{ background: '#ffedd5', color: '#c2410c' }}>3</div>
+                  <div>
+                    <h4 className="fg-right__takeawayTitle">Preserve the extension</h4>
+                    <p className="fg-right__takeawayText">Keep the final clause as an extension of the legal ruling to the city outskirts.</p>
+                  </div>
+                </div>
+              </div>
+            ) : (
             <div className="fg-right__takeawayList">
               <div className="fg-right__takeawayItem">
                 <div className="fg-right__takeawayNumber">1</div>
@@ -1368,6 +1503,7 @@ export default function RightPanel({
                 </div>
               </div>
             </div>
+            )}
           </div>
         );
         break;
@@ -1699,7 +1835,8 @@ export default function RightPanel({
                     setPinnedPreviewId(previewCard.id);
                   }}
                 >
-                  Keep Open
+                  <Move size={14} />
+                  Float
                 </button>
               )}
               <button

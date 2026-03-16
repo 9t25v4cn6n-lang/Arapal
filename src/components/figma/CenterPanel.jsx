@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   AlignCenter,
   AlignLeft,
+  AlertTriangle,
   Bold,
   BookOpen,
   CheckCircle2,
@@ -14,6 +15,7 @@ import {
   MessageSquare,
   Maximize2,
   Minimize2,
+  Move,
   Pin,
   PinOff,
   Plus,
@@ -187,14 +189,50 @@ const centerPanelStyles = `
   }
 
   .fg-center__inner {
-    width: 50%;
-    max-width: 760px;
+    width: min(var(--center-lane-width, 72%), calc(100% - 24px));
+    max-width: var(--center-lane-max, 1080px);
     margin: 0 auto;
     padding: 0;
     min-height: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
+    transition: width 0.24s ease, max-width 0.24s ease;
+  }
+
+  .fg-center__inner.is-docked {
+    max-width: 1480px;
+    display: grid;
+    grid-template-columns: minmax(860px, 1fr) 392px;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 22px;
+    align-items: start;
+  }
+
+  .fg-center__inner.is-docked .fg-center__topStack,
+  .fg-center__inner.is-docked .fg-center__editorShell {
+    grid-column: 1;
+  }
+
+  .fg-center__inner.is-docked .fg-center__topStack {
+    grid-row: 1;
+    min-height: 0;
+  }
+
+  .fg-center__inner.is-docked .fg-center__editorShell {
+    grid-row: 2;
+  }
+
+  .fg-center__practiceCompanion {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: end;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 40px;
   }
 
   .fg-center__topStack {
@@ -567,8 +605,8 @@ const centerPanelStyles = `
 
   .fg-center__editorBody {
     position: relative;
-    min-height: 210px;
-    padding: 42px 34px 68px;
+    min-height: 72px;
+    padding: 18px 34px 54px;
     transition: background-color 0.2s ease;
   }
 
@@ -578,7 +616,7 @@ const centerPanelStyles = `
 
   .fg-center__textarea {
     width: 100%;
-    min-height: 28px;
+    min-height: 0;
     padding: 0;
     border: none;
     outline: none;
@@ -621,6 +659,7 @@ const centerPanelStyles = `
     padding: 0 26px;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     font-size: 14px;
     font-weight: 600;
@@ -632,6 +671,133 @@ const centerPanelStyles = `
   .fg-center__primaryButton:hover {
     background: #1d4ed8;
     box-shadow: 0 12px 24px rgba(37, 99, 235, 0.22);
+  }
+
+  .fg-center__secondaryAction {
+    border: 1px solid #dbeafe;
+    border-radius: 12px;
+    background: rgba(239, 246, 255, 0.78);
+    color: #1d4ed8;
+    height: 44px;
+    min-width: 156px;
+    padding: 0 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .fg-center__secondaryAction:hover {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1e40af;
+  }
+
+  .fg-center__laneToggle {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #dbeafe;
+    background: #ffffff;
+    color: #94a3b8;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .fg-center__laneToggle:hover {
+    border-color: #bfdbfe;
+    background: #eff6ff;
+    color: #2563eb;
+  }
+
+  .fg-center__laneToggle.is-active {
+    border-color: #bfdbfe;
+    background: #eff6ff;
+    color: #2563eb;
+  }
+
+  .fg-center__retryBanner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid #fdba74;
+    border-radius: 18px;
+    background: rgba(255, 247, 237, 0.96);
+    color: #9a3412;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.08);
+  }
+
+  .fg-center__retryBadge {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffedd5;
+    color: #c2410c;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .fg-center__retryContent {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .fg-center__retryTitle {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #9a3412;
+  }
+
+  .fg-center__retryText {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: #9a3412;
+  }
+
+  .fg-center__debugRow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding-right: 6px;
+  }
+
+  .fg-center__debugButton {
+    height: 30px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #64748b;
+    padding: 0 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .fg-center__debugButton:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+    color: #334155;
   }
 
   .fg-center__jump {
@@ -876,9 +1042,9 @@ const centerPanelStyles = `
   }
 
   .fg-center__overlay {
-    position: absolute;
-    right: 40px;
-    bottom: 100px;
+    position: fixed;
+    left: var(--discuss-left, 50%);
+    top: var(--discuss-top, 132px);
     z-index: 30;
     display: flex;
     flex-direction: column;
@@ -886,18 +1052,19 @@ const centerPanelStyles = `
     border-radius: 20px;
     background: #ffffff;
     box-shadow: 0 24px 48px rgba(15, 23, 42, 0.18);
-    transform-origin: bottom right;
+    transform-origin: top right;
     overflow: hidden;
     min-width: 360px;
-    min-height: 720px;
+    min-height: 620px;
     max-width: min(720px, calc(100% - 80px));
     max-height: calc(100% - 96px);
-    resize: both;
-    transition: width 0.3s ease, height 0.3s ease, top 0.3s ease, bottom 0.3s ease;
+    transition: width 0.24s ease, height 0.24s ease;
   }
 
   .fg-center__overlay--modal {
     position: relative;
+    left: auto;
+    top: auto;
     right: auto;
     bottom: auto;
     width: min(860px, calc(100vw - 96px));
@@ -906,6 +1073,22 @@ const centerPanelStyles = `
     max-height: calc(100vh - 88px);
     box-shadow: 0 28px 56px rgba(15, 23, 42, 0.24);
     resize: none;
+    transform: none;
+  }
+
+  .fg-center__overlay--docked {
+    position: relative;
+    left: auto;
+    top: auto;
+    border-radius: 24px;
+    border: 1px solid #dbeafe;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.07), 0 2px 4px rgba(15, 23, 42, 0.05);
+    max-height: none;
+    min-height: 640px;
+  }
+
+  .fg-center__overlay--docked .fg-center__overlayBody {
+    padding-bottom: 16px;
   }
 
   .fg-center__overlayBackdrop {
@@ -920,12 +1103,39 @@ const centerPanelStyles = `
   }
 
   .fg-center__overlayHeader {
-    padding: 20px 24px;
+    padding: 18px 22px;
     border-bottom: 1px solid #f1f5f9;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
+    background: linear-gradient(180deg, rgba(255, 248, 240, 0.94) 0%, rgba(255, 255, 255, 0.96) 100%);
+    cursor: grab;
+  }
+
+  .fg-center__overlayHeader:active {
+    cursor: grabbing;
+  }
+
+  .fg-center__overlayIdentity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .fg-center__overlayAvatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #fde68a 0%, #fca5a5 100%);
+    color: #7c2d12;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 8px 20px rgba(249, 115, 22, 0.18);
+    font-size: 22px;
   }
 
   .fg-center__overlayKicker {
@@ -947,7 +1157,29 @@ const centerPanelStyles = `
   .fg-center__overlayActions {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 10px;
+  }
+
+  .fg-center__overlayUtility {
+    height: 34px;
+    border: 1px solid #eadfd4;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #8b6b56;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .fg-center__overlayUtility:hover {
+    border-color: #d7c2b2;
+    color: #7c2d12;
+    background: #ffffff;
   }
 
   .fg-center__textButton {
@@ -984,18 +1216,25 @@ const centerPanelStyles = `
   .fg-center__overlayBody {
     flex: 1;
     overflow-y: auto;
-    padding: 18px 20px 24px;
+    padding: 18px 20px 22px;
     display: flex;
     flex-direction: column;
     gap: 16px;
-    background: #ffffff;
+    background: linear-gradient(180deg, #fffdfb 0%, #ffffff 42%);
+  }
+
+  .fg-center__overlayInputGroup {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
 
   .fg-center__contextBox {
-    padding: 20px 22px;
-    border: 2px dashed #e2e8f0;
+    padding: 18px 20px;
+    border: 1px dashed #e6ddd5;
     border-radius: 18px;
-    background: rgba(248, 250, 252, 0.45);
+    background: rgba(255, 248, 240, 0.62);
   }
 
   .fg-center__contextTitle {
@@ -1009,18 +1248,25 @@ const centerPanelStyles = `
     margin: 0;
     font-size: 14px;
     line-height: 1.7;
-    color: #64748b;
+    color: #7a6d64;
+  }
+
+  .fg-center__companionHint {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.55;
+    color: #8b6b56;
   }
 
   .fg-center__inputShell {
     position: relative;
-    flex: 1;
-    min-height: 340px;
+    flex: 0 0 auto;
+    min-height: 84px;
     padding: 18px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #ece3db;
     border-radius: 18px;
     background: #ffffff;
-    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    box-shadow: 0 8px 22px rgba(87, 57, 39, 0.06);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
@@ -1032,7 +1278,7 @@ const centerPanelStyles = `
   .fg-center__overlayTextarea {
     width: 100%;
     height: 100%;
-    min-height: 280px;
+    min-height: 56px;
     border: none;
     outline: none;
     resize: none;
@@ -1060,23 +1306,102 @@ const centerPanelStyles = `
   }
 
   .fg-center__overlayFooter {
-    margin-top: 4px;
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 12px;
     flex-wrap: wrap;
+    margin-left: auto;
+    width: 100%;
   }
 
   .fg-center__overlayResizeHandle {
+    width: 34px;
+    height: 34px;
+    border: 1px solid #eadfd4;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #8b6b56;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: nwse-resize;
+    transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .fg-center__overlayResizeHandle:hover {
+    border-color: #d7c2b2;
+    color: #7c2d12;
+    background: #ffffff;
+  }
+
+  .fg-center__overlayResizeGlyph {
+    width: 14px;
+    height: 14px;
+    position: relative;
+    display: inline-block;
+  }
+
+  .fg-center__overlayResizeGlyph::before,
+  .fg-center__overlayResizeGlyph::after {
+    content: "";
     position: absolute;
-    right: 10px;
-    bottom: 10px;
+    right: 0;
+    bottom: 0;
+    height: 1.6px;
+    border-radius: 999px;
+    background: currentColor;
+    transform-origin: right bottom;
+  }
+
+  .fg-center__overlayResizeGlyph::before {
+    width: 13px;
+    transform: rotate(-45deg);
+  }
+
+  .fg-center__overlayResizeGlyph::after {
+    width: 8px;
+    right: 2px;
+    bottom: 2px;
+    transform: rotate(-45deg);
+  }
+
+  .fg-center__overlayResizeEdge {
+    position: absolute;
+    z-index: 2;
+    background: transparent;
+  }
+
+  .fg-center__overlayResizeEdge--east {
+    top: 0;
+    right: 0;
+    width: 12px;
+    height: 100%;
+    cursor: ew-resize;
+  }
+
+  .fg-center__overlayResizeEdge--west {
+    top: 0;
+    left: 0;
+    width: 12px;
+    height: 100%;
+    cursor: ew-resize;
+  }
+
+  .fg-center__overlayResizeEdge--south {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 12px;
+    cursor: ns-resize;
+  }
+
+  .fg-center__overlayResizeEdge--corner {
+    right: 0;
+    bottom: 0;
     width: 18px;
     height: 18px;
-    opacity: 0.46;
     cursor: nwse-resize;
-    color: #94a3b8;
-    z-index: 6;
   }
 
   .fg-center__ghostButton {
@@ -1302,8 +1627,21 @@ function ActionPill({ tone, active = false, icon, children, onClick }) {
   );
 }
 
-export default function CenterPanel({ isSubmitted = false, onSubmit } = {}) {
+export default function CenterPanel({
+  submissionState = 'draft',
+  onSubmit,
+  onPreviousSegment,
+  onNextSegment,
+  canGoPrevious = true,
+  canGoNext = true,
+  segmentMeta,
+  debugActions,
+} = {}) {
+  const isSubmitted = submissionState === 'submitted';
+  const isFailed = submissionState === 'failed';
+  const [isWideMode, setIsWideMode] = useState(false);
   const [showDiscuss, setShowDiscuss] = useState(false);
+  const [isDiscussFloating, setIsDiscussFloating] = useState(false);
   const [discussExpanded, setDiscussExpanded] = useState(false);
   const [showTashkeel, setShowTashkeel] = useState(true);
   const [pinnedCard, setPinnedCard] = useState(null);
@@ -1311,10 +1649,13 @@ export default function CenterPanel({ isSubmitted = false, onSubmit } = {}) {
   const [isAddingManualNote, setIsAddingManualNote] = useState(false);
   const [manualNoteDraft, setManualNoteDraft] = useState('');
   const [manualNotes, setManualNotes] = useState([]);
-  const [discussSize, setDiscussSize] = useState({ width: 420, height: 820 });
+  const [discussSize, setDiscussSize] = useState({ width: 420, height: 620 });
+  const [discussPosition, setDiscussPosition] = useState({ left: 760, top: 156 });
   const [discussResizeState, setDiscussResizeState] = useState(null);
+  const [discussDragState, setDiscussDragState] = useState(null);
 
   const sourceRef = useRef(null);
+  const sourceTextBlockRef = useRef(null);
   const bestInClassRef = useRef(null);
   const yourTranslationRef = useRef(null);
   const discussionRef = useRef(null);
@@ -1336,6 +1677,17 @@ export default function CenterPanel({ isSubmitted = false, onSubmit } = {}) {
 
   const bestInClassTranslation = `The Friday prayer is only valid in a comprehensive city (miṣr jāmiʿ) or in the prayer area of the city, and it is not permissible in villages. This is based on the saying of the Prophet ﷺ: "There is no Friday prayer, nor meat-drying, nor Eid al-Fitr, nor Eid al-Adha except in a comprehensive city." A comprehensive city is any place that has a ruler and a judge who enforces judgments and establishes legal punishments. This is according to Abū Yūsuf, may Allah have mercy on him. Another opinion from him states that if people gather in their largest mosque and it cannot accommodate them [then it is considered a comprehensive city]. The first opinion is the choice of al-Karkhī and is the apparent position, while the second is the choice of al-Thaljī. The ruling is not confined to the prayer area alone; rather, it is permissible throughout all the outskirts of the city because they are in the same status as the city regarding the needs of its people.`;
   const userTranslation = `Jumu'ah prayer is only valid in a comprehensive city (misr jami') or in the prayer area (musalla) of the city. It is not permissible in villages...`;
+  const chapterLabel = segmentMeta?.chapterLabel ?? "Chapter 4: Jumu'ah (Friday Prayer)";
+  const progressText = segmentMeta?.progressText ?? 'Segment 12 of 47';
+  const progressStep = segmentMeta?.progressStep ?? 11;
+  const progressTotal = segmentMeta?.progressTotal ?? 47;
+  const hasDockedCompanion = showDiscuss && !isDiscussFloating && !isSubmitted;
+
+  const openDockedDiscuss = () => {
+    setDiscussExpanded(false);
+    setIsDiscussFloating(false);
+    setShowDiscuss(true);
+  };
 
   const saveManualNote = () => {
     const trimmed = manualNoteDraft.trim();
@@ -1355,13 +1707,28 @@ export default function CenterPanel({ isSubmitted = false, onSubmit } = {}) {
     setIsAddingManualNote(false);
   };
 
-  const beginDiscussResize = (event) => {
+  const beginDiscussResize = (event, direction = 'se') => {
     event.preventDefault();
+    event.stopPropagation();
     setDiscussResizeState({
+      direction,
       startX: event.clientX,
       startY: event.clientY,
       startWidth: discussSize.width,
       startHeight: discussSize.height,
+      startLeft: discussPosition.left,
+      startTop: discussPosition.top,
+    });
+  };
+
+  const beginDiscussDrag = (event) => {
+    if (!isDiscussFloating || discussExpanded) {
+      return;
+    }
+
+    setDiscussDragState({
+      offsetX: event.clientX - discussPosition.left,
+      offsetY: event.clientY - discussPosition.top,
     });
   };
 
@@ -1401,7 +1768,8 @@ export default function CenterPanel({ isSubmitted = false, onSubmit } = {}) {
   const discussFloatingStyle = {
     width: discussSize.width,
     height: discussSize.height,
-    bottom: 92,
+    '--discuss-left': `${discussPosition.left}px`,
+    '--discuss-top': `${discussPosition.top}px`,
     maxWidth: 'calc(100% - 80px)',
   };
 
@@ -1411,9 +1779,39 @@ export default function CenterPanel({ isSubmitted = false, onSubmit } = {}) {
     }
 
     const handlePointerMove = (event) => {
+      const dx = event.clientX - discussResizeState.startX;
+      const dy = event.clientY - discussResizeState.startY;
+      const minWidth = 360;
+      const maxWidth = 720;
+      const minHeight = 520;
+      const maxHeight = window.innerHeight - 48;
+      let nextWidth = discussResizeState.startWidth;
+      let nextHeight = discussResizeState.startHeight;
+      let nextLeft = discussResizeState.startLeft;
+
+      if (discussResizeState.direction.includes('e')) {
+        nextWidth = Math.max(minWidth, Math.min(maxWidth, discussResizeState.startWidth + dx));
+      }
+
+      if (discussResizeState.direction.includes('w')) {
+        const widthFromWest = Math.max(minWidth, Math.min(maxWidth, discussResizeState.startWidth - dx));
+        nextLeft = discussResizeState.startLeft + (discussResizeState.startWidth - widthFromWest);
+        nextWidth = widthFromWest;
+      }
+
+      if (discussResizeState.direction.includes('s')) {
+        nextHeight = Math.max(minHeight, Math.min(maxHeight, discussResizeState.startHeight + dy));
+      }
+
+      nextLeft = Math.max(120, Math.min(window.innerWidth - nextWidth - 24, nextLeft));
+
+      setDiscussPosition((current) => ({
+        left: nextLeft,
+        top: current.top,
+      }));
       setDiscussSize({
-        width: Math.max(360, Math.min(720, discussResizeState.startWidth + (event.clientX - discussResizeState.startX))),
-        height: Math.max(720, Math.min(window.innerHeight - 48, discussResizeState.startHeight + (event.clientY - discussResizeState.startY))),
+        width: nextWidth,
+        height: nextHeight,
       });
     };
 
@@ -1428,6 +1826,35 @@ export default function CenterPanel({ isSubmitted = false, onSubmit } = {}) {
     };
   }, [discussResizeState]);
 
+  useEffect(() => {
+    if (!discussDragState) {
+      return undefined;
+    }
+
+    const handlePointerMove = (event) => {
+      setDiscussPosition({
+        left: Math.max(120, Math.min(window.innerWidth - discussSize.width - 24, event.clientX - discussDragState.offsetX)),
+        top: Math.max(96, Math.min(window.innerHeight - discussSize.height - 24, event.clientY - discussDragState.offsetY)),
+      });
+    };
+
+    const stopDragging = () => setDiscussDragState(null);
+
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', stopDragging);
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', stopDragging);
+    };
+  }, [discussDragState, discussSize.height, discussSize.width]);
+
+  useEffect(() => {
+    if (sourceTextBlockRef.current) {
+      sourceTextBlockRef.current.scrollTop = 0;
+    }
+  }, [submissionState, progressText]);
+
   return (
     <>
       <style>{centerPanelStyles}</style>
@@ -1440,7 +1867,7 @@ export default function CenterPanel({ isSubmitted = false, onSubmit } = {}) {
                 Al-Hidayah • The Book of Prayer
               </h1>
               <div className="fg-center__subRow">
-                <p className="fg-center__subtext">Chapter 4: Jumu&apos;ah (Friday Prayer)</p>
+                <p className="fg-center__subtext">{chapterLabel}</p>
                 <span className="fg-center__dot" />
                 <button className="fg-center__chip" type="button">
                   <Tag size={12} strokeWidth={1.9} />
@@ -1454,7 +1881,7 @@ export default function CenterPanel({ isSubmitted = false, onSubmit } = {}) {
                 <button
                   type="button"
                   className="fg-center__primaryButton"
-                  onClick={() => setShowDiscuss(!showDiscuss)}
+                  onClick={openDockedDiscuss}
                   style={{ padding: '10px 20px' }}
                 >
                   <MessageSquare size={16} />
@@ -1471,6 +1898,12 @@ export default function CenterPanel({ isSubmitted = false, onSubmit } = {}) {
                         '--status-bg': '#ecfdf5',
                         '--status-border': '#d1fae5',
                       }
+                    : isFailed
+                      ? {
+                          '--status-text': '#c2410c',
+                          '--status-bg': '#fff7ed',
+                          '--status-border': '#fed7aa',
+                        }
                     : {
                         '--status-text': '#1447e6',
                         '--status-bg': '#eff6ff',
@@ -1478,9 +1911,33 @@ export default function CenterPanel({ isSubmitted = false, onSubmit } = {}) {
                       }
                 }
               >
-                {isSubmitted ? <CheckCircle2 size={14} /> : <Sparkles size={14} />}
-                {isSubmitted ? 'Submitted' : 'Drafting Phase'}
+                {isSubmitted ? <CheckCircle2 size={14} /> : isFailed ? <AlertTriangle size={14} /> : <Sparkles size={14} />}
+                {isSubmitted ? 'Submitted' : isFailed ? 'Needs Revision' : 'Drafting Phase'}
               </span>
+
+              {debugActions && (
+                <div className="fg-center__debugRow">
+                  <button type="button" className="fg-center__debugButton" onClick={debugActions.onReset}>
+                    Draft
+                  </button>
+                  <button type="button" className="fg-center__debugButton" onClick={debugActions.onFail}>
+                    Fail
+                  </button>
+                  <button type="button" className="fg-center__debugButton" onClick={debugActions.onPass}>
+                    Pass
+                  </button>
+                </div>
+              )}
+
+              <button
+                type="button"
+                className={`fg-center__laneToggle${isWideMode ? ' is-active' : ''}`}
+                onClick={() => setIsWideMode((current) => !current)}
+                aria-label={isWideMode ? 'Shrink center cards' : 'Expand center cards'}
+                title={isWideMode ? 'Shrink center cards' : 'Expand center cards'}
+              >
+                {isWideMode ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+              </button>
             </div>
           </div>
         </div>
@@ -1499,19 +1956,54 @@ export default function CenterPanel({ isSubmitted = false, onSubmit } = {}) {
             <div
               className="fg-center__contentWrap"
               style={{
-                '--content-wrap-padding-bottom': isSubmitted ? '92px' : '0px',
+                '--content-wrap-padding-bottom': isSubmitted ? '24px' : '0px',
               }}
             >
-              <div className="fg-center__inner">
-                <div className={`fg-center__topStack${!isSubmitted ? ' fg-center__topStack--scrollable' : ''}`}>
+              <div
+                className={`fg-center__inner${hasDockedCompanion ? ' is-docked' : ''}`}
+                style={
+                  hasDockedCompanion
+                    ? isWideMode
+                      ? {
+                          '--center-lane-width': '100%',
+                          '--center-lane-max': 'none',
+                        }
+                      : {
+                          '--center-lane-width': '100%',
+                          '--center-lane-max': '1480px',
+                        }
+                    : isWideMode
+                      ? {
+                          '--center-lane-width': '100%',
+                          '--center-lane-max': 'none',
+                        }
+                      : undefined
+                }
+              >
+                <div
+                  className={`fg-center__topStack${!isSubmitted ? ' fg-center__topStack--scrollable' : ''}`}
+                  style={isSubmitted ? { paddingBottom: 24 } : undefined}
+                >
                   {!isSubmitted && (
                     <div className="fg-center__navRow">
-                      <button type="button" className="fg-center__tinyButton">
+                      <button
+                        type="button"
+                        className="fg-center__tinyButton"
+                        onClick={onPreviousSegment}
+                        disabled={!canGoPrevious}
+                        style={!canGoPrevious ? { opacity: 0.35, cursor: 'not-allowed' } : undefined}
+                      >
                         <ChevronLeft size={15} strokeWidth={1.9} />
                         <span>Previous</span>
                       </button>
 
-                      <button type="button" className="fg-center__tinyButton">
+                      <button
+                        type="button"
+                        className="fg-center__tinyButton"
+                        onClick={onNextSegment}
+                        disabled={!canGoNext}
+                        style={!canGoNext ? { opacity: 0.35, cursor: 'not-allowed' } : undefined}
+                      >
                         <span>Next</span>
                         <ChevronRight size={15} strokeWidth={1.9} />
                       </button>
@@ -1577,7 +2069,7 @@ export default function CenterPanel({ isSubmitted = false, onSubmit } = {}) {
                       </div>
                     </div>
 
-                    <div className="fg-center__textBlock fg-center__textBlock--source">
+                    <div ref={sourceTextBlockRef} className="fg-center__textBlock fg-center__textBlock--source">
                       <p
                         className="fg-center__arabic"
                         dir="rtl"
@@ -1792,6 +2284,19 @@ export default function CenterPanel({ isSubmitted = false, onSubmit } = {}) {
 
                 {!isSubmitted && (
                   <div className="fg-center__editorShell">
+                    {isFailed && (
+                      <div className="fg-center__retryBanner" style={{ marginBottom: 12 }}>
+                        <span className="fg-center__retryBadge">!</span>
+                        <div className="fg-center__retryContent">
+                          <p className="fg-center__retryTitle">Try Again</p>
+                          <p className="fg-center__retryText">
+                            Tighten the legal condition. Clarify the attribution,
+                            then resubmit.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
                     <div className="fg-center__editorCard">
                       <div className="fg-center__editorHeader">
                         <div className="fg-center__cardTitleRow">
@@ -1858,10 +2363,93 @@ export default function CenterPanel({ isSubmitted = false, onSubmit } = {}) {
 
                         <div className="fg-center__submitRow">
                           <span className="fg-center__hintText">⌘ Enter to submit</span>
+                          <button
+                            type="button"
+                            className="fg-center__secondaryAction"
+                            onClick={openDockedDiscuss}
+                          >
+                            <MessageSquare size={15} strokeWidth={1.9} />
+                            Discuss This Segment
+                          </button>
                           <button type="button" className="fg-center__primaryButton" onClick={handleSubmit}>
                             <Send size={15} strokeWidth={1.9} />
-                            Submit
+                            {isFailed ? 'Submit Again' : 'Submit'}
                           </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {hasDockedCompanion && (
+                  <div className="fg-center__practiceCompanion">
+                    <div
+                      className="fg-center__overlay fg-center__overlay--docked"
+                      style={{
+                        width: '100%',
+                        height: 768,
+                        minHeight: 768,
+                        maxWidth: 'none',
+                      }}
+                    >
+                      <div className="fg-center__overlayHeader">
+                        <div className="fg-center__overlayIdentity">
+                          <span className="fg-center__overlayAvatar">🦊</span>
+                          <div>
+                            <p className="fg-center__overlayKicker">Study companion</p>
+                            <h3 className="fg-center__overlayTitle">Segment discussion</h3>
+                          </div>
+                        </div>
+
+                        <div className="fg-center__overlayActions">
+                          <button
+                            type="button"
+                            className="fg-center__overlayUtility"
+                            onClick={() => setIsDiscussFloating(true)}
+                          >
+                            <Move size={14} />
+                            Float
+                          </button>
+                          <button
+                            type="button"
+                            className="fg-center__closeButton"
+                            onClick={() => setShowDiscuss(false)}
+                            aria-label="Close discussion"
+                          >
+                            <X size={18} />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="fg-center__overlayBody">
+                        <div className="fg-center__contextBox">
+                          <h4 className="fg-center__contextTitle">Start the conversation</h4>
+                          <p className="fg-center__contextText">
+                            Ask the first segment-specific question here. The summary will be saved when the session closes.
+                          </p>
+                        </div>
+
+                        <p className="fg-center__companionHint">
+                          Your companion can help unpack wording, compare views, and point out what needs revision.
+                        </p>
+
+                        <div className="fg-center__overlayInputGroup">
+                          <div className="fg-center__inputShell">
+                            <textarea
+                              className="fg-center__overlayTextarea"
+                              placeholder="Ask a segment-specific follow-up question..."
+                            />
+                          </div>
+
+                          <div className="fg-center__overlayFooter">
+                            <button type="button" className="fg-center__ghostButton">
+                              Summarise and save
+                            </button>
+                            <button type="button" className="fg-center__primaryButton" style={{ padding: '12px 24px' }}>
+                              <Send size={15} strokeWidth={1.9} />
+                              Send
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1919,41 +2507,63 @@ export default function CenterPanel({ isSubmitted = false, onSubmit } = {}) {
 
         {isSubmitted && (
           <div className="fg-center__bottomBar">
-            <button type="button" className="fg-center__secondaryButton">
+            <button
+              type="button"
+              className="fg-center__secondaryButton"
+              onClick={onPreviousSegment}
+              disabled={!canGoPrevious}
+              style={!canGoPrevious ? { opacity: 0.45, cursor: 'not-allowed' } : undefined}
+            >
               <ChevronLeft size={18} />
               <span>Previous Segment</span>
             </button>
 
             <div className="fg-center__progress">
-              <p className="fg-center__progressText">Segment 12 of 47</p>
+              <p className="fg-center__progressText">{progressText}</p>
               <div className="fg-center__progressBarRow">
-                {[0, 1, 2, 3, 4].map((index) => (
+                {Array.from({ length: Math.min(progressTotal, 5) }, (_, index) => (
                   <div
                     key={index}
-                    className={`fg-center__progressBar${index === 2 ? ' is-active' : ''}`}
+                    className={`fg-center__progressBar${index === Math.min(progressStep, 4) ? ' is-active' : ''}`}
                   />
                 ))}
               </div>
             </div>
 
-            <button type="button" className="fg-center__primaryButton" style={{ padding: '14px 24px' }}>
+            <button
+              type="button"
+              className="fg-center__primaryButton"
+              style={{ padding: '14px 24px' }}
+              onClick={onNextSegment}
+              disabled={!canGoNext}
+            >
               <span>Next Segment</span>
               <ChevronRight size={18} />
             </button>
           </div>
         )}
 
-        {showDiscuss &&
+        {showDiscuss && isDiscussFloating &&
           (discussExpanded ? (
             <div className="fg-center__overlayBackdrop">
               <div className="fg-center__overlay fg-center__overlay--modal">
                 <div className="fg-center__overlayHeader">
-                  <div>
-                    <p className="fg-center__overlayKicker">Discussion</p>
+                  <div className="fg-center__overlayIdentity">
+                    <span className="fg-center__overlayAvatar">🦊</span>
+                    <div>
+                    <p className="fg-center__overlayKicker">Study companion</p>
                     <h3 className="fg-center__overlayTitle">Segment discussion</h3>
+                    </div>
                   </div>
 
                   <div className="fg-center__overlayActions">
+                    <button
+                      type="button"
+                      className="fg-center__overlayUtility"
+                      onClick={() => setIsDiscussFloating(false)}
+                    >
+                      Dock
+                    </button>
                     <button
                       type="button"
                       className="fg-center__closeButton"
@@ -1981,37 +2591,54 @@ export default function CenterPanel({ isSubmitted = false, onSubmit } = {}) {
                     </p>
                   </div>
 
-                  <div className="fg-center__inputShell">
-                    <textarea
-                      className="fg-center__overlayTextarea"
-                      placeholder="Ask a segment-specific follow-up question..."
-                    />
-                  </div>
-
-                  <p className="fg-center__overlayNote">
-                    Discussion stays separate from the authoritative study record until the summary is saved.
+                  <p className="fg-center__companionHint">
+                    Your companion can help unpack wording, compare views, and point out what needs revision.
                   </p>
 
-                  <div className="fg-center__overlayFooter">
-                    <button type="button" className="fg-center__primaryButton" style={{ padding: '12px 32px' }}>
-                      Send
-                    </button>
-                    <button type="button" className="fg-center__ghostButton">
-                      Summarise and save
-                    </button>
+                  <div className="fg-center__overlayInputGroup">
+                    <div className="fg-center__inputShell">
+                      <textarea
+                        className="fg-center__overlayTextarea"
+                        placeholder="Ask a segment-specific follow-up question..."
+                      />
+                    </div>
+
+                    <p className="fg-center__overlayNote">
+                      Discussion stays separate from the authoritative study record until the summary is saved.
+                    </p>
+
+                    <div className="fg-center__overlayFooter">
+                      <button type="button" className="fg-center__ghostButton">
+                        Summarise and save
+                      </button>
+                      <button type="button" className="fg-center__primaryButton" style={{ padding: '12px 32px' }}>
+                        <Send size={15} strokeWidth={1.9} />
+                        Send
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           ) : (
             <div className="fg-center__overlay" style={discussFloatingStyle}>
-              <div className="fg-center__overlayHeader">
-                <div>
-                  <p className="fg-center__overlayKicker">Discussion</p>
+              <div className="fg-center__overlayHeader" onPointerDown={beginDiscussDrag}>
+                <div className="fg-center__overlayIdentity">
+                  <span className="fg-center__overlayAvatar">🦊</span>
+                  <div>
+                  <p className="fg-center__overlayKicker">Study companion</p>
                   <h3 className="fg-center__overlayTitle">Segment discussion</h3>
+                  </div>
                 </div>
 
                 <div className="fg-center__overlayActions">
+                  <button
+                    type="button"
+                    className="fg-center__overlayUtility"
+                    onClick={() => setIsDiscussFloating(false)}
+                  >
+                    Dock
+                  </button>
                   <button
                     type="button"
                     className="fg-center__closeButton"
@@ -2031,40 +2658,58 @@ export default function CenterPanel({ isSubmitted = false, onSubmit } = {}) {
                 </div>
               </div>
 
-              <div className="fg-center__overlayBody">
-                <div className="fg-center__contextBox">
-                  <h4 className="fg-center__contextTitle">Start the conversation</h4>
-                  <p className="fg-center__contextText">
-                    Ask the first segment-specific question here. The summary will be saved when the session closes.
+                <div className="fg-center__overlayBody">
+                  <div className="fg-center__contextBox">
+                    <h4 className="fg-center__contextTitle">Start the conversation</h4>
+                    <p className="fg-center__contextText">
+                      Ask the first segment-specific question here. The summary will be saved when the session closes.
+                    </p>
+                  </div>
+
+                  <p className="fg-center__companionHint">
+                    Your companion can help unpack wording, compare views, and point out what needs revision.
                   </p>
+
+                  <div className="fg-center__overlayInputGroup">
+                    <div className="fg-center__inputShell">
+                      <textarea
+                        className="fg-center__overlayTextarea"
+                        placeholder="Ask a segment-specific follow-up question..."
+                      />
+                    </div>
+
+                    <p className="fg-center__overlayNote">
+                      Discussion stays separate from the authoritative study record until the summary is saved.
+                    </p>
+
+                    <div className="fg-center__overlayFooter">
+                      <button type="button" className="fg-center__ghostButton">
+                        Summarise and save
+                      </button>
+                      <button type="button" className="fg-center__primaryButton" style={{ padding: '12px 32px' }}>
+                        <Send size={15} strokeWidth={1.9} />
+                        Send
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="fg-center__inputShell">
-                  <textarea
-                    className="fg-center__overlayTextarea"
-                    placeholder="Ask a segment-specific follow-up question..."
-                  />
-                </div>
-
-                <p className="fg-center__overlayNote">
-                  Discussion stays separate from the authoritative study record until the summary is saved.
-                </p>
-
-                <div className="fg-center__overlayFooter">
-                  <button type="button" className="fg-center__primaryButton" style={{ padding: '12px 32px' }}>
-                    Send
-                  </button>
-                  <button type="button" className="fg-center__ghostButton">
-                    Summarise and save
-                  </button>
-                </div>
-              </div>
-
-              <div className="fg-center__overlayResizeHandle" onPointerDown={beginDiscussResize}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                  <path d="M16 0v16H0L16 0Z" />
-                </svg>
-              </div>
+                <div
+                  className="fg-center__overlayResizeEdge fg-center__overlayResizeEdge--east"
+                  onPointerDown={(event) => beginDiscussResize(event, 'e')}
+                />
+                <div
+                  className="fg-center__overlayResizeEdge fg-center__overlayResizeEdge--west"
+                  onPointerDown={(event) => beginDiscussResize(event, 'w')}
+                />
+                <div
+                  className="fg-center__overlayResizeEdge fg-center__overlayResizeEdge--south"
+                  onPointerDown={(event) => beginDiscussResize(event, 's')}
+                />
+                <div
+                  className="fg-center__overlayResizeEdge fg-center__overlayResizeEdge--corner"
+                  onPointerDown={(event) => beginDiscussResize(event, 'se')}
+                />
             </div>
           ))}
       </div>
