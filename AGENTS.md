@@ -75,3 +75,39 @@ Rules:
 - Optimize for approachable, premium, award winning, always 9.5/10 or more styling
 - ensure consistency in sizes, fonts, accent colours and so on. 
 - Stunning designs
+
+Cleanup instruction:
+Whenever the user asks for "cleanup", interpret that as a UI consistency audit and polish pass, not a redesign by default.
+
+What "cleanup" means in this project:
+- align all cards, headers, labels, inputs, and buttons
+- implement a consistent spacing system
+- apply consistent padding inside cards and panels
+- standardize border radius across similar components
+- standardize font sizes, weights, and line heights
+- establish consistent vertical rhythm between sections
+- fix awkward indents, off-center content, uneven gaps, and misaligned text or icons
+- ensure columns and panel edges line up cleanly
+- remove one-off styling values where possible
+- avoid overlapping texts and boxes
+
+When performing cleanup:
+1. First identify rule violations.
+2. Then propose structural adjustments.
+3. Then implement the minimal fixes.
+
+Cleanup constraints:
+- do not redesign the component unless the user explicitly asks
+- do not invent new components unless necessary
+- do not change colors or fonts unless the user explicitly asks
+- do not alter the layout concept unless the user explicitly asks
+- focus only on spacing, alignment, grouping, consistency, and layout polish
+
+Cleanup checklist:
+- consistent left alignment
+- consistent vertical spacing scale
+- balanced whitespace distribution
+- grouped metadata chips
+- action button placed in action region
+- text blocks visually connected to related controls
+- no floating elements disconnected from layout flow

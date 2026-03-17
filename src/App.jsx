@@ -1,5 +1,5 @@
-import ProjectsScreen from './screens/ProjectsScreen'
+import SegmentsScreen from './screens/SegmentsScreen'
 
 export default function App() {
-  return <ProjectsScreen />
+  return <SegmentsScreen />
 }
