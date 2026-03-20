@@ -1,11 +1,20 @@
 import { useEffect, useState } from 'react'
 import FigmaScreen from './screens/FigmaScreen'
+import MakeSegmentationFlowScreen from './screens/MakeSegmentationFlowScreen'
 import SegmentsScreen from './screens/SegmentsScreen'
 
 export default function App() {
   const getScreenFromHash = () => {
     const hash = window.location.hash.replace('#', '')
-    return hash === 'segments' ? 'segments' : 'study'
+    if (hash === 'segments') {
+      return 'segments'
+    }
+
+    if (hash === 'make') {
+      return 'make'
+    }
+
+    return 'study'
   }
 
   const [screen, setScreen] = useState(getScreenFromHash)
@@ -20,7 +29,14 @@ export default function App() {
   }, [])
 
   const setActiveScreen = (nextScreen) => {
-    window.location.hash = nextScreen === 'segments' ? 'segments' : 'study'
+    if (nextScreen === 'segments') {
+      window.location.hash = 'segments'
+    } else if (nextScreen === 'make') {
+      window.location.hash = 'make'
+    } else {
+      window.location.hash = 'study'
+    }
+
     setScreen(nextScreen)
   }
 
@@ -76,9 +92,28 @@ export default function App() {
         >
           Segments
         </button>
+        <button
+          type="button"
+          onClick={() => setActiveScreen('make')}
+          style={{
+            border: 'none',
+            borderRadius: 999,
+            minHeight: 34,
+            padding: '0 14px',
+            background: screen === 'make' ? '#0f172a' : 'transparent',
+            color: screen === 'make' ? '#ffffff' : '#475569',
+            fontSize: 12,
+            fontWeight: 700,
+            cursor: 'pointer',
+          }}
+        >
+          Make
+        </button>
       </div>
 
-      {screen === 'segments' ? <SegmentsScreen /> : <FigmaScreen />}
+      {screen === 'segments' ? <SegmentsScreen /> : null}
+      {screen === 'make' ? <MakeSegmentationFlowScreen /> : null}
+      {screen === 'study' ? <FigmaScreen /> : null}
     </>
   )
 }
