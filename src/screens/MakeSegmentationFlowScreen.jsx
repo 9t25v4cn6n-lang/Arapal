@@ -1288,8 +1288,8 @@ const makeSegmentationStyles = `
 
   .make-seg__continueStage .make-seg__primaryButton {
     min-width: 560px;
-    background: linear-gradient(90deg, rgba(37, 99, 235, 0.92) 0%, rgba(37, 99, 235, 0.78) 100%);
-    box-shadow: 0 22px 40px rgba(37, 99, 235, 0.18);
+    background: linear-gradient(90deg, var(--make-accent) 0%, var(--make-accent-strong) 100%);
+    box-shadow: var(--make-shadow-accent);
   }
 
   .make-seg__editorFooter {
