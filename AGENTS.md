@@ -257,6 +257,74 @@ Allowed only for true overlays or decorative layers:
 
 Even then, the parent remains the positioning context.
 
+## 6.5 Screen shell engineering standard
+Every major screen must follow one shared screen-shell contract.
+This should carry across Home, Source + Segmentation, Study, Patching, and Exams.
+
+Rules:
+- every screen has one `stage` owner
+- every screen has one `content` owner
+- every screen has one explicit primary `action region`
+- every screen has one primary `scroll owner`
+
+Stage owns:
+- viewport height
+- full-screen background
+- atmospheric/decorative layers
+- clipping and overflow boundaries
+
+Content owns:
+- max width
+- page padding
+- section spacing
+- main composition alignment
+
+Action region owns:
+- primary CTA placement
+- final approval/publish placement
+- hierarchy between primary and secondary actions
+
+Scroll ownership rules:
+- the page may scroll
+- inner panels only scroll intentionally
+- long content must be contained on purpose, never by accident
+
+Examples of intentional inner scroll regions:
+- source tray
+- marker list
+- output/result pane
+- discussion feed
+
+Functional zones should remain structurally clear:
+- header/navigation zone
+- source/reference zone
+- main work zone
+- support/output zone
+- action/publish zone
+
+Decorative layers must never determine:
+- content height
+- panel position
+- action placement
+- scroll behaviour
+
+Long content must have an explicit containment model.
+Examples:
+- source text = peek / expand / collapse in a bounded tray
+- marker lists = fixed-height scroll region
+- output = bounded workspace pane
+
+Structural correctness test:
+A screen is only correct if it still behaves properly under:
+- browser zoom in/out
+- long labels
+- long user-generated content
+- smaller laptop heights
+- larger desktop widths
+- collapsed and expanded states
+
+If a seam, stripe, overlap, drift, or broken action anchor appears under those conditions, fix the shell, not the styling.
+
 ---
 
 # 7) Width Negotiation + Responsive Rules
@@ -490,6 +558,159 @@ Title/subtitle lockup rules:
 - title + subtitle = tight relationship
 - subtitle + main section = larger gap
 - page title area must feel like a coherent introduction, not scattered items
+
+## 13.1 Typography standards for AraPal screens
+Use a restrained, repeatable type system.
+Do not invent bespoke font sizes or tracking for one screen unless a new token is being established.
+
+Current visual standard:
+- display / ceremonial titles use `Playfair Display`
+- body, labels, controls, support copy, and metadata use a clean sans-serif UI font
+- display titles should feel elegant and editorial, not decorative or romantic
+- body text should feel calm, readable, and neutral
+
+Type role guidance:
+- display title = major success, landing, or stage title
+- page title = main screen heading
+- section title = smaller structural heading inside a screen
+- body = explanatory copy
+- support/meta = labels, counts, auxiliary context
+
+Rules:
+- preserve strong contrast between serif display titles and sans-serif UI text
+- use uppercase metadata sparingly and consistently
+- metadata should be supportive, not tiny or footer-like by accident
+- if a summary row exists, labels should stay in the metadata role and values should use the secondary-emphasis role
+- avoid turning one screen into a different typographic system from the rest
+
+## 13.2 Typographic mood
+AraPal should feel:
+- editorial, not magazine-like
+- scholarly, not old-fashioned
+- premium, not ornamental
+- confident, not loud
+
+Use typography to create elegance through:
+- contrast
+- spacing
+- restraint
+- line length
+
+Not through:
+- many fonts
+- excessive tracking changes
+- many font-size jumps
+- decorative flourishes
+
+---
+
+# 13.5 Visual System Standards
+
+These rules capture the current AraPal segmentation visual language and should carry into other screens unless a mode explicitly requires deviation.
+
+## 13.5.1 Colour system
+AraPal uses a restrained blue / slate palette.
+Do not introduce off-system accent colours casually.
+
+Current accent standard:
+- primary accent blue = `#2563EB`
+- stronger accent blue = `#1D4ED8`
+- softer accent blue = `#93C5FD`
+- accent wash = `#EFF6FF`
+- accent mist = `#DBEAFE`
+
+Supporting neutrals:
+- background top = `#F6F9FD`
+- background bottom = `#EDF3F9`
+- primary surface = `#FFFFFF`
+- soft surface = `#F8FBFF`
+- strong text = `#0F172A`
+- body text = `#334155`
+- soft text = `#64748B`
+- faint text = `#94A3B8`
+
+Meaning rules:
+- blue = primary action, active state, trusted emphasis
+- green = success / ready / live state only
+- amber/yellow = softer warning or “needs review”, not failure
+- avoid purple, red, or arbitrary gradients unless the system is being intentionally updated everywhere
+
+## 13.5.2 Backgrounds and atmosphere
+The premium feel comes from atmospheric restraint, not busy decoration.
+
+Use:
+- soft blue/slate radial washes
+- subtle diagonal structural lines
+- very low-opacity branded watermark treatment when appropriate
+- one full-screen stage owner for the atmosphere
+
+Rules:
+- decorative atmosphere belongs to the stage, never to random child containers
+- diagonal lines should support structure, not cut through primary content
+- watermark text should sit at the edge of perception, never dominate
+- if a decorative element competes with readability, reduce opacity or push it outward before removing it entirely
+
+## 13.5.3 Buttons and action styling
+Primary actions should feel premium, calm, and slightly ceremonial.
+
+Primary button standard:
+- pill shape
+- accent blue gradient
+- soft but confident shadow
+- subtle lift on hover
+- polished highlight/sweep, not flashy animation
+- hover/active states should feel refined, not game-like
+
+Secondary button standard:
+- white or near-white surface
+- soft border
+- quiet elevation
+- clearly subordinate to the primary action
+
+Rules:
+- one screen should usually have one obvious primary CTA
+- secondary actions should not compete visually with the primary
+- split buttons or advanced actions must still read as one composed action cluster
+- do not create bespoke button treatments per screen unless establishing a new reusable variant
+
+## 13.5.4 Card and panel treatment
+Panels should feel calm, breathable, and structurally related.
+
+Use:
+- large radii
+- soft borders
+- light shadows
+- subtle tinted headers or bars where needed
+
+Rules:
+- repeated panels should share header/body spacing logic
+- panel chrome should feel quiet and product-like, not browser-mock gimmicky
+- avoid stacking too many equal-weight panels
+- if a card feels loud, simplify header tint, border contrast, or shadow before changing the layout
+
+## 13.5.5 Spacing and indentation discipline
+Use the spacing scale already defined in this file.
+Do not create ad hoc spacing values just to make one screen “look right”.
+
+Rules:
+- repeated rows/items use repeated padding and gaps
+- left edges across adjacent panels should align cleanly
+- action regions should not feel detached from their associated content
+- summary bars and footer-like rows should use the same spacing roles as the rest of the system, not tiny compressed custom spacing
+- when something feels off, fix the parent rhythm rather than nudging one child
+
+## 13.5.6 Visual consistency rule
+When creating or updating a new AraPal screen, check for consistency in:
+- display typography
+- button hierarchy
+- accent blue usage
+- background atmosphere
+- panel radius/border/shadow language
+- spacing rhythm
+- metadata sizing
+- action placement
+
+New screens should feel like members of the same product family, not one-off art directions.
 
 ---
 
