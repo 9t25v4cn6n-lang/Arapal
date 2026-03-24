@@ -586,7 +586,32 @@ Workspace is one family with subtypes:
 
 - `choice`
 
-## 13. Per-Screen Contract Requirement
+## 13. Rebuild Fidelity Contract
+
+The default goal of the V2 rebuild is to faithfully recreate the visual and interaction design of the old app in a more structurally sound system.
+
+This is a rebuild, not a redesign.
+
+Rules:
+
+- for most screens, the old app is the visual reference
+- do not invent a new design direction unless explicitly asked
+- preserve the proven composition, hierarchy, action placement, and interaction patterns of the existing screen
+- use V2 to improve engineering quality, proportion discipline, consistency, responsiveness, and extensibility
+- Layer 3 and Layer 4 flexibility exists so nuanced elements and interactions can be rebuilt cleanly, not so the screen can be reimagined
+- if a reference detail is visually strong but structurally weak, keep the visual intent and rebuild the structure underneath it
+- Level 1 should remain shared and stable
+- Level 2 should change rarely and only for real shell needs, not local screen preferences
+- do not over-create wrappers or containers; if a container exists it must own real layout responsibility
+- consistent naming and debug visibility are mandatory even when faithfully recreating an old design
+
+Reference interpretation rule:
+
+- when a legacy screen already has a strong visual and interaction solution, the job is to translate it into contracts and reusable primitives
+- when a screenshot or diagram defines proportions but not the exact internal substructure, infer the necessary Layer 3 and Layer 4 containers to support that known design cleanly
+- those inferred containers should serve the reference design, not replace it with a new one
+
+## 14. Per-Screen Contract Requirement
 
 Each V2 screen must export one `layoutContract`.
 
@@ -606,7 +631,7 @@ Backdrop rule:
 - the shared backdrop preset registry lives in `src/v2/foundation/layout/bodyBackdropPresets.jsx`
 - changing the `default` preset updates every screen contract that points at `default`
 
-## 14. Validation Contract
+## 15. Validation Contract
 
 For every V2 screen:
 
@@ -624,7 +649,7 @@ Rules:
 - long content, zoom pressure, and smaller desktop heights must not break the shell
 - if the shell fails structurally, fix the contract or primitive, not the symptom
 
-## 15. Deferred By Design
+## 16. Deferred By Design
 
 These are intentionally not frozen yet:
 
