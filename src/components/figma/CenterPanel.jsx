@@ -48,15 +48,15 @@ const centerPanelStyles = `
   }
 
   .fg-center__header {
-    height: 126px;
-    padding: 0 32px;
+    height: 96px;
+    padding: 0 28px;
     border-bottom: 1px solid #f1f5f9;
     background: #ffffff;
     position: relative;
     z-index: 10;
     flex-shrink: 0;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
   }
 
   .fg-center__headerRow {
@@ -64,7 +64,7 @@ const centerPanelStyles = `
     max-width: none;
     margin: 0;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 16px;
     min-width: 0;
@@ -80,8 +80,8 @@ const centerPanelStyles = `
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 38px;
-    line-height: 42px;
+    font-size: 32px;
+    line-height: 36px;
     font-weight: 700;
     color: #0f172b;
     font-family: Georgia, "Times New Roman", serif;
@@ -93,8 +93,8 @@ const centerPanelStyles = `
     align-items: center;
     gap: 14px;
     flex-wrap: wrap;
-    margin-top: 14px;
-    margin-left: 30px;
+    margin-top: 8px;
+    margin-left: 28px;
   }
 
   .fg-center__subtext {
@@ -133,26 +133,29 @@ const centerPanelStyles = `
   }
 
   .fg-center__headerActions {
+    position: absolute;
+    top: 12px;
+    right: 28px;
     display: flex;
     align-items: center;
     justify-content: flex-end;
     flex-wrap: wrap;
-    gap: 10px;
-    flex-shrink: 0;
-    margin-left: auto;
+    gap: 8px;
+    max-width: calc(100% - 420px);
+    margin-left: 0;
   }
 
   .fg-center__status {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 0 14px;
-    height: 36px;
+    padding: 0 12px;
+    height: 32px;
     border-radius: 0;
     border: 1px solid var(--status-border);
     background: var(--status-bg);
     color: var(--status-text);
-    font-size: 13px;
+    font-size: 12px;
     line-height: 18px;
     font-weight: 600;
   }
@@ -171,7 +174,7 @@ const centerPanelStyles = `
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding-top: 24px;
+    padding-top: 14px;
     padding-bottom: var(--scroll-padding-bottom);
     background: #f6f9fd;
   }
@@ -201,9 +204,9 @@ const centerPanelStyles = `
   }
 
   .fg-center__inner.is-docked {
-    max-width: 1480px;
+    max-width: 1400px;
     display: grid;
-    grid-template-columns: minmax(860px, 1fr) 392px;
+    grid-template-columns: minmax(0, 1fr) 368px;
     grid-template-rows: minmax(0, 1fr) auto;
     gap: 22px;
     align-items: start;
@@ -244,7 +247,7 @@ const centerPanelStyles = `
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
-    padding-bottom: 20px;
+    padding-bottom: 12px;
   }
 
   .fg-center__card {
@@ -345,12 +348,12 @@ const centerPanelStyles = `
   }
 
   .fg-center__textBlock {
-    padding: var(--card-body-padding, 34px 38px 44px);
+    padding: var(--card-body-padding, 26px 28px 30px);
     background: var(--card-body-bg, #ffffff);
   }
 
   .fg-center__textBlock--source {
-    max-height: 398px;
+    max-height: 240px;
     overflow-y: auto;
     overscroll-behavior: contain;
   }
@@ -358,7 +361,7 @@ const centerPanelStyles = `
   .fg-center__arabic {
     margin: 0;
     font-size: var(--arabic-size, 24px);
-    line-height: 2.62;
+    line-height: 2.3;
     color: var(--arabic-color, #172033);
     text-align: right;
     cursor: text;
@@ -377,15 +380,15 @@ const centerPanelStyles = `
   }
 
   .fg-center__sectionSpacing {
-    margin-top: 24px;
+    margin-top: 18px;
   }
 
   .fg-center__sectionSpacing--tight {
-    margin-top: 24px;
+    margin-top: 18px;
   }
 
   .fg-center__lexHeader {
-    margin: 0 0 14px;
+    margin: 0 0 10px;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -399,11 +402,11 @@ const centerPanelStyles = `
 
   .fg-center__lexStrip {
     display: flex;
-    gap: 14px;
+    gap: 10px;
     flex-wrap: nowrap;
     overflow-x: auto;
     overflow-y: visible;
-    padding: 4px 2px 8px;
+    padding: 2px 2px 6px;
     margin: 0;
     scrollbar-width: none;
   }
@@ -421,8 +424,8 @@ const centerPanelStyles = `
     display: flex;
     align-items: center;
     gap: 8px;
-    min-height: 50px;
-    padding: 0 19px;
+    min-height: 44px;
+    padding: 0 16px;
     border: 1px solid #dfe7f2;
     border-radius: 999px;
     background: #ffffff;
@@ -503,14 +506,14 @@ const centerPanelStyles = `
   .fg-center__editorShell {
     flex-shrink: 0;
     margin-top: 0;
-    padding: 24px 0 40px;
+    padding: 12px 0 20px;
     position: relative;
     z-index: 10;
     background: #f6f9fd;
   }
 
   .fg-center__navRow {
-    margin-bottom: 14px;
+    margin-bottom: 8px;
     padding: 0 10px;
     display: flex;
     align-items: center;
@@ -550,8 +553,8 @@ const centerPanelStyles = `
   }
 
   .fg-center__editorHeader {
-    padding: 0 32px;
-    min-height: 74px;
+    padding: 0 24px;
+    min-height: 62px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -606,7 +609,7 @@ const centerPanelStyles = `
   .fg-center__editorBody {
     position: relative;
     min-height: 72px;
-    padding: 18px 34px 54px;
+    padding: 14px 24px 48px;
     transition: background-color 0.2s ease;
   }
 
@@ -635,11 +638,11 @@ const centerPanelStyles = `
 
   .fg-center__submitRow {
     position: absolute;
-    right: 34px;
-    bottom: 16px;
+    right: 24px;
+    bottom: 12px;
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 14px;
     justify-content: flex-end;
   }
 
@@ -2017,8 +2020,8 @@ export default function CenterPanel({
                       '--card-border': sourceCardTone.border,
                       '--card-header-bg': sourceCardTone.headerBg,
                       '--card-header-border': sourceCardTone.headerBorder,
-                      '--card-header-height': '74px',
-                      '--card-header-padding-x': '32px',
+                      '--card-header-height': '62px',
+                      '--card-header-padding-x': '28px',
                       '--badge-bg': sourceCardTone.badgeBg,
                       '--badge-text': sourceCardTone.badgeText,
                       '--section-text': sourceCardTone.sectionText,

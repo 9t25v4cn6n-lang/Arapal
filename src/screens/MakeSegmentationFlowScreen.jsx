@@ -16,9 +16,9 @@ import {
   Save,
   Scissors,
   Sparkles,
-  Wand2,
   X,
 } from 'lucide-react';
+import { getLayoutDebugAttrs } from '../components/debug/layoutDebug';
 
 const makeSegmentationStyles = `
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
@@ -102,6 +102,39 @@ const makeSegmentationStyles = `
     position: relative;
   }
 
+  .make-seg__layer1HeaderShell {
+    max-width: none;
+    padding: 0;
+    min-height: var(--make-workspace-header-height);
+    display: grid;
+    grid-template-columns: minmax(48px, 6fr) minmax(0, 18fr) minmax(48px, 6fr);
+    align-items: stretch;
+  }
+
+  .make-seg__layer2HeaderStart,
+  .make-seg__layer2HeaderCenter,
+  .make-seg__layer2HeaderEnd {
+    min-width: 0;
+    min-height: var(--make-workspace-header-height);
+    display: flex;
+    align-items: center;
+  }
+
+  .make-seg__layer2HeaderStart {
+    justify-content: flex-start;
+    padding-left: clamp(24px, 2vw, 40px);
+  }
+
+  .make-seg__layer2HeaderCenter {
+    justify-content: center;
+    padding: 0 12px;
+  }
+
+  .make-seg__layer2HeaderEnd {
+    justify-content: flex-end;
+    padding-right: clamp(24px, 2vw, 40px);
+  }
+
   .make-seg__brand {
     display: inline-flex;
     align-items: center;
@@ -167,6 +200,176 @@ const makeSegmentationStyles = `
     margin-left: auto;
   }
 
+  .make-seg__pasteCleanScreen {
+    height: 100vh;
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: 1.5fr 17fr;
+    background: #ffffff;
+  }
+
+  .make-seg__screenHeaderBand {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    border-bottom: 1px solid var(--make-line);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(18px);
+  }
+
+  .make-seg__screenHeaderGrid {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 6fr 18fr 6fr;
+  }
+
+  .make-seg__headerStartLane,
+  .make-seg__headerCenterLane,
+  .make-seg__headerEndLane {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .make-seg__headerStartLane {
+    justify-content: flex-start;
+    padding-left: clamp(24px, 2vw, 40px);
+  }
+
+  .make-seg__headerCenterLane {
+    justify-content: center;
+  }
+
+  .make-seg__headerEndLane {
+    justify-content: flex-end;
+    padding-right: clamp(24px, 2vw, 40px);
+  }
+
+  .make-seg__headerBrandSlot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 0;
+  }
+
+  .make-seg__screenBodyField {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 8% 10%, rgba(219, 234, 254, 0.78), transparent 28%),
+      radial-gradient(circle at 88% 12%, rgba(226, 232, 240, 0.82), transparent 24%),
+      linear-gradient(180deg, var(--make-bg-top) 0%, var(--make-bg-bottom) 100%);
+  }
+
+  .make-seg__screenBodyGrid {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 6fr 18fr 6fr;
+  }
+
+  .make-seg__bodyStartRail,
+  .make-seg__bodyEndRail {
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .make-seg__bodyCenterStack {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: 3.5fr 10fr 3.5fr;
+  }
+
+  .make-seg__introBand,
+  .make-seg__editorBand,
+  .make-seg__actionBand {
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .make-seg__introBand {
+    display: grid;
+    grid-template-rows: 1fr 2fr 1fr;
+  }
+
+  .make-seg__introSignalRow,
+  .make-seg__introSubtitleRow {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .make-seg__introHeadlineRow {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .make-seg__displayTitle {
+    --make-display-title-optical-shift-y: -0.05em;
+    margin: 0;
+    color: #08060d;
+    font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+    font-size: clamp(56px, 4.6vw, 68px);
+    line-height: 1;
+    display: block;
+    transform: translateY(var(--make-display-title-optical-shift-y));
+    transform-origin: center center;
+  }
+
+  .make-seg__supportSubtext {
+    margin: 0;
+    max-width: 640px;
+    color: rgba(15, 23, 42, 0.42);
+    font-size: clamp(16px, 1.15vw, 18px);
+    line-height: 1.45;
+    letter-spacing: 0.01em;
+  }
+
+  .make-seg__editorBand {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    padding: 10px clamp(20px, 2vw, 32px) 12px;
+  }
+
+  .make-seg__editorBandFrame {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    align-items: stretch;
+  }
+
+  .make-seg__actionBand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px clamp(20px, 2vw, 32px) 18px;
+  }
+
+  .make-seg__actionDock {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .make-seg__headerPill,
   .make-seg__ghostButton,
   .make-seg__primaryButton,
@@ -197,6 +400,21 @@ const makeSegmentationStyles = `
     transform: translateY(-1px);
     border-color: var(--make-line-strong);
     box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+  }
+
+  .make-seg__workspaceBack {
+    min-height: 42px;
+    padding: 0 22px;
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--make-text-soft);
+  }
+
+  .make-seg__workspaceBack:hover {
+    color: var(--make-accent-strong);
   }
 
   .make-seg__main {
@@ -385,27 +603,73 @@ const makeSegmentationStyles = `
     width: 100%;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 80px 48px;
+    padding: 64px 48px;
   }
 
   .make-seg__centerStage {
     text-align: center;
-    padding: 80px 0;
+    padding: 56px 0;
     animation: make-seg-fade-up 0.6s ease both;
   }
 
   .make-seg__centerStage--workspaceIntro {
-    padding-top: 0;
-    padding-bottom: 16px;
+    width: 100%;
+    padding: 0;
   }
 
   .make-seg__centerStage--workspaceIntro .make-seg__sectionLead {
     max-width: 620px;
   }
 
+  .make-seg__intakeIntroGrid {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: 48px auto 52px;
+  }
+
+  .make-seg__intakeIntroSignal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .make-seg__intakeSourceMarker {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(51, 65, 85, 0.72);
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .make-seg__intakeSourceDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: currentColor;
+    flex: 0 0 auto;
+  }
+
+  .make-seg__intakeIntroBody {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+    padding-top: 12px;
+  }
+
+  .make-seg__intakeIntroBody .make-seg__sectionTitle,
+  .make-seg__intakeIntroBody .make-seg__sectionLead {
+    margin: 0;
+  }
+
   .make-seg__workspacePanel.is-intakeStage .make-seg__sectionPill {
     padding: 0;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
     background: none;
     border: none;
     border-radius: 0;
@@ -416,10 +680,14 @@ const makeSegmentationStyles = `
 
   .make-seg__workspacePanel.is-intakeStage .make-seg__sectionTitle {
     color: #08060d;
+    font-size: clamp(32px, 5.1vw, 64px);
   }
 
   .make-seg__workspacePanel.is-intakeStage .make-seg__sectionLead {
     color: rgba(15, 23, 42, 0.32);
+    max-width: 680px;
+    font-size: 15px;
+    line-height: 1.5;
   }
 
   .make-seg__workspacePanel.is-intakeStage .make-seg__sectionPill.is-live {
@@ -456,45 +724,80 @@ const makeSegmentationStyles = `
   .make-seg__sectionTitle {
     font-size: clamp(32px, 6vw, 72px);
     line-height: 0.95;
-    margin-bottom: 24px;
+    margin-bottom: 18px;
   }
 
   .make-seg__sectionLead {
     margin: 0 auto;
     max-width: 540px;
     color: var(--make-text-soft);
-    font-size: 18px;
-    line-height: 1.7;
+    font-size: 16px;
+    line-height: 1.6;
     letter-spacing: 0.02em;
   }
 
   .make-seg__intakeActions {
-    margin-top: 30px;
     position: relative;
-    z-index: 24;
+    z-index: 2;
+    width: 100%;
+    padding: 0;
     display: flex;
+    justify-content: center;
+  }
+
+  .make-seg__intakeActions::before {
+    content: none;
+  }
+
+  .make-seg__intakeBottomRegion {
+    position: relative;
+    z-index: 20;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: transparent;
+    backdrop-filter: none;
+  }
+
+  .make-seg__intakeBottomRegion::before {
+    content: none;
+  }
+
+  .make-seg__intakeBottomRegionInner {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    margin: 0 auto;
+    padding: 8px clamp(24px, 2vw, 40px) 18px;
+    display: flex;
+    align-items: center;
     justify-content: center;
   }
 
   .make-seg__ctaCluster {
     position: relative;
-    display: inline-flex;
+    display: inline-grid;
+    grid-template-columns: minmax(340px, auto) 72px;
     align-items: stretch;
     justify-content: center;
     justify-self: center;
-    filter: drop-shadow(0 26px 44px rgba(37, 99, 235, 0.16));
-    transition: transform 0.25s ease;
-  }
-
-  .make-seg__ctaCluster:hover {
-    transform: translateY(-2px);
+    width: max-content;
+    height: 56px;
+    overflow: visible;
+    isolation: isolate;
   }
 
   .make-seg__primaryButton.is-segmentation {
-    min-width: 360px;
+    min-width: 340px;
+    min-height: 56px;
+    width: 100%;
+    height: 100%;
+    flex: 0 0 auto;
     border-top-right-radius: 24px;
     border-bottom-right-radius: 24px;
-    box-shadow: none;
+    box-shadow: var(--make-shadow-accent);
   }
 
   .make-seg__primaryButton.is-segmentation:hover {
@@ -503,6 +806,9 @@ const makeSegmentationStyles = `
 
   .make-seg__splitButton {
     width: 72px;
+    min-height: 56px;
+    height: 100%;
+    flex: 0 0 auto;
     border: none;
     border-left: 1px solid rgba(255, 255, 255, 0.2);
     border-top-right-radius: 999px;
@@ -513,12 +819,35 @@ const makeSegmentationStyles = `
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: filter 0.25s ease;
+    box-shadow: var(--make-shadow-accent);
+    transition: filter 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+  }
+
+  .make-seg__splitButton:hover {
+    filter: saturate(1.02);
+    box-shadow: 0 28px 54px rgba(37, 99, 235, 0.24);
+    transform: translateY(-2px);
   }
 
   .make-seg__splitButton:focus-visible {
     outline: 2px solid rgba(37, 99, 235, 0.35);
     outline-offset: 2px;
+  }
+
+  .make-seg__ctaCluster.is-dormant .make-seg__primaryButton.is-segmentation,
+  .make-seg__ctaCluster.is-dormant .make-seg__splitButton {
+    background: linear-gradient(90deg, rgba(37, 99, 235, 0.92) 0%, rgba(29, 78, 216, 0.98) 100%);
+    box-shadow: none;
+    filter: none;
+  }
+
+  .make-seg__ctaCluster.is-dormant .make-seg__primaryButton.is-segmentation::before {
+    opacity: 0.14;
+  }
+
+  .make-seg__ctaCluster.is-dormant .make-seg__splitButton:hover {
+    transform: none;
+    box-shadow: none;
   }
 
   .make-seg__splitChevron {
@@ -531,15 +860,15 @@ const makeSegmentationStyles = `
 
   .make-seg__splitMenu {
     position: absolute;
-    right: 0;
+    left: calc(100% + 16px);
     bottom: calc(100% + 16px);
     width: 320px;
     padding: 14px;
     border: 1px solid rgba(191, 219, 254, 0.88);
     border-radius: 24px;
-    background: rgba(255, 255, 255, 0.96);
+    background: rgba(255, 255, 255, 0.985);
     backdrop-filter: blur(16px);
-    box-shadow: 0 28px 56px rgba(15, 23, 42, 0.12);
+    box-shadow: 0 32px 64px rgba(15, 23, 42, 0.16);
     z-index: 80;
     animation: make-seg-fade-up 0.2s ease both;
   }
@@ -858,8 +1187,8 @@ const makeSegmentationStyles = `
   .make-seg__primaryButton::before {
     inset: 1px;
     border-radius: inherit;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.08) 34%, rgba(255, 255, 255, 0) 100%);
-    opacity: 0.95;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.06) 34%, rgba(255, 255, 255, 0) 100%);
+    opacity: 0.28;
   }
 
   .make-seg__primaryButton::after {
@@ -882,6 +1211,11 @@ const makeSegmentationStyles = `
     filter: saturate(1.02);
   }
 
+  .make-seg__primaryButton:hover::before,
+  .make-seg__primaryButton:focus-visible::before {
+    opacity: 0.44;
+  }
+
   .make-seg__primaryButton:hover::after,
   .make-seg__primaryButton:focus-visible::after {
     opacity: 1;
@@ -894,10 +1228,21 @@ const makeSegmentationStyles = `
   }
 
   .make-seg__primaryButton:disabled {
-    opacity: 0.5;
+    opacity: 1;
     box-shadow: none;
     transform: none;
     cursor: not-allowed;
+    filter: none;
+    background: linear-gradient(90deg, rgba(37, 99, 235, 0.92) 0%, rgba(29, 78, 216, 0.98) 100%);
+    color: rgba(255, 255, 255, 0.96);
+  }
+
+  .make-seg__primaryButton:disabled::before {
+    opacity: 0.14;
+  }
+
+  .make-seg__primaryButton:disabled::after {
+    opacity: 0;
   }
 
   .make-seg__ghostButton {
@@ -1231,13 +1576,170 @@ const makeSegmentationStyles = `
     width: 100%;
     max-width: 1000px;
     margin: 0 auto;
-    padding: 96px 48px 120px;
+    padding: 72px 48px 88px;
   }
 
   .make-seg__workspaceSection.is-intakeStage {
-    max-width: 1080px;
-    padding-top: 68px;
-    padding-bottom: 88px;
+    max-width: none;
+    height: calc(100vh - var(--make-workspace-header-height));
+    min-height: calc(100vh - var(--make-workspace-header-height));
+    padding: 0;
+  }
+
+  .make-seg__workspacePanel--pasteClean {
+    min-height: calc(100vh - var(--make-workspace-header-height));
+  }
+
+  .make-seg__layer1BodyShell {
+    position: relative;
+    width: 100%;
+    min-height: calc(100vh - var(--make-workspace-header-height));
+    height: calc(100vh - var(--make-workspace-header-height));
+  }
+
+  .make-seg__layer2BodyGrid {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: minmax(48px, 6fr) minmax(0, 18fr) minmax(48px, 6fr);
+  }
+
+  .make-seg__layer2BodyRailStart,
+  .make-seg__layer2BodyRailEnd {
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .make-seg__layer2BodyCenter {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: minmax(0, 4fr) minmax(0, 9.5fr) minmax(0, 3.5fr);
+  }
+
+  .make-seg__layer2BodyIntro,
+  .make-seg__layer2BodyEditor,
+  .make-seg__layer2BodyAction {
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .make-seg__layer2BodyIntro {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    padding: 10px 0 16px;
+  }
+
+  .make-seg__layer3IntroStack {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+  }
+
+  .make-seg__layer3IntroLead,
+  .make-seg__layer3IntroTrail {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .make-seg__layer3IntroLead {
+    align-items: flex-end;
+    padding-bottom: 10px;
+  }
+
+  .make-seg__layer3IntroHero {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    text-align: center;
+    padding: 10px 0 16px;
+  }
+
+  .make-seg__layer3IntroHero .make-seg__sectionTitle {
+    margin-bottom: 0;
+    font-size: clamp(32px, 5vw, 68px);
+    line-height: 0.93;
+  }
+
+  .make-seg__layer3IntroHero .make-seg__sectionLead {
+    max-width: 620px;
+    font-size: clamp(16px, 1.1vw, 18px);
+    line-height: 1.45;
+  }
+
+  .make-seg__layer2BodyEditor {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 10px clamp(24px, 2vw, 40px) 12px;
+  }
+
+  .make-seg__layer2BodyAction {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px clamp(24px, 2vw, 40px) 20px;
+  }
+
+  .make-seg__layer3ActionDock {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .make-seg__intakeBodyFrame {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .make-seg__intakeLayout {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: minmax(48px, 6fr) minmax(0, 18fr) minmax(48px, 6fr);
+  }
+
+  .make-seg__intakeRail {
+    min-width: 0;
+  }
+
+  .make-seg__intakeMain {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: minmax(0, 3.5fr) minmax(0, 10fr) minmax(0, 3.5fr);
+  }
+
+  .make-seg__intakeIntroRegion,
+  .make-seg__intakeEditorRegion,
+  .make-seg__intakeBottomRegion {
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .make-seg__intakeIntroRegion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 clamp(24px, 2vw, 40px);
+  }
+
+  .make-seg__intakeEditorRegion {
+    display: flex;
+    align-items: stretch;
+    padding: 36px clamp(24px, 2vw, 40px) 10px;
   }
 
   .make-seg__workspaceSection.is-collapsed {
@@ -1287,9 +1789,14 @@ const makeSegmentationStyles = `
 
   .make-seg__pasteCanvas {
     position: relative;
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 12px 32px 10px;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    align-items: stretch;
   }
 
   .make-seg__intakeWord,
@@ -1485,6 +1992,11 @@ const makeSegmentationStyles = `
   .make-seg__editorWrap--feature {
     position: relative;
     z-index: 1;
+    display: flex;
+    flex: 1;
+    height: 100%;
+    min-height: 0;
+    width: 100%;
   }
 
   .make-seg__editorGlow {
@@ -1513,6 +2025,12 @@ const makeSegmentationStyles = `
   }
 
   .make-seg__editorShell--feature {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+    min-height: 0;
+    width: 100%;
     border-radius: 28px;
     border-color: rgba(15, 23, 42, 0.08);
     background: #ffffff;
@@ -1557,8 +2075,8 @@ const makeSegmentationStyles = `
   }
 
   .make-seg__editorTopbar--feature {
-    min-height: 72px;
-    padding: 18px 24px;
+    min-height: 60px;
+    padding: 14px 22px;
     background: #ffffff;
     border-bottom-color: rgba(0, 0, 0, 0.05);
   }
@@ -1642,7 +2160,7 @@ const makeSegmentationStyles = `
   }
 
   .make-seg__editorMetaPill {
-    min-height: 36px;
+    min-height: 32px;
     padding: 0 14px;
     border-radius: 999px;
     border: 1px solid rgba(15, 23, 42, 0.08);
@@ -1670,8 +2188,9 @@ const makeSegmentationStyles = `
   }
 
   .make-seg__editorTextarea--feature {
-    min-height: 420px;
-    padding: 34px 32px 36px;
+    min-height: 0;
+    flex: 1;
+    padding: 28px 28px 30px;
     background: #ffffff;
     color: rgba(0, 0, 0, 0.8);
   }
@@ -1696,8 +2215,8 @@ const makeSegmentationStyles = `
   }
 
   .make-seg__editorFooter {
-    min-height: 44px;
-    padding: 0 24px;
+    min-height: 38px;
+    padding: 0 20px;
     border-top: 1px solid rgba(0, 0, 0, 0.05);
     display: flex;
     align-items: center;
@@ -1735,9 +2254,9 @@ const makeSegmentationStyles = `
   .make-seg__editorWatermark {
     position: absolute;
     right: 34px;
-    bottom: 58px;
+    bottom: 52px;
     font-family: "Playfair Display", Georgia, "Times New Roman", serif;
-    font-size: 54px;
+    font-size: 48px;
     line-height: 1;
     letter-spacing: -0.06em;
     color: rgba(37, 99, 235, 0.085);
@@ -2031,7 +2550,7 @@ const makeSegmentationStyles = `
   .make-seg__reviewSection {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 48px 48px 128px;
+    padding: 48px 48px 220px;
     animation: make-seg-fade-up 0.5s ease both;
   }
 
@@ -2584,16 +3103,42 @@ const makeSegmentationStyles = `
   .make-seg__reviewActionArea {
     position: relative;
     z-index: 1;
-    margin: 48px auto 0;
+    margin: 0 auto;
     width: min(100%, 560px);
-    padding-top: 28px;
-    border-top: 1px solid rgba(203, 213, 225, 0.72);
+    padding: 22px 0 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     gap: 14px;
     text-align: center;
+  }
+
+  .make-seg__bottomRegion {
+    position: sticky;
+    bottom: 0;
+    z-index: 8;
+    margin-top: 32px;
+    margin-left: -48px;
+    margin-right: -48px;
+    padding: 28px 48px 24px;
+    background:
+      linear-gradient(180deg, rgba(238, 244, 250, 0) 0%, rgba(238, 244, 250, 0.82) 24%, rgba(238, 244, 250, 0.96) 46%, rgba(238, 244, 250, 0.98) 100%);
+    backdrop-filter: blur(14px);
+  }
+
+  .make-seg__bottomRegion::before {
+    content: "";
+    position: absolute;
+    inset: 0 48px auto;
+    height: 1px;
+    background: rgba(203, 213, 225, 0.72);
+    pointer-events: none;
+  }
+
+  .make-seg__bottomRegionInner {
+    max-width: 560px;
+    margin: 0 auto;
   }
 
   .make-seg__reviewActionSummary {
@@ -2633,6 +3178,17 @@ const makeSegmentationStyles = `
   }
 
   @media (max-width: 900px) {
+    .make-seg__bottomRegion {
+      margin-left: -24px;
+      margin-right: -24px;
+      padding: 22px 24px 20px;
+    }
+
+    .make-seg__bottomRegion::before {
+      left: 24px;
+      right: 24px;
+    }
+
     .make-seg__reviewActionArea {
       width: min(100%, 420px);
     }
@@ -2640,6 +3196,33 @@ const makeSegmentationStyles = `
     .make-seg__reviewActionArea .make-seg__primaryButton {
       min-width: 0;
       width: 100%;
+    }
+
+    .make-seg__workspaceSection.is-intakeStage {
+      height: auto;
+      min-height: calc(100vh - var(--make-workspace-header-height));
+    }
+
+    .make-seg__intakeLayout {
+      grid-template-columns: 24px minmax(0, 1fr) 24px;
+    }
+
+    .make-seg__intakeMain {
+      grid-template-rows: auto minmax(360px, 1fr) auto;
+    }
+
+    .make-seg__intakeIntroRegion {
+      padding: 0;
+    }
+
+    .make-seg__intakeEditorRegion {
+      padding: 12px 0 10px;
+    }
+
+    .make-seg__intakeBottomRegionInner {
+      padding-left: 0;
+      padding-right: 0;
+      padding-bottom: 20px;
     }
   }
 
@@ -3007,7 +3590,7 @@ const makeSegmentationStyles = `
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 48px;
+    padding: 28px 48px 32px;
   }
 
   .make-seg__compilingPage {
@@ -3043,14 +3626,14 @@ const makeSegmentationStyles = `
   }
 
   .make-seg__successInner {
-    max-width: 800px;
+    max-width: 820px;
     animation: make-seg-fade-up 0.8s ease both;
     position: relative;
     z-index: 1;
   }
 
   .make-seg__successHero {
-    margin-bottom: 64px;
+    margin-bottom: 34px;
   }
 
   .make-seg__compilingSeal {
@@ -3071,15 +3654,15 @@ const makeSegmentationStyles = `
   }
 
   .make-seg__successTitle {
-    font-size: 72px;
-    line-height: 0.95;
+    font-size: clamp(60px, 5.6vw, 72px);
+    line-height: 0.9;
   }
 
   .make-seg__successBadge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 12px 24px;
+    padding: 10px 20px;
     border-radius: 999px;
     border: 1px solid var(--make-line-soft);
     background: rgba(255, 255, 255, 0.92);
@@ -3089,21 +3672,30 @@ const makeSegmentationStyles = `
   .make-seg__successLink {
     border: none;
     background: transparent;
-    color: var(--make-text-soft);
+    color: var(--make-text-body);
     font-size: 13px;
     line-height: 1;
-    letter-spacing: 0.06em;
+    font-weight: 600;
+    letter-spacing: 0.04em;
     cursor: pointer;
-    transition: color 0.2s ease, transform 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.78;
+    text-decoration: underline;
+    text-decoration-color: rgba(37, 99, 235, 0.18);
+    text-underline-offset: 0.22em;
+    transition: color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
   }
 
   .make-seg__successLink:hover {
     color: var(--make-accent-strong);
     transform: translateY(-1px);
+    opacity: 1;
   }
 
   .make-seg__successSecondary {
-    margin-top: 18px;
+    margin-top: 14px;
     display: inline-flex;
     align-items: center;
     gap: 12px;
@@ -3120,15 +3712,15 @@ const makeSegmentationStyles = `
   }
 
   .make-seg__successDivider {
-    margin-top: 80px;
-    padding-top: 40px;
+    margin-top: 46px;
+    padding-top: 28px;
     border-top: 1px solid var(--make-line);
   }
 
   .make-seg__successStats {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 40px;
+    gap: 28px;
     text-align: center;
   }
 
@@ -3136,8 +3728,8 @@ const makeSegmentationStyles = `
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
-    min-height: 88px;
+    gap: 10px;
+    min-height: 76px;
   }
 
   .make-seg__successStatLabel {
@@ -3295,6 +3887,15 @@ const makeSegmentationStyles = `
       font-size: 52px;
     }
 
+    .make-seg__successHero {
+      margin-bottom: 28px;
+    }
+
+    .make-seg__successDivider {
+      margin-top: 36px;
+      padding-top: 24px;
+    }
+
     .make-seg__cardGrid,
     .make-seg__choiceGrid,
     .make-seg__successStats,
@@ -3388,10 +3989,6 @@ const makeSegmentationStyles = `
       width: min(320px, calc(100vw - 48px));
       right: 50%;
       transform: translateX(50%);
-    }
-
-    .make-seg__pasteCanvas {
-      padding-inline: 12px;
     }
 
     .make-seg__pasteLayer.is-back,
@@ -3854,13 +4451,11 @@ function WorkspaceStage({ className = '', children }) {
 
 function WorkspaceStepbar({ step }) {
   const progressStep =
-    step === 'method'
-      ? 'paste'
-      : step === 'compiling' || step === 'segmenting'
-        ? 'segment'
-        : step === 'review'
-          ? 'review'
-          : step;
+    step === 'compiling' || step === 'segmenting'
+      ? 'segment'
+      : step === 'review'
+        ? 'review'
+        : step;
   const currentIndex = workspaceSteps.findIndex((item) => item.id === progressStep);
 
   return (
@@ -3902,6 +4497,272 @@ function PasteStageOrnament({ side }) {
   );
 }
 
+function PasteIntakeCleanScreen({
+  onBackHome,
+  rawText,
+  setRawText,
+  wordCount,
+  hasText,
+  defaultMethod,
+  handlePrimaryAction,
+  handleToggleActionMenu,
+  isActionMenuOpen,
+  handleSelectMethodOption,
+  segmentationStyleOptions,
+  segmentationStyle,
+  setSegmentationStyle,
+  segmentationGranularityOptions,
+  segmentationGranularity,
+  setSegmentationGranularity,
+  handleQuickModeToggle,
+  quickMode,
+  handleTransitionPreferenceToggle,
+  showSegmentationTransition,
+}) {
+  const ctaClusterClassName = cn('make-seg__ctaCluster', !hasText ? 'is-dormant' : '');
+
+  return (
+    <div className="make-seg__pasteCleanScreen" {...getLayoutDebugAttrs('misc', 'screen_root')}>
+      <header className="make-seg__screenHeaderBand" {...getLayoutDebugAttrs('layer1', 'screen_header_band')}>
+        <div className="make-seg__screenHeaderGrid" {...getLayoutDebugAttrs('misc', 'screen_header_grid')}>
+          <div className="make-seg__headerStartLane" {...getLayoutDebugAttrs('layer2', 'header_start_lane')}>
+            <button type="button" className="make-seg__headerPill make-seg__workspaceBack" onClick={onBackHome}>
+              <ArrowLeft size={16} strokeWidth={1.9} />
+              Back
+            </button>
+          </div>
+
+          <div className="make-seg__headerCenterLane" {...getLayoutDebugAttrs('layer2', 'header_center_lane')}>
+            <WorkspaceStepbar step="paste" />
+          </div>
+
+          <div className="make-seg__headerEndLane" {...getLayoutDebugAttrs('layer2', 'header_end_lane')}>
+            <div className="make-seg__headerBrandSlot" {...getLayoutDebugAttrs('misc', 'header_brand_slot')}>
+              <div className="make-seg__brand">
+                <div className="make-seg__brandMark is-small">
+                  <Scissors size={16} strokeWidth={1.9} />
+                </div>
+                <div className="make-seg__brandText">
+                  <p className="make-seg__brandName is-inline">Source Intake</p>
+                  <p className="make-seg__brandMeta">Segmentation</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section className="make-seg__screenBodyField" {...getLayoutDebugAttrs('layer1', 'screen_body_field')}>
+        <StageAtmosphere />
+
+        <div className="make-seg__screenBodyGrid" {...getLayoutDebugAttrs('misc', 'screen_body_grid')}>
+          <div className="make-seg__bodyStartRail" aria-hidden="true" {...getLayoutDebugAttrs('layer2', 'body_start_rail')} />
+
+          <div className="make-seg__bodyCenterStack" {...getLayoutDebugAttrs('layer2', 'body_center_stack')}>
+            <div className="make-seg__introBand" {...getLayoutDebugAttrs('layer3', 'intro_band')}>
+              <div className="make-seg__introSignalRow" {...getLayoutDebugAttrs('layer3', 'intro_signal_row')}>
+                <div className="make-seg__intakeSourceMarker" data-debug-item="source_marker">
+                  <span className="make-seg__intakeSourceDot" />
+                  <span>Source</span>
+                </div>
+              </div>
+
+              <div className="make-seg__introHeadlineRow" {...getLayoutDebugAttrs('layer3', 'intro_headline_row')}>
+                <h1 className="make-seg__displayTitle" data-debug-item="display_title">Paste your text</h1>
+              </div>
+
+              <div className="make-seg__introSubtitleRow" {...getLayoutDebugAttrs('layer3', 'intro_subtitle_row')}>
+                <p className="make-seg__supportSubtext" data-debug-item="support_subtext">
+                  Drop in your raw source material. AraPal will turn it into clean, study-ready segments.
+                </p>
+              </div>
+            </div>
+
+            <div className="make-seg__editorBand" {...getLayoutDebugAttrs('layer3', 'editor_band')}>
+              <div className="make-seg__editorBandFrame" {...getLayoutDebugAttrs('misc', 'editor_band_frame')}>
+                  <div className="make-seg__panelCorner is-topLeft" />
+                  <div className="make-seg__panelCorner is-topRight" />
+                  <div className="make-seg__panelCorner is-bottomLeft" />
+                  <div className="make-seg__panelCorner is-bottomRight" />
+
+                  <div className="make-seg__editorWrap make-seg__editorWrap--feature" {...getLayoutDebugAttrs('misc', 'editor_wrap_feature')}>
+                    <div className="make-seg__editorGlow" />
+                    <div className="make-seg__editorShell make-seg__editorShell--feature" {...getLayoutDebugAttrs('misc', 'editor_shell_feature')}>
+                      <div className="make-seg__editorTopbar make-seg__editorTopbar--feature" {...getLayoutDebugAttrs('misc', 'editor_topbar_feature')}>
+                        <div className="make-seg__editorChrome">
+                          <WindowButtons />
+                          <div className="make-seg__editorChromeText">
+                            <span className="make-seg__editorChromeEyebrow">Arapal intake</span>
+                          </div>
+                        </div>
+                        <div className="make-seg__editorSeal">Preserved source</div>
+                      </div>
+
+                      <textarea
+                        value={rawText}
+                        onChange={(event) => setRawText(event.target.value)}
+                        placeholder={'Paste your source text here…\n\nThe workspace will analyze and segment your text into structured, study-ready sections.'}
+                        className="make-seg__fieldTextarea make-seg__editorTextarea make-seg__editorTextarea--feature"
+                      />
+                      <div className="make-seg__editorWatermark">Arapal</div>
+
+                      <div className="make-seg__editorFooter" {...getLayoutDebugAttrs('misc', 'editor_footer')}>
+                        <div className="make-seg__editorShortcut">
+                          <span className="make-seg__editorKey">⌘</span>
+                          <span className="make-seg__editorKey">V</span>
+                          <span>to paste</span>
+                        </div>
+                        {hasText ? <div className="make-seg__editorFooterMeta">{wordCount} words</div> : <div />}
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            </div>
+
+            <div className="make-seg__actionBand" {...getLayoutDebugAttrs('layer3', 'action_band')}>
+              <div className="make-seg__actionDock" {...getLayoutDebugAttrs('layer3', 'action_dock')}>
+                <div className="make-seg__intakeActions" {...getLayoutDebugAttrs('misc', 'intake_actions')}>
+                  <div className={ctaClusterClassName} {...getLayoutDebugAttrs('misc', 'cta_cluster')}>
+                      <button
+                        type="button"
+                        className="make-seg__primaryButton is-segmentation"
+                        onClick={handlePrimaryAction}
+                        disabled={!hasText}
+                      >
+                        {defaultMethod === 'manual' ? <Edit3 size={16} strokeWidth={1.9} /> : <Sparkles size={16} strokeWidth={1.9} />}
+                        <span>{defaultMethod === 'manual' ? 'Manual review' : 'AI Segment Text'}</span>
+                        <ArrowDown size={16} strokeWidth={1.9} />
+                      </button>
+
+                      <button
+                        type="button"
+                        className="make-seg__splitButton"
+                        onClick={handleToggleActionMenu}
+                        aria-haspopup="menu"
+                        aria-expanded={isActionMenuOpen}
+                        aria-label="Segmentation options"
+                      >
+                        <ChevronUp
+                          size={18}
+                          strokeWidth={1.9}
+                          className={cn('make-seg__splitChevron', isActionMenuOpen ? 'is-open' : '')}
+                        />
+                      </button>
+
+                      {isActionMenuOpen ? (
+                        <div
+                          className="make-seg__splitMenu"
+                          role="menu"
+                          aria-label="Segmentation options"
+                          {...getLayoutDebugAttrs('misc', 'split_menu')}
+                        >
+                          <div className="make-seg__splitMenuSection">
+                            <p className="make-seg__splitMenuLabel">Method</p>
+                            <button
+                              type="button"
+                              className={cn('make-seg__splitMenuOption', defaultMethod === 'ai' ? 'is-selected' : '')}
+                              onClick={() => handleSelectMethodOption('ai')}
+                            >
+                              <span className="make-seg__splitMenuOptionText">
+                                <Sparkles size={15} strokeWidth={1.9} />
+                                AI proposal
+                              </span>
+                              {defaultMethod === 'ai' ? <Check size={15} strokeWidth={1.9} /> : null}
+                            </button>
+                            <button
+                              type="button"
+                              className={cn('make-seg__splitMenuOption', defaultMethod === 'manual' ? 'is-selected' : '')}
+                              onClick={() => handleSelectMethodOption('manual')}
+                            >
+                              <span className="make-seg__splitMenuOptionText">
+                                <Edit3 size={15} strokeWidth={1.9} />
+                                Manual start
+                              </span>
+                              {defaultMethod === 'manual' ? <Check size={15} strokeWidth={1.9} /> : null}
+                            </button>
+                          </div>
+
+                          <div className="make-seg__splitMenuSection">
+                            <p className="make-seg__splitMenuLabel">Segmentation style</p>
+                            {segmentationStyleOptions.map((option) => (
+                              <button
+                                key={option.id}
+                                type="button"
+                                className={cn('make-seg__splitMenuOption', segmentationStyle === option.id ? 'is-selected' : '')}
+                                onClick={() => setSegmentationStyle(option.id)}
+                              >
+                                <span className="make-seg__splitMenuOptionText is-stacked">
+                                  <span className="make-seg__splitMenuOptionTitle">{option.label}</span>
+                                  <span className="make-seg__splitMenuOptionMeta">{option.meta}</span>
+                                </span>
+                                {segmentationStyle === option.id ? <Check size={15} strokeWidth={1.9} /> : null}
+                              </button>
+                            ))}
+                          </div>
+
+                          <div className="make-seg__splitMenuSection">
+                            <p className="make-seg__splitMenuLabel">Granularity</p>
+                            {segmentationGranularityOptions.map((option) => (
+                              <button
+                                key={option.id}
+                                type="button"
+                                className={cn('make-seg__splitMenuOption', segmentationGranularity === option.id ? 'is-selected' : '')}
+                                onClick={() => setSegmentationGranularity(option.id)}
+                              >
+                                <span className="make-seg__splitMenuOptionText is-stacked">
+                                  <span className="make-seg__splitMenuOptionTitle">{option.label}</span>
+                                  <span className="make-seg__splitMenuOptionMeta">{option.meta}</span>
+                                </span>
+                                {segmentationGranularity === option.id ? <Check size={15} strokeWidth={1.9} /> : null}
+                              </button>
+                            ))}
+                          </div>
+
+                          <div className="make-seg__splitMenuSection">
+                            <p className="make-seg__splitMenuLabel">Preferences</p>
+                            <button type="button" className="make-seg__splitMenuToggle" onClick={handleQuickModeToggle}>
+                              <span className="make-seg__splitMenuToggleText">
+                                <span className="make-seg__splitMenuToggleTitle">Quick mode</span>
+                                <span className="make-seg__splitMenuToggleMeta">
+                                  {quickMode
+                                    ? 'Go straight to Segments Ready after the AI pass'
+                                    : 'Open review first before showing Segments Ready'}
+                                </span>
+                              </span>
+                              <span className={cn('make-seg__miniSwitch', quickMode ? 'is-active' : '')}>
+                                <span className="make-seg__miniSwitchThumb" />
+                              </span>
+                            </button>
+
+                            <button
+                              type="button"
+                              className="make-seg__splitMenuToggle"
+                              onClick={handleTransitionPreferenceToggle}
+                            >
+                              <span className="make-seg__splitMenuToggleText">
+                                <span className="make-seg__splitMenuToggleTitle">Show segmentation animation</span>
+                                <span className="make-seg__splitMenuToggleMeta">Let the text split visually before study</span>
+                              </span>
+                              <span className={cn('make-seg__miniSwitch', showSegmentationTransition ? 'is-active' : '')}>
+                                <span className="make-seg__miniSwitchThumb" />
+                              </span>
+                            </button>
+                          </div>
+                        </div>
+                      ) : null}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="make-seg__bodyEndRail" aria-hidden="true" {...getLayoutDebugAttrs('layer2', 'body_end_rail')} />
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function HomeScreen({ onReplayIntro, onOpenProject, onOpenSourceIntake, onOpenProjects, onOpenWorkspace }) {
   return (
     <div className="make-seg__page">
@@ -3913,7 +4774,7 @@ function HomeScreen({ onReplayIntro, onOpenProject, onOpenSourceIntake, onOpenPr
             </div>
             <div>
               <p className="make-seg__brandName">Arapal</p>
-              <p className="make-seg__brandMeta">Segments</p>
+              <p className="make-seg__brandMeta">Project Home</p>
             </div>
           </div>
 
@@ -4015,7 +4876,7 @@ function SourceIntakeScreen({ initialBatchName = '', initialSourceText = '', onR
       <main className="make-seg__workspaceMain">
         {!isSaved ? (
           <div className="make-seg__centerStage">
-            <SectionPill>Step 1</SectionPill>
+            <SectionPill>Source</SectionPill>
             <h1 className="make-seg__sectionTitle">Preserve your source</h1>
             <p className="make-seg__sectionLead">
               Raw text, safely stored before any processing begins
@@ -4113,7 +4974,7 @@ function SegmentationWorkspaceScreen({
   onStartStudying,
   onSegmentationComplete,
 }) {
-  const useDemoReviewSeed = !initialText.trim();
+  const useDemoReviewSeed = !initialText.trim() && batchId !== 'new';
   const [rawText, setRawText] = useState(useDemoReviewSeed ? demoReviewText : initialText);
   const [step, setStep] = useState(useDemoReviewSeed ? 'review' : 'paste');
   const [markers, setMarkers] = useState(() => (useDemoReviewSeed ? createDemoReviewMarkers() : []));
@@ -4134,7 +4995,7 @@ function SegmentationWorkspaceScreen({
     const storedTransitionPreference = readTransitionPreference();
     const storedStyle = readSegmentationStyle();
     const storedGranularity = readSegmentationGranularity();
-    const shouldUseDemoReview = !initialText.trim();
+    const shouldUseDemoReview = !initialText.trim() && batchId !== 'new';
 
     setRawText(shouldUseDemoReview ? demoReviewText : initialText);
     setStep(shouldUseDemoReview ? 'review' : 'paste');
@@ -4279,10 +5140,6 @@ function SegmentationWorkspaceScreen({
   };
 
   const handleToggleActionMenu = () => {
-    if (!hasText) {
-      return;
-    }
-
     setIsActionMenuOpen((current) => !current);
   };
 
@@ -4299,16 +5156,8 @@ function SegmentationWorkspaceScreen({
     setShowSegmentationTransition((current) => !current);
   };
 
-  const handleChooseMode = (mode) => {
-    setSavedMethod(mode);
-
-    if (mode === 'manual') {
-      beginManualFlow();
-      return;
-    }
-
-    beginAiFlow();
-  };
+  const useLegacyPasteScreen =
+    typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('pasteLegacy') === '1';
 
   const handleApprove = () => {
     onSegmentationComplete({
@@ -4362,11 +5211,40 @@ function SegmentationWorkspaceScreen({
     );
   };
 
+  if (step === 'paste' && !useLegacyPasteScreen) {
+    return (
+      <div className="make-seg__workspacePage">
+        <PasteIntakeCleanScreen
+          onBackHome={onBackHome}
+          rawText={rawText}
+          setRawText={setRawText}
+          wordCount={wordCount}
+          hasText={hasText}
+          defaultMethod={defaultMethod}
+          handlePrimaryAction={handlePrimaryAction}
+          handleToggleActionMenu={handleToggleActionMenu}
+          isActionMenuOpen={isActionMenuOpen}
+          handleSelectMethodOption={handleSelectMethodOption}
+          segmentationStyleOptions={segmentationStyleOptions}
+          segmentationStyle={segmentationStyle}
+          setSegmentationStyle={setSegmentationStyle}
+          segmentationGranularityOptions={segmentationGranularityOptions}
+          segmentationGranularity={segmentationGranularity}
+          setSegmentationGranularity={setSegmentationGranularity}
+          handleQuickModeToggle={handleQuickModeToggle}
+          quickMode={quickMode}
+          handleTransitionPreferenceToggle={handleTransitionPreferenceToggle}
+          showSegmentationTransition={showSegmentationTransition}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="make-seg__workspacePage">
       <header className="make-seg__header">
         <div className="make-seg__headerInner is-workspace">
-          <button type="button" className="make-seg__headerPill" onClick={onBackHome}>
+          <button type="button" className="make-seg__headerPill make-seg__workspaceBack" onClick={onBackHome}>
             <ArrowLeft size={16} strokeWidth={1.9} />
             Back
           </button>
@@ -4395,233 +5273,215 @@ function SegmentationWorkspaceScreen({
           </div>
 
           <div className="make-seg__workspaceSection is-intakeStage">
-            <div className="make-seg__centerStage make-seg__centerStage--workspaceIntro">
-              <SectionPill className={hasText ? 'is-live' : ''}>Step 1</SectionPill>
-              <h1 className="make-seg__sectionTitle">Paste your text</h1>
-              <p className="make-seg__sectionLead">
-                Drop in your raw source material. AraPal will turn it into clean, study-ready segments.
-              </p>
-            </div>
+            <div className="make-seg__intakeBodyFrame">
+              <div className="make-seg__intakeLayout">
+                <div className="make-seg__intakeRail" aria-hidden="true" />
 
-            <div className="make-seg__pasteCanvas">
-              <div className="make-seg__panelCorner is-topLeft" />
-              <div className="make-seg__panelCorner is-topRight" />
-              <div className="make-seg__panelCorner is-bottomLeft" />
-              <div className="make-seg__panelCorner is-bottomRight" />
-              <div className="make-seg__pasteLayer is-back" />
-              <div className="make-seg__pasteLayer is-mid" />
-              <div className="make-seg__pasteAura is-left" />
-              <div className="make-seg__pasteAura is-right" />
-              <PasteStageOrnament side="left" />
-              <PasteStageOrnament side="right" />
-              <div className="make-seg__pasteStageGrid" />
-
-              <div className="make-seg__editorWrap make-seg__editorWrap--feature">
-                <div className="make-seg__editorGlow" />
-                <div className="make-seg__editorShell make-seg__editorShell--feature">
-                  <div className="make-seg__editorTopbar make-seg__editorTopbar--feature">
-                    <div className="make-seg__editorChrome">
-                      <WindowButtons />
-                      <div className="make-seg__editorChromeText">
-                        <span className="make-seg__editorChromeEyebrow">Arapal intake</span>
+                <div className="make-seg__intakeMain">
+                  <div className="make-seg__intakeIntroRegion">
+                    <div className="make-seg__centerStage make-seg__centerStage--workspaceIntro">
+                        <div className="make-seg__intakeIntroGrid">
+                          <div className="make-seg__intakeIntroSignal">
+                            <div className="make-seg__intakeSourceMarker">
+                              <span className="make-seg__intakeSourceDot" />
+                              <span>Source</span>
+                            </div>
+                          </div>
+                        <div className="make-seg__intakeIntroBody">
+                          <h1 className="make-seg__sectionTitle">Paste your text</h1>
+                          <p className="make-seg__sectionLead">
+                            Drop in your raw source material. AraPal will turn it into clean, study-ready segments.
+                          </p>
+                        </div>
+                        <div aria-hidden="true" />
                       </div>
                     </div>
-                    <div className="make-seg__editorSeal">Preserved source</div>
                   </div>
 
-                  <textarea
-                    value={rawText}
-                    onChange={(event) => setRawText(event.target.value)}
-                    placeholder={'Paste your source text here…\n\nThe workspace will analyze and segment your text into structured, study-ready sections.'}
-                    className="make-seg__fieldTextarea make-seg__editorTextarea make-seg__editorTextarea--feature"
-                  />
-                  <div className="make-seg__editorWatermark">Arapal</div>
+                  <div className="make-seg__intakeEditorRegion">
+                    <div className="make-seg__pasteCanvas">
+                      <div className="make-seg__panelCorner is-topLeft" />
+                      <div className="make-seg__panelCorner is-topRight" />
+                      <div className="make-seg__panelCorner is-bottomLeft" />
+                      <div className="make-seg__panelCorner is-bottomRight" />
+                      <div className="make-seg__pasteLayer is-back" />
+                      <div className="make-seg__pasteLayer is-mid" />
+                      <div className="make-seg__pasteAura is-left" />
+                      <div className="make-seg__pasteAura is-right" />
+                      <PasteStageOrnament side="left" />
+                      <PasteStageOrnament side="right" />
+                      <div className="make-seg__pasteStageGrid" />
 
-                  <div className="make-seg__editorFooter">
-                    <div className="make-seg__editorShortcut">
-                      <span className="make-seg__editorKey">⌘</span>
-                      <span className="make-seg__editorKey">V</span>
-                      <span>to paste</span>
+                      <div className="make-seg__editorWrap make-seg__editorWrap--feature">
+                        <div className="make-seg__editorGlow" />
+                        <div className="make-seg__editorShell make-seg__editorShell--feature">
+                          <div className="make-seg__editorTopbar make-seg__editorTopbar--feature">
+                            <div className="make-seg__editorChrome">
+                              <WindowButtons />
+                              <div className="make-seg__editorChromeText">
+                                <span className="make-seg__editorChromeEyebrow">Arapal intake</span>
+                              </div>
+                            </div>
+                            <div className="make-seg__editorSeal">Preserved source</div>
+                          </div>
+
+                          <textarea
+                            value={rawText}
+                            onChange={(event) => setRawText(event.target.value)}
+                            placeholder={'Paste your source text here…\n\nThe workspace will analyze and segment your text into structured, study-ready sections.'}
+                            className="make-seg__fieldTextarea make-seg__editorTextarea make-seg__editorTextarea--feature"
+                          />
+                          <div className="make-seg__editorWatermark">Arapal</div>
+
+                          <div className="make-seg__editorFooter">
+                            <div className="make-seg__editorShortcut">
+                              <span className="make-seg__editorKey">⌘</span>
+                              <span className="make-seg__editorKey">V</span>
+                              <span>to paste</span>
+                            </div>
+                            {hasText ? <div className="make-seg__editorFooterMeta">{wordCount} words</div> : <div />}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    {hasText ? <div className="make-seg__editorFooterMeta">{wordCount} words</div> : <div />}
+                  </div>
+
+                  <div className="make-seg__intakeBottomRegion">
+                    <div className="make-seg__intakeBottomRegionInner">
+                      <div className="make-seg__intakeActions">
+                        <div className="make-seg__ctaCluster">
+                          <button
+                            type="button"
+                            className="make-seg__primaryButton is-segmentation"
+                            onClick={handlePrimaryAction}
+                            disabled={!hasText}
+                          >
+                            {defaultMethod === 'manual' ? <Edit3 size={16} strokeWidth={1.9} /> : <Sparkles size={16} strokeWidth={1.9} />}
+                            <span>{defaultMethod === 'manual' ? 'Manual review' : 'AI Segment Text'}</span>
+                            <ArrowDown size={16} strokeWidth={1.9} />
+                          </button>
+
+                          <button
+                            type="button"
+                            className="make-seg__splitButton"
+                            onClick={handleToggleActionMenu}
+                            aria-haspopup="menu"
+                            aria-expanded={isActionMenuOpen}
+                            aria-label="Segmentation options"
+                          >
+                            <ChevronUp
+                              size={18}
+                              strokeWidth={1.9}
+                              className={cn('make-seg__splitChevron', isActionMenuOpen ? 'is-open' : '')}
+                            />
+                          </button>
+
+                          {isActionMenuOpen ? (
+                            <div className="make-seg__splitMenu" role="menu" aria-label="Segmentation options">
+                              <div className="make-seg__splitMenuSection">
+                                <p className="make-seg__splitMenuLabel">Method</p>
+                                <button
+                                  type="button"
+                                  className={cn('make-seg__splitMenuOption', defaultMethod === 'ai' ? 'is-selected' : '')}
+                                  onClick={() => handleSelectMethodOption('ai')}
+                                >
+                                  <span className="make-seg__splitMenuOptionText">
+                                    <Sparkles size={15} strokeWidth={1.9} />
+                                    AI proposal
+                                  </span>
+                                  {defaultMethod === 'ai' ? <Check size={15} strokeWidth={1.9} /> : null}
+                                </button>
+                                <button
+                                  type="button"
+                                  className={cn('make-seg__splitMenuOption', defaultMethod === 'manual' ? 'is-selected' : '')}
+                                  onClick={() => handleSelectMethodOption('manual')}
+                                >
+                                  <span className="make-seg__splitMenuOptionText">
+                                    <Edit3 size={15} strokeWidth={1.9} />
+                                    Manual start
+                                  </span>
+                                  {defaultMethod === 'manual' ? <Check size={15} strokeWidth={1.9} /> : null}
+                                </button>
+                              </div>
+
+                              <div className="make-seg__splitMenuSection">
+                                <p className="make-seg__splitMenuLabel">Segmentation style</p>
+                                {segmentationStyleOptions.map((option) => (
+                                  <button
+                                    key={option.id}
+                                    type="button"
+                                    className={cn('make-seg__splitMenuOption', segmentationStyle === option.id ? 'is-selected' : '')}
+                                    onClick={() => setSegmentationStyle(option.id)}
+                                  >
+                                    <span className="make-seg__splitMenuOptionText is-stacked">
+                                      <span className="make-seg__splitMenuOptionTitle">{option.label}</span>
+                                      <span className="make-seg__splitMenuOptionMeta">{option.meta}</span>
+                                    </span>
+                                    {segmentationStyle === option.id ? <Check size={15} strokeWidth={1.9} /> : null}
+                                  </button>
+                                ))}
+                              </div>
+
+                              <div className="make-seg__splitMenuSection">
+                                <p className="make-seg__splitMenuLabel">Granularity</p>
+                                {segmentationGranularityOptions.map((option) => (
+                                  <button
+                                    key={option.id}
+                                    type="button"
+                                    className={cn('make-seg__splitMenuOption', segmentationGranularity === option.id ? 'is-selected' : '')}
+                                    onClick={() => setSegmentationGranularity(option.id)}
+                                  >
+                                    <span className="make-seg__splitMenuOptionText is-stacked">
+                                      <span className="make-seg__splitMenuOptionTitle">{option.label}</span>
+                                      <span className="make-seg__splitMenuOptionMeta">{option.meta}</span>
+                                    </span>
+                                    {segmentationGranularity === option.id ? <Check size={15} strokeWidth={1.9} /> : null}
+                                  </button>
+                                ))}
+                              </div>
+
+                              <div className="make-seg__splitMenuSection">
+                                <p className="make-seg__splitMenuLabel">Preferences</p>
+                                <button type="button" className="make-seg__splitMenuToggle" onClick={handleQuickModeToggle}>
+                                  <span className="make-seg__splitMenuToggleText">
+                                    <span className="make-seg__splitMenuToggleTitle">Quick mode</span>
+                                    <span className="make-seg__splitMenuToggleMeta">
+                                      {quickMode
+                                        ? 'Go straight to Segments Ready after the AI pass'
+                                        : 'Open review first before showing Segments Ready'}
+                                    </span>
+                                  </span>
+                                  <span className={cn('make-seg__miniSwitch', quickMode ? 'is-active' : '')}>
+                                    <span className="make-seg__miniSwitchThumb" />
+                                  </span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  className="make-seg__splitMenuToggle"
+                                  onClick={handleTransitionPreferenceToggle}
+                                >
+                                  <span className="make-seg__splitMenuToggleText">
+                                    <span className="make-seg__splitMenuToggleTitle">Show segmentation animation</span>
+                                    <span className="make-seg__splitMenuToggleMeta">Let the text split visually before study</span>
+                                  </span>
+                                  <span className={cn('make-seg__miniSwitch', showSegmentationTransition ? 'is-active' : '')}>
+                                    <span className="make-seg__miniSwitchThumb" />
+                                  </span>
+                                </button>
+                              </div>
+                            </div>
+                          ) : null}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
+                <div className="make-seg__intakeRail" aria-hidden="true" />
               </div>
             </div>
-
-            {hasText ? (
-              <div className="make-seg__intakeActions">
-                <div className="make-seg__ctaCluster">
-                  <button
-                    type="button"
-                    className="make-seg__primaryButton is-segmentation"
-                    onClick={handlePrimaryAction}
-                  >
-                    {defaultMethod === 'manual' ? <Edit3 size={16} strokeWidth={1.9} /> : <Sparkles size={16} strokeWidth={1.9} />}
-                    <span>{defaultMethod === 'manual' ? 'Manual review' : 'AI Segment Text'}</span>
-                    <ArrowDown size={16} strokeWidth={1.9} />
-                  </button>
-
-                  <button
-                    type="button"
-                    className="make-seg__splitButton"
-                    onClick={handleToggleActionMenu}
-                    aria-haspopup="menu"
-                    aria-expanded={isActionMenuOpen}
-                    aria-label="Segmentation options"
-                  >
-                    <ChevronUp
-                      size={18}
-                      strokeWidth={1.9}
-                      className={cn('make-seg__splitChevron', isActionMenuOpen ? 'is-open' : '')}
-                    />
-                  </button>
-
-                  {isActionMenuOpen ? (
-                    <div className="make-seg__splitMenu" role="menu" aria-label="Segmentation options">
-                      <div className="make-seg__splitMenuSection">
-                        <p className="make-seg__splitMenuLabel">Method</p>
-                        <button
-                          type="button"
-                          className={cn('make-seg__splitMenuOption', defaultMethod === 'ai' ? 'is-selected' : '')}
-                          onClick={() => handleSelectMethodOption('ai')}
-                        >
-                          <span className="make-seg__splitMenuOptionText">
-                            <Sparkles size={15} strokeWidth={1.9} />
-                            AI proposal
-                          </span>
-                          {defaultMethod === 'ai' ? <Check size={15} strokeWidth={1.9} /> : null}
-                        </button>
-                        <button
-                          type="button"
-                          className={cn('make-seg__splitMenuOption', defaultMethod === 'manual' ? 'is-selected' : '')}
-                          onClick={() => handleSelectMethodOption('manual')}
-                        >
-                          <span className="make-seg__splitMenuOptionText">
-                            <Edit3 size={15} strokeWidth={1.9} />
-                            Manual start
-                          </span>
-                          {defaultMethod === 'manual' ? <Check size={15} strokeWidth={1.9} /> : null}
-                        </button>
-                      </div>
-
-                      <div className="make-seg__splitMenuSection">
-                        <p className="make-seg__splitMenuLabel">Segmentation style</p>
-                        {segmentationStyleOptions.map((option) => (
-                          <button
-                            key={option.id}
-                            type="button"
-                            className={cn('make-seg__splitMenuOption', segmentationStyle === option.id ? 'is-selected' : '')}
-                            onClick={() => setSegmentationStyle(option.id)}
-                          >
-                            <span className="make-seg__splitMenuOptionText is-stacked">
-                              <span className="make-seg__splitMenuOptionTitle">{option.label}</span>
-                              <span className="make-seg__splitMenuOptionMeta">{option.meta}</span>
-                            </span>
-                            {segmentationStyle === option.id ? <Check size={15} strokeWidth={1.9} /> : null}
-                          </button>
-                        ))}
-                      </div>
-
-                      <div className="make-seg__splitMenuSection">
-                        <p className="make-seg__splitMenuLabel">Granularity</p>
-                        {segmentationGranularityOptions.map((option) => (
-                          <button
-                            key={option.id}
-                            type="button"
-                            className={cn('make-seg__splitMenuOption', segmentationGranularity === option.id ? 'is-selected' : '')}
-                            onClick={() => setSegmentationGranularity(option.id)}
-                          >
-                            <span className="make-seg__splitMenuOptionText is-stacked">
-                              <span className="make-seg__splitMenuOptionTitle">{option.label}</span>
-                              <span className="make-seg__splitMenuOptionMeta">{option.meta}</span>
-                            </span>
-                            {segmentationGranularity === option.id ? <Check size={15} strokeWidth={1.9} /> : null}
-                          </button>
-                        ))}
-                      </div>
-
-                      <div className="make-seg__splitMenuSection">
-                        <p className="make-seg__splitMenuLabel">Preferences</p>
-                        <button type="button" className="make-seg__splitMenuToggle" onClick={handleQuickModeToggle}>
-                          <span className="make-seg__splitMenuToggleText">
-                            <span className="make-seg__splitMenuToggleTitle">Quick mode</span>
-                            <span className="make-seg__splitMenuToggleMeta">
-                              {quickMode
-                                ? 'Go straight to Segments Ready after the AI pass'
-                                : 'Open review first before showing Segments Ready'}
-                            </span>
-                          </span>
-                          <span className={cn('make-seg__miniSwitch', quickMode ? 'is-active' : '')}>
-                            <span className="make-seg__miniSwitchThumb" />
-                          </span>
-                        </button>
-
-                        <button
-                          type="button"
-                          className="make-seg__splitMenuToggle"
-                          onClick={handleTransitionPreferenceToggle}
-                        >
-                          <span className="make-seg__splitMenuToggleText">
-                            <span className="make-seg__splitMenuToggleTitle">Show segmentation animation</span>
-                            <span className="make-seg__splitMenuToggleMeta">Let the text split visually before study</span>
-                          </span>
-                          <span className={cn('make-seg__miniSwitch', showSegmentationTransition ? 'is-active' : '')}>
-                            <span className="make-seg__miniSwitchThumb" />
-                          </span>
-                        </button>
-                      </div>
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-            ) : null}
           </div>
-        </WorkspaceStage>
-      ) : null}
-
-      {step === 'method' ? (
-        <WorkspaceStage>
-          <section className="make-seg__choiceSection">
-            <div className="make-seg__centerStage make-seg__centerStage--choiceIntro">
-              <SectionPill>Choose method</SectionPill>
-              <h2 className="make-seg__sectionTitle">How should AraPal start?</h2>
-              <p className="make-seg__sectionLead">
-                AI is best for most users. Manual exists for the cases where you want direct control from the first split.
-              </p>
-            </div>
-
-            <div className="make-seg__choiceGrid">
-              <button type="button" className="make-seg__choiceCard is-featured" onClick={() => handleChooseMode('ai')}>
-                <div className="make-seg__choiceDecoration is-featured" />
-                <div className="make-seg__choiceIcon">
-                  <Wand2 size={28} strokeWidth={1.9} />
-                </div>
-                <h3 className="make-seg__choiceTitle">AI Proposal</h3>
-                <p className="make-seg__choiceText">
-                  Let AraPal create the first segmentation pass in the background, then decide whether to go straight to study or review the result.
-                </p>
-                <span className="make-seg__choiceLink">
-                  Use AI
-                  <ChevronRight size={16} strokeWidth={1.9} />
-                </span>
-              </button>
-
-              <button type="button" className="make-seg__choiceCard" onClick={() => handleChooseMode('manual')}>
-                <div className="make-seg__choiceIcon">
-                  <Edit3 size={28} strokeWidth={1.9} />
-                </div>
-                <h3 className="make-seg__choiceTitle">Manual Start</h3>
-                <p className="make-seg__choiceText">
-                  Open Review & refine directly and place the segment boundaries yourself before continuing.
-                </p>
-                <span className="make-seg__choiceLink">
-                  Start manually
-                  <ChevronRight size={16} strokeWidth={1.9} />
-                </span>
-              </button>
-            </div>
-          </section>
         </WorkspaceStage>
       ) : null}
 
@@ -4647,7 +5507,7 @@ function SegmentationWorkspaceScreen({
             <div className="make-seg__transitionShell">
               <div className="make-seg__transitionHeader">
                 <div>
-                  <SectionPill>Step 2</SectionPill>
+                  <SectionPill>Segment</SectionPill>
                   <h2 className="make-seg__sectionTitle is-review">Segmenting your text</h2>
                   <p className="make-seg__sectionLead">
                     AraPal is drafting a clean first pass so you can move straight into study or inspect the structure afterwards.
@@ -4726,7 +5586,7 @@ function SegmentationWorkspaceScreen({
         <WorkspaceStage className="is-review-atmosphere">
           <section className="make-seg__reviewSection">
             <div className="make-seg__reviewHeader">
-              <SectionPill>Step 3</SectionPill>
+              <SectionPill>Review</SectionPill>
               <h2 className="make-seg__sectionTitle is-review">Review & refine</h2>
               <p className="make-seg__reviewLead">
                 The AI draft is ready. Only the amber items need a closer look before you approve and continue.
@@ -4902,23 +5762,27 @@ function SegmentationWorkspaceScreen({
               </section>
             </div>
 
-            <div className="make-seg__reviewActionArea">
-              <div className="make-seg__reviewActionSummary">
-                <p className="make-seg__reviewActionEyebrow">Ready to continue</p>
-                <h3 className="make-seg__reviewActionTitle">Approve structure</h3>
-                <p className="make-seg__reviewActionText">
-                  {markers.length} segments prepared
-                  {needsReviewCount
-                    ? `, with ${needsReviewCount} needing review${secondLookCount ? ` and ${secondLookCount} worth a look` : ''}.`
-                    : secondLookCount
-                      ? `, with ${secondLookCount} worth a look before study.`
-                      : ' and ready to publish.'}
-                </p>
+            <div className="make-seg__bottomRegion">
+              <div className="make-seg__bottomRegionInner">
+                <div className="make-seg__reviewActionArea">
+                  <div className="make-seg__reviewActionSummary">
+                    <p className="make-seg__reviewActionEyebrow">Ready to continue</p>
+                    <h3 className="make-seg__reviewActionTitle">Approve structure</h3>
+                    <p className="make-seg__reviewActionText">
+                      {markers.length} segments prepared
+                      {needsReviewCount
+                        ? `, with ${needsReviewCount} needing review${secondLookCount ? ` and ${secondLookCount} worth a look` : ''}.`
+                        : secondLookCount
+                          ? `, with ${secondLookCount} worth a look before study.`
+                          : ' and ready to publish.'}
+                    </p>
+                  </div>
+                  <button type="button" className="make-seg__primaryButton" onClick={handleApprove}>
+                    <Check size={18} strokeWidth={1.9} />
+                    Approve & continue
+                  </button>
+                </div>
               </div>
-              <button type="button" className="make-seg__primaryButton" onClick={handleApprove}>
-                <Check size={18} strokeWidth={1.9} />
-                Approve & continue
-              </button>
             </div>
           </section>
         </WorkspaceStage>
@@ -4948,59 +5812,61 @@ function SuccessScreen({
   onReviewSegments,
 }) {
   return (
-    <div className="make-seg__successPage">
-      <StageAtmosphere />
-      <div className="make-seg__successInner">
-        <div className="make-seg__successSeal">
-          <CheckCircle2 size={64} strokeWidth={1.8} />
-        </div>
-
-        <div className="make-seg__successHero">
-          <h1 className="make-seg__successTitle">Segments Ready</h1>
-          <p className="make-seg__successText">Your study material has been successfully compiled</p>
-          <div className="make-seg__successBadge">
-            <Sparkles size={16} strokeWidth={1.9} className="make-seg__accentIcon" />
-            <span><strong>{segmentCount}</strong> segments created</span>
+    <WorkspaceStage className="is-centered">
+      <div className="make-seg__successPage">
+        <div className="make-seg__successInner">
+          <div className="make-seg__successSeal">
+            <CheckCircle2 size={64} strokeWidth={1.8} />
           </div>
-        </div>
 
-        <div className="make-seg__buttonRow">
-          <button type="button" className="make-seg__primaryButton" onClick={onStartStudying}>
-            <Play size={16} strokeWidth={1.9} />
-            Start Studying
-          </button>
-          <button type="button" className="make-seg__ghostButton" onClick={onReturnHome}>
-            <Home size={16} strokeWidth={1.9} />
-            Return to Home
-          </button>
-        </div>
+          <div className="make-seg__successHero">
+            <h1 className="make-seg__successTitle">Segments Ready</h1>
+            <p className="make-seg__successText">Your study material has been successfully compiled</p>
+            <div className="make-seg__successBadge">
+              <Sparkles size={16} strokeWidth={1.9} className="make-seg__accentIcon" />
+              <span><strong>{segmentCount}</strong> segments created</span>
+            </div>
+          </div>
 
-        {onReviewSegments ? (
-          <div className="make-seg__successSecondary">
-            <button type="button" className="make-seg__successLink" onClick={onReviewSegments}>
-              Review and edit segments
+          <div className="make-seg__buttonRow">
+            <button type="button" className="make-seg__primaryButton" onClick={onStartStudying}>
+              <Play size={16} strokeWidth={1.9} />
+              Start Studying
+            </button>
+            <button type="button" className="make-seg__ghostButton" onClick={onReturnHome}>
+              <Home size={16} strokeWidth={1.9} />
+              Return to Home
             </button>
           </div>
-        ) : null}
 
-        <div className="make-seg__successDivider">
-          <div className="make-seg__successStats">
-            <div className="make-seg__successStat">
-              <p className="make-seg__successStatLabel">Project</p>
-              <p className="make-seg__successStatValue">{projectName || getProjectDisplayName(batchId)}</p>
+          {onReviewSegments ? (
+            <div className="make-seg__successSecondary">
+              <button type="button" className="make-seg__successLink" onClick={onReviewSegments}>
+                Review and edit segments
+                <ChevronRight size={14} strokeWidth={1.9} />
+              </button>
             </div>
-            <div className="make-seg__successStat">
-              <p className="make-seg__successStatLabel">Batch ID</p>
-              <p className="make-seg__successStatValue">{batchId || 'NEW-001'}</p>
-            </div>
-            <div className="make-seg__successStat">
-              <p className="make-seg__successStatLabel">Status</p>
-              <p className="make-seg__successStatValue is-live">Live</p>
+          ) : null}
+
+          <div className="make-seg__successDivider">
+            <div className="make-seg__successStats">
+              <div className="make-seg__successStat">
+                <p className="make-seg__successStatLabel">Project</p>
+                <p className="make-seg__successStatValue">{projectName || getProjectDisplayName(batchId)}</p>
+              </div>
+              <div className="make-seg__successStat">
+                <p className="make-seg__successStatLabel">Batch ID</p>
+                <p className="make-seg__successStatValue">{batchId || 'NEW-001'}</p>
+              </div>
+              <div className="make-seg__successStat">
+                <p className="make-seg__successStatLabel">Status</p>
+                <p className="make-seg__successStatValue is-live">Live</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </WorkspaceStage>
   );
 }
 
@@ -5018,7 +5884,8 @@ export default function MakeSegmentationFlowScreen() {
   });
 
   const openArchivedPickup = () => setRoute('home');
-  const openProjects = () => window.location.hash = 'segments';
+  const openProjectHome = () => window.location.hash = 'home';
+  const openProjects = () => window.location.hash = 'projects';
   const openStudy = () => window.location.hash = 'study';
 
   const openWorkspace = (batchId, initialText = '') => {
@@ -5058,7 +5925,7 @@ export default function MakeSegmentationFlowScreen() {
             key={workspaceKey}
             batchId={activeBatchId}
             initialText={workspaceText}
-            onBackHome={openProjects}
+            onBackHome={openProjectHome}
             onStartStudying={openStudy}
             onSegmentationComplete={openSuccess}
           />
@@ -5071,7 +5938,7 @@ export default function MakeSegmentationFlowScreen() {
             worthCheckingCount={successMeta.worthCheckingCount}
             projectName={successMeta.projectName}
             onStartStudying={openStudy}
-            onReturnHome={openProjects}
+            onReturnHome={openProjectHome}
           />
         ) : null}
       </div>

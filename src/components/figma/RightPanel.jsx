@@ -24,7 +24,7 @@ const rightPanelStyles = `
   }
 
   .fg-right__header {
-    height: 52px;
+    height: 48px;
     padding: 0 14px 0 16px;
     border-bottom: 1px solid #f1f5f9;
     display: flex;
@@ -239,10 +239,10 @@ const rightPanelStyles = `
 
   .fg-right__content {
     height: 100%;
-    padding: 22px 18px 34px;
+    padding: 14px 14px 20px;
     display: flex;
     flex-direction: column;
-    gap: 22px;
+    gap: 12px;
     overflow-y: auto;
     scrollbar-gutter: stable;
   }
@@ -260,8 +260,8 @@ const rightPanelStyles = `
   }
 
   .fg-right__cardHeader {
-    min-height: 52px;
-    padding: 0 18px;
+    min-height: 46px;
+    padding: 0 16px;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -297,7 +297,7 @@ const rightPanelStyles = `
   }
 
   .fg-right__cardBody {
-    padding: 18px 18px 32px;
+    padding: 14px 16px 18px;
   }
 
   .fg-right__centered {
@@ -401,7 +401,7 @@ const rightPanelStyles = `
   .fg-right__text {
     margin: 0;
     font-size: 14px;
-    line-height: 1.7;
+    line-height: 1.58;
     color: #415268;
   }
 
@@ -516,7 +516,7 @@ const rightPanelStyles = `
   }
 
   .fg-right__entry {
-    padding-bottom: 16px;
+    padding-bottom: 12px;
     border-bottom: 1px solid #f3f4f6;
   }
 
@@ -526,7 +526,7 @@ const rightPanelStyles = `
   }
 
   .fg-right__entryRow {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -534,8 +534,8 @@ const rightPanelStyles = `
   }
 
   .fg-right__contextBox {
-    margin-top: 12px;
-    padding: 16px 17px;
+    margin-top: 10px;
+    padding: 12px 14px;
     border: 1px solid #f3f4f6;
     border-radius: 8px;
     background: #f9fafb;
@@ -1100,7 +1100,7 @@ export default function RightPanel({
   const renderLexicographyBody = () => (
     <div
       className="fg-right__stack fg-right__scrollFrame fg-right__scrollFrame--soft"
-      style={{ gap: 16, '--scroll-max-height': '356px' }}
+      style={{ gap: 14, '--scroll-max-height': '220px' }}
     >
       <div className="fg-right__entry">
         <div className="fg-right__entryRow">
@@ -1714,15 +1714,28 @@ export default function RightPanel({
           className="fg-right__header"
           style={{ justifyContent: isExpanded ? 'space-between' : 'center' }}
         >
-          {isExpanded && <span>Support</span>}
-          <button
-            className="fg-right__toggle"
-            type="button"
-            onClick={onToggleCollapse}
-            aria-label={isCollapsed ? 'Expand support panels' : 'Collapse support panels'}
-          >
-            {isCollapsed ? <ChevronsLeft size={16} /> : <ChevronsRight size={16} />}
-          </button>
+          {isExpanded ? (
+            <>
+              <button
+                className="fg-right__toggle"
+                type="button"
+                onClick={onToggleCollapse}
+                aria-label={isCollapsed ? 'Expand support panels' : 'Collapse support panels'}
+              >
+                {isCollapsed ? <ChevronsLeft size={16} /> : <ChevronsRight size={16} />}
+              </button>
+              <span style={{ marginRight: 'auto', marginLeft: 12 }}>Support</span>
+            </>
+          ) : (
+            <button
+              className="fg-right__toggle"
+              type="button"
+              onClick={onToggleCollapse}
+              aria-label={isCollapsed ? 'Expand support panels' : 'Collapse support panels'}
+            >
+              {isCollapsed ? <ChevronsLeft size={16} /> : <ChevronsRight size={16} />}
+            </button>
+          )}
         </div>
 
         <div className="fg-right__body">

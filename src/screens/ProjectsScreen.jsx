@@ -30,40 +30,6 @@ const projectScreenStyles = `
     color: #14213a;
   }
 
-  .projects-screen__testNav {
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    z-index: 9999;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px;
-    border: 1px solid rgba(203, 213, 225, 0.9);
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(14px);
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
-  }
-
-  .projects-screen__testNavButton {
-    border: none;
-    border-radius: 999px;
-    min-height: 34px;
-    padding: 0 14px;
-    background: transparent;
-    color: #475569;
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.18s ease, color 0.18s ease;
-  }
-
-  .projects-screen__testNavButton.is-active {
-    background: #0f172a;
-    color: #ffffff;
-  }
-
   .projects-screen__layout {
     min-height: 100vh;
     display: grid;
@@ -262,7 +228,7 @@ const projectScreenStyles = `
 
   .projects-screen__mainInner {
     min-width: 0;
-    max-width: 1640px;
+    max-width: 1400px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -924,7 +890,6 @@ const activityItems = [
 
 export default function ProjectsScreen() {
   const [activeFilter, setActiveFilter] = useState('All projects');
-  const activeHash = typeof window !== 'undefined' ? window.location.hash.replace('#', '') : 'projects';
 
   const filteredProjects = useMemo(() => {
     if (activeFilter === 'All projects') {
@@ -942,26 +907,6 @@ export default function ProjectsScreen() {
     <>
       <style>{projectScreenStyles}</style>
       <div className="projects-screen">
-        <div className="projects-screen__testNav">
-          {[
-            { label: 'Home', hash: 'home' },
-            { label: 'Projects', hash: 'projects' },
-            { label: 'Segmentation', hash: 'segments' },
-            { label: 'Study', hash: 'study' },
-          ].map((item) => (
-            <button
-              key={item.hash}
-              type="button"
-              className={`projects-screen__testNavButton${activeHash === item.hash || (item.hash === 'projects' && !activeHash) ? ' is-active' : ''}`}
-              onClick={() => {
-                window.location.hash = item.hash;
-              }}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-
         <div className="projects-screen__layout">
           <aside className="projects-screen__sidebar">
             <div className="projects-screen__sidebarInner">

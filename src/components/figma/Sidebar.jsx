@@ -4,10 +4,12 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
+  ClipboardList,
   Home,
   List,
   Plus,
   Star,
+  SplitSquareVertical,
 } from 'lucide-react';
 
 const sidebarStyles = `
@@ -113,6 +115,11 @@ const sidebarStyles = `
     color: #155dfc;
   }
 
+  .fg-sidebar__button.is-active {
+    background: rgba(239, 246, 255, 0.92);
+    color: #155dfc;
+  }
+
   .fg-sidebar__buttonLabel {
     overflow: hidden;
     white-space: nowrap;
@@ -173,24 +180,25 @@ const sidebarStyles = `
 `;
 
 const primaryItems = [
-  { id: 'library', label: 'Library', icon: BookOpen },
-  { id: 'home', label: 'Home', icon: Home },
-  { id: 'favorites', label: 'Favorites', icon: Star },
-  { id: 'create', label: 'Create', icon: Plus },
-  { id: 'list', label: 'List', icon: List },
+  { id: 'home', label: 'Project Home', icon: Home },
+  { id: 'projects', label: 'Projects', icon: List },
+  { id: 'study', label: 'Study Workspace', icon: BookOpen },
+  { id: 'segmentation', label: 'Source + Segmentation', icon: SplitSquareVertical },
+  { id: 'exams', label: 'Exams', icon: ClipboardList },
 ];
 
 const secondaryItems = [
-  { id: 'alerts', label: 'Alerts', icon: AlertCircle },
+  { id: 'alerts', label: 'Review Queue', icon: AlertCircle },
   { id: 'completed', label: 'Completed', icon: Check },
 ];
 
-function NavButton({ label, icon: Icon, isExpanded }) {
+function NavButton({ id, label, icon: Icon, isExpanded, isActive = false, onSelect }) {
   return (
     <button
-      className={`fg-sidebar__button${isExpanded ? ' is-expanded' : ''}`}
+      className={`fg-sidebar__button${isExpanded ? ' is-expanded' : ''}${isActive ? ' is-active' : ''}`}
       type="button"
       aria-label={label}
+      onClick={() => onSelect?.(id)}
     >
       <Icon size={21} strokeWidth={1.8} />
       {isExpanded && <span className="fg-sidebar__buttonLabel">{label}</span>}
@@ -203,7 +211,15 @@ export default function Sidebar({
   onToggleExpand,
   onHoverStart,
   onHoverEnd,
+  items = primaryItems,
+  secondaryNavItems = secondaryItems,
+  activeId = 'study',
+  onSelect,
 } = {}) {
+  const allItems = [...items, ...secondaryNavItems];
+  const activeIndex = Math.max(0, allItems.findIndex((item) => item.id === activeId));
+  const activeTop = 214 + activeIndex * 50;
+
   return (
     <>
       <style>{sidebarStyles}</style>
@@ -220,16 +236,28 @@ export default function Sidebar({
           </button>
         </div>
 
-        <div className="fg-sidebar__activeIndicator" />
+        <div className="fg-sidebar__activeIndicator" style={{ top: activeTop }} />
 
         <div className="fg-sidebar__nav">
-          {primaryItems.map((item) => (
-            <NavButton key={item.id} {...item} isExpanded={isExpanded} />
+          {items.map((item) => (
+            <NavButton
+              key={item.id}
+              {...item}
+              isExpanded={isExpanded}
+              isActive={item.id === activeId}
+              onSelect={onSelect}
+            />
           ))}
 
           <div className="fg-sidebar__navBottom">
-            {secondaryItems.map((item) => (
-              <NavButton key={item.id} {...item} isExpanded={isExpanded} />
+            {secondaryNavItems.map((item) => (
+              <NavButton
+                key={item.id}
+                {...item}
+                isExpanded={isExpanded}
+                isActive={item.id === activeId}
+                onSelect={onSelect}
+              />
             ))}
 
             <button

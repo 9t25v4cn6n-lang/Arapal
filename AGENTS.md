@@ -318,6 +318,26 @@ Structural correctness test:
 A screen is only correct if it still behaves properly under:
 - browser zoom in/out
 - long labels
+
+## 6.6 Viewport and width standard
+AraPal is currently desktop-first.
+
+Canonical viewport targets:
+- primary design target = `1440x900`
+- minimum supported desktop = `1366x768`
+- wide desktop validation = `1920x1080`
+
+Content width rules:
+- default major screen content max-width = `1400px`
+- wider layouts are exceptions, not defaults
+- if a screen intentionally exceeds `1400px`, that should be a conscious decision tied to a real layout need
+
+Validation rules:
+- every canonical screen should be checked at `1366x768`, `1440x900`, and `1920x1080`
+- the primary task must stay obvious at all three sizes
+- action regions must remain discoverable
+- atmosphere/background must continue filling the stage cleanly
+- zoom should not reveal seams, accidental background breaks, or container ownership mistakes
 - long user-generated content
 - smaller laptop heights
 - larger desktop widths
@@ -712,6 +732,73 @@ When creating or updating a new AraPal screen, check for consistency in:
 
 New screens should feel like members of the same product family, not one-off art directions.
 
+## 13.5.7 Mandatory post-change visual validation
+After any meaningful visual screen change, do not stop at code completion.
+You must validate the actual rendered screen visually before presenting the work as done.
+
+Default validation workflow:
+1. capture the relevant screen at `1440x900 @ 100%`
+2. inspect the screenshot, not just the code
+3. run the validation checklist below
+4. if the screen fails, do not present it as finished
+5. either fix it immediately or explicitly say `failed visual validation`
+
+If a Figma reference or screenshot reference is given:
+- verify the relevant parts against that reference explicitly
+- do not stop at “reasonable” if the output is still materially different from the target
+- check placement, scale, hierarchy, spacing, and composition against the reference
+
+Mandatory visual validation checklist:
+1. Primary composition
+- one clear focal point
+- no duplicate titles, duplicate heroes, or competing primary actions
+
+2. Placement
+- major elements sit in the intended places
+- nothing feels awkwardly floating, detached, or off-centre
+
+3. Proportion
+- titles, cards, panels, and controls feel correctly sized for the screen
+- nothing feels oversized, cramped, or undersized
+
+4. First view
+- at `1440x900 @ 100%`, the important content is visible without unnecessary scrolling
+- no key action or core content is cut off
+
+5. Spacing rhythm
+- the screen feels breathable without becoming sparse
+- no awkward dead space
+- no overpacked stacks
+- no accidental vertical compression
+
+6. Alignment
+- text, metadata, dividers, buttons, and card internals align cleanly
+- no “almost aligned” rows or visibly drifting edges
+
+7. Consistency
+- typography, button treatment, card treatment, spacing, and chrome match the established AraPal system
+- nothing should look like a different product or UI system
+
+8. Reference match
+- if a reference exists, the output must be closer to the reference than before
+- if not, the pass fails even if the screen looks broadly acceptable in isolation
+
+9. Feel check
+- view the screenshot as a regular user would
+- ask: does this feel nice, clear, and exciting?
+- ask: does it feel well made?
+- ask: is it breathable but still clear?
+- ask: is it aligned, symmetrical, and visually composed?
+- if the answer is no, the pass fails
+
+Required reporting format after screenshot review:
+- `Screenshot checked: <screen> / <viewport>`
+- `Status: Pass` or `Status: Fail`
+- `Issues found: ...`
+- `Next correction: ...`
+
+Never present a screen as complete if the screenshot still shows obvious duplication, misplacement, poor proportion, cutoff content, or clear alignment issues.
+
 ---
 
 # 14) Surface + Component Rules
@@ -741,233 +828,73 @@ Component rules:
 
 ---
 
-# 15) Text Behaviour
+# 15) Supporting Rules
 
-Every text block must define its constraint behaviour:
+## 15.1 Text behaviour
+Every text block must have an intentional constraint model:
 - wrap
 - truncate
 - clamp
 - scroll
 
-Never allow text collision or silent overflow.
+Never allow silent overflow or text collision.
 
-Rules:
-- action labels must remain legible
-- long branch names must not break navigation layout
-- long guidance/support text must not destabilise adjacent panels
-- source text must preserve readability
-- support text can wrap, but layout must stay stable
+## 15.2 States
+Every important surface must support the real states it can enter, not just the happy path.
 
----
-
-# 16) States
-
-Every important surface must support:
+Minimum expectation:
 - empty
 - loading
 - success
 - error
-- reconciling
-- long-content
-- short-content
+- long-content / short-content
 - disabled
-- hover/focus/active where relevant
+- hover / focus / active where relevant
 
-Important product-specific states:
+Product-specific states matter too:
 - no source yet
 - poor segmentation proposal
 - repair mode after fail
-- discussion retry failure
-- saved but reconciling
-- pass state with revealed outputs
-- patch impact preview
 - exam autosave / resume
+- pass state with revealed outputs
 
-The happy path is not enough.
-
----
-
-# 17) Bottom Anchoring + Height Rules
-
-If an action belongs at the bottom of a card or pane, implement that structurally.
-
-Use:
-- full-height parent
-- column layout
-- intentional spacer / justify-between
-- sticky footer only where correct
-
-Do not fake bottom anchoring with large margins.
-
-If zoom or content change makes the anchor drift, the structure is wrong.
-
----
-
-# 18) Mobile + Smaller Screens
-
-Do not shrink desktop layouts blindly.
-
-For smaller screens:
-- preserve one dominant task per viewport
-- stack rather than compress
-- move secondary support behind tabs/drawers/sheets
-- keep navigation recoverable but not always open
-- maintain obvious primary CTA
-- keep tap targets large and clear
-
-Study on small screens still needs:
-- source
-- translation input
-- guidance access
-- submit path
-- result visibility
-
----
-
-# 19) Accessibility + Global Use
-
-This product is intended for broad real-world use.
-
+## 15.3 Accessibility + global use
 Required:
 - obvious primary actions
-- clear information hierarchy
-- keyboard accessibility where relevant
+- clear hierarchy
 - visible focus states
 - readable contrast
-- large enough targets
+- targets that are large enough
 - layouts that survive increased text size
-- no reliance on colour alone for meaning
+- no reliance on colour alone
 - language-aware handling where Arabic and English coexist
 
-Clarity should feel consumer-grade, not admin-tool grade.
+## 15.4 Reference interpretation
+When given a screenshot or Figma reference:
+- infer the layout system, grouping, spacing, hierarchy, and responsive behaviour
+- match the design logic, not just the pixels
+- never hardcode coordinates to mimic one frame
 
----
-
-# 20) Figma / Screenshot Interpretation
-
-When given references:
-- infer the layout system
-- infer spacing logic
-- infer grouping
-- infer hierarchy
-- infer responsive behaviour
-- infer component rules
-
-Do not copy pixels.
-Do not hardcode coordinates to mimic one frame.
-
-Match the design logic, not just the screenshot.
-
----
-
-# 21) Edit Doctrine for Codex
-
-When changing an existing UI:
-
+## 15.5 Working discipline
+When changing UI:
 1. identify the governing screen mode
-2. identify the affected layout primitive or component
-3. identify the spacing/hierarchy rule being violated
-4. fix at parent/component/system level
-5. verify no drift was introduced elsewhere
+2. identify the violated layout/component rule
+3. fix at parent/component/system level first
+4. avoid one-off spacing or width hacks
+5. leave the codebase cleaner, or at least no messier
 
-Do not patch symptoms locally.
-Do not add one-off spacing or width hacks.
-Do not mix bespoke values into an existing pattern.
+Forbidden patterns:
+- absolute positioning for structure
+- arbitrary nudging to “make it look right”
+- duplicate component variants per screen
+- ambiguous primary actions
+- layouts that are technically present but practically unusable
 
-Every change must leave the codebase cleaner or at least equally clean.
-
----
-
-# 22) Forbidden Patterns
-
-Do not:
-- use absolute positioning for structure
-- nudge elements into place by arbitrary offsets
-- create per-screen versions of the same component
-- let side panels overpower the main task
-- mix many near-identical spacing values
-- create ambiguous primary actions
-- turn home into a noisy dashboard
-- turn study into a workflow maze
-- bury the translation action under support content
-- compress multi-pane layouts until they are technically present but practically unusable
-
----
-
-# 23) Required Working Process
-
-Before implementing any screen or edit:
-
-1. define the screen mode and purpose
-2. identify the primary user action
-3. define the page hierarchy
-4. choose layout primitives
-5. define spacing rhythm and hierarchy
-6. define width negotiation and responsive collapse
-7. define text constraints
-8. define reusable components/variants
-9. define states
-10. implement
-11. stress-test mentally for zoom, narrow widths, long content, and real use
-
-Do not jump into code before the hierarchy is clear.
-
----
-
-# 24) Definition of Done
-
-UI work is not complete until all are true:
-
-## Product clarity
-- the user can tell what mode they are in
-- the primary next action is obvious
-- the screen supports the intended journey cleanly
-
-## Structural correctness
-- every element belongs to a logical parent
-- layout primitives are clear
-- no floating structural elements
-- no hacks
-
-## Responsiveness
-- no overlap at supported widths
-- no overlap under zoom
-- side panes collapse intentionally
-- text does not break layout
-- bottom actions stay anchored correctly
-
-## Consistency
-- repeated surfaces use repeated spacing
-- repeated components match
-- typography hierarchy is consistent
-- no random values
-
-## Visual quality
-- grouping is clear
-- title/subtitle/content relationships feel right
-- outer and inner spacing feel balanced
-- no surfaces or labels feel awkwardly positioned
-- the main task remains visually dominant
-
-## Extensibility
-- the screen can accept more/less content without collapse
-- adding a new card/panel/state will be straightforward
-- the change did not increase mess
-
-If any of these fail, the work is not done.
-
----
-
-# 25) Guiding Principle
-
-AraPal should feel like a beautifully engineered study instrument:
-clear, calm, stable, premium, and obvious.
-
-A correct UI:
-- looks refined
-- feels balanced
-- survives zoom and resizing
-- handles real content
-- preserves user orientation
-- supports the learning loop cleanly
-- is easy to extend without drift
+Definition of done:
+- the mode is clear
+- the primary action is obvious
+- the layout is structurally correct
+- the screen survives supported widths and zoom
+- repeated components are consistent
+- the visual hierarchy feels balanced
+- the screen can take more or less content without collapse
