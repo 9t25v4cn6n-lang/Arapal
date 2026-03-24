@@ -1,0 +1,21 @@
+export const colors = {
+  accentBase: '#2563EB',
+  accentStrong: '#1D4ED8',
+  accentSoft: '#93C5FD',
+  accentWash: '#EFF6FF',
+  accentMist: '#DBEAFE',
+  bgTop: '#F6F9FD',
+  bgBottom: '#EDF3F9',
+  surfacePrimary: '#FFFFFF',
+  surfaceSoft: '#F8FBFF',
+  textStrong: '#0F172A',
+  textBody: '#334155',
+  textSoft: '#64748B',
+  textFaint: '#94A3B8',
+  lineSoft: 'rgba(219, 228, 239, 0.96)',
+  lineStrong: 'rgba(147, 197, 253, 0.72)',
+  success: '#16A34A',
+  review: '#D97706',
+}
+
+export default colors
