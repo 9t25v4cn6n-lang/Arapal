@@ -59,8 +59,8 @@ export default function V2ScreenFrame({ contract, route, shell, screenSlots = {}
     <ScreenContractRenderer
       contract={contract}
       slotContent={{
-        ...screenSlots,
         ...sharedSlots,
+        ...screenSlots,
       }}
       containerOverrides={{
         ...containerOverrides,
