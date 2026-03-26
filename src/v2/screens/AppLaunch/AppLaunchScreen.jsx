@@ -97,7 +97,7 @@ export default function AppLaunchScreen({ route, shell }) {
             shell.navigate('foundationLab')
           }}
         >
-          Open foundation lab
+          Open generics boards
         </button>
         <button
           type="button"
@@ -122,7 +122,7 @@ export default function AppLaunchScreen({ route, shell }) {
         <div style={cardStyle}>
           <p style={{ ...typography.eyebrowLabel, margin: `0 0 ${spacing[12]}`, color: colors.textSoft }}>Next</p>
           <p style={{ ...typography.bodyText, margin: 0, color: colors.textBody }}>
-            Build the reusable shell and then prove it properly on SegmentationPasteScreen.
+            Approve the shared generic families on the review boards before rebuilding more product screens.
           </p>
         </div>
       </>

@@ -1,7 +1,15 @@
 import AppLaunchScreen from '../screens/AppLaunch/AppLaunchScreen'
 import appLaunchLayoutContract from '../screens/AppLaunch/AppLaunchScreen.contract'
+import ControlsLabScreen from '../screens/ControlsLab/ControlsLabScreen'
+import controlsLabLayoutContract from '../screens/ControlsLab/ControlsLabScreen.contract'
+import EditorPanelsLabScreen from '../screens/EditorPanelsLab/EditorPanelsLabScreen'
+import editorPanelsLabLayoutContract from '../screens/EditorPanelsLab/EditorPanelsLabScreen.contract'
 import FoundationLabScreen from '../screens/FoundationLab/FoundationLabScreen'
 import foundationLabLayoutContract from '../screens/FoundationLab/FoundationLabScreen.contract'
+import MotionInteractionLabScreen from '../screens/MotionInteractionLab/MotionInteractionLabScreen'
+import motionInteractionLabLayoutContract from '../screens/MotionInteractionLab/MotionInteractionLabScreen.contract'
+import PatternLabScreen from '../screens/PatternLab/PatternLabScreen'
+import patternLabLayoutContract from '../screens/PatternLab/PatternLabScreen.contract'
 import ProjectHomeScreen from '../screens/ProjectHome/ProjectHomeScreen'
 import projectHomeLayoutContract from '../screens/ProjectHome/ProjectHomeScreen.contract'
 import ProjectsScreen from '../screens/Projects/ProjectsScreen'
@@ -18,6 +26,8 @@ import SegmentationSuccessScreen from '../screens/SegmentationSuccess/Segmentati
 import segmentationSuccessLayoutContract from '../screens/SegmentationSuccess/SegmentationSuccessScreen.contract'
 import StudyWorkspaceScreen from '../screens/StudyWorkspace/StudyWorkspaceScreen'
 import studyWorkspaceLayoutContract from '../screens/StudyWorkspace/StudyWorkspaceScreen.contract'
+import TypographyTokensLabScreen from '../screens/TypographyTokensLab/TypographyTokensLabScreen'
+import typographyTokensLabLayoutContract from '../screens/TypographyTokensLab/TypographyTokensLabScreen.contract'
 import ExamsScreen from '../screens/Exams/ExamsScreen'
 import examsLayoutContract from '../screens/Exams/ExamsScreen.contract'
 
@@ -61,6 +71,111 @@ export const routeRegistry = {
         shortLabel: 'FL',
         order: 5,
         routeId: 'foundationLab',
+      },
+    },
+  },
+  controlsLab: {
+    id: 'controlsLab',
+    label: 'Controls Lab',
+    component: ControlsLabScreen,
+    layoutContract: controlsLabLayoutContract,
+    shell: {
+      showRail: false,
+      header: {
+        modeLabel: 'Controls Lab',
+        description: 'Visual review board for buttons, controls, and action rows',
+      },
+      rail: {
+        visible: false,
+        groupId: 'foundationLab',
+        label: 'Controls Lab',
+        shortLabel: 'CL',
+        order: 6,
+        routeId: 'controlsLab',
+      },
+    },
+  },
+  editorPanelsLab: {
+    id: 'editorPanelsLab',
+    label: 'Editor + Panels Lab',
+    component: EditorPanelsLabScreen,
+    layoutContract: editorPanelsLabLayoutContract,
+    shell: {
+      showRail: false,
+      header: {
+        modeLabel: 'Editor + Panels Lab',
+        description: 'Visual review board for editor, panel, and casing families',
+      },
+      rail: {
+        visible: false,
+        groupId: 'foundationLab',
+        label: 'Editor + Panels Lab',
+        shortLabel: 'EP',
+        order: 7,
+        routeId: 'editorPanelsLab',
+      },
+    },
+  },
+  typographyTokensLab: {
+    id: 'typographyTokensLab',
+    label: 'Typography + Tokens Lab',
+    component: TypographyTokensLabScreen,
+    layoutContract: typographyTokensLabLayoutContract,
+    shell: {
+      showRail: false,
+      header: {
+        modeLabel: 'Typography + Tokens Lab',
+        description: 'Visual review board for type, color, surface, and backdrop language',
+      },
+      rail: {
+        visible: false,
+        groupId: 'foundationLab',
+        label: 'Typography + Tokens Lab',
+        shortLabel: 'TT',
+        order: 8,
+        routeId: 'typographyTokensLab',
+      },
+    },
+  },
+  motionInteractionLab: {
+    id: 'motionInteractionLab',
+    label: 'Motion + Interaction Lab',
+    component: MotionInteractionLabScreen,
+    layoutContract: motionInteractionLabLayoutContract,
+    shell: {
+      showRail: false,
+      header: {
+        modeLabel: 'Motion + Interaction Lab',
+        description: 'Visual review board for motion language and behavior rules',
+      },
+      rail: {
+        visible: false,
+        groupId: 'foundationLab',
+        label: 'Motion + Interaction Lab',
+        shortLabel: 'MI',
+        order: 9,
+        routeId: 'motionInteractionLab',
+      },
+    },
+  },
+  patternLab: {
+    id: 'patternLab',
+    label: 'Pattern Lab',
+    component: PatternLabScreen,
+    layoutContract: patternLabLayoutContract,
+    shell: {
+      showRail: false,
+      header: {
+        modeLabel: 'Pattern Lab',
+        description: 'Visual review board for repeated mode-level compositions',
+      },
+      rail: {
+        visible: false,
+        groupId: 'foundationLab',
+        label: 'Pattern Lab',
+        shortLabel: 'PL',
+        order: 10,
+        routeId: 'patternLab',
       },
     },
   },

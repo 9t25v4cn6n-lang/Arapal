@@ -1,8 +1,8 @@
 import createLabBoardContract from '../../foundation/layout/createLabBoardContract'
 
 export const layoutContract = createLabBoardContract({
-  screenId: 'foundationLab',
-  screenName: 'FoundationLabScreen',
+  screenId: 'typographyTokensLab',
+  screenName: 'TypographyTokensLabScreen',
 })
 
 export default layoutContract

@@ -54,6 +54,97 @@ Use it to decide what should be:
   - generic popover/menu styling
   - generic utility-control behavior
 
+## Review Boards
+These visual boards are where generics are judged before they are reused in product screens.
+
+| Board | Route | Focus |
+| --- | --- | --- |
+| Lab index | `foundationLab` | entry point for the review workflow |
+| Controls Lab | `controlsLab` | CTAs, utility controls, pills, toggles, and action rows |
+| Editor + Panels Lab | `editorPanelsLab` | editor family, panel family, support cards, and attached casing |
+| Typography + Tokens Lab | `typographyTokensLab` | type roles, color roles, radius, elevation, and backdrop language |
+| Motion + Interaction Lab | `motionInteractionLab` | hover, focus, dismissal, open/close, and motion rules |
+| Pattern Lab | `patternLab` | repeated screen-pattern families above single primitives |
+
+## Board Coverage
+This is the review map. A generic is not considered system-ready until it has been judged on its board and marked appropriately.
+
+### Controls Lab
+- Navigation rail
+- Navigation rail row
+- Utility icon control (`pin`, `back`, `expand`, `collapse`, `close`)
+- Back pill
+- Step bar
+- Primary CTA
+- Split CTA
+- Preference toggle row
+- Status chip / badge
+- Action pill
+
+### Editor + Panels Lab
+- Source intake brand
+- Operational panel
+- Editor surface
+- Editor topbar
+- Editor footer
+- Panel corner casing
+- Options popover
+- Support panel card
+- Support rail card
+- Floating support preview
+- Expandable support modal
+- Feedback block
+- Numbered takeaway item
+- Lexicography entry row
+
+### Typography + Tokens Lab
+- Typography role system
+- Blue/slate semantic palette
+- Stage backdrop / watermark treatment
+- Editor watermark treatment
+- Panel border / radius / shadow language
+- Primary CTA sheen / highlight language
+- Support panel tone system
+- Editor chrome opacity rules
+- Home hero / door card treatment
+
+### Motion + Interaction Lab
+- Utility control hover reveal
+- Outside-click dismissal for overlays
+- Escape-to-close overlays
+- Segment tree expand/collapse
+- Support-panel collapse/expand
+- Hover preview + pin-to-keep-open
+- Floating panel drag/resize
+- Split CTA open/select/close behavior
+- Editor shortcut hint behavior
+- Hover/focus micro-motion
+- Menu/panel open motion
+- Screen intro/transition motion
+- CTA sheen sweep
+- Hover lift for primary surfaces
+- Reduced motion fallbacks
+
+### Pattern Lab
+- Study three-pane workspace layout
+- Segmentation operational center-band layout
+- Success-stage centered flow layout
+- Segment tree row
+- Segment tree folder row
+- Quick lex term chip/tooltip
+- Grade circle
+- Project home destination card
+- Workspace card family (`source`, `editor`, `result`, `support-inline`)
+- Project Home command deck
+- Source intake / segmentation operational workspace
+- Study workspace main loop shell
+- Support rail + floating preview system
+- Review / remediation support state set
+- Segmentation success stage
+- Exams focus shell
+- Projects index shell
+- Patching / corrections shell
+
 ## Layout Generics
 | Item | Product source | Visual source | Final design confidence | Repeatability confidence | Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- |

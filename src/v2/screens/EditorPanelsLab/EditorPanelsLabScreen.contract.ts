@@ -1,8 +1,8 @@
 import createLabBoardContract from '../../foundation/layout/createLabBoardContract'
 
 export const layoutContract = createLabBoardContract({
-  screenId: 'foundationLab',
-  screenName: 'FoundationLabScreen',
+  screenId: 'editorPanelsLab',
+  screenName: 'EditorPanelsLabScreen',
 })
 
 export default layoutContract
