@@ -1,4 +1,8 @@
+import { Sparkles } from 'lucide-react'
+import { useState } from 'react'
 import layoutContract from './FoundationLabScreen.contract'
+import EditorSurface from '../../foundation/primitives/EditorSurface'
+import PrimaryCTA from '../../foundation/primitives/PrimaryCTA'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import { colors, elevation, radius, spacing, typography } from '../../foundation/tokens'
 
@@ -12,16 +16,6 @@ const genericCategories = [
     title: 'Primitives',
     score: 'Needs extraction',
     note: 'This is the missing middle layer. Buttons, editor surfaces, support cards, and menus must move out of screens.',
-  },
-  {
-    title: 'Styling',
-    score: 'Partly locked',
-    note: 'Type, palette, and backdrop are documented, but panel, editor, and CTA styling still need one owner.',
-  },
-  {
-    title: 'Screen patterns',
-    score: 'Early',
-    note: 'Segmentation and study are visible, but not yet rebuilt from approved shared primitives.',
   },
 ]
 
@@ -59,6 +53,9 @@ function makeCardStyle(background = 'rgba(255, 255, 255, 0.92)') {
 }
 
 export default function FoundationLabScreen({ route, shell }) {
+  const [editorValue, setEditorValue] = useState(
+    'The Friday prayer is only valid in a comprehensive city or in the prayer area of the city. It is not permissible in villages...'
+  )
   const summaryCardStyle = makeCardStyle('rgba(248, 251, 255, 0.92)')
   const categoryCardStyle = makeCardStyle('rgba(255, 255, 255, 0.96)')
   const checklistCardStyle = makeCardStyle('rgba(248, 251, 255, 0.92)')
@@ -212,6 +209,69 @@ export default function FoundationLabScreen({ route, shell }) {
           >
             Return to SegmentationPaste
           </button>
+        </div>
+      </>
+    ),
+    Layer3_Lab_PreviewPanel: (
+      <>
+        <div>
+          <p style={{ ...typography.eyebrowLabel, margin: `0 0 ${spacing[10]}`, color: colors.textSoft }}>
+            Live preview
+          </p>
+          <p style={{ ...typography.bodyText, margin: 0, color: colors.textBody }}>
+            First extraction pass for the editor family and the premium primary CTA. Review these here before we let any
+            product screen depend on them.
+          </p>
+        </div>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'minmax(0, 1.4fr) minmax(280px, 0.8fr)',
+            gap: spacing[20],
+            alignItems: 'stretch',
+          }}
+        >
+          <EditorSurface
+            value={editorValue}
+            onChange={setEditorValue}
+            placeholder={'Paste your source text here…\n\nThe workspace will analyze and segment your text into structured, study-ready sections.'}
+            footerMeta={`${editorValue.trim().split(/\s+/).filter(Boolean).length} words`}
+            minHeight={360}
+          />
+          <div
+            style={{
+              border: `1px solid ${colors.lineSoft}`,
+              borderRadius: radius[16],
+              background: 'rgba(248, 251, 255, 0.92)',
+              padding: spacing[20],
+              display: 'flex',
+              flexDirection: 'column',
+              gap: spacing[16],
+              justifyContent: 'space-between',
+            }}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[12] }}>
+              <div>
+                <p style={{ ...typography.eyebrowLabel, margin: `0 0 ${spacing[8]}`, color: colors.textSoft }}>
+                  Primary CTA
+                </p>
+                <p style={{ ...typography.bodyText, margin: 0, color: colors.textBody }}>
+                  Default state should feel premium before hover, with the sheen and lift simply sharpening it.
+                </p>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[12], alignItems: 'flex-start' }}>
+                <PrimaryCTA icon={<Sparkles size={16} strokeWidth={1.9} />} endIcon={null}>
+                  AI segment text
+                </PrimaryCTA>
+                <PrimaryCTA icon={<Sparkles size={16} strokeWidth={1.9} />} disabled>
+                  AI segment text
+                </PrimaryCTA>
+              </div>
+            </div>
+            <p style={{ ...typography.bodyText, margin: 0, color: colors.textSoft }}>
+              Next primitive after this: `SplitCTA`, using the same visual family rather than a bespoke screen build.
+            </p>
+          </div>
         </div>
       </>
     ),

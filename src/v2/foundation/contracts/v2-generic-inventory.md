@@ -75,11 +75,11 @@ Use it to decide what should be:
 | Step bar | Current app segmentation | Old app segmentation | 4 | 4 | Candidate | Applies to multi-step operational flows. |
 | Source intake brand | Current app segmentation | Old app segmentation | 4 | 3 | Candidate | Likely segmentation-specific but still reusable within that mode. |
 | Operational panel | Current app segmentation | Old app segmentation | 5 | 5 | Candidate | High-value base family for operational screens. |
-| Editor surface | Current app segmentation + study | Old app segmentation editor chrome | 5 | 5 | Candidate | Major missing primitive. |
+| Editor surface | Current app segmentation + study | Old app segmentation editor chrome | 5 | 5 | Active extraction | Major missing primitive. |
 | Editor topbar | Current app segmentation + study | Old app segmentation editor chrome | 4 | 5 | Candidate | Should sit under the editor family. |
 | Editor footer | Current app segmentation + study | Old app segmentation editor chrome | 4 | 5 | Candidate | Includes shortcut and meta patterns. |
 | Panel corner casing | Current app segmentation | Old app segmentation | 4 | 4 | Candidate | Must stay attached to editor/panel family. |
-| Primary CTA | Current app segmentation/home | Old app segmentation CTA finesse | 5 | 5 | Candidate | Needs one canonical premium treatment. |
+| Primary CTA | Current app segmentation/home | Old app segmentation CTA finesse | 5 | 5 | Active extraction | Needs one canonical premium treatment. |
 | Split CTA | Current app segmentation | Old app segmentation | 5 | 5 | Candidate | Very important shared primitive. |
 | Options popover | Current app segmentation | Old app segmentation advanced menu | 4 | 5 | Candidate | Outside-click dismissal should be standard. |
 | Preference toggle row | Current app segmentation | Old app segmentation | 4 | 5 | Candidate | Could generalize to app-wide settings rows. |
