@@ -1,5 +1,5 @@
 import createScreenLayoutContract from '../../foundation/layout/createScreenLayoutContract'
-import { colors, elevation, radius, spacing } from '../../foundation/tokens'
+import { radius, spacing } from '../../foundation/tokens'
 
 const panelSurfaceStyle = {
   border: `1px solid rgba(15, 23, 42, 0.08)`,
@@ -14,7 +14,7 @@ export const layoutContract = createScreenLayoutContract({
   bodyBackdrop: { preset: 'default' },
   layer3: [
     {
-      name: 'Layer3_Segmentation_CenterGrid',
+      name: 'Layer3_Segmentation_CenterBands',
       layer: 'Layer3',
       parent: 'Layer2_Body_ContentCenterField',
       display: 'grid',
@@ -35,7 +35,7 @@ export const layoutContract = createScreenLayoutContract({
     {
       name: 'Layer4_Segmentation_ModeBand',
       layer: 'Layer4',
-      parent: 'Layer3_Segmentation_CenterGrid',
+      parent: 'Layer3_Segmentation_CenterBands',
       display: 'flex',
       layoutMode: 'flex',
       alignItems: 'center',
@@ -48,7 +48,7 @@ export const layoutContract = createScreenLayoutContract({
     {
       name: 'Layer4_Segmentation_HeaderBand',
       layer: 'Layer4',
-      parent: 'Layer3_Segmentation_CenterGrid',
+      parent: 'Layer3_Segmentation_CenterBands',
       display: 'flex',
       layoutMode: 'flex',
       flexDirection: 'column',
@@ -65,7 +65,7 @@ export const layoutContract = createScreenLayoutContract({
     {
       name: 'Layer4_Segmentation_ContextBand',
       layer: 'Layer4',
-      parent: 'Layer3_Segmentation_CenterGrid',
+      parent: 'Layer3_Segmentation_CenterBands',
       display: 'flex',
       layoutMode: 'flex',
       alignItems: 'center',
@@ -81,7 +81,7 @@ export const layoutContract = createScreenLayoutContract({
     {
       name: 'Layer4_Segmentation_WorkspaceBand',
       layer: 'Layer4',
-      parent: 'Layer3_Segmentation_CenterGrid',
+      parent: 'Layer3_Segmentation_CenterBands',
       display: 'flex',
       layoutMode: 'flex',
       alignItems: 'stretch',
@@ -97,7 +97,7 @@ export const layoutContract = createScreenLayoutContract({
     {
       name: 'Layer4_Segmentation_ActionBand',
       layer: 'Layer4',
-      parent: 'Layer3_Segmentation_CenterGrid',
+      parent: 'Layer3_Segmentation_CenterBands',
       display: 'flex',
       layoutMode: 'flex',
       alignItems: 'center',
