@@ -549,7 +549,18 @@ Rules:
 - the main CTA and split-arrow CTA share the same state model
 - disabled must remain premium, not washed out
 
-### 11.6 Destructive State Preparedness
+### 11.6 Overlay Dismissal
+
+Unpinned overlays are temporary context, not persistent chrome.
+
+Rules:
+
+- menus, popovers, and similar unpinned overlays close when the user clicks or taps outside them
+- `Escape` closes the current unpinned overlay
+- pinned overlays are the explicit exception
+- dismissal rules should be shared behavior, not reinvented per screen
+
+### 11.7 Destructive State Preparedness
 
 Destructive visual design is deferred, but future support must be designed in now.
 

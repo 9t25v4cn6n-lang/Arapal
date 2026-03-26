@@ -56,7 +56,7 @@ export const layoutContract = createScreenLayoutContract({
       justifyContent: 'center',
       padding: '0',
       gap: spacing[8],
-      overflow: 'visible',
+      overflow: 'hidden',
       textAlign: 'center',
       style: {
         minWidth: 0,
@@ -72,7 +72,7 @@ export const layoutContract = createScreenLayoutContract({
       justifyContent: 'center',
       padding: '0',
       gap: spacing[12],
-      overflow: 'visible',
+      overflow: 'hidden',
       textAlign: 'center',
       style: {
         minWidth: 0,
@@ -126,6 +126,7 @@ export const layoutContract = createScreenLayoutContract({
         position: 'relative',
         width: '100%',
         minHeight: 0,
+        padding: '12px 10px 16px',
       },
     },
     {

@@ -49,11 +49,17 @@ export default function AppLaunchScreen({ route, shell }) {
         <h1
           style={{
             margin: 0,
+            width: '100%',
+            maxWidth: '100%',
+            minWidth: 0,
             fontFamily: typography.displayTitle.fontFamily,
-            fontSize: '72px',
+            fontSize: 'clamp(44px, 5vw, 72px)',
             lineHeight: 1,
             color: colors.textStrong,
             transform: 'translateY(-0.05em)',
+            textAlign: 'center',
+            textWrap: 'balance',
+            overflowWrap: 'anywhere',
           }}
         >
           Clean foundation first.
@@ -62,8 +68,10 @@ export default function AppLaunchScreen({ route, shell }) {
           style={{
             ...typography.supportSubtext,
             margin: 0,
+            width: '100%',
             maxWidth: '56ch',
             color: colors.textBody,
+            textAlign: 'center',
           }}
         >
           AppV2 now has a distinct mount point, executable layout contracts, named debug-visible containers, and a
