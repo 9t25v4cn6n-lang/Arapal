@@ -9,6 +9,7 @@ import {
   Maximize2,
   Minimize2,
   Move,
+  PanelsTopLeft,
   PanelLeftClose,
   PanelLeftOpen,
   Pin,
@@ -246,25 +247,25 @@ export function UtilityIconFamilyPreview() {
     {
       label: 'Panel state',
       items: [
-        { key: 'maximize', icon: <Maximize2 strokeWidth={1.8} />, active: false },
-        { key: 'minimize', icon: <Minimize2 strokeWidth={1.8} />, active: false },
-        { key: 'pin', icon: <Pin strokeWidth={1.8} />, active: false },
-        { key: 'unpin', icon: <PinOff strokeWidth={1.8} />, active: true },
+        { key: 'Expand', icon: <Maximize2 strokeWidth={1.8} />, active: false },
+        { key: 'Collapse', icon: <Minimize2 strokeWidth={1.8} />, active: false },
+        { key: 'Pin', icon: <Pin strokeWidth={1.8} />, active: false },
+        { key: 'Unpin', icon: <PinOff strokeWidth={1.8} />, active: true },
       ],
     },
     {
       label: 'Sidebar state',
       items: [
-        { key: 'open-sidebar', icon: <PanelLeftOpen strokeWidth={1.8} />, active: false },
-        { key: 'close-sidebar', icon: <PanelLeftClose strokeWidth={1.8} />, active: false },
-        { key: 'float', icon: <SquareArrowOutUpRight strokeWidth={1.8} />, active: false },
-        { key: 'move', icon: <Move strokeWidth={1.8} />, active: false },
+        { key: 'Open sidebar', icon: <PanelLeftOpen strokeWidth={1.8} />, active: false },
+        { key: 'Close sidebar', icon: <PanelLeftClose strokeWidth={1.8} />, active: false },
+        { key: 'Float', icon: <PanelsTopLeft strokeWidth={1.8} />, active: false },
+        { key: 'Move', icon: <Move strokeWidth={1.8} />, active: false },
       ],
     },
     {
       label: 'Utility actions',
       items: [
-        { key: 'copy', icon: <Copy strokeWidth={1.8} />, active: false },
+        { key: 'Copy', icon: <Copy strokeWidth={1.8} />, active: false },
       ],
     },
   ]
@@ -276,7 +277,18 @@ export function UtilityIconFamilyPreview() {
           <span style={{ ...typography.eyebrowLabel, color: colors.textSoft }}>{group.label}</span>
           <div style={{ display: 'flex', gap: spacing[8], flexWrap: 'wrap' }}>
             {group.items.map((item) => (
-              <IconActionButton key={item.key} size="utility-sm" label={item.key} active={item.active} icon={item.icon} />
+              <div
+                key={item.key}
+                style={{
+                  minWidth: 74,
+                  display: 'grid',
+                  justifyItems: 'center',
+                  gap: spacing[6],
+                }}
+              >
+                <IconActionButton size="utility-sm" label={item.key} active={item.active} icon={item.icon} />
+                <span style={{ ...typography.bodyText, fontSize: 11, lineHeight: 1.2, color: colors.textSoft, textAlign: 'center' }}>{item.key}</span>
+              </div>
             ))}
           </div>
         </div>
@@ -302,6 +314,7 @@ export function FontSizeControlsPreview() {
             border: `1px solid ${colors.lineSoft}`,
             background: 'rgba(255, 255, 255, 0.96)',
             color: colors.textSoft,
+            boxShadow: '0 1px 0 rgba(255,255,255,0.6) inset',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',

@@ -28,7 +28,7 @@ function NavigationRailPreview() {
   const shell = {
     showRail: true,
     isNavExpanded: true,
-    isNavPinned: true,
+    isNavPinned: false,
     activeRailGroupId: 'segmentation',
     railItems: [
       {
@@ -90,9 +90,19 @@ export default function ControlsLabScreen({ route, shell }) {
           <PrimaryCTA icon={<Sparkles size={16} strokeWidth={1.9} />}>AI segment text</PrimaryCTA>
         </LabGenericCard>
         <LabGenericCard
+          title="Primary CTA disabled state"
+          status="Candidate"
+          note="Disabled should still feel premium and related, not greyed into irrelevance."
+          minHeight={180}
+        >
+          <PrimaryCTA icon={<Sparkles size={16} strokeWidth={1.9} />} disabled>
+            AI segment text
+          </PrimaryCTA>
+        </LabGenericCard>
+        <LabGenericCard
           title="Split CTA"
           status="Candidate"
-          note="Judge the composed button family here. The advanced options panel is reviewed separately as its own generic."
+          note="Judge the composed button family here. The tail can differ slightly, but it must still read as one button family."
           minHeight={180}
         >
           <SplitCTAPreview showMenu={false} />
@@ -114,7 +124,7 @@ export default function ControlsLabScreen({ route, shell }) {
         <LabGenericCard
           title="Back pill"
           status="Active extraction"
-          note="Existing V2 operational control. This is now being reviewed as a proper shared primitive."
+          note="Directional action variant. It should inherit the premium blue-fill hover, but not the full ceremonial sheen sweep."
           minHeight={120}
         >
           <BackPill />
@@ -184,7 +194,7 @@ export default function ControlsLabScreen({ route, shell }) {
         <LabGenericCard
           title="Action pill"
           status="Candidate"
-          note="Review a few directions here. One option should inherit the same filled premium behavior as the Back pill hover."
+          note="Related to the Back pill family, but quieter and more utility-like. Review a few directions here."
           minHeight={120}
         >
           <ActionPillPreview />

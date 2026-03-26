@@ -100,6 +100,7 @@ export function NavigationRailBrand({ isExpanded = false }) {
         alignItems: 'center',
         justifyContent: isExpanded ? 'flex-start' : 'center',
         minWidth: 0,
+        marginLeft: isExpanded ? 8 : 0,
       }}
     >
       <NavigationRailBrandMark />

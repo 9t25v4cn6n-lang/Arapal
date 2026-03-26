@@ -48,11 +48,12 @@ export default function PrimaryCTA({
         minHeight: height,
         height,
         border: 'none',
-        background:
-          'linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 55%), linear-gradient(90deg, #2D6BF0 0%, #2563EB 42%, #1D4ED8 100%)',
-        color: '#ffffff',
+        background: disabled
+          ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.04) 55%), linear-gradient(90deg, rgba(96, 165, 250, 0.95) 0%, rgba(59, 130, 246, 0.94) 42%, rgba(37, 99, 235, 0.92) 100%)'
+          : 'linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 55%), linear-gradient(90deg, #2D6BF0 0%, #2563EB 42%, #1D4ED8 100%)',
+        color: disabled ? 'rgba(255, 255, 255, 0.9)' : '#ffffff',
         boxShadow: disabled
-          ? 'none'
+          ? 'inset 0 1px 0 rgba(255,255,255,0.16), 0 10px 22px rgba(37,99,235,0.12)'
           : showActiveChrome
             ? 'inset 0 1px 0 rgba(255,255,255,0.24), inset 0 -12px 18px rgba(22,78,199,0.18), 0 28px 54px rgba(37,99,235,0.24), 0 12px 28px rgba(29,78,216,0.12)'
             : 'inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -10px 18px rgba(22,78,199,0.16), 0 24px 52px rgba(37,99,235,0.22), 0 10px 24px rgba(29,78,216,0.1)',
@@ -61,7 +62,7 @@ export default function PrimaryCTA({
         justifyContent: 'center',
         padding: '0 24px',
         cursor: disabled ? 'not-allowed' : 'pointer',
-        filter: disabled ? 'none' : showActiveChrome ? 'saturate(1.02)' : 'none',
+        filter: disabled ? 'saturate(0.82)' : showActiveChrome ? 'saturate(1.02)' : 'none',
         outline: isFocused ? '2px solid rgba(37, 99, 235, 0.35)' : 'none',
         outlineOffset: '2px',
         transition: `box-shadow ${motion.panel}, filter ${motion.micro}, transform ${motion.micro}`,
@@ -77,7 +78,7 @@ export default function PrimaryCTA({
           borderRadius: 'inherit',
           background:
             'linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 34%, rgba(255,255,255,0) 100%)',
-          opacity: disabled ? 0.14 : showActiveChrome ? 0.44 : 0.38,
+          opacity: disabled ? 0.24 : showActiveChrome ? 0.44 : 0.38,
           transition: `opacity ${motion.panel}`,
           pointerEvents: 'none',
         }}

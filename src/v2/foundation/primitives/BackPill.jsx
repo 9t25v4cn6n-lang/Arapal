@@ -61,22 +61,6 @@ export default function BackPill({ onClick, children = 'Back', icon = <ArrowLeft
         }}
       />
       <span
-        aria-hidden="true"
-        style={{
-          position: 'absolute',
-          top: '-24%',
-          bottom: '-24%',
-          left: '-30%',
-          width: '32%',
-          background:
-            'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.34) 48%, rgba(255,255,255,0) 100%)',
-          opacity: showActiveChrome ? 1 : 0,
-          transform: showActiveChrome ? 'translateX(250%) skewX(-18deg)' : 'translateX(-12px) skewX(-18deg)',
-          transition: `opacity ${motion.screen}, transform ${motion.screen}`,
-          pointerEvents: 'none',
-        }}
-      />
-      <span
         style={{
           position: 'relative',
           zIndex: 1,
