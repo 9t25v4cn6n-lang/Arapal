@@ -448,3 +448,20 @@ export function SupportPreviewRevealMotion() {
 export function FocusedExpandMotionPreview() {
   return <FloatingSupportPreview />
 }
+
+export function ReducedMotionFallbackPreview() {
+  return (
+    <div style={previewShell()}>
+      <div style={{ display: 'grid', gap: spacing[12] }}>
+        <div style={{ minHeight: 46, borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: 'rgba(255,255,255,0.98)', padding: `0 ${spacing[14]}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ ...typography.bodyText, fontWeight: 700, color: colors.textStrong }}>Motion</span>
+          <span style={{ ...typography.eyebrowLabel, color: colors.textSoft }}>default</span>
+        </div>
+        <div style={{ minHeight: 46, borderRadius: radius[16], border: `1px dashed ${colors.lineSoft}`, background: 'rgba(248,250,252,0.92)', padding: `0 ${spacing[14]}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ ...typography.bodyText, fontWeight: 700, color: colors.textStrong }}>Reduced motion</span>
+          <span style={{ ...typography.eyebrowLabel, color: colors.textSoft }}>fade / no sweep / no lift</span>
+        </div>
+      </div>
+    </div>
+  )
+}

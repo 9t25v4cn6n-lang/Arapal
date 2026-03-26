@@ -12,13 +12,14 @@ import {
   HoverPreviewPinDemo,
   MenuMotionPreview,
   OutsideClickDismissPreview,
+  ReducedMotionFallbackPreview,
   ScreenIntroPreview,
   SegmentTreeExpandPreview,
   SplitCTAInteractionPreview,
   SupportPanelCollapsePreview,
   SupportPreviewRevealMotion,
 } from '../../foundation/lab-previews/interactions'
-import { LabGenericCard, LabPlaceholderCard, LabScaffold, LabSection } from '../../foundation/primitives/LabBoard'
+import { LabGenericCard, LabScaffold, LabSection } from '../../foundation/primitives/LabBoard'
 import { colors, radius, spacing, typography } from '../../foundation/tokens'
 
 export default function MotionInteractionLabScreen({ route, shell }) {
@@ -107,7 +108,9 @@ export default function MotionInteractionLabScreen({ route, shell }) {
         <LabGenericCard title="Hover lift for primary surfaces" status="Candidate" note="Lift should follow the elevation scale, not invent a new one." minHeight={0}>
           <HoverLiftPreview />
         </LabGenericCard>
-        <LabPlaceholderCard title="Reduced motion fallback" note="Must be defined before we call the motion system finished." />
+        <LabGenericCard title="Reduced motion fallbacks" status="Deferred" note="Must flatten non-essential motion without harming hierarchy." minHeight={0}>
+          <ReducedMotionFallbackPreview />
+        </LabGenericCard>
       </LabSection>
     </>
   )

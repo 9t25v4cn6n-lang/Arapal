@@ -1,19 +1,26 @@
 import layoutContract from './PatternLabScreen.contract'
 import {
+  BestInClassTranslationPreview,
+  DiscussionSummaryNotesPreview,
   DiscussionFlowPreview,
+  ExamsFocusShellPreview,
   GradeCirclePreview,
   PassReflectionPreview,
+  PatchingShellPreview,
   ProjectHomeDestinationCardPreview,
+  ProjectsIndexShellPreview,
   QuickLexChipTooltipPreview,
   ReviewRemediationStatePreview,
+  SegmentTreeFolderRowPreview,
   SegmentTreeRowFamilyPreview,
   SegmentationSuccessStagePreview,
   SegmentationWorkspacePatternPreview,
   StudyWorkspaceShellPreview,
   SupportRailFloatingSystemPreview,
   WorkspaceCardFamilyPreview,
+  YourTranslationPreview,
 } from '../../foundation/lab-previews/patterns'
-import { LabGenericCard, LabPlaceholderCard, LabScaffold, LabSection } from '../../foundation/primitives/LabBoard'
+import { LabGenericCard, LabScaffold, LabSection } from '../../foundation/primitives/LabBoard'
 
 export default function PatternLabScreen({ route, shell }) {
   const content = (
@@ -58,6 +65,9 @@ export default function PatternLabScreen({ route, shell }) {
         <LabGenericCard title="Segment tree row family" status="Candidate" note="Hierarchy, active state, and segment-state icon language." minHeight={0}>
           <SegmentTreeRowFamilyPreview />
         </LabGenericCard>
+        <LabGenericCard title="Segment tree folder row" status="Candidate" note="Folder/header row variant in the study tree." minHeight={0}>
+          <SegmentTreeFolderRowPreview />
+        </LabGenericCard>
         <LabGenericCard title="Support rail + floating preview system" status="Candidate" note="Promising, but still needs structural audit." minHeight={0}>
           <SupportRailFloatingSystemPreview />
         </LabGenericCard>
@@ -79,11 +89,14 @@ export default function PatternLabScreen({ route, shell }) {
         title="Pass and reflection patterns"
         description="These are some of the strongest existing repeated surfaces in the study screen and should inform future extraction."
       >
-        <LabGenericCard title="Best in class / your translation comparison stack" status="Candidate" note="Submitted-state center cards with compare and pin behaviors." minHeight={0}>
-          <PassReflectionPreview />
+        <LabGenericCard title="Best in class translation card" status="Candidate" note="Submitted-state center card with success tone and pin behavior." minHeight={0}>
+          <BestInClassTranslationPreview />
+        </LabGenericCard>
+        <LabGenericCard title="Your translation card" status="Candidate" note="Submitted-state comparison card beside the reference answer." minHeight={0}>
+          <YourTranslationPreview />
         </LabGenericCard>
         <LabGenericCard title="Discussion summary + notes card" status="Candidate" note="Reflection surface with empty state, manual note composer, and saved note items." minHeight={0}>
-          <DiscussionFlowPreview />
+          <DiscussionSummaryNotesPreview />
         </LabGenericCard>
         <LabGenericCard title="Submission jump bar" status="Candidate" note="Bottom anchored jump-and-continue bar used on submitted/pass states." minHeight={0}>
           <div style={{ minHeight: 78, borderRadius: '16px', border: '1px solid rgba(219, 228, 239, 0.96)', background: 'rgba(255,255,255,0.98)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', gap: '12px' }}>
@@ -119,9 +132,15 @@ export default function PatternLabScreen({ route, shell }) {
         title="Needs redesign / deferred"
         description="These exist in the product map, but are not yet strong reference sources."
       >
-        <LabPlaceholderCard title="Projects index shell" status="Needs redesign" note="Current product surface is too early to freeze." />
-        <LabPlaceholderCard title="Exams focus shell" status="Needs redesign" note="Mode is important, but current implementation is weak." />
-        <LabPlaceholderCard title="Patching / corrections shell" status="Deferred" note="No proper reference extraction pass yet." />
+        <LabGenericCard title="Projects index shell" status="Needs redesign" note="Current product surface is too early to freeze." minHeight={0}>
+          <ProjectsIndexShellPreview />
+        </LabGenericCard>
+        <LabGenericCard title="Exams focus shell" status="Needs redesign" note="Mode is important, but current implementation is weak." minHeight={0}>
+          <ExamsFocusShellPreview />
+        </LabGenericCard>
+        <LabGenericCard title="Patching / corrections shell" status="Deferred" note="Generated from doctrine; needs stronger product reference later." minHeight={0}>
+          <PatchingShellPreview />
+        </LabGenericCard>
       </LabSection>
     </>
   )

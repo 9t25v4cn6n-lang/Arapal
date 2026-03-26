@@ -27,6 +27,18 @@ export function SegmentTreeRowFamilyPreview() {
   )
 }
 
+export function SegmentTreeFolderRowPreview() {
+  return (
+    <div style={{ ...frameStyle(), display: 'grid', gap: spacing[8] }}>
+      <div style={{ minHeight: 40, borderRadius: radius[12], border: `1px solid ${colors.lineSoft}`, background: '#fff', display: 'flex', alignItems: 'center', gap: spacing[10], padding: `0 ${spacing[12]}` }}>
+        <span style={{ fontSize: 14, color: colors.textSoft }}>▸</span>
+        <BookOpen size={16} strokeWidth={1.8} color={colors.textSoft} />
+        <span style={{ ...typography.bodyText, fontWeight: 700, color: colors.textStrong }}>Chapter 3: Fasting</span>
+      </div>
+    </div>
+  )
+}
+
 export function QuickLexChipTooltipPreview() {
   return (
     <div style={frameStyle()}>
@@ -77,6 +89,22 @@ export function ProjectHomeDestinationCardPreview() {
           <span style={{ ...typography.bodyText, fontWeight: 700, color: colors.accentStrong }}>→</span>
         </div>
       </article>
+    </div>
+  )
+}
+
+export function ProjectsIndexShellPreview() {
+  return (
+    <div style={{ ...frameStyle(), display: 'grid', gap: spacing[12] }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: spacing[12] }}>
+        {['Active', 'Review', 'Archived'].map((item, index) => (
+          <div key={item} style={{ minHeight: 140, borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: index === 0 ? 'rgba(239, 246, 255, 0.96)' : '#fff', padding: spacing[14], display: 'grid', gap: spacing[10] }}>
+            <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>{item}</p>
+            <p style={{ ...typography.bodyText, margin: 0, fontWeight: 700, color: colors.textStrong }}>Friday Prayer</p>
+            <p style={{ ...typography.bodyText, margin: 0, fontSize: 14, color: colors.textSoft }}>Project list shell with intentional grouping, not a crowded dashboard table.</p>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
@@ -156,6 +184,55 @@ export function ReviewRemediationStatePreview() {
   )
 }
 
+export function ExamsFocusShellPreview() {
+  return (
+    <div style={{ ...frameStyle(), display: 'grid', gap: spacing[12] }}>
+      <div style={{ minHeight: 220, borderRadius: radius[24], border: `1px solid ${colors.lineSoft}`, background: '#fff', padding: spacing[18], display: 'grid', gridTemplateRows: 'auto 1fr auto', gap: spacing[14] }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: spacing[12] }}>
+          <div style={{ display: 'grid', gap: 4 }}>
+            <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.accentBase }}>Exam</p>
+            <p style={{ ...typography.bodyText, margin: 0, fontWeight: 700, color: colors.textStrong }}>Segment 2.2 Conditions</p>
+          </div>
+          <span style={{ ...typography.monoMeta, color: colors.textSoft }}>Autosaved</span>
+        </div>
+        <div style={{ borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: 'rgba(248, 250, 252, 0.92)', padding: spacing[16], display: 'grid', gap: spacing[10] }}>
+          <p style={{ ...typography.bodyText, margin: 0, color: colors.textBody }}>Translate the highlighted segment without opening the full study shell around it.</p>
+          <div style={{ minHeight: 70, borderRadius: radius[12], border: `1px solid ${colors.lineSoft}`, background: '#fff' }} />
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: spacing[12] }}>
+          <button type="button" style={{ minHeight: 40, padding: '0 16px', borderRadius: radius.pill, border: `1px solid ${colors.lineSoft}`, background: '#fff', color: colors.textSoft }}>Back to study</button>
+          <button type="button" style={{ minHeight: 40, padding: '0 18px', borderRadius: radius.pill, border: 'none', background: colors.accentBase, color: '#fff' }}>Submit</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export function PatchingShellPreview() {
+  return (
+    <div style={{ ...frameStyle(), display: 'grid', gap: spacing[12] }}>
+      <div style={{ minHeight: 220, borderRadius: radius[24], border: '1px solid rgba(254, 215, 170, 0.96)', background: 'rgba(255, 247, 237, 0.86)', padding: spacing[18], display: 'grid', gap: spacing[12] }}>
+        <div style={{ display: 'grid', gap: 4 }}>
+          <p style={{ ...typography.eyebrowLabel, margin: 0, color: '#C2410C' }}>Patching</p>
+          <p style={{ ...typography.bodyText, margin: 0, fontWeight: 700, color: colors.textStrong }}>Controlled correction workflow</p>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: spacing[12] }}>
+          <div style={{ minHeight: 110, borderRadius: radius[16], border: `1px solid rgba(253, 186, 116, 0.96)`, background: 'rgba(255,255,255,0.92)', padding: spacing[14] }}>
+            <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>Before</p>
+          </div>
+          <div style={{ minHeight: 110, borderRadius: radius[16], border: `1px solid rgba(253, 186, 116, 0.96)`, background: 'rgba(255,255,255,0.92)', padding: spacing[14] }}>
+            <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>After</p>
+          </div>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: spacing[12] }}>
+          <button type="button" style={{ minHeight: 38, padding: '0 14px', borderRadius: radius.pill, border: `1px solid rgba(253, 186, 116, 0.96)`, background: 'rgba(255,255,255,0.92)', color: '#9A3412' }}>Preview impact</button>
+          <button type="button" style={{ minHeight: 38, padding: '0 14px', borderRadius: radius.pill, border: 'none', background: '#EA580C', color: '#fff' }}>Apply patch</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function SegmentationSuccessStagePreview() {
   return (
     <div style={{ ...frameStyle(), display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 220 }}>
@@ -183,6 +260,54 @@ export function PassReflectionPreview() {
       </div>
       <div style={{ borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: 'rgba(248, 250, 252, 0.94)', padding: spacing[14] }}>
         <span style={{ ...typography.bodyText, fontWeight: 700, color: colors.textStrong }}>Discussion + notes</span>
+      </div>
+    </div>
+  )
+}
+
+export function BestInClassTranslationPreview() {
+  return (
+    <div style={frameStyle()}>
+      <div style={{ borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: 'rgba(220, 252, 231, 0.84)', padding: spacing[14], display: 'grid', gap: spacing[10] }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: spacing[10] }}>
+          <CheckCircle2 size={16} strokeWidth={1.8} color={colors.success} />
+          <span style={{ ...typography.bodyText, fontWeight: 700, color: colors.textStrong }}>Best in class translation</span>
+          <button type="button" style={{ marginLeft: 'auto', minHeight: 30, padding: '0 12px', border: `1px solid rgba(134, 239, 172, 0.96)`, borderRadius: radius.pill, background: 'rgba(255,255,255,0.92)' }}>
+            <Pin size={13} strokeWidth={1.8} />
+          </button>
+        </div>
+        <p style={{ ...typography.bodyText, margin: 0, fontSize: 14, color: colors.textBody }}>Reference answer shown after submission as a calm success surface.</p>
+      </div>
+    </div>
+  )
+}
+
+export function YourTranslationPreview() {
+  return (
+    <div style={frameStyle()}>
+      <div style={{ borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: '#fff', padding: spacing[14], display: 'grid', gap: spacing[10] }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: spacing[10] }}>
+          <FileText size={16} strokeWidth={1.8} color={colors.textSoft} />
+          <span style={{ ...typography.bodyText, fontWeight: 700, color: colors.textStrong }}>Your translation</span>
+          <button type="button" style={{ marginLeft: 'auto', minHeight: 30, padding: '0 12px', border: `1px solid ${colors.lineSoft}`, borderRadius: radius.pill, background: '#fff' }}>
+            <Pin size={13} strokeWidth={1.8} />
+          </button>
+        </div>
+        <p style={{ ...typography.bodyText, margin: 0, fontSize: 14, color: colors.textBody }}>Comparison card for the user’s submitted translation.</p>
+      </div>
+    </div>
+  )
+}
+
+export function DiscussionSummaryNotesPreview() {
+  return (
+    <div style={frameStyle()}>
+      <div style={{ borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: 'rgba(248, 250, 252, 0.94)', padding: spacing[14], display: 'grid', gap: spacing[10] }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: spacing[10] }}>
+          <MessageSquare size={16} strokeWidth={1.8} color="#4F46E5" />
+          <span style={{ ...typography.bodyText, fontWeight: 700, color: colors.textStrong }}>Discussion summary + notes</span>
+        </div>
+        <p style={{ ...typography.bodyText, margin: 0, fontSize: 14, color: colors.textSoft }}>Saved discussion summary with manual notes attached beneath it.</p>
       </div>
     </div>
   )
