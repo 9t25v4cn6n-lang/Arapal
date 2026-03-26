@@ -269,9 +269,10 @@ export function LabScaffold({
         <h1
           style={{
             margin: `0 0 ${spacing[12]}`,
+            paddingTop: spacing[8],
             fontFamily: typography.displayTitle.fontFamily,
             fontSize: 'clamp(34px, 3.8vw, 56px)',
-            lineHeight: 0.96,
+            lineHeight: 1.02,
             color: colors.textStrong,
             letterSpacing: '-0.04em',
           }}

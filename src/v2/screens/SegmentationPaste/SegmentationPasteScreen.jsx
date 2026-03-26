@@ -1,13 +1,14 @@
 import {
   ArrowDown,
-  ArrowLeft,
   Check,
   ChevronUp,
   Edit3,
-  Scissors,
   Sparkles,
 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import BackPill from '../../foundation/primitives/BackPill'
+import SourceIntakeBrand from '../../foundation/primitives/SourceIntakeBrand'
+import StepBar from '../../foundation/primitives/StepBar'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import { colors, motion, radius, spacing, typography } from '../../foundation/tokens'
 import layoutContract from './SegmentationPasteScreen.contract'
@@ -488,154 +489,6 @@ const granularityOptions = [
   { id: 'broad', label: 'Broader', meta: 'Fewer, larger sections' },
 ]
 
-function BackPill({ onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      style={{
-        border: `1px solid ${colors.lineSoft}`,
-        borderRadius: radius.pill,
-        background: 'rgba(255, 255, 255, 0.92)',
-        color: colors.textSoft,
-        minHeight: '42px',
-        padding: '0 22px',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: spacing[8],
-        cursor: 'pointer',
-        fontFamily: typography.bodyText.fontFamily,
-        fontSize: '12px',
-        fontWeight: 600,
-        lineHeight: 1,
-        letterSpacing: '0.14em',
-        textTransform: 'uppercase',
-        transition: `border-color ${motion.micro}, box-shadow ${motion.micro}, color ${motion.micro}, transform ${motion.micro}`,
-      }}
-    >
-      <ArrowLeft size={16} strokeWidth={1.9} />
-      Back
-    </button>
-  )
-}
-
-function Stepbar() {
-  return (
-    <div
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: spacing[8],
-      }}
-    >
-      {workspaceSteps.map((item, index) => {
-        const state = index === 0 ? 'current' : 'pending'
-
-        return (
-          <div key={item.id} style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[8] }}>
-            <div
-              style={{
-                width: '24px',
-                height: '24px',
-                borderRadius: radius.pill,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '10px',
-                lineHeight: 1,
-                background: state === 'current' ? colors.accentBase : 'rgba(148, 163, 184, 0.14)',
-                color: state === 'current' ? '#ffffff' : colors.textFaint,
-              }}
-            >
-              {index + 1}
-            </div>
-            {state === 'current' ? (
-              <span
-                style={{
-                  ...typography.eyebrowLabel,
-                  color: colors.textSoft,
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {item.label}
-              </span>
-            ) : null}
-            {index < workspaceSteps.length - 1 ? (
-              <span
-                aria-hidden="true"
-                style={{
-                  width: '32px',
-                  height: '1px',
-                  background: colors.lineSoft,
-                }}
-              />
-            ) : null}
-          </div>
-        )
-      })}
-    </div>
-  )
-}
-
-function IntakeBrand() {
-  return (
-    <div
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: spacing[12],
-        minWidth: 0,
-      }}
-    >
-      <div
-        style={{
-          width: '32px',
-          height: '32px',
-          borderRadius: radius.pill,
-          border: `1px solid ${colors.lineStrong}`,
-          background: `linear-gradient(180deg, ${colors.accentWash} 0%, ${colors.accentMist} 100%)`,
-          color: colors.accentBase,
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.92), 0 16px 28px rgba(37, 99, 235, 0.12)',
-          flexShrink: 0,
-        }}
-      >
-        <Scissors size={16} strokeWidth={1.9} />
-      </div>
-      <div style={{ display: 'grid', gap: '3px' }}>
-        <p
-          style={{
-            margin: 0,
-            fontSize: '14px',
-            lineHeight: 1,
-            fontWeight: 600,
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            color: colors.textStrong,
-          }}
-        >
-          Source Intake
-        </p>
-        <p
-          style={{
-            margin: 0,
-            fontSize: '10px',
-            lineHeight: 1,
-            letterSpacing: '0.2em',
-            textTransform: 'uppercase',
-            color: colors.textSoft,
-          }}
-        >
-          Segmentation
-        </p>
-      </div>
-    </div>
-  )
-}
-
 function SourceMarker() {
   return (
     <div
@@ -766,8 +619,8 @@ export default function SegmentationPasteScreen({ route, shell }) {
   const selectedMethod = methodOptions.find((option) => option.id === method) ?? methodOptions[0]
 
   const backButton = <BackPill onClick={() => shell.navigate('projectHome')} />
-  const stepbar = <Stepbar />
-  const intakeBrand = <IntakeBrand />
+  const stepbar = <StepBar steps={workspaceSteps} currentIndex={0} />
+  const intakeBrand = <SourceIntakeBrand />
 
   const slots = {
     Layer1_Header_StartLane: backButton,

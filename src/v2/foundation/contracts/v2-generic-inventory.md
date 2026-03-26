@@ -30,6 +30,7 @@ Use it to decide what should be:
 ## Status Legend
 - `Locked` = approved and ready to reuse
 - `Active extraction` = currently being rebuilt into V2
+- `Not yet extracted` = known generic with no shared V2 implementation yet
 - `Candidate` = likely reusable, needs extraction
 - `Needs redesign` = important, but current form is not yet fit to canonize
 - `Deferred` = not needed yet
@@ -90,9 +91,14 @@ This is the review map. A generic is not considered system-ready until it has be
 - Panel corner casing
 - Options popover
 - Support panel card
+- Lexicography support card
 - Support rail card
 - Floating support preview
 - Expandable support modal
+- Expanded focus panel
+- Dimmed stage overlay
+- Floating panel header + actions
+- Floating panel resize affordance
 - Feedback block
 - Numbered takeaway item
 - Lexicography entry row
@@ -116,11 +122,14 @@ This is the review map. A generic is not considered system-ready until it has be
 - Support-panel collapse/expand
 - Hover preview + pin-to-keep-open
 - Floating panel drag/resize
+- Float / dock support panel
 - Split CTA open/select/close behavior
 - Editor shortcut hint behavior
 - Hover/focus micro-motion
 - Menu/panel open motion
 - Screen intro/transition motion
+- Focused expand with dim backdrop
+- Support preview reveal motion
 - CTA sheen sweep
 - Hover lift for primary surfaces
 - Reduced motion fallbacks
@@ -141,6 +150,14 @@ This is the review map. A generic is not considered system-ready until it has be
 - Support rail + floating preview system
 - Review / remediation support state set
 - Segmentation success stage
+- Best in class translation card
+- Your translation card
+- Discussion summary + notes card
+- Submission jump bar
+- Docked discussion companion
+- Floating discussion panel
+- Focused discussion modal
+- Discussion composer + summary flow
 - Exams focus shell
 - Projects index shell
 - Patching / corrections shell
@@ -162,9 +179,9 @@ This is the review map. A generic is not considered system-ready until it has be
 | Navigation rail | Current app | Current app study shell | 4 | 5 | Active extraction | Shared shell primitive; avoid per-screen variants. |
 | Navigation rail row | Current app | Current app study shell | 4 | 5 | Candidate | Includes active state, hover, icon + label logic. |
 | Utility icon control (`pin`, `back`, `expand`, `collapse`, `close`) | Current app | Current app study shell | 5 | 5 | Active extraction | Small utility control family; shared hover box pattern. |
-| Back pill | Current app segmentation | Old app segmentation | 4 | 4 | Candidate | Segmentation family first, but likely usable elsewhere. |
-| Step bar | Current app segmentation | Old app segmentation | 4 | 4 | Candidate | Applies to multi-step operational flows. |
-| Source intake brand | Current app segmentation | Old app segmentation | 4 | 3 | Candidate | Likely segmentation-specific but still reusable within that mode. |
+| Back pill | Current app segmentation | Old app segmentation | 4 | 4 | Active extraction | Existing V2 implementation now moved toward a real shared primitive. |
+| Step bar | Current app segmentation | Old app segmentation | 4 | 4 | Active extraction | Applies to multi-step operational flows and now has a shared V2 primitive path. |
+| Source intake brand | Current app segmentation | Old app segmentation | 4 | 3 | Active extraction | Segmentation-specific identity cluster that should live under the operational editor family. |
 | Operational panel | Current app segmentation | Old app segmentation | 5 | 5 | Candidate | High-value base family for operational screens. |
 | Editor surface | Current app segmentation + study | Old app segmentation editor chrome | 5 | 5 | Active extraction | Major missing primitive. |
 | Editor topbar | Current app segmentation + study | Old app segmentation editor chrome | 4 | 5 | Candidate | Should sit under the editor family. |
@@ -179,15 +196,23 @@ This is the review map. A generic is not considered system-ready until it has be
 | Status chip / badge | Current app study + segmentation | Current app | 4 | 5 | Candidate | Good shared semantic primitive. |
 | Action pill | Current app study | Current app study center pane | 3 | 4 | Candidate | Worth extracting after core panels/buttons. |
 | Support panel card | Current app study | Current app study right pane | 5 | 5 | Candidate | Strong candidate for support family. |
+| Lexicography support card | Current app study | Current app study right pane | 5 | 5 | Candidate | One of the clearest concrete support-card references in the app. |
 | Support rail card (collapsed preview card) | Current app study | Current app study right pane | 4 | 5 | Candidate | Useful for collapsed support mode. |
 | Floating support preview | Current app study | Current app study right pane | 4 | 4 | Candidate | Visually strong; still needs structural audit. |
 | Expandable support modal | Current app study | Current app study right pane | 4 | 4 | Candidate | Related to support panel family. |
+| Expanded focus panel | Current app study | Current app study right pane | 4 | 4 | Candidate | Front-and-center expanded support state that likely belongs to a shared overlay family. |
+| Floating panel header + actions | Current app study | Current app study right pane | 4 | 4 | Candidate | Includes title row, pin/close controls, and drag affordance. |
+| Floating panel resize affordance | Current app study | Current app study right pane | 3 | 3 | Candidate | Useful, but needs deliberate product-level rules. |
 | Feedback block | Current app study | Current app study right pane | 4 | 4 | Candidate | Reusable in review/assessment surfaces. |
 | Numbered takeaway item | Current app study | Current app study right pane | 4 | 4 | Candidate | Good secondary instructional primitive. |
 | Grade circle | Current app study | Current app study right pane | 3 | 3 | Candidate | Useful for exams/review, but needs more system thinking. |
 | Lexicography entry row | Current app study | Current app study right pane | 4 | 4 | Candidate | Strong study-support primitive. |
 | Quick lex term chip/tooltip | Current app study | Current app study center pane | 3 | 3 | Candidate | Nice, but less core than panels/editor/CTA. |
 | Project home destination card | Current app home | Current app home | 4 | 5 | Candidate | Core family for command-center surfaces. |
+| Best in class translation card | Current app study | Current app study center pane | 4 | 4 | Candidate | Strong submitted-state reference card with success tone and pin/copy behavior. |
+| Your translation card | Current app study | Current app study center pane | 4 | 4 | Candidate | Comparison card that likely belongs to a reusable submitted-state family. |
+| Discussion summary + notes card | Current app study | Current app study center pane | 4 | 4 | Candidate | Reflection surface with empty, compose, and populated states. |
+| Submission jump bar | Current app study | Current app study center pane | 4 | 4 | Candidate | Bottom-anchored post-submit navigation/control family. |
 | Workspace card family (`source`, `editor`, `result`, `support-inline`) | Current app study | Current app study | 3 | 5 | Needs redesign | Important family, but not yet fit to freeze visually. |
 
 ## Styling Generics
@@ -215,7 +240,10 @@ This is the review map. A generic is not considered system-ready until it has be
 | Support-panel collapse/expand | Current app study | Current app study | 4 | 5 | Candidate | Important workspace interaction pattern. |
 | Hover preview + pin-to-keep-open | Current app study | Current app study right pane | 3 | 4 | Candidate | Promising, but needs audit before canonization. |
 | Floating panel drag/resize | Current app study | Current app study right pane | 2 | 3 | Candidate | Powerful, but should be treated cautiously. |
+| Float / dock support panel | Current app study | Current app study center pane | 4 | 4 | Candidate | Clear interaction family for detaching support without losing context. |
 | Split CTA open/select/close behavior | Current app segmentation | Old app segmentation | 5 | 5 | Candidate | Needs systemization with CTA primitive. |
+| Focused expand with dim backdrop | Current app study | Current app study center pane | 4 | 4 | Candidate | Shared overlay behavior candidate for support-focused reading modes. |
+| Support preview reveal motion | Current app study | Current app study right pane | 3 | 4 | Candidate | Part interaction, part motion; should be reviewed as a distinct family. |
 | Editor shortcut hint behavior | Current app segmentation | Old app segmentation | 3 | 3 | Candidate | Nice-to-have, lower priority. |
 
 ## Motion Generics
@@ -224,6 +252,8 @@ This is the review map. A generic is not considered system-ready until it has be
 | Hover/focus micro-motion | Current V2 contracts | Current app study/segmentation | 5 | 5 | Locked | Tokenized durations/easing already defined. |
 | Menu/panel open motion | Current V2 contracts | Current app study/segmentation | 4 | 5 | Candidate | Needs reusable implementation helpers. |
 | Screen intro/transition motion | Current V2 contracts | Current app segmentation | 3 | 4 | Candidate | Contracted, but not yet fully implemented as a system. |
+| Focused expand with dim backdrop | Current app study | Current app study | 4 | 4 | Candidate | Transition family for taking a support surface into temporary focus. |
+| Support preview reveal motion | Current app study | Current app study | 3 | 4 | Candidate | Hover-preview motion should clarify, not surprise. |
 | CTA sheen sweep | Current app segmentation | Old app segmentation | 5 | 5 | Candidate | Strong shared premium detail. |
 | Hover lift for primary surfaces | Current app home/segmentation | Current app | 4 | 5 | Candidate | Should be tied to elevation scale. |
 | Reduced motion fallbacks | V2 requirement | N/A | 5 | 5 | Deferred | Must be implemented before finalization. |
@@ -237,6 +267,11 @@ This is the review map. A generic is not considered system-ready until it has be
 | Support rail + floating preview system | Current app study | Current app study | 3 | 4 | Candidate | Good, but still needs structural audit. |
 | Review / remediation support state set | Current app study | Current app study | 4 | 4 | Candidate | Useful across study and exams. |
 | Segmentation success stage | Current app segmentation | Old app segmentation | 3 | 4 | Candidate | Should become a reusable success-stage pattern. |
+| Best in class / your translation comparison stack | Current app study | Current app study | 4 | 4 | Candidate | Submitted-state center-lane pattern with compare and pin behaviors. |
+| Discussion summary + notes flow | Current app study | Current app study | 4 | 4 | Candidate | Submitted-state reflection pattern with empty and populated states. |
+| Docked discussion companion | Current app study | Current app study | 4 | 4 | Candidate | Attached help surface that preserves segment context. |
+| Floating discussion panel | Current app study | Current app study | 3 | 4 | Candidate | Detachable discussion state that may generalize beyond one screen. |
+| Focused discussion modal | Current app study | Current app study | 3 | 4 | Candidate | Expanded discussion mode with dimmed backdrop and centered focus. |
 | Exams focus shell | Current app exams | Current app exams | 2 | 4 | Needs redesign | Product mode exists, but current implementation is weak. |
 | Projects index shell | Current app projects | Current app projects | 2 | 4 | Needs redesign | Early-state product surface. |
 | Patching / corrections shell | Current app doctrine only | N/A | 1 | 3 | Deferred | Needs proper reference work before extraction. |

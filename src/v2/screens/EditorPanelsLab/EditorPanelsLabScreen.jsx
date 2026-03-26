@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import layoutContract from './EditorPanelsLabScreen.contract'
 import EditorSurface from '../../foundation/primitives/EditorSurface'
+import SourceIntakeBrand from '../../foundation/primitives/SourceIntakeBrand'
 import { LabGenericCard, LabPlaceholderCard, LabScaffold, LabSection } from '../../foundation/primitives/LabBoard'
 import { colors, radius, spacing, typography } from '../../foundation/tokens'
 
@@ -36,6 +37,16 @@ export default function EditorPanelsLabScreen({ route, shell }) {
         title="Editor sub-parts"
         description="These live inside the editor family, but we still review them as distinct generics."
       >
+        <LabGenericCard
+          title="Source intake brand"
+          status="Active extraction"
+          note="Segmentation-specific identity cluster that likely belongs to the operational editor family."
+          minHeight={130}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', minHeight: 68 }}>
+            <SourceIntakeBrand />
+          </div>
+        </LabGenericCard>
         <LabPlaceholderCard title="Editor topbar" note="Window buttons, eyebrow, and seal treatment." />
         <LabPlaceholderCard title="Editor footer" note="Shortcut hint, keycaps, and footer meta rhythm." />
         <LabPlaceholderCard title="Editor watermark treatment" note="Opacity, position, and visual restraint." />
@@ -48,8 +59,19 @@ export default function EditorPanelsLabScreen({ route, shell }) {
       >
         <LabPlaceholderCard title="Operational panel" note="Core surface for controlled preparation and approval flows." />
         <LabPlaceholderCard title="Support panel card" note="Study support family from the right rail." />
+        <LabPlaceholderCard title="Lexicography support card" note="One of the strongest concrete support-card references from the study shell." />
         <LabPlaceholderCard title="Support rail card" note="Collapsed preview card for right-rail support." />
-        <LabPlaceholderCard title="Floating support preview" note="Promising, but not yet canonized." />
+        <LabPlaceholderCard title="Floating support preview" note="Pinned or hovered preview surface from the collapsed support rail." />
+      </LabSection>
+
+      <LabSection
+        title="Expanded and floating support surfaces"
+        description="These are the parts of the study shell that feel powerful and reusable, but need a more explicit system home."
+      >
+        <LabPlaceholderCard title="Expanded focus panel" note="Dimmed-background, front-and-center expansion for support content such as lexicography." />
+        <LabPlaceholderCard title="Dimmed stage overlay" note="Shared focused-overlay treatment used when a support surface takes temporary center stage." />
+        <LabPlaceholderCard title="Floating panel header + actions" note="Header strip for floating support surfaces, including close and pin controls." />
+        <LabPlaceholderCard title="Floating panel resize affordance" note="Should become a defined floating-panel capability rather than staying a local trick." />
       </LabSection>
     </>
   )

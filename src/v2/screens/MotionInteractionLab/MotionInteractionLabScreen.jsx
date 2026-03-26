@@ -40,6 +40,9 @@ export default function MotionInteractionLabScreen({ route, shell }) {
         <LabPlaceholderCard title="Split CTA open/select/close" note="Needs a real interactive demo board once SplitCTA is extracted." />
         <LabPlaceholderCard title="Outside-click dismissal" note="Should be standard for overlays unless pinned." />
         <LabPlaceholderCard title="Escape-to-close overlays" note="Same rule family as outside-click dismissal." />
+        <LabPlaceholderCard title="Hover preview + pin to keep open" note="Study-shell support rail behavior with a broader reuse question." />
+        <LabPlaceholderCard title="Float / dock support panel" note="Detaching a support surface from its docked state without losing context." />
+        <LabPlaceholderCard title="Floating panel drag / resize" note="Needs a deliberate system call on when this is allowed and how it should feel." />
       </LabSection>
 
       <LabSection
@@ -51,6 +54,8 @@ export default function MotionInteractionLabScreen({ route, shell }) {
         </LabGenericCard>
         <LabPlaceholderCard title="Menu / panel open motion" note="Needs reusable implementation helpers, not screen-local animation." />
         <LabPlaceholderCard title="Screen intro / transition motion" note="Documented, but not yet proven as a reusable motion family." />
+        <LabPlaceholderCard title="Focused expand with dim backdrop" note="Used when a support surface expands into a central, temporary focus state." />
+        <LabPlaceholderCard title="Support preview reveal motion" note="Hover reveal from the collapsed support rail should feel informative, not jumpy." />
         <LabPlaceholderCard title="Reduced motion fallback" note="Must be defined before we call the motion system finished." />
       </LabSection>
     </>

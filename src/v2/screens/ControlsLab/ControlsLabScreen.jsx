@@ -1,9 +1,19 @@
 import { ArrowLeft, Pin, Sparkles } from 'lucide-react'
 import layoutContract from './ControlsLabScreen.contract'
+import BackPill from '../../foundation/primitives/BackPill'
 import PrimaryCTA from '../../foundation/primitives/PrimaryCTA'
 import IconActionButton from '../../foundation/primitives/IconActionButton'
+import StepBar from '../../foundation/primitives/StepBar'
+import { NavigationRailBrand, NavigationRailItems, NavigationRailPinControl } from '../../foundation/primitives/NavigationRail'
+import { shellSizing } from '../../foundation/layout/shellSizing'
 import { LabGenericCard, LabPlaceholderCard, LabScaffold, LabSection } from '../../foundation/primitives/LabBoard'
 import { colors, radius, spacing, typography } from '../../foundation/tokens'
+
+const stepItems = [
+  { id: 'source', label: 'Source' },
+  { id: 'segment', label: 'Segment' },
+  { id: 'review', label: 'Review' },
+]
 
 function UtilityControlPreview() {
   return (
@@ -40,6 +50,57 @@ function UtilityControlPreview() {
           color: colors.accentStrong,
         }}
       />
+    </div>
+  )
+}
+
+function NavigationRailPreview() {
+  const shell = {
+    showRail: true,
+    isNavExpanded: true,
+    isNavPinned: true,
+    activeRailGroupId: 'segmentation',
+    railItems: [
+      {
+        id: 'projectHome',
+        label: 'Project Home',
+        shell: { rail: { groupId: 'projectHome', label: 'Project Home', iconKey: 'home', routeId: 'projectHome' } },
+      },
+      {
+        id: 'studyWorkspace',
+        label: 'Study Workspace',
+        shell: { rail: { groupId: 'study', label: 'Study Workspace', iconKey: 'study', routeId: 'studyWorkspace' } },
+      },
+      {
+        id: 'segmentationPaste',
+        label: 'Source + Segmentation',
+        shell: { rail: { groupId: 'segmentation', label: 'Source + Segmentation', iconKey: 'segmentation', routeId: 'segmentationPaste' } },
+      },
+    ],
+    navigate: () => {},
+    toggleNavigationRailPin: () => {},
+  }
+
+  return (
+    <div
+      style={{
+        width: shellSizing.navigationRail.expandedPx,
+        border: `1px solid ${colors.lineSoft}`,
+        borderRadius: radius[24],
+        background: 'rgba(255, 255, 255, 0.96)',
+        padding: `${spacing[20]} ${spacing[16]}`,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: spacing[16],
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: spacing[12] }}>
+        <NavigationRailBrand />
+        <NavigationRailPinControl shell={shell} />
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[8] }}>
+        <NavigationRailItems shell={shell} />
+      </div>
     </div>
   )
 }
@@ -81,20 +142,42 @@ export default function ControlsLabScreen({ route, shell }) {
         >
           <UtilityControlPreview />
         </LabGenericCard>
-        <LabPlaceholderCard
+        <LabGenericCard
           title="Back pill"
-          note="Operational header control for segmentation and other controlled workflows."
-        />
+          status="Active extraction"
+          note="Existing V2 operational control. This is now being reviewed as a proper shared primitive."
+          minHeight={130}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', minHeight: 60 }}>
+            <BackPill />
+          </div>
+        </LabGenericCard>
       </LabSection>
 
       <LabSection
         title="Rows + toggles"
         description="These lower-level controls should feel like members of the same family rather than isolated one-offs."
       >
+        <LabGenericCard
+          title="Step bar"
+          status="Active extraction"
+          note="Multi-step operational progress pattern carried over from segmentation."
+          minHeight={130}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', minHeight: 60 }}>
+            <StepBar steps={stepItems} currentIndex={0} />
+          </div>
+        </LabGenericCard>
+        <LabGenericCard
+          title="Navigation rail"
+          status="Active extraction"
+          note="The shell already exists. This board is here to judge the row sizing, active state, and control balance."
+          minHeight={0}
+        >
+          <NavigationRailPreview />
+        </LabGenericCard>
         <LabPlaceholderCard title="Preference toggle row" note="Used in advanced menus and settings-style overlays." />
         <LabPlaceholderCard title="Status chip / badge" note="Shared semantic chip for state, not a per-screen embellishment." />
-        <LabPlaceholderCard title="Navigation rail row" note="Shared row treatment for the main app modes." />
-        <LabPlaceholderCard title="Step bar" note="Multi-step operational flow progress pattern." />
       </LabSection>
     </>
   )

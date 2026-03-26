@@ -49,7 +49,7 @@ export default function createLabBoardContract({ screenId, screenName }) {
         justifyContent: 'flex-start',
         padding: spacing[28],
         gap: spacing[16],
-        overflow: 'visible',
+        overflow: 'hidden',
         textAlign: 'left',
       },
       {

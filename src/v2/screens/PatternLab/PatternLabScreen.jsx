@@ -25,6 +25,26 @@ export default function PatternLabScreen({ route, shell }) {
       </LabSection>
 
       <LabSection
+        title="Pass and reflection patterns"
+        description="These are some of the strongest existing repeated surfaces in the study screen and should inform future extraction."
+      >
+        <LabPlaceholderCard title="Best in class translation card" note="Submitted-state center card with pin/copy actions and success tone." />
+        <LabPlaceholderCard title="Your translation card" note="Submitted-state comparison card that sits beside the best-in-class reference." />
+        <LabPlaceholderCard title="Discussion summary + notes card" note="Reflection surface with empty state, manual note composer, and saved note items." />
+        <LabPlaceholderCard title="Submission jump bar" note="Bottom anchored jump-and-continue bar used on submitted/pass states." />
+      </LabSection>
+
+      <LabSection
+        title="Attached discussion patterns"
+        description="These feel like a real reusable family, even if they still need stronger extraction."
+      >
+        <LabPlaceholderCard title="Docked discussion companion" note="Attached side experience that keeps the user in the current segment context." />
+        <LabPlaceholderCard title="Floating discussion panel" note="Detached but still attached-to-context discussion surface." />
+        <LabPlaceholderCard title="Focused discussion modal" note="Expanded discussion state with dimmed backdrop and centered focus." />
+        <LabPlaceholderCard title="Discussion composer + summary flow" note="Input, send, summarise, and save as one coherent repeated pattern." />
+      </LabSection>
+
+      <LabSection
         title="Needs redesign / deferred"
         description="These exist in the product map, but are not yet strong reference sources."
       >
