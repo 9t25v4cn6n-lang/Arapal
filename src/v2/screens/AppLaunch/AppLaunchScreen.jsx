@@ -94,6 +94,15 @@ export default function AppLaunchScreen({ route, shell }) {
           type="button"
           style={secondaryButtonStyle}
           onClick={() => {
+            shell.navigate('foundationLab')
+          }}
+        >
+          Open foundation lab
+        </button>
+        <button
+          type="button"
+          style={secondaryButtonStyle}
+          onClick={() => {
             shell.navigate('projectHome')
           }}
         >

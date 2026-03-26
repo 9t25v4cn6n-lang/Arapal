@@ -1,5 +1,7 @@
 import AppLaunchScreen from '../screens/AppLaunch/AppLaunchScreen'
 import appLaunchLayoutContract from '../screens/AppLaunch/AppLaunchScreen.contract'
+import FoundationLabScreen from '../screens/FoundationLab/FoundationLabScreen'
+import foundationLabLayoutContract from '../screens/FoundationLab/FoundationLabScreen.contract'
 import ProjectHomeScreen from '../screens/ProjectHome/ProjectHomeScreen'
 import projectHomeLayoutContract from '../screens/ProjectHome/ProjectHomeScreen.contract'
 import ProjectsScreen from '../screens/Projects/ProjectsScreen'
@@ -38,6 +40,27 @@ export const routeRegistry = {
         shortLabel: 'AL',
         order: 0,
         routeId: 'appLaunch',
+      },
+    },
+  },
+  foundationLab: {
+    id: 'foundationLab',
+    label: 'Foundation Lab',
+    component: FoundationLabScreen,
+    layoutContract: foundationLabLayoutContract,
+    shell: {
+      showRail: false,
+      header: {
+        modeLabel: 'Foundation Lab',
+        description: 'Internal review surface for V2 generics',
+      },
+      rail: {
+        visible: false,
+        groupId: 'foundationLab',
+        label: 'Foundation Lab',
+        shortLabel: 'FL',
+        order: 5,
+        routeId: 'foundationLab',
       },
     },
   },
