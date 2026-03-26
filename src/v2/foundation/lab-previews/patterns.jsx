@@ -211,17 +211,19 @@ export function ExamsFocusShellPreview() {
 export function PatchingShellPreview() {
   return (
     <div style={{ ...frameStyle(), display: 'grid', gap: spacing[12] }}>
-      <div style={{ minHeight: 220, borderRadius: radius[24], border: '1px solid rgba(254, 215, 170, 0.96)', background: 'rgba(255, 247, 237, 0.86)', padding: spacing[18], display: 'grid', gap: spacing[12] }}>
-        <div style={{ display: 'grid', gap: 4 }}>
-          <p style={{ ...typography.eyebrowLabel, margin: 0, color: '#C2410C' }}>Patching</p>
-          <p style={{ ...typography.bodyText, margin: 0, fontWeight: 700, color: colors.textStrong }}>Controlled correction workflow</p>
+      <div style={{ minHeight: 220, borderRadius: radius[24], border: '1px solid rgba(254, 215, 170, 0.96)', background: 'rgba(255, 247, 237, 0.82)', padding: spacing[18], display: 'grid', gap: spacing[14] }}>
+        <div style={{ display: 'grid', gap: 6 }}>
+          <p style={{ ...typography.eyebrowLabel, margin: 0, color: '#C2410C' }}>Controlled correction workflow</p>
+          <p style={{ ...typography.bodyText, margin: 0, fontWeight: 700, color: colors.textStrong }}>Preview impact before committing a patch.</p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: spacing[12] }}>
-          <div style={{ minHeight: 110, borderRadius: radius[16], border: `1px solid rgba(253, 186, 116, 0.96)`, background: 'rgba(255,255,255,0.92)', padding: spacing[14] }}>
-            <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>Before</p>
+          <div style={{ minHeight: 118, borderRadius: radius[16], border: `1px solid rgba(253, 186, 116, 0.96)`, background: 'rgba(255,255,255,0.94)', padding: spacing[14], display: 'grid', gap: spacing[10] }}>
+            <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>Current output</p>
+            <div style={{ borderRadius: radius[12], border: `1px solid ${colors.lineSoft}`, background: 'rgba(248, 250, 252, 0.92)', minHeight: 56 }} />
           </div>
-          <div style={{ minHeight: 110, borderRadius: radius[16], border: `1px solid rgba(253, 186, 116, 0.96)`, background: 'rgba(255,255,255,0.92)', padding: spacing[14] }}>
-            <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>After</p>
+          <div style={{ minHeight: 118, borderRadius: radius[16], border: `1px solid rgba(253, 186, 116, 0.96)`, background: 'rgba(255,255,255,0.94)', padding: spacing[14], display: 'grid', gap: spacing[10] }}>
+            <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>Patched output</p>
+            <div style={{ borderRadius: radius[12], border: `1px solid ${colors.lineSoft}`, background: 'rgba(255,255,255,0.98)', minHeight: 56 }} />
           </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: spacing[12] }}>

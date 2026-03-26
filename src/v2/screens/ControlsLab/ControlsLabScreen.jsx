@@ -122,22 +122,17 @@ export default function ControlsLabScreen({ route, shell }) {
         <LabGenericCard
           title="Primary CTA"
           status="Active extraction"
-          note="Premium default state, with the sheen and hover simply sharpening it."
+          note="Assess the default resting state here. Hover polish and sheen are reviewed separately on the motion board."
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[12], alignItems: 'flex-start' }}>
-            <PrimaryCTA icon={<Sparkles size={16} strokeWidth={1.9} />}>AI segment text</PrimaryCTA>
-            <PrimaryCTA icon={<Sparkles size={16} strokeWidth={1.9} />} disabled>
-              AI segment text
-            </PrimaryCTA>
-          </div>
+          <PrimaryCTA icon={<Sparkles size={16} strokeWidth={1.9} />}>AI segment text</PrimaryCTA>
         </LabGenericCard>
         <LabGenericCard
           title="Split CTA"
           status="Candidate"
-          note="Must inherit the same premium family as the primary CTA, not become a bespoke screen-local treatment."
-          minHeight={0}
+          note="Judge the composed button family here. The advanced options panel is reviewed separately as its own generic."
+          minHeight={180}
         >
-          <SplitCTAPreview />
+          <SplitCTAPreview showMenu={false} />
         </LabGenericCard>
       </LabSection>
 
@@ -149,7 +144,7 @@ export default function ControlsLabScreen({ route, shell }) {
           title="Utility icon control"
           status="Active extraction"
           note="Hover should reveal the box cleanly without making the icon feel oversized."
-          minHeight={130}
+          minHeight={120}
         >
           <UtilityControlPreview />
         </LabGenericCard>
@@ -157,17 +152,15 @@ export default function ControlsLabScreen({ route, shell }) {
           title="Back pill"
           status="Active extraction"
           note="Existing V2 operational control. This is now being reviewed as a proper shared primitive."
-          minHeight={130}
+          minHeight={120}
         >
-          <div style={{ display: 'flex', alignItems: 'center', minHeight: 60 }}>
-            <BackPill />
-          </div>
+          <BackPill />
         </LabGenericCard>
         <LabGenericCard
           title="Navigation rail row"
           status="Candidate"
           note="Single-row sizing, icon balance, label rhythm, and active indicator."
-          minHeight={130}
+          minHeight={120}
         >
           <NavigationRailRowPreview />
         </LabGenericCard>
@@ -181,11 +174,9 @@ export default function ControlsLabScreen({ route, shell }) {
           title="Step bar"
           status="Active extraction"
           note="Multi-step operational progress pattern carried over from segmentation."
-          minHeight={130}
+          minHeight={120}
         >
-          <div style={{ display: 'flex', alignItems: 'center', minHeight: 60 }}>
-            <StepBar steps={stepItems} currentIndex={0} />
-          </div>
+          <StepBar steps={stepItems} currentIndex={0} />
         </LabGenericCard>
         <LabGenericCard
           title="Navigation rail"
@@ -207,7 +198,7 @@ export default function ControlsLabScreen({ route, shell }) {
           title="Status chip / badge"
           status="Candidate"
           note="Shared semantic chip for state, not a per-screen embellishment."
-          minHeight={130}
+          minHeight={120}
         >
           <StatusChipPreview />
         </LabGenericCard>
@@ -215,7 +206,7 @@ export default function ControlsLabScreen({ route, shell }) {
           title="Action pill"
           status="Candidate"
           note="Small inline actions from the study workspace should feel like one family."
-          minHeight={130}
+          minHeight={120}
         >
           <ActionPillPreview />
         </LabGenericCard>

@@ -81,7 +81,51 @@ export function LabStatusPill({ status }) {
   )
 }
 
-export function LabGenericCard({ title, status, note, children, empty = false, minHeight = 150 }) {
+export function LabDisplayStage({
+  children,
+  empty = false,
+  minHeight = 180,
+  align = 'center',
+  justify = 'center',
+}) {
+  return (
+    <div
+      style={{
+        minHeight,
+        borderRadius: radius[16],
+        border: `1px ${empty ? 'dashed' : 'solid'} ${empty ? 'rgba(203, 213, 225, 0.96)' : colors.lineSoft}`,
+        background: empty ? 'rgba(255, 255, 255, 0.72)' : 'rgba(248, 251, 255, 0.86)',
+        padding: spacing[16],
+        overflow: 'hidden',
+        display: 'flex',
+        alignItems: align,
+        justifyContent: justify,
+      }}
+    >
+      <div
+        style={{
+          width: '100%',
+          display: 'flex',
+          alignItems: align,
+          justifyContent: justify,
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
+
+export function LabGenericCard({
+  title,
+  status,
+  note,
+  children,
+  empty = false,
+  minHeight = 180,
+  displayAlign = 'center',
+  displayJustify = 'center',
+}) {
   return (
     <div
       style={{
@@ -92,8 +136,7 @@ export function LabGenericCard({ title, status, note, children, empty = false, m
         boxShadow: empty ? 'none' : elevation.flat,
         display: 'flex',
         flexDirection: 'column',
-        gap: spacing[14],
-        minHeight,
+        gap: spacing[12],
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: spacing[12], alignItems: 'flex-start' }}>
@@ -102,8 +145,8 @@ export function LabGenericCard({ title, status, note, children, empty = false, m
             style={{
               margin: 0,
               fontFamily: typography.bodyText.fontFamily,
-              fontSize: 18,
-              lineHeight: 1.25,
+              fontSize: 17,
+              lineHeight: 1.3,
               fontWeight: 700,
               color: colors.textStrong,
             }}
@@ -111,14 +154,16 @@ export function LabGenericCard({ title, status, note, children, empty = false, m
             {title}
           </p>
           {note ? (
-            <p style={{ ...typography.bodyText, margin: 0, color: colors.textSoft }}>
+            <p style={{ ...typography.bodyText, margin: 0, fontSize: 15, lineHeight: 1.45, color: colors.textSoft }}>
               {note}
             </p>
           ) : null}
         </div>
         <LabStatusPill status={status} />
       </div>
-      <div style={{ flex: 1, minHeight: empty ? 120 : 0 }}>{children}</div>
+      <LabDisplayStage empty={empty} minHeight={minHeight} align={displayAlign} justify={displayJustify}>
+        {children}
+      </LabDisplayStage>
     </div>
   )
 }
@@ -128,11 +173,6 @@ export function LabPlaceholderCard({ title, status = 'Not yet extracted', note }
     <LabGenericCard title={title} status={status} note={note} empty>
       <div
         style={{
-          width: '100%',
-          minHeight: 120,
-          borderRadius: radius[16],
-          border: '1px dashed rgba(203, 213, 225, 0.96)',
-          background: 'rgba(255, 255, 255, 0.66)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -153,7 +193,7 @@ export function LabSection({ title, description, children, columns = 'repeat(2, 
       <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[8], marginBottom: spacing[16] }}>
         <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>{title}</p>
         {description ? (
-          <p style={{ ...typography.bodyText, margin: 0, color: colors.textBody }}>{description}</p>
+          <p style={{ ...typography.bodyText, margin: 0, maxWidth: '76ch', color: colors.textBody }}>{description}</p>
         ) : null}
       </div>
       <div
@@ -269,17 +309,17 @@ export function LabScaffold({
         <h1
           style={{
             margin: `0 0 ${spacing[12]}`,
-            paddingTop: spacing[8],
-            fontFamily: typography.displayTitle.fontFamily,
-            fontSize: 'clamp(34px, 3.8vw, 56px)',
-            lineHeight: 1.02,
+            fontFamily: typography.bodyText.fontFamily,
+            fontSize: 'clamp(26px, 2.3vw, 34px)',
+            lineHeight: 1.15,
+            fontWeight: 700,
             color: colors.textStrong,
-            letterSpacing: '-0.04em',
+            letterSpacing: '-0.02em',
           }}
         >
           {title}
         </h1>
-        <p style={{ ...typography.supportSubtext, margin: 0, maxWidth: '58ch', color: colors.textBody }}>{intro}</p>
+        <p style={{ ...typography.bodyText, margin: 0, maxWidth: '72ch', color: colors.textBody }}>{intro}</p>
       </div>
     ),
     Layer3_Lab_Content: content,

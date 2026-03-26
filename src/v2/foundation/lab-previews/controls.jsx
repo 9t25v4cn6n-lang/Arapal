@@ -200,8 +200,8 @@ export function ActionPillPreview() {
   )
 }
 
-export function SplitCTAPreview() {
-  const [isOpen, setIsOpen] = useState(true)
+export function SplitCTAPreview({ showMenu = false }) {
+  const [isOpen, setIsOpen] = useState(showMenu)
   const [method, setMethod] = useState('ai')
   const [style, setStyle] = useState('meaning')
 
@@ -230,8 +230,8 @@ export function SplitCTAPreview() {
   )
 
   return (
-    <div style={{ position: 'relative', display: 'grid', gap: spacing[12], alignItems: 'start' }}>
-      <div style={{ display: 'inline-flex', alignItems: 'stretch', alignSelf: 'flex-start', boxShadow: '0 18px 34px rgba(37, 99, 235, 0.14)' }}>
+    <div style={{ position: 'relative', display: 'grid', gap: spacing[12], justifyItems: 'center', alignItems: 'start' }}>
+      <div style={{ display: 'inline-flex', alignItems: 'stretch', boxShadow: '0 18px 34px rgba(37, 99, 235, 0.14)' }}>
         <PrimaryCTA
           icon={<Sparkles size={16} strokeWidth={1.9} />}
           minWidth={280}
@@ -242,7 +242,11 @@ export function SplitCTAPreview() {
         <button
           type="button"
           aria-expanded={isOpen}
-          onClick={() => setIsOpen((open) => !open)}
+          onClick={() => {
+            if (showMenu) {
+              setIsOpen((open) => !open)
+            }
+          }}
           style={{
             minWidth: 72,
             border: 'none',
@@ -265,7 +269,7 @@ export function SplitCTAPreview() {
         </button>
       </div>
 
-      {isOpen ? (
+      {showMenu && isOpen ? (
         <div
           style={{
             width: 340,
