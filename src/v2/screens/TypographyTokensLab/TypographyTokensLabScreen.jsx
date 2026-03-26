@@ -1,6 +1,10 @@
 import layoutContract from './TypographyTokensLabScreen.contract'
 import BodyBackdropItems from '../../foundation/layout/BodyBackdropItems'
-import { LabGenericCard, LabPlaceholderCard, LabScaffold, LabSection } from '../../foundation/primitives/LabBoard'
+import PrimaryCTA from '../../foundation/primitives/PrimaryCTA'
+import {
+  ProjectHomeDestinationCardPreview,
+} from '../../foundation/lab-previews/patterns'
+import { LabGenericCard, LabScaffold, LabSection } from '../../foundation/primitives/LabBoard'
 import { colors, elevation, radius, spacing, typography } from '../../foundation/tokens'
 
 function Swatch({ label, value }) {
@@ -91,6 +95,58 @@ function EditorWatermarkPreview() {
   )
 }
 
+function PanelSurfaceLanguagePreview() {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: spacing[12] }}>
+      {[
+        { label: 'Rest', shadow: elevation.flat, bg: '#fff' },
+        { label: 'Raised', shadow: elevation.raised, bg: 'rgba(255,255,255,0.98)' },
+        { label: 'Floating', shadow: elevation.floating, bg: 'rgba(255,255,255,0.98)' },
+      ].map((panel) => (
+        <div key={panel.label} style={{ minHeight: 116, borderRadius: radius[24], border: `1px solid ${colors.lineSoft}`, background: panel.bg, boxShadow: panel.shadow, padding: spacing[16], display: 'grid', alignContent: 'space-between' }}>
+          <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>{panel.label}</p>
+          <p style={{ ...typography.bodyText, margin: 0, fontWeight: 700, color: colors.textStrong }}>Panel family</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function SupportToneSystemPreview() {
+  const tones = [
+    { label: 'Lexicography', bg: 'rgba(243, 232, 255, 0.92)', border: 'rgba(216, 180, 254, 0.96)', color: '#7C3AED' },
+    { label: 'Discussion', bg: 'rgba(224, 231, 255, 0.92)', border: 'rgba(165, 180, 252, 0.96)', color: '#4F46E5' },
+    { label: 'Grade', bg: 'rgba(220, 252, 231, 0.92)', border: 'rgba(134, 239, 172, 0.96)', color: '#15803D' },
+  ]
+
+  return (
+    <div style={{ display: 'grid', gap: spacing[10] }}>
+      {tones.map((tone) => (
+        <div key={tone.label} style={{ minHeight: 42, borderRadius: radius[16], border: `1px solid ${tone.border}`, background: tone.bg, display: 'flex', alignItems: 'center', padding: `0 ${spacing[14]}`, color: tone.color, fontWeight: 700 }}>
+          {tone.label}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function EditorChromeOpacityPreview() {
+  return (
+    <div style={{ display: 'grid', gap: spacing[10] }}>
+      {[
+        { label: 'Topbar chrome', opacity: 0.34 },
+        { label: 'Footer hint', opacity: 0.28 },
+        { label: 'Watermark', opacity: 0.085 },
+      ].map((row) => (
+        <div key={row.label} style={{ minHeight: 42, borderRadius: radius[12], border: `1px solid ${colors.lineSoft}`, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: `0 ${spacing[14]}` }}>
+          <span style={{ ...typography.bodyText, fontSize: 14, color: colors.textBody }}>{row.label}</span>
+          <span style={{ ...typography.monoMeta, color: colors.textSoft }}>opacity {row.opacity}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export default function TypographyTokensLabScreen({ route, shell }) {
   const content = (
     <>
@@ -98,7 +154,7 @@ export default function TypographyTokensLabScreen({ route, shell }) {
         title="Type roles"
         description="These should feel like one restrained system, not a bag of screen-local decisions."
       >
-        <LabGenericCard title="Display / page / section" status="Locked" note="Current V2 type roles are locked conceptually.">
+        <LabGenericCard title="Typography role system" status="Locked" note="Current V2 type roles are locked conceptually.">
           <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[12] }}>
             <h2 style={{ ...typography.displayTitle, margin: 0, fontSize: '56px', color: colors.textStrong }}>Display title</h2>
             <h3 style={{ ...typography.sectionTitle, margin: 0, fontSize: '38px', color: colors.textStrong }}>Section title</h3>
@@ -120,7 +176,7 @@ export default function TypographyTokensLabScreen({ route, shell }) {
         description="These define the visual language. We judge them as families rather than on individual screens."
         columns="repeat(3, minmax(0, 1fr))"
       >
-        <LabGenericCard title="Color roles" status="Locked" note="Blue/slate semantic palette is the current V2 standard.">
+        <LabGenericCard title="Blue/slate semantic palette" status="Locked" note="Blue/slate semantic palette is the current V2 standard.">
           <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[10] }}>
             <Swatch label="accentBase" value={colors.accentBase} />
             <Swatch label="accentStrong" value={colors.accentStrong} />
@@ -156,7 +212,7 @@ export default function TypographyTokensLabScreen({ route, shell }) {
           </div>
         </LabGenericCard>
         <LabGenericCard
-          title="Stage backdrop"
+          title="Stage backdrop / watermark treatment"
           status="Locked"
           note="Shared atmosphere and watermark treatment from the shell."
           minHeight={0}
@@ -177,7 +233,23 @@ export default function TypographyTokensLabScreen({ route, shell }) {
         >
           <EditorWatermarkPreview />
         </LabGenericCard>
-        <LabPlaceholderCard title="Panel border / shadow language" note="Needs stronger central implementation rather than local styling." />
+        <LabGenericCard title="Panel border / radius / shadow language" status="Candidate" note="Needs stronger central implementation rather than local styling." minHeight={0}>
+          <PanelSurfaceLanguagePreview />
+        </LabGenericCard>
+        <LabGenericCard title="Primary CTA sheen / highlight language" status="Candidate" note="This should read as system polish, not a local gimmick." minHeight={0}>
+          <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+            <PrimaryCTA>AI segment text</PrimaryCTA>
+          </div>
+        </LabGenericCard>
+        <LabGenericCard title="Support panel tone system" status="Candidate" note="Study support tones should be intentional and limited." minHeight={0}>
+          <SupportToneSystemPreview />
+        </LabGenericCard>
+        <LabGenericCard title="Editor chrome opacity rules" status="Candidate" note="Recent drift showed how easy this family is to over-ink." minHeight={0}>
+          <EditorChromeOpacityPreview />
+        </LabGenericCard>
+        <LabGenericCard title="Home hero / door card treatment" status="Candidate" note="Project Home’s destination surfaces should be judged here too." minHeight={0}>
+          <ProjectHomeDestinationCardPreview />
+        </LabGenericCard>
       </LabSection>
     </>
   )

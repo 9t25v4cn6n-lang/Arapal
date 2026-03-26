@@ -2,6 +2,22 @@ import { ArrowLeft, Pin } from 'lucide-react'
 import layoutContract from './MotionInteractionLabScreen.contract'
 import IconActionButton from '../../foundation/primitives/IconActionButton'
 import PrimaryCTA from '../../foundation/primitives/PrimaryCTA'
+import {
+  EditorShortcutHintPreview,
+  EscapeDismissPreview,
+  FloatDockPreview,
+  FloatingDragResizePreview,
+  FocusedExpandMotionPreview,
+  HoverLiftPreview,
+  HoverPreviewPinDemo,
+  MenuMotionPreview,
+  OutsideClickDismissPreview,
+  ScreenIntroPreview,
+  SegmentTreeExpandPreview,
+  SplitCTAInteractionPreview,
+  SupportPanelCollapsePreview,
+  SupportPreviewRevealMotion,
+} from '../../foundation/lab-previews/interactions'
 import { LabGenericCard, LabPlaceholderCard, LabScaffold, LabSection } from '../../foundation/primitives/LabBoard'
 import { colors, radius, spacing, typography } from '../../foundation/tokens'
 
@@ -37,12 +53,30 @@ export default function MotionInteractionLabScreen({ route, shell }) {
             />
           </div>
         </LabGenericCard>
-        <LabPlaceholderCard title="Split CTA open/select/close" note="Needs a real interactive demo board once SplitCTA is extracted." />
-        <LabPlaceholderCard title="Outside-click dismissal" note="Should be standard for overlays unless pinned." />
-        <LabPlaceholderCard title="Escape-to-close overlays" note="Same rule family as outside-click dismissal." />
-        <LabPlaceholderCard title="Hover preview + pin to keep open" note="Study-shell support rail behavior with a broader reuse question." />
-        <LabPlaceholderCard title="Float / dock support panel" note="Detaching a support surface from its docked state without losing context." />
-        <LabPlaceholderCard title="Floating panel drag / resize" note="Needs a deliberate system call on when this is allowed and how it should feel." />
+        <LabGenericCard title="Split CTA open/select/close" status="Candidate" note="Open, inspect, select, and collapse must behave like one composed control." minHeight={0}>
+          <SplitCTAInteractionPreview />
+        </LabGenericCard>
+        <LabGenericCard title="Outside-click dismissal" status="Locked" note="Should be standard for overlays unless pinned." minHeight={0}>
+          <OutsideClickDismissPreview />
+        </LabGenericCard>
+        <LabGenericCard title="Escape-to-close overlays" status="Locked" note="Same rule family as outside-click dismissal." minHeight={0}>
+          <EscapeDismissPreview />
+        </LabGenericCard>
+        <LabGenericCard title="Segment tree expand/collapse" status="Candidate" note="Hierarchy reveal should feel calm, not twitchy." minHeight={0}>
+          <SegmentTreeExpandPreview />
+        </LabGenericCard>
+        <LabGenericCard title="Support-panel collapse/expand" status="Candidate" note="Collapse before compressing the whole workspace." minHeight={0}>
+          <SupportPanelCollapsePreview />
+        </LabGenericCard>
+        <LabGenericCard title="Hover preview + pin to keep open" status="Candidate" note="Study-shell support rail behavior with a broader reuse question." minHeight={0}>
+          <HoverPreviewPinDemo />
+        </LabGenericCard>
+        <LabGenericCard title="Float / dock support panel" status="Candidate" note="Detaching a support surface from its docked state without losing context." minHeight={0}>
+          <FloatDockPreview />
+        </LabGenericCard>
+        <LabGenericCard title="Floating panel drag / resize" status="Candidate" note="Existing in the study shell; still needs product-level rules." minHeight={0}>
+          <FloatingDragResizePreview />
+        </LabGenericCard>
       </LabSection>
 
       <LabSection
@@ -52,10 +86,27 @@ export default function MotionInteractionLabScreen({ route, shell }) {
         <LabGenericCard title="CTA sheen" status="Candidate" note="Hover the button to assess the sheen sweep and lift feel.">
           <PrimaryCTA>AI segment text</PrimaryCTA>
         </LabGenericCard>
-        <LabPlaceholderCard title="Menu / panel open motion" note="Needs reusable implementation helpers, not screen-local animation." />
-        <LabPlaceholderCard title="Screen intro / transition motion" note="Documented, but not yet proven as a reusable motion family." />
-        <LabPlaceholderCard title="Focused expand with dim backdrop" note="Used when a support surface expands into a central, temporary focus state." />
-        <LabPlaceholderCard title="Support preview reveal motion" note="Hover reveal from the collapsed support rail should feel informative, not jumpy." />
+        <LabGenericCard title="Hover/focus micro-motion" status="Locked" note="Mini controls and panels should sharpen, not jump." minHeight={0}>
+          <HoverLiftPreview />
+        </LabGenericCard>
+        <LabGenericCard title="Menu / panel open motion" status="Candidate" note="Needs reusable implementation helpers, not screen-local animation." minHeight={0}>
+          <MenuMotionPreview />
+        </LabGenericCard>
+        <LabGenericCard title="Screen intro / transition motion" status="Candidate" note="Documented, but not yet proven as a reusable motion family." minHeight={0}>
+          <ScreenIntroPreview />
+        </LabGenericCard>
+        <LabGenericCard title="Focused expand with dim backdrop" status="Candidate" note="Used when a support surface expands into a central, temporary focus state." minHeight={0}>
+          <FocusedExpandMotionPreview />
+        </LabGenericCard>
+        <LabGenericCard title="Support preview reveal motion" status="Candidate" note="Hover reveal from the collapsed support rail should feel informative, not jumpy." minHeight={0}>
+          <SupportPreviewRevealMotion />
+        </LabGenericCard>
+        <LabGenericCard title="Editor shortcut hint behavior" status="Candidate" note="Footer hints should stay helpful and quiet, never noisy chrome." minHeight={0}>
+          <EditorShortcutHintPreview />
+        </LabGenericCard>
+        <LabGenericCard title="Hover lift for primary surfaces" status="Candidate" note="Lift should follow the elevation scale, not invent a new one." minHeight={0}>
+          <HoverLiftPreview />
+        </LabGenericCard>
         <LabPlaceholderCard title="Reduced motion fallback" note="Must be defined before we call the motion system finished." />
       </LabSection>
     </>

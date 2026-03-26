@@ -5,8 +5,15 @@ import PrimaryCTA from '../../foundation/primitives/PrimaryCTA'
 import IconActionButton from '../../foundation/primitives/IconActionButton'
 import StepBar from '../../foundation/primitives/StepBar'
 import { NavigationRailBrand, NavigationRailItems, NavigationRailPinControl } from '../../foundation/primitives/NavigationRail'
+import {
+  ActionPillPreview,
+  NavigationRailRowPreview,
+  PreferenceToggleRowPreview,
+  SplitCTAPreview,
+  StatusChipPreview,
+} from '../../foundation/lab-previews/controls'
 import { shellSizing } from '../../foundation/layout/shellSizing'
-import { LabGenericCard, LabPlaceholderCard, LabScaffold, LabSection } from '../../foundation/primitives/LabBoard'
+import { LabGenericCard, LabScaffold, LabSection } from '../../foundation/primitives/LabBoard'
 import { colors, radius, spacing, typography } from '../../foundation/tokens'
 
 const stepItems = [
@@ -124,10 +131,14 @@ export default function ControlsLabScreen({ route, shell }) {
             </PrimaryCTA>
           </div>
         </LabGenericCard>
-        <LabPlaceholderCard
+        <LabGenericCard
           title="Split CTA"
+          status="Candidate"
           note="Must inherit the same premium family as the primary CTA, not become a bespoke screen-local treatment."
-        />
+          minHeight={0}
+        >
+          <SplitCTAPreview />
+        </LabGenericCard>
       </LabSection>
 
       <LabSection
@@ -151,6 +162,14 @@ export default function ControlsLabScreen({ route, shell }) {
           <div style={{ display: 'flex', alignItems: 'center', minHeight: 60 }}>
             <BackPill />
           </div>
+        </LabGenericCard>
+        <LabGenericCard
+          title="Navigation rail row"
+          status="Candidate"
+          note="Single-row sizing, icon balance, label rhythm, and active indicator."
+          minHeight={130}
+        >
+          <NavigationRailRowPreview />
         </LabGenericCard>
       </LabSection>
 
@@ -176,8 +195,30 @@ export default function ControlsLabScreen({ route, shell }) {
         >
           <NavigationRailPreview />
         </LabGenericCard>
-        <LabPlaceholderCard title="Preference toggle row" note="Used in advanced menus and settings-style overlays." />
-        <LabPlaceholderCard title="Status chip / badge" note="Shared semantic chip for state, not a per-screen embellishment." />
+        <LabGenericCard
+          title="Preference toggle row"
+          status="Candidate"
+          note="Used in advanced menus and settings-style overlays."
+          minHeight={0}
+        >
+          <PreferenceToggleRowPreview />
+        </LabGenericCard>
+        <LabGenericCard
+          title="Status chip / badge"
+          status="Candidate"
+          note="Shared semantic chip for state, not a per-screen embellishment."
+          minHeight={130}
+        >
+          <StatusChipPreview />
+        </LabGenericCard>
+        <LabGenericCard
+          title="Action pill"
+          status="Candidate"
+          note="Small inline actions from the study workspace should feel like one family."
+          minHeight={130}
+        >
+          <ActionPillPreview />
+        </LabGenericCard>
       </LabSection>
     </>
   )
