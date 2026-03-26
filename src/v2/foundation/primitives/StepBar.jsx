@@ -37,17 +37,21 @@ export default function StepBar({ steps = [], currentIndex = 0 }) {
             >
               {index + 1}
             </div>
-            {state === 'current' ? (
-              <span
-                style={{
-                  ...typography.eyebrowLabel,
-                  color: colors.textSoft,
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {item.label}
-              </span>
-            ) : null}
+            <span
+              style={{
+                ...typography.eyebrowLabel,
+                color:
+                  state === 'current'
+                    ? colors.textSoft
+                    : state === 'complete'
+                      ? colors.textBody
+                      : colors.textFaint,
+                whiteSpace: 'nowrap',
+                opacity: state === 'pending' ? 0.82 : 1,
+              }}
+            >
+              {item.label}
+            </span>
             {index < steps.length - 1 ? (
               <span
                 aria-hidden="true"

@@ -326,7 +326,7 @@ export function EditorShortcutHintPreview() {
 }
 
 export function SplitCTAInteractionPreview() {
-  return <SplitCTAPreview />
+  return <SplitCTAPreview showMenu />
 }
 
 export function HoverLiftPreview() {

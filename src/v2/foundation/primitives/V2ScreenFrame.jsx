@@ -50,7 +50,7 @@ export default function V2ScreenFrame({ contract, route, shell, screenSlots = {}
     Layer1_Header_StartLane: shell.showRail ? null : <HeaderBrand />,
     Layer1_Header_CenterLane: <HeaderCenter route={route} />,
     Layer1_Header_EndLane: <HeaderMeta route={route} />,
-    Layer1_Navigation_BrandAnchor: <NavigationRailBrand />,
+    Layer1_Navigation_BrandAnchor: <NavigationRailBrand isExpanded={shell.isNavExpanded} />,
     Layer1_Navigation_UtilityAnchor: <NavigationRailPinControl shell={shell} />,
     Layer1_Navigation_PrimaryList: <NavigationRailItems shell={shell} />,
   }

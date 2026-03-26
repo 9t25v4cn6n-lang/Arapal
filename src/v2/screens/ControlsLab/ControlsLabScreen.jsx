@@ -1,16 +1,18 @@
-import { ArrowLeft, Pin, Sparkles } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
 import layoutContract from './ControlsLabScreen.contract'
 import BackPill from '../../foundation/primitives/BackPill'
 import PrimaryCTA from '../../foundation/primitives/PrimaryCTA'
-import IconActionButton from '../../foundation/primitives/IconActionButton'
 import StepBar from '../../foundation/primitives/StepBar'
 import { NavigationRailBrand, NavigationRailItems, NavigationRailPinControl } from '../../foundation/primitives/NavigationRail'
 import {
   ActionPillPreview,
+  EditorToolbarControlsPreview,
+  FontSizeControlsPreview,
   NavigationRailRowPreview,
   PreferenceToggleRowPreview,
   SplitCTAPreview,
   StatusChipPreview,
+  UtilityIconFamilyPreview,
 } from '../../foundation/lab-previews/controls'
 import { shellSizing } from '../../foundation/layout/shellSizing'
 import { LabGenericCard, LabScaffold, LabSection } from '../../foundation/primitives/LabBoard'
@@ -21,45 +23,6 @@ const stepItems = [
   { id: 'segment', label: 'Segment' },
   { id: 'review', label: 'Review' },
 ]
-
-function UtilityControlPreview() {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        gap: spacing[12],
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        padding: spacing[12],
-        borderRadius: radius[16],
-        background: 'rgba(239, 246, 255, 0.68)',
-        border: `1px solid ${colors.lineSoft}`,
-      }}
-    >
-      <IconActionButton
-        size="utility-sm"
-        label="Back"
-        icon={<ArrowLeft size={16} strokeWidth={1.9} />}
-      />
-      <IconActionButton
-        size="utility-sm"
-        label="Pin"
-        active
-        icon={<Pin size={16} strokeWidth={1.9} />}
-      />
-      <IconActionButton
-        size="utility-sm"
-        label="Spark"
-        icon={<Sparkles size={16} strokeWidth={1.9} />}
-        style={{
-          background: 'rgba(239, 246, 255, 0.96)',
-          borderColor: 'rgba(191, 219, 254, 0.96)',
-          color: colors.accentStrong,
-        }}
-      />
-    </div>
-  )
-}
 
 function NavigationRailPreview() {
   const shell = {
@@ -102,7 +65,7 @@ function NavigationRailPreview() {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: spacing[12] }}>
-        <NavigationRailBrand />
+        <NavigationRailBrand isExpanded />
         <NavigationRailPinControl shell={shell} />
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[8] }}>
@@ -141,12 +104,12 @@ export default function ControlsLabScreen({ route, shell }) {
         description="These mini controls should all belong to one family: back, pin, expand, collapse, and close."
       >
         <LabGenericCard
-          title="Utility icon control"
+          title="Utility icon family"
           status="Active extraction"
-          note="Hover should reveal the box cleanly without making the icon feel oversized."
-          minHeight={120}
+          note="These should all come from one mini-control family: full-screen, sidebar, pin, float, move, and copy."
+          minHeight={190}
         >
-          <UtilityControlPreview />
+          <UtilityIconFamilyPreview />
         </LabGenericCard>
         <LabGenericCard
           title="Back pill"
@@ -159,10 +122,26 @@ export default function ControlsLabScreen({ route, shell }) {
         <LabGenericCard
           title="Navigation rail row"
           status="Candidate"
-          note="Single-row sizing, icon balance, label rhythm, and active indicator."
+          note="Single-row sizing, icon meaning, label rhythm, and active indicator placement."
           minHeight={120}
         >
           <NavigationRailRowPreview />
+        </LabGenericCard>
+        <LabGenericCard
+          title="Font size controls"
+          status="Candidate"
+          note="Small reading-size controls should feel related to the pill/action family, not like unrelated browser buttons."
+          minHeight={120}
+        >
+          <FontSizeControlsPreview />
+        </LabGenericCard>
+        <LabGenericCard
+          title="Editor micro-toolbar"
+          status="Candidate"
+          note="Bold, italic, and alignment controls should use the same mini-control language as the rest of the app."
+          minHeight={140}
+        >
+          <EditorToolbarControlsPreview />
         </LabGenericCard>
       </LabSection>
 
@@ -181,7 +160,7 @@ export default function ControlsLabScreen({ route, shell }) {
         <LabGenericCard
           title="Navigation rail"
           status="Active extraction"
-          note="The shell already exists. This board is here to judge the row sizing, active state, and control balance."
+          note="Judge the brand mark, row rhythm, active indicator, and pin-control balance."
           minHeight={0}
         >
           <NavigationRailPreview />
@@ -205,7 +184,7 @@ export default function ControlsLabScreen({ route, shell }) {
         <LabGenericCard
           title="Action pill"
           status="Candidate"
-          note="Small inline actions from the study workspace should feel like one family."
+          note="Review a few directions here. One option should inherit the same filled premium behavior as the Back pill hover."
           minHeight={120}
         >
           <ActionPillPreview />

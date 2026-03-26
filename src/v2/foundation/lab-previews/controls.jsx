@@ -1,5 +1,24 @@
-import { Check, ChevronUp, ListFilter, Pin, Sparkles } from 'lucide-react'
+import {
+  AlignCenter,
+  AlignLeft,
+  Bold,
+  Check,
+  ChevronUp,
+  Copy,
+  Italic,
+  Maximize2,
+  Minimize2,
+  Move,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Pin,
+  PinOff,
+  Sparkles,
+  SplitSquareVertical,
+  SquareArrowOutUpRight,
+} from 'lucide-react'
 import { useMemo, useState } from 'react'
+import IconActionButton from '../primitives/IconActionButton'
 import PrimaryCTA from '../primitives/PrimaryCTA'
 import { colors, motion, radius, spacing, typography } from '../tokens'
 
@@ -47,13 +66,13 @@ export function NavigationRailRowPreview() {
             position: 'absolute',
             top: 4,
             bottom: 4,
-            right: -1,
+            left: -1,
             width: 4,
-            borderRadius: '999px 0 0 999px',
+            borderRadius: '0 999px 999px 0',
             background: colors.accentBase,
           }}
         />
-        <ListFilter size={18} strokeWidth={1.8} />
+        <SplitSquareVertical size={18} strokeWidth={1.8} />
         <span style={{ ...typography.bodyText, fontSize: 13, fontWeight: 600, lineHeight: 1.2 }}>Source + Segmentation</span>
       </button>
     </div>
@@ -163,39 +182,192 @@ export function StatusChipPreview() {
 }
 
 export function ActionPillPreview() {
-  const actions = [
-    { label: 'Pin', active: true },
-    { label: 'Copy', active: false },
-    { label: 'Discuss', active: false },
+  const directions = [
+    {
+      label: 'Quiet outline',
+      background: 'rgba(255, 255, 255, 0.96)',
+      border: colors.lineSoft,
+      color: colors.textSoft,
+      shadow: 'none',
+    },
+    {
+      label: 'Accent fill',
+      background:
+        'linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 55%), linear-gradient(90deg, #2D6BF0 0%, #2563EB 42%, #1D4ED8 100%)',
+      border: 'rgba(37, 99, 235, 0.18)',
+      color: '#ffffff',
+      shadow: 'inset 0 1px 0 rgba(255,255,255,0.18), 0 14px 28px rgba(37,99,235,0.18)',
+    },
+    {
+      label: 'Success soft',
+      background: 'rgba(220, 252, 231, 0.84)',
+      border: 'rgba(134, 239, 172, 0.96)',
+      color: '#15803D',
+      shadow: 'none',
+    },
   ]
 
   return (
-    <div style={{ ...previewFrameStyle(), display: 'flex', gap: spacing[10], flexWrap: 'wrap' }}>
-      {actions.map((action) => (
+    <div style={{ ...previewFrameStyle(), width: '100%', display: 'grid', gap: spacing[12] }}>
+      {directions.map((direction) => (
+        <div key={direction.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: spacing[12] }}>
+          <span style={{ ...typography.bodyText, fontSize: 14, fontWeight: 600, color: colors.textBody }}>{direction.label}</span>
+          <button
+            type="button"
+            style={{
+              minHeight: 34,
+              padding: '0 14px',
+              borderRadius: radius.pill,
+              border: `1px solid ${direction.border}`,
+              background: direction.background,
+              color: direction.color,
+              boxShadow: direction.shadow,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontFamily: typography.bodyText.fontFamily,
+              fontSize: 12,
+              fontWeight: 600,
+              lineHeight: 1,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+            }}
+          >
+            Copy
+          </button>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export function UtilityIconFamilyPreview() {
+  const groups = [
+    {
+      label: 'Panel state',
+      items: [
+        { key: 'maximize', icon: <Maximize2 strokeWidth={1.8} />, active: false },
+        { key: 'minimize', icon: <Minimize2 strokeWidth={1.8} />, active: false },
+        { key: 'pin', icon: <Pin strokeWidth={1.8} />, active: false },
+        { key: 'unpin', icon: <PinOff strokeWidth={1.8} />, active: true },
+      ],
+    },
+    {
+      label: 'Sidebar state',
+      items: [
+        { key: 'open-sidebar', icon: <PanelLeftOpen strokeWidth={1.8} />, active: false },
+        { key: 'close-sidebar', icon: <PanelLeftClose strokeWidth={1.8} />, active: false },
+        { key: 'float', icon: <SquareArrowOutUpRight strokeWidth={1.8} />, active: false },
+        { key: 'move', icon: <Move strokeWidth={1.8} />, active: false },
+      ],
+    },
+    {
+      label: 'Utility actions',
+      items: [
+        { key: 'copy', icon: <Copy strokeWidth={1.8} />, active: false },
+      ],
+    },
+  ]
+
+  return (
+    <div style={{ ...previewFrameStyle(), width: '100%', display: 'grid', gap: spacing[12] }}>
+      {groups.map((group) => (
+        <div key={group.label} style={{ display: 'grid', gap: spacing[8] }}>
+          <span style={{ ...typography.eyebrowLabel, color: colors.textSoft }}>{group.label}</span>
+          <div style={{ display: 'flex', gap: spacing[8], flexWrap: 'wrap' }}>
+            {group.items.map((item) => (
+              <IconActionButton key={item.key} size="utility-sm" label={item.key} active={item.active} icon={item.icon} />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export function FontSizeControlsPreview() {
+  const variants = ['A-', 'A+']
+
+  return (
+    <div style={{ ...previewFrameStyle(), display: 'flex', alignItems: 'center', justifyContent: 'center', gap: spacing[10] }}>
+      {variants.map((variant) => (
         <button
-          key={action.label}
+          key={variant}
           type="button"
           style={{
             minHeight: 34,
-            padding: '0 14px',
+            minWidth: 40,
+            padding: '0 12px',
             borderRadius: radius.pill,
-            border: `1px solid ${action.active ? 'rgba(191, 219, 254, 0.96)' : colors.lineSoft}`,
-            background: action.active ? 'rgba(239, 246, 255, 0.94)' : 'rgba(255, 255, 255, 0.96)',
-            color: action.active ? colors.accentStrong : colors.textSoft,
+            border: `1px solid ${colors.lineSoft}`,
+            background: 'rgba(255, 255, 255, 0.96)',
+            color: colors.textSoft,
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontFamily: typography.bodyText.fontFamily,
             fontSize: 12,
-            fontWeight: 600,
+            fontWeight: 700,
             lineHeight: 1,
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
           }}
         >
-          {action.label}
+          {variant}
         </button>
       ))}
+    </div>
+  )
+}
+
+export function EditorToolbarControlsPreview() {
+  return (
+    <div style={{ ...previewFrameStyle(), width: '100%', maxWidth: 520, padding: 0, overflow: 'hidden' }}>
+      <div
+        style={{
+          minHeight: 60,
+          borderBottom: `1px solid ${colors.lineSoft}`,
+          background: 'rgba(255, 255, 255, 0.96)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: spacing[16],
+          padding: `0 ${spacing[18]}`,
+        }}
+      >
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[12] }}>
+          <span
+            style={{
+              minWidth: 26,
+              minHeight: 26,
+              borderRadius: 8,
+              background: 'rgba(239, 246, 255, 0.96)',
+              color: colors.accentStrong,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontFamily: typography.bodyText.fontFamily,
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+            }}
+          >
+            EN
+          </span>
+          <span style={{ ...typography.bodyText, fontSize: 13, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: colors.textBody }}>
+            Translation
+          </span>
+        </div>
+
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[6] }}>
+          <IconActionButton size="utility-sm" label="Bold" icon={<Bold strokeWidth={1.8} />} />
+          <IconActionButton size="utility-sm" label="Italic" icon={<Italic strokeWidth={1.8} />} />
+          <div style={{ width: 1, height: 16, background: colors.lineSoft, margin: '0 2px' }} />
+          <IconActionButton size="utility-sm" label="Align left" active icon={<AlignLeft strokeWidth={1.8} />} />
+          <IconActionButton size="utility-sm" label="Align center" icon={<AlignCenter strokeWidth={1.8} />} />
+        </div>
+      </div>
     </div>
   )
 }
@@ -211,7 +383,7 @@ export function SplitCTAPreview({ showMenu = false }) {
         title: 'Method',
         items: [
           { id: 'ai', label: 'AI proposal', meta: 'Generate a first pass for later review', leading: <Sparkles size={15} strokeWidth={1.9} /> },
-          { id: 'manual', label: 'Manual start', meta: 'Begin from preserved source without a proposal', leading: <ListFilter size={15} strokeWidth={1.9} /> },
+          { id: 'manual', label: 'Manual start', meta: 'Begin from preserved source without a proposal', leading: <SplitSquareVertical size={15} strokeWidth={1.9} /> },
         ],
         selected: method,
         onSelect: setMethod,
@@ -253,7 +425,8 @@ export function SplitCTAPreview({ showMenu = false }) {
             borderLeft: '1px solid rgba(255,255,255,0.16)',
             borderTopRightRadius: radius.pill,
             borderBottomRightRadius: radius.pill,
-            background: 'linear-gradient(180deg, #2D6BF0 0%, #1D4ED8 100%)',
+            background:
+              'linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 55%), linear-gradient(90deg, #2D6BF0 0%, #2563EB 42%, #1D4ED8 100%)',
             color: '#ffffff',
             display: 'inline-flex',
             alignItems: 'center',
