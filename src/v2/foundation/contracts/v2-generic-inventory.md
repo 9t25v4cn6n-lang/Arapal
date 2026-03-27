@@ -177,7 +177,7 @@ This is the review map. A generic is not considered system-ready until it has be
 ## Primitive Generics
 | Item | Product source | Visual source | Final design confidence | Repeatability confidence | Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| Navigation rail | Current app | Current app study shell | 4 | 5 | Active extraction | Shared shell primitive; avoid per-screen variants. |
+| Navigation rail | Current app | Current app study shell | 4 | 5 | Locked | Shared shell primitive; expanded canonical state, hover-expand, and pin/unpin behavior are now approved. |
 | Navigation rail row | Current app | Current app study shell | 4 | 5 | Locked | Includes active state, hover, icon + label logic. |
 | Screen mode icon set | Current app | Current app study shell | 4 | 5 | Locked | Canonical icon set for Home, Projects, Study, Segmentation, and Exams. The board framing around them is not part of the generic. |
 | Utility icon control (`pin`, `back`, `expand`, `collapse`, `close`) | Current app | Current app study shell | 5 | 5 | Locked | Small utility control family; shared hover box pattern. |

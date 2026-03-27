@@ -215,7 +215,7 @@ export default function ControlsLabScreen({ route, shell }) {
         </LabGenericCard>
         <LabGenericCard
           title="Navigation rail"
-          status="Active extraction"
+          status="Locked"
           note="Judge the expanded rail as the canonical state. This preview uses the standard hover-expand and pin/unpin behavior instead of separate static states."
           minHeight={280}
           gridColumn="1 / -1"
