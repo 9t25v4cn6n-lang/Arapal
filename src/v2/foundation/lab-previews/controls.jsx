@@ -371,26 +371,27 @@ export function FontSizeControlsPreview() {
 
 export function EditorToolbarControlsPreview() {
   return (
-    <div style={{ ...previewFrameStyle(), width: '100%', maxWidth: 540, padding: spacing[10], overflow: 'hidden' }}>
+    <div style={{ width: '100%', maxWidth: 540 }}>
       <div
         style={{
-          minHeight: 64,
+          minHeight: 62,
           border: `1px solid ${colors.lineSoft}`,
-          borderRadius: radius[16],
+          borderRadius: radius[18],
           background: 'rgba(255, 255, 255, 0.96)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: spacing[16],
-          padding: `0 ${spacing[18]}`,
+          padding: `0 ${spacing[16]}`,
+          boxShadow: '0 1px 0 rgba(255,255,255,0.72) inset',
         }}
       >
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[12], minWidth: 0, flex: 1 }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[12], minWidth: 0 }}>
           <span
             style={{
-              minWidth: 26,
-              minHeight: 26,
-              borderRadius: 8,
+              minWidth: 28,
+              minHeight: 28,
+              borderRadius: 9,
               background: 'rgba(239, 246, 255, 0.96)',
               color: colors.accentStrong,
               display: 'inline-flex',
@@ -401,11 +402,22 @@ export function EditorToolbarControlsPreview() {
               fontWeight: 700,
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
+              boxShadow: '0 1px 0 rgba(255,255,255,0.7) inset',
             }}
           >
             EN
           </span>
-          <span style={{ ...typography.bodyText, fontSize: 13, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: colors.textBody }}>
+          <span
+            style={{
+              ...typography.bodyText,
+              fontSize: 14,
+              fontWeight: 700,
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              color: colors.textBody,
+              whiteSpace: 'nowrap',
+            }}
+          >
             Translation
           </span>
         </div>
@@ -415,6 +427,7 @@ export function EditorToolbarControlsPreview() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: spacing[4],
+            marginLeft: 'auto',
             padding: '4px 6px',
             borderRadius: radius.pill,
             border: `1px solid rgba(219, 234, 254, 0.96)`,
