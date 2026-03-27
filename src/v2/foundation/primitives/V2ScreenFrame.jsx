@@ -37,6 +37,24 @@ function getShellContainerOverrides(shell) {
       onMouseEnter: shell.showRail ? shell.handleNavigationRailMouseEnter : undefined,
       onMouseLeave: shell.showRail ? shell.handleNavigationRailMouseLeave : undefined,
     },
+    Layer1_Navigation_HeaderBand: {
+      style: {
+        gridTemplateColumns: shell.isNavExpanded ? 'minmax(0, 1fr) auto' : '1fr',
+        justifyContent: shell.isNavExpanded ? 'stretch' : 'center',
+      },
+    },
+    Layer1_Navigation_BrandAnchor: {
+      style: {
+        justifyContent: shell.isNavExpanded ? 'flex-start' : 'center',
+      },
+    },
+    Layer1_Navigation_UtilityAnchor: {
+      style: shell.isNavExpanded
+        ? undefined
+        : {
+            display: 'none',
+          },
+    },
     Layer1_Header_Row: {
       style: {
         boxShadow: `inset 0 -1px 0 ${colors.lineSoft}`,

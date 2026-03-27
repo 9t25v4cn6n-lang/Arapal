@@ -179,8 +179,8 @@ This is the review map. A generic is not considered system-ready until it has be
 | --- | --- | --- | --- | --- | --- | --- |
 | Navigation rail | Current app | Current app study shell | 4 | 5 | Active extraction | Shared shell primitive; avoid per-screen variants. |
 | Navigation rail row | Current app | Current app study shell | 4 | 5 | Locked | Includes active state, hover, icon + label logic. |
-| Screen mode icon set | Current app | Current app study shell | 4 | 5 | Candidate | Canonical icon set for Home, Projects, Study, Segmentation, and Exams. |
-| Utility icon control (`pin`, `back`, `expand`, `collapse`, `close`) | Current app | Current app study shell | 5 | 5 | Active extraction | Small utility control family; shared hover box pattern. |
+| Screen mode icon set | Current app | Current app study shell | 4 | 5 | Locked | Canonical icon set for Home, Projects, Study, Segmentation, and Exams. The board framing around them is not part of the generic. |
+| Utility icon control (`pin`, `back`, `expand`, `collapse`, `close`) | Current app | Current app study shell | 5 | 5 | Locked | Small utility control family; shared hover box pattern. |
 | Back pill | Current app segmentation | Old app segmentation | 4 | 4 | Locked | Directional action variant in the shared action-control family. |
 | Step bar | Current app segmentation | Old app segmentation | 4 | 4 | Locked | Applies to multi-step operational flows and now has a shared V2 primitive path. |
 | Source intake brand | Current app segmentation | Old app segmentation | 4 | 3 | Active extraction | Segmentation-specific identity cluster that should live under the operational editor family. |
@@ -190,7 +190,7 @@ This is the review map. A generic is not considered system-ready until it has be
 | Editor footer | Current app segmentation + study | Old app segmentation editor chrome | 4 | 5 | Candidate | Includes shortcut and meta patterns. |
 | Panel corner casing | Current app segmentation | Old app segmentation | 4 | 4 | Candidate | Must stay attached to editor/panel family. |
 | Primary CTA | Current app segmentation/home | Old app segmentation CTA finesse | 5 | 5 | Locked | Canonical premium primary action treatment. |
-| Split CTA | Current app segmentation | Old app segmentation | 5 | 5 | Candidate | Very important shared primitive. |
+| Split CTA | Current app segmentation | Old app segmentation | 5 | 5 | Locked | Very important shared primitive. Chevron direction is state-driven, not a separate generic. |
 | Options popover | Current app segmentation | Old app segmentation advanced menu | 4 | 5 | Candidate | Outside-click dismissal should be standard. |
 | Preference toggle row | Current app segmentation | Old app segmentation | 4 | 5 | Locked | Shared settings-style row with label, meta, and toggle state. |
 | Segment tree row | Current app study | Current app study left pane | 4 | 5 | Candidate | Includes folder/leaf/state icon treatment. |
@@ -226,7 +226,7 @@ This is the review map. A generic is not considered system-ready until it has be
 | Editor watermark treatment | Current app segmentation | Old app segmentation | 4 | 4 | Candidate | Should live under editor family, not as ad hoc text. |
 | Panel border / radius / shadow language | Current V2 + current app | Current app home/study/segmentation | 4 | 5 | Candidate | Needs stronger implementation centralization. |
 | Primary CTA sheen / highlight language | Current app segmentation | Old app segmentation | 5 | 5 | Candidate | Important premium-system detail. |
-| Utility hover box treatment | Current app study | Current app study | 5 | 5 | Active extraction | Shared small-control style. |
+| Utility hover box treatment | Current app study | Current app study | 5 | 5 | Locked | Shared small-control style. |
 | Support panel tone system | Current app study | Current app study right pane | 4 | 5 | Candidate | Blue/purple/orange/emerald/rose tones need canonization rules. |
 | Editor chrome opacity rules | Current app segmentation | Old app segmentation | 4 | 4 | Candidate | Needed because recent drift showed how easy this is to get wrong. |
 | Home hero / door card treatment | Current app home | Current app home | 4 | 4 | Candidate | Likely close to final. |

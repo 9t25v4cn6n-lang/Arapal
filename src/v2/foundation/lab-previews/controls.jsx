@@ -312,6 +312,7 @@ export function UtilityIconFamilyPreview() {
 
 export function FontSizeControlsPreview() {
   const variants = ['A-', 'A+']
+  const [hoveredVariant, setHoveredVariant] = useState(null)
 
   return (
     <div style={{ ...previewFrameStyle(), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -331,14 +332,23 @@ export function FontSizeControlsPreview() {
         <button
           key={variant}
           type="button"
+          onMouseEnter={() => setHoveredVariant(variant)}
+          onMouseLeave={() => setHoveredVariant(null)}
           style={{
             minHeight: 34,
             minWidth: 40,
             padding: '0 12px',
             borderRadius: radius.pill,
-            border: '1px solid transparent',
-            background: 'transparent',
-            color: colors.textSoft,
+            border: `1px solid ${hoveredVariant === variant ? 'rgba(37, 99, 235, 0.18)' : 'transparent'}`,
+            background:
+              hoveredVariant === variant
+                ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 55%), linear-gradient(90deg, #2D6BF0 0%, #2563EB 42%, #1D4ED8 100%)'
+                : 'transparent',
+            color: hoveredVariant === variant ? '#ffffff' : colors.textSoft,
+            boxShadow:
+              hoveredVariant === variant
+                ? 'inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -8px 14px rgba(22,78,199,0.14), 0 10px 20px rgba(37,99,235,0.14)'
+                : 'none',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -348,6 +358,7 @@ export function FontSizeControlsPreview() {
             lineHeight: 1,
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
+            transition: `background ${motion.panel}, color ${motion.micro}, box-shadow ${motion.panel}, border-color ${motion.micro}`,
           }}
           >
             {variant}
@@ -438,13 +449,10 @@ export function ModeIconSetPreview() {
           key={item.label}
           style={{
             minWidth: 88,
-            borderRadius: radius[14],
-            border: `1px solid ${colors.lineSoft}`,
-            background: 'rgba(255, 255, 255, 0.88)',
-            padding: `${spacing[10]} ${spacing[12]}`,
             display: 'grid',
             justifyItems: 'center',
             gap: spacing[8],
+            padding: `${spacing[8]} ${spacing[10]}`,
           }}
         >
           <div style={{ color: colors.accentStrong, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{item.icon}</div>

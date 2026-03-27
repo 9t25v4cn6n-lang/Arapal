@@ -65,7 +65,14 @@ function NavigationRailPreview({ isExpanded = true }) {
         gap: spacing[16],
       }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: spacing[12] }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: isExpanded ? 'space-between' : 'center',
+          gap: spacing[12],
+        }}
+      >
           <NavigationRailBrand isExpanded={isExpanded} />
           <NavigationRailPinControl shell={shell} />
         </div>
@@ -92,7 +99,7 @@ export default function ControlsLabScreen({ route, shell }) {
         </LabGenericCard>
         <LabGenericCard
           title="Primary CTA disabled state"
-          status="Candidate"
+          status="Locked"
           note="Disabled should still feel premium and related, not greyed into irrelevance."
           minHeight={180}
         >
@@ -102,8 +109,8 @@ export default function ControlsLabScreen({ route, shell }) {
         </LabGenericCard>
         <LabGenericCard
           title="Split CTA"
-          status="Candidate"
-          note="Judge the composed button family here. The tail can differ slightly, but it must still read as one button family."
+          status="Locked"
+          note="Chevron direction is state-driven; the resting and open states should feel like one composed action family."
           minHeight={180}
         >
           <SplitCTAPreview showMenu={false} />
@@ -116,7 +123,7 @@ export default function ControlsLabScreen({ route, shell }) {
       >
         <LabGenericCard
           title="Utility icon family"
-          status="Active extraction"
+          status="Locked"
           note="These should all come from one mini-control family: full-screen, sidebar, pin, float, move, and copy."
           minHeight={190}
         >
@@ -140,8 +147,8 @@ export default function ControlsLabScreen({ route, shell }) {
         </LabGenericCard>
         <LabGenericCard
           title="Screen mode icon set"
-          status="Candidate"
-          note="Canonical icons for the major product modes. These should stay stable across the rail and related navigation surfaces."
+          status="Locked"
+          note="Canonical icons for the major product modes. The icons are the generic here; the surrounding lab framing is not part of the system."
           minHeight={120}
         >
           <ModeIconSetPreview />
