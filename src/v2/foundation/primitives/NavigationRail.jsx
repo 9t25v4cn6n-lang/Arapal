@@ -16,7 +16,7 @@ function getNavButtonStyle(isExpanded, isActive, isHovered) {
 
   return {
     position: 'relative',
-    width: '100%',
+    width: isExpanded ? '100%' : '36px',
     height: '40px',
     border: 'none',
     borderRadius: radius[12],
@@ -27,6 +27,7 @@ function getNavButtonStyle(isExpanded, isActive, isHovered) {
     justifyContent: isExpanded ? 'flex-start' : 'center',
     gap: spacing[12],
     padding: isExpanded ? '0 12px 0 16px' : '0',
+    margin: isExpanded ? '0' : '0 auto',
     cursor: 'pointer',
     textAlign: 'left',
     transition: `background-color ${motion.micro}, color ${motion.micro}`,
@@ -39,9 +40,9 @@ function NavigationRailBrandMark() {
       aria-hidden="true"
       style={{
         position: 'relative',
-        width: 34,
-        height: 34,
-        flex: '0 0 34px',
+        width: 36,
+        height: 36,
+        flex: '0 0 36px',
         overflow: 'hidden',
         borderRadius: 12,
         border: '1px solid rgba(191, 219, 254, 0.96)',
@@ -157,9 +158,9 @@ export function NavigationRailItems({ shell }) {
                   position: 'absolute',
                   top: '4px',
                   bottom: '4px',
-                  left: '-1px',
+                  left: shell.isNavExpanded ? '-1px' : '3px',
                   width: '4px',
-                  borderRadius: '0 999px 999px 0',
+                  borderRadius: shell.isNavExpanded ? '0 999px 999px 0' : '999px',
                   background: colors.accentBase,
                   boxShadow: '0 0 0 1px rgba(37, 99, 235, 0.04)',
                 }}
