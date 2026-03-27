@@ -205,6 +205,8 @@ export function NavigationRailItems({ shell }) {
               style={{
                 ...typography.bodyText,
                 display: 'block',
+                flex: shell.isNavExpanded ? '1 1 auto' : '0 0 0px',
+                minWidth: 0,
                 fontSize: '13px',
                 fontWeight: 600,
                 lineHeight: 1.2,
@@ -212,7 +214,7 @@ export function NavigationRailItems({ shell }) {
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                maxWidth: shell.isNavExpanded ? '180px' : '0px',
+                maxWidth: shell.isNavExpanded ? '100%' : '0px',
                 opacity: shell.isNavExpanded ? 1 : 0,
                 transform: shell.isNavExpanded ? 'translateX(0)' : 'translateX(-4px)',
                 transition: [
