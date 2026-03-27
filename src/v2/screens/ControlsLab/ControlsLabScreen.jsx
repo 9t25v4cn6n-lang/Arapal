@@ -3,7 +3,15 @@ import layoutContract from './ControlsLabScreen.contract'
 import BackPill from '../../foundation/primitives/BackPill'
 import PrimaryCTA from '../../foundation/primitives/PrimaryCTA'
 import StepBar from '../../foundation/primitives/StepBar'
-import { NavigationRailBrand, NavigationRailItems, NavigationRailPinControl } from '../../foundation/primitives/NavigationRail'
+import {
+  getNavigationBrandAnchorStyle,
+  getNavigationHeaderBandStyle,
+  getNavigationUtilityAnchorStyle,
+  NavigationRailBrand,
+  NavigationRailItems,
+  NavigationRailPinControl,
+} from '../../foundation/primitives/NavigationRail'
+import useNavigationRailState from '../../foundation/primitives/useNavigationRailState'
 import {
   ActionPillPreview,
   EditorToolbarControlsPreview,
@@ -17,7 +25,7 @@ import {
 } from '../../foundation/lab-previews/controls'
 import { shellSizing } from '../../foundation/layout/shellSizing'
 import { LabGenericCard, LabScaffold, LabSection } from '../../foundation/primitives/LabBoard'
-import { colors, radius, spacing, typography } from '../../foundation/tokens'
+import { colors, motion, radius, spacing, typography } from '../../foundation/tokens'
 
 const stepItems = [
   { id: 'source', label: 'Source' },
@@ -25,11 +33,14 @@ const stepItems = [
   { id: 'review', label: 'Review' },
 ]
 
-function NavigationRailPreview({ isExpanded = true }) {
+function NavigationRailPreview() {
+  const navigationRailState = useNavigationRailState({ defaultPinned: true })
+  const isExpanded = navigationRailState.isNavExpanded
+
   const shell = {
     showRail: true,
     isNavExpanded: isExpanded,
-    isNavPinned: false,
+    isNavPinned: navigationRailState.isNavPinned,
     activeRailGroupId: 'segmentation',
     railItems: [
       {
@@ -49,35 +60,54 @@ function NavigationRailPreview({ isExpanded = true }) {
       },
     ],
     navigate: () => {},
-    toggleNavigationRailPin: () => {},
+    ...navigationRailState,
   }
 
   return (
-    <div
-      style={{
-        width: isExpanded ? shellSizing.navigationRail.expandedPx : shellSizing.navigationRail.collapsedPx,
-        border: `1px solid ${colors.lineSoft}`,
-        borderRadius: radius[24],
-        background: 'rgba(255, 255, 255, 0.96)',
-        padding: isExpanded ? `${spacing[20]} ${spacing[16]}` : `${spacing[20]} ${spacing[10]}`,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: spacing[16],
-      }}
-      >
+    <div style={{ width: '100%', display: 'grid', gap: spacing[10], justifyItems: 'center' }}>
+      <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>
+        Hover expands. Pin keeps it open.
+      </p>
       <div
+        onMouseEnter={navigationRailState.handleNavigationRailMouseEnter}
+        onMouseLeave={navigationRailState.handleNavigationRailMouseLeave}
         style={{
+          width: '100%',
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: isExpanded ? 'space-between' : 'center',
-          gap: spacing[12],
+          justifyContent: 'center',
         }}
       >
-          <NavigationRailBrand isExpanded={isExpanded} />
-          <NavigationRailPinControl shell={shell} />
+        <div
+          style={{
+            width: isExpanded ? shellSizing.navigationRail.expandedPx : shellSizing.navigationRail.collapsedPx,
+            border: `1px solid ${colors.lineSoft}`,
+            borderRadius: radius[24],
+            background: 'rgba(255, 255, 255, 0.96)',
+            padding: isExpanded ? `${spacing[20]} ${spacing[16]}` : `${spacing[20]} ${spacing[10]}`,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: spacing[16],
+            transition: `width ${motion.panel}, padding ${motion.panel}, box-shadow ${motion.micro}`,
+            overflow: 'hidden',
+            boxShadow: isExpanded ? '0 16px 30px rgba(15, 23, 42, 0.06)' : 'none',
+          }}
+        >
+          <div
+            style={{
+              ...getNavigationHeaderBandStyle(isExpanded),
+            }}
+          >
+            <div style={getNavigationBrandAnchorStyle(isExpanded)}>
+              <NavigationRailBrand isExpanded={isExpanded} />
+            </div>
+            <div style={getNavigationUtilityAnchorStyle(isExpanded)}>
+              <NavigationRailPinControl shell={shell} />
+            </div>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[8] }}>
+            <NavigationRailItems shell={shell} />
+          </div>
         </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[8] }}>
-        <NavigationRailItems shell={shell} />
       </div>
     </div>
   )
@@ -186,19 +216,11 @@ export default function ControlsLabScreen({ route, shell }) {
         <LabGenericCard
           title="Navigation rail"
           status="Active extraction"
-          note="Judge the brand mark, row rhythm, active indicator, and collapsed/expanded state balance."
-          minHeight={0}
+          note="Judge the expanded rail as the canonical state. This preview uses the standard hover-expand and pin/unpin behavior instead of separate static states."
+          minHeight={280}
+          gridColumn="1 / -1"
         >
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: spacing[20], justifyContent: 'center', alignItems: 'flex-end' }}>
-            <div style={{ display: 'grid', gap: spacing[8], justifyItems: 'center' }}>
-              <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>Collapsed</p>
-              <NavigationRailPreview isExpanded={false} />
-            </div>
-            <div style={{ display: 'grid', gap: spacing[8], justifyItems: 'center' }}>
-              <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>Expanded</p>
-              <NavigationRailPreview isExpanded />
-            </div>
-          </div>
+          <NavigationRailPreview />
         </LabGenericCard>
         <LabGenericCard
           title="Preference toggle row"

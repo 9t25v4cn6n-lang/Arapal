@@ -11,6 +11,38 @@ const iconMap = {
   exams: ClipboardList,
 }
 
+export function getNavigationHeaderBandStyle(isExpanded) {
+  return {
+    display: 'grid',
+    gridTemplateColumns: isExpanded ? 'minmax(0, 1fr) auto' : '1fr',
+    alignItems: 'start',
+    justifyContent: isExpanded ? 'stretch' : 'center',
+    gap: spacing[12],
+    minHeight: '32px',
+  }
+}
+
+export function getNavigationBrandAnchorStyle(isExpanded) {
+  return {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: isExpanded ? 'flex-start' : 'center',
+  }
+}
+
+export function getNavigationUtilityAnchorStyle(isExpanded) {
+  return isExpanded
+    ? {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        minWidth: '28px',
+      }
+    : {
+        display: 'none',
+      }
+}
+
 function getNavButtonStyle(isExpanded, isActive, isHovered) {
   const isHighlighted = isActive || isHovered
 
@@ -25,7 +57,7 @@ function getNavButtonStyle(isExpanded, isActive, isHovered) {
     display: 'flex',
     alignItems: 'center',
     justifyContent: isExpanded ? 'flex-start' : 'center',
-    gap: spacing[12],
+    gap: isExpanded ? spacing[12] : 0,
     padding: isExpanded ? '0 12px 0 16px' : '0',
     margin: isExpanded ? '0' : '0 auto',
     cursor: 'pointer',
@@ -169,22 +201,29 @@ export function NavigationRailItems({ shell }) {
 
             <Icon size={18} strokeWidth={1.8} />
 
-            {shell.isNavExpanded ? (
-              <span
-                style={{
-                  ...typography.bodyText,
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  lineHeight: 1.2,
-                  color: 'inherit',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                {rail?.label ?? route.label}
-              </span>
-            ) : null}
+            <span
+              style={{
+                ...typography.bodyText,
+                display: 'block',
+                fontSize: '13px',
+                fontWeight: 600,
+                lineHeight: 1.2,
+                color: 'inherit',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                maxWidth: shell.isNavExpanded ? '180px' : '0px',
+                opacity: shell.isNavExpanded ? 1 : 0,
+                transform: shell.isNavExpanded ? 'translateX(0)' : 'translateX(-4px)',
+                transition: [
+                  `max-width ${motion.panel}`,
+                  `opacity ${motion.micro}`,
+                  `transform ${motion.micro}`,
+                ].join(', '),
+              }}
+            >
+              {rail?.label ?? route.label}
+            </span>
           </button>
         )
       })}

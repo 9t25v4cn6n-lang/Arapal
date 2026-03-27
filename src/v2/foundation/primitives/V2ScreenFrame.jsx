@@ -2,7 +2,14 @@ import ScreenContractRenderer from '../layout/ScreenContractRenderer'
 import { shellSizing } from '../layout/shellSizing'
 import { colors, motion, spacing } from '../tokens'
 import { HeaderBrand, HeaderCenter, HeaderMeta } from './HeaderBar'
-import { NavigationRailBrand, NavigationRailItems, NavigationRailPinControl } from './NavigationRail'
+import {
+  getNavigationBrandAnchorStyle,
+  getNavigationHeaderBandStyle,
+  getNavigationUtilityAnchorStyle,
+  NavigationRailBrand,
+  NavigationRailItems,
+  NavigationRailPinControl,
+} from './NavigationRail'
 
 function getShellContainerOverrides(shell) {
   const collapsedRailWidth = shell.showRail ? shellSizing.navigationRail.collapsedPx : '0px'
@@ -39,21 +46,18 @@ function getShellContainerOverrides(shell) {
     },
     Layer1_Navigation_HeaderBand: {
       style: {
-        gridTemplateColumns: shell.isNavExpanded ? 'minmax(0, 1fr) auto' : '1fr',
-        justifyContent: shell.isNavExpanded ? 'stretch' : 'center',
+        ...getNavigationHeaderBandStyle(shell.isNavExpanded),
       },
     },
     Layer1_Navigation_BrandAnchor: {
       style: {
-        justifyContent: shell.isNavExpanded ? 'flex-start' : 'center',
+        ...getNavigationBrandAnchorStyle(shell.isNavExpanded),
       },
     },
     Layer1_Navigation_UtilityAnchor: {
-      style: shell.isNavExpanded
-        ? undefined
-        : {
-            display: 'none',
-          },
+      style: {
+        ...getNavigationUtilityAnchorStyle(shell.isNavExpanded),
+      },
     },
     Layer1_Header_Row: {
       style: {

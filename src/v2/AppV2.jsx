@@ -1,15 +1,14 @@
-import { useState } from 'react'
 import { defaultRouteId, getPrimaryRailRoutes, routeRegistry } from './app/routeRegistry'
 import { shellSizing } from './foundation/layout/shellSizing'
+import useNavigationRailState from './foundation/primitives/useNavigationRailState'
 
 export default function AppV2({ routeId = defaultRouteId }) {
   const activeRoute = routeRegistry[routeId] ?? routeRegistry[defaultRouteId]
   const ActiveScreen = activeRoute.component
-  const [isNavPinned, setIsNavPinned] = useState(false)
-  const [isNavHovered, setIsNavHovered] = useState(false)
+  const navigationRailState = useNavigationRailState()
 
   const railItems = getPrimaryRailRoutes()
-  const isNavExpanded = isNavPinned || isNavHovered
+  const { isNavPinned, isNavHovered, isNavExpanded } = navigationRailState
   const activeRailGroupId = activeRoute.shell?.rail?.groupId ?? activeRoute.id
   const showRail = activeRoute.shell?.showRail !== false
 
@@ -28,30 +27,12 @@ export default function AppV2({ routeId = defaultRouteId }) {
       }
 
       if (!isNavPinned) {
-        setIsNavHovered(false)
+        navigationRailState.handleNavigationRailMouseLeave()
       }
 
       window.location.hash = `v2/${nextRouteId}`
     },
-    pinNavigationRail() {
-      setIsNavPinned(true)
-    },
-    unpinNavigationRail() {
-      setIsNavPinned(false)
-    },
-    toggleNavigationRailPin() {
-      setIsNavPinned((current) => !current)
-    },
-    handleNavigationRailMouseEnter() {
-      if (!isNavPinned) {
-        setIsNavHovered(true)
-      }
-    },
-    handleNavigationRailMouseLeave() {
-      if (!isNavPinned) {
-        setIsNavHovered(false)
-      }
-    },
+    ...navigationRailState,
   }
 
   return <ActiveScreen route={activeRoute} shell={shell} />

@@ -125,10 +125,12 @@ export function LabGenericCard({
   minHeight = 180,
   displayAlign = 'center',
   displayJustify = 'center',
+  gridColumn,
 }) {
   return (
     <div
       style={{
+        gridColumn,
         border: `1px ${empty ? 'dashed' : 'solid'} ${empty ? 'rgba(203, 213, 225, 0.96)' : colors.lineSoft}`,
         borderRadius: radius[24],
         background: empty ? 'rgba(248, 250, 252, 0.86)' : 'rgba(255, 255, 255, 0.98)',
