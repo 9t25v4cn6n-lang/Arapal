@@ -8,6 +8,7 @@ import {
   ActionPillPreview,
   EditorToolbarControlsPreview,
   FontSizeControlsPreview,
+  ModeIconSetPreview,
   NavigationRailRowPreview,
   PreferenceToggleRowPreview,
   SplitCTAPreview,
@@ -24,10 +25,10 @@ const stepItems = [
   { id: 'review', label: 'Review' },
 ]
 
-function NavigationRailPreview() {
+function NavigationRailPreview({ isExpanded = true }) {
   const shell = {
     showRail: true,
-    isNavExpanded: true,
+    isNavExpanded: isExpanded,
     isNavPinned: false,
     activeRailGroupId: 'segmentation',
     railItems: [
@@ -54,20 +55,20 @@ function NavigationRailPreview() {
   return (
     <div
       style={{
-        width: shellSizing.navigationRail.expandedPx,
+        width: isExpanded ? shellSizing.navigationRail.expandedPx : shellSizing.navigationRail.collapsedPx,
         border: `1px solid ${colors.lineSoft}`,
         borderRadius: radius[24],
         background: 'rgba(255, 255, 255, 0.96)',
-        padding: `${spacing[20]} ${spacing[16]}`,
+        padding: isExpanded ? `${spacing[20]} ${spacing[16]}` : `${spacing[20]} ${spacing[10]}`,
         display: 'flex',
         flexDirection: 'column',
         gap: spacing[16],
       }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: spacing[12] }}>
-        <NavigationRailBrand isExpanded />
-        <NavigationRailPinControl shell={shell} />
-      </div>
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: spacing[12] }}>
+          <NavigationRailBrand isExpanded={isExpanded} />
+          <NavigationRailPinControl shell={shell} />
+        </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[8] }}>
         <NavigationRailItems shell={shell} />
       </div>
@@ -84,7 +85,7 @@ export default function ControlsLabScreen({ route, shell }) {
       >
         <LabGenericCard
           title="Primary CTA"
-          status="Active extraction"
+          status="Locked"
           note="Assess the default resting state here. Hover polish and sheen are reviewed separately on the motion board."
         >
           <PrimaryCTA icon={<Sparkles size={16} strokeWidth={1.9} />}>AI segment text</PrimaryCTA>
@@ -123,7 +124,7 @@ export default function ControlsLabScreen({ route, shell }) {
         </LabGenericCard>
         <LabGenericCard
           title="Back pill"
-          status="Active extraction"
+          status="Locked"
           note="Directional action variant. It should inherit the premium blue-fill hover, but not the full ceremonial sheen sweep."
           minHeight={120}
         >
@@ -131,11 +132,19 @@ export default function ControlsLabScreen({ route, shell }) {
         </LabGenericCard>
         <LabGenericCard
           title="Navigation rail row"
-          status="Candidate"
+          status="Locked"
           note="Single-row sizing, icon meaning, label rhythm, and active indicator placement."
           minHeight={120}
         >
           <NavigationRailRowPreview />
+        </LabGenericCard>
+        <LabGenericCard
+          title="Screen mode icon set"
+          status="Candidate"
+          note="Canonical icons for the major product modes. These should stay stable across the rail and related navigation surfaces."
+          minHeight={120}
+        >
+          <ModeIconSetPreview />
         </LabGenericCard>
         <LabGenericCard
           title="Font size controls"
@@ -161,7 +170,7 @@ export default function ControlsLabScreen({ route, shell }) {
       >
         <LabGenericCard
           title="Step bar"
-          status="Active extraction"
+          status="Locked"
           note="Multi-step operational progress pattern carried over from segmentation."
           minHeight={120}
         >
@@ -170,14 +179,23 @@ export default function ControlsLabScreen({ route, shell }) {
         <LabGenericCard
           title="Navigation rail"
           status="Active extraction"
-          note="Judge the brand mark, row rhythm, active indicator, and pin-control balance."
+          note="Judge the brand mark, row rhythm, active indicator, and collapsed/expanded state balance."
           minHeight={0}
         >
-          <NavigationRailPreview />
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: spacing[20], justifyContent: 'center', alignItems: 'flex-end' }}>
+            <div style={{ display: 'grid', gap: spacing[8], justifyItems: 'center' }}>
+              <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>Collapsed</p>
+              <NavigationRailPreview isExpanded={false} />
+            </div>
+            <div style={{ display: 'grid', gap: spacing[8], justifyItems: 'center' }}>
+              <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>Expanded</p>
+              <NavigationRailPreview isExpanded />
+            </div>
+          </div>
         </LabGenericCard>
         <LabGenericCard
           title="Preference toggle row"
-          status="Candidate"
+          status="Locked"
           note="Used in advanced menus and settings-style overlays."
           minHeight={0}
         >

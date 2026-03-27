@@ -31,7 +31,7 @@ export default function createLabBoardContract({ screenId, screenName }) {
         alignItems: 'stretch',
         justifyContent: 'flex-start',
         padding: `${spacing[16]} 0`,
-        gap: spacing[16],
+        gap: spacing[20],
         overflow: 'auto',
         textAlign: 'left',
         style: {
@@ -48,7 +48,7 @@ export default function createLabBoardContract({ screenId, screenName }) {
         alignItems: 'stretch',
         justifyContent: 'flex-start',
         padding: spacing[28],
-        gap: spacing[16],
+        gap: spacing[20],
         overflow: 'visible',
         textAlign: 'left',
       },

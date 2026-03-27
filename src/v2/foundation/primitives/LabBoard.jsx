@@ -304,7 +304,7 @@ export function LabScaffold({
   const slots = {
     Layer3_Lab_LeftNav: <LabNav shell={shell} route={route} />,
     Layer3_Lab_Hero: (
-      <div style={{ ...cardStyle, padding: spacing[24] }}>
+      <div style={{ ...cardStyle, padding: spacing[28] }}>
         <p style={{ ...typography.eyebrowLabel, margin: `0 0 ${spacing[10]}`, color: colors.accentBase }}>{eyebrow}</p>
         <h1
           style={{
@@ -319,7 +319,7 @@ export function LabScaffold({
         >
           {title}
         </h1>
-        <p style={{ ...typography.bodyText, margin: 0, maxWidth: '72ch', color: colors.textBody }}>{intro}</p>
+        <p style={{ ...typography.bodyText, margin: 0, maxWidth: '64ch', lineHeight: 1.6, color: colors.textBody }}>{intro}</p>
       </div>
     ),
     Layer3_Lab_Content: content,

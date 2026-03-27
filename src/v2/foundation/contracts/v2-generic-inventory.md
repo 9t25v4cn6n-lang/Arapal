@@ -73,6 +73,7 @@ This is the review map. A generic is not considered system-ready until it has be
 ### Controls Lab
 - Navigation rail
 - Navigation rail row
+- Screen mode icon set
 - Utility icon control (`pin`, `back`, `expand`, `collapse`, `close`)
 - Back pill
 - Step bar
@@ -177,20 +178,21 @@ This is the review map. A generic is not considered system-ready until it has be
 | Item | Product source | Visual source | Final design confidence | Repeatability confidence | Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
 | Navigation rail | Current app | Current app study shell | 4 | 5 | Active extraction | Shared shell primitive; avoid per-screen variants. |
-| Navigation rail row | Current app | Current app study shell | 4 | 5 | Candidate | Includes active state, hover, icon + label logic. |
+| Navigation rail row | Current app | Current app study shell | 4 | 5 | Locked | Includes active state, hover, icon + label logic. |
+| Screen mode icon set | Current app | Current app study shell | 4 | 5 | Candidate | Canonical icon set for Home, Projects, Study, Segmentation, and Exams. |
 | Utility icon control (`pin`, `back`, `expand`, `collapse`, `close`) | Current app | Current app study shell | 5 | 5 | Active extraction | Small utility control family; shared hover box pattern. |
-| Back pill | Current app segmentation | Old app segmentation | 4 | 4 | Active extraction | Existing V2 implementation now moved toward a real shared primitive. |
-| Step bar | Current app segmentation | Old app segmentation | 4 | 4 | Active extraction | Applies to multi-step operational flows and now has a shared V2 primitive path. |
+| Back pill | Current app segmentation | Old app segmentation | 4 | 4 | Locked | Directional action variant in the shared action-control family. |
+| Step bar | Current app segmentation | Old app segmentation | 4 | 4 | Locked | Applies to multi-step operational flows and now has a shared V2 primitive path. |
 | Source intake brand | Current app segmentation | Old app segmentation | 4 | 3 | Active extraction | Segmentation-specific identity cluster that should live under the operational editor family. |
 | Operational panel | Current app segmentation | Old app segmentation | 5 | 5 | Candidate | High-value base family for operational screens. |
 | Editor surface | Current app segmentation + study | Old app segmentation editor chrome | 5 | 5 | Active extraction | Major missing primitive. |
 | Editor topbar | Current app segmentation + study | Old app segmentation editor chrome | 4 | 5 | Candidate | Should sit under the editor family. |
 | Editor footer | Current app segmentation + study | Old app segmentation editor chrome | 4 | 5 | Candidate | Includes shortcut and meta patterns. |
 | Panel corner casing | Current app segmentation | Old app segmentation | 4 | 4 | Candidate | Must stay attached to editor/panel family. |
-| Primary CTA | Current app segmentation/home | Old app segmentation CTA finesse | 5 | 5 | Active extraction | Needs one canonical premium treatment. |
+| Primary CTA | Current app segmentation/home | Old app segmentation CTA finesse | 5 | 5 | Locked | Canonical premium primary action treatment. |
 | Split CTA | Current app segmentation | Old app segmentation | 5 | 5 | Candidate | Very important shared primitive. |
 | Options popover | Current app segmentation | Old app segmentation advanced menu | 4 | 5 | Candidate | Outside-click dismissal should be standard. |
-| Preference toggle row | Current app segmentation | Old app segmentation | 4 | 5 | Candidate | Could generalize to app-wide settings rows. |
+| Preference toggle row | Current app segmentation | Old app segmentation | 4 | 5 | Locked | Shared settings-style row with label, meta, and toggle state. |
 | Segment tree row | Current app study | Current app study left pane | 4 | 5 | Candidate | Includes folder/leaf/state icon treatment. |
 | Segment tree folder row | Current app study | Current app study left pane | 4 | 5 | Candidate | Related to tree row but distinct variant. |
 | Status chip / badge | Current app study + segmentation | Current app | 4 | 5 | Candidate | Good shared semantic primitive. |
