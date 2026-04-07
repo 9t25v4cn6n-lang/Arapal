@@ -1,13 +1,14 @@
 import { ArrowLeft, Pin } from 'lucide-react'
 import layoutContract from './MotionInteractionLabScreen.contract'
 import IconActionButton from '../../foundation/primitives/IconActionButton'
-import PrimaryCTA from '../../foundation/primitives/PrimaryCTA'
 import {
+  CTASheenPreview,
   EditorShortcutHintPreview,
   EscapeDismissPreview,
   FloatDockPreview,
   FloatingDragResizePreview,
   FocusedExpandMotionPreview,
+  HoverFocusMicroMotionPreview,
   HoverLiftPreview,
   HoverPreviewPinDemo,
   MenuMotionPreview,
@@ -20,7 +21,7 @@ import {
   SupportPreviewRevealMotion,
 } from '../../foundation/lab-previews/interactions'
 import { LabGenericCard, LabScaffold, LabSection } from '../../foundation/primitives/LabBoard'
-import { colors, radius, spacing, typography } from '../../foundation/tokens'
+import { colors, radius, spacing, surfacePadding, typography } from '../../foundation/tokens'
 
 export default function MotionInteractionLabScreen({ route, shell }) {
   const content = (
@@ -29,29 +30,23 @@ export default function MotionInteractionLabScreen({ route, shell }) {
         title="Interaction rules"
         description="These items should behave consistently across the app, even if they appear in different modes."
       >
-        <LabGenericCard title="Utility hover reveal" status="Active extraction" note="Hover the mini controls to check the reveal box and sizing.">
-          <div
-            style={{
-              display: 'flex',
-              gap: spacing[12],
-              flexWrap: 'wrap',
-              padding: spacing[12],
-              borderRadius: radius[16],
-              background: 'rgba(239, 246, 255, 0.68)',
-              border: `1px solid ${colors.lineSoft}`,
-            }}
-          >
-            <IconActionButton
-              size="utility-sm"
-              label="Back"
-              icon={<ArrowLeft size={16} strokeWidth={1.9} />}
-            />
-            <IconActionButton
-              size="utility-sm"
-              label="Pin"
-              active
-              icon={<Pin size={16} strokeWidth={1.9} />}
-            />
+        <LabGenericCard title="Utility hover reveal" status="Locked" note="Shared hover-box treatment for mini controls such as pin, back, expand, and collapse.">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: spacing[16], alignItems: 'start' }}>
+            {[
+              { label: 'Rest', active: false },
+              { label: 'Hover', active: true },
+              { label: 'Pinned', active: true, icon: <Pin size={16} strokeWidth={1.9} />, text: 'Pin' },
+            ].map((state) => (
+              <div key={state.label} style={{ display: 'grid', gap: spacing[8], justifyItems: 'center', padding: surfacePadding.standard, borderRadius: radius[16], background: 'rgba(239, 246, 255, 0.68)', border: `1px solid ${colors.lineSoft}` }}>
+                <IconActionButton
+                  size="utility-sm"
+                  label={state.text ?? 'Back'}
+                  active={state.active}
+                  icon={state.icon ?? <ArrowLeft size={16} strokeWidth={1.9} />}
+                />
+                <span style={{ ...typography.eyebrowLabel, color: colors.textSoft }}>{state.label}</span>
+              </div>
+            ))}
           </div>
         </LabGenericCard>
         <LabGenericCard title="Split CTA open/select/close" status="Candidate" note="Open, inspect, select, and collapse must behave like one composed control." minHeight={0}>
@@ -84,11 +79,11 @@ export default function MotionInteractionLabScreen({ route, shell }) {
         title="Motion language"
         description="Motion should clarify state and hierarchy, not decorate for its own sake."
       >
-        <LabGenericCard title="CTA sheen" status="Candidate" note="Hover the button to assess the sheen sweep and lift feel.">
-          <PrimaryCTA>AI segment text</PrimaryCTA>
+        <LabGenericCard title="CTA sheen" status="Locked" note="Reserved for large ceremonial CTAs, not small controls or utility buttons.">
+          <CTASheenPreview />
         </LabGenericCard>
-        <LabGenericCard title="Hover/focus micro-motion" status="Locked" note="Mini controls and panels should sharpen, not jump." minHeight={0}>
-          <HoverLiftPreview />
+        <LabGenericCard title="Hover/focus micro-motion" status="Locked" note="Small controls should sharpen and reveal state without jumping or over-animating." minHeight={0}>
+          <HoverFocusMicroMotionPreview />
         </LabGenericCard>
         <LabGenericCard title="Menu / panel open motion" status="Candidate" note="Needs reusable implementation helpers, not screen-local animation." minHeight={0}>
           <MenuMotionPreview />
@@ -102,7 +97,7 @@ export default function MotionInteractionLabScreen({ route, shell }) {
         <LabGenericCard title="Support preview reveal motion" status="Candidate" note="Hover reveal from the collapsed support rail should feel informative, not jumpy." minHeight={0}>
           <SupportPreviewRevealMotion />
         </LabGenericCard>
-        <LabGenericCard title="Editor shortcut hint behavior" status="Candidate" note="Footer hints should stay helpful and quiet, never noisy chrome." minHeight={0}>
+        <LabGenericCard title="Control hover hints / shortcut hints" status="Candidate" note="Helpful hints should clarify controls quietly when meaning is not already obvious." minHeight={0}>
           <EditorShortcutHintPreview />
         </LabGenericCard>
         <LabGenericCard title="Hover lift for primary surfaces" status="Candidate" note="Lift should follow the elevation scale, not invent a new one." minHeight={0}>
@@ -121,10 +116,10 @@ export default function MotionInteractionLabScreen({ route, shell }) {
         border: `1px solid ${colors.lineSoft}`,
         borderRadius: radius[24],
         background: 'rgba(255, 255, 255, 0.96)',
-        padding: spacing[18],
+        padding: surfacePadding.standard,
         display: 'flex',
         flexDirection: 'column',
-        gap: spacing[10],
+        gap: spacing[12],
       }}
     >
       <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>Board note</p>

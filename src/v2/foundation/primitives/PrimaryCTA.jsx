@@ -1,5 +1,18 @@
 import { useState } from 'react'
-import { colors, motion, radius, typography } from '../tokens'
+import { motion, radius, spacing, typography } from '../tokens'
+import { ctaChrome } from './ctaChromePresets'
+
+const primaryCtaMetrics = {
+  horizontalPadding: `0 ${spacing[24]}`,
+  contentGap: spacing[12],
+  strongLabelWeight: 700,
+}
+
+const primaryCtaMotion = {
+  chromeTransition: `box-shadow ${motion.panel}, filter ${motion.micro}, transform ${motion.micro}`,
+  overlayTransition: `opacity ${motion.panel}`,
+  sweepTransition: `opacity ${motion.screen}, transform ${motion.screen}`,
+}
 
 function getShapeRadii(shape) {
   if (shape === 'splitLead') {
@@ -22,18 +35,22 @@ export default function PrimaryCTA({
   endIcon = null,
   onClick,
   disabled = false,
+  forceActiveChrome = false,
   minWidth = 340,
   height = 56,
   shape = 'pill',
   style = {},
+  contentStyle = {},
+  debugItem,
 }) {
   const [isHovered, setIsHovered] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
-  const showActiveChrome = !disabled && (isHovered || isFocused)
+  const showActiveChrome = !disabled && (forceActiveChrome || isHovered || isFocused)
 
   return (
     <button
       type="button"
+      data-debug-item={debugItem}
       onClick={onClick}
       disabled={disabled}
       onMouseEnter={() => setIsHovered(true)}
@@ -48,24 +65,22 @@ export default function PrimaryCTA({
         minHeight: height,
         height,
         border: 'none',
-        background: disabled
-          ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.1) 52%, rgba(255, 255, 255, 0.02) 100%), linear-gradient(90deg, #CAD5E6 0%, #B9C5DA 42%, #AAB8D0 100%)'
-          : 'linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 55%), linear-gradient(90deg, #2D6BF0 0%, #2563EB 42%, #1D4ED8 100%)',
-        color: disabled ? 'rgba(255, 255, 255, 0.9)' : '#ffffff',
+        background: disabled ? ctaChrome.disabledSurface : ctaChrome.leadSurface,
+        color: disabled ? ctaChrome.disabledTone : ctaChrome.activeTone,
         boxShadow: disabled
-          ? 'inset 0 1px 0 rgba(255,255,255,0.32), inset 0 -10px 18px rgba(148,163,184,0.08), 0 12px 24px rgba(148,163,184,0.18), 0 4px 12px rgba(148,163,184,0.08)'
+          ? ctaChrome.disabledShadow
           : showActiveChrome
-            ? 'inset 0 1px 0 rgba(255,255,255,0.24), inset 0 -12px 18px rgba(22,78,199,0.18), 0 28px 54px rgba(37,99,235,0.24), 0 12px 28px rgba(29,78,216,0.12)'
-            : 'inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -10px 18px rgba(22,78,199,0.16), 0 24px 52px rgba(37,99,235,0.22), 0 10px 24px rgba(29,78,216,0.1)',
+            ? ctaChrome.activeShadow
+            : ctaChrome.idleShadow,
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '0 24px',
+        padding: primaryCtaMetrics.horizontalPadding,
         cursor: disabled ? 'not-allowed' : 'pointer',
         filter: disabled ? 'saturate(0.68)' : showActiveChrome ? 'saturate(1.02)' : 'none',
-        outline: isFocused ? '2px solid rgba(37, 99, 235, 0.35)' : 'none',
+        outline: isFocused ? ctaChrome.focusOutline : 'none',
         outlineOffset: '2px',
-        transition: `box-shadow ${motion.panel}, filter ${motion.micro}, transform ${motion.micro}`,
+        transition: primaryCtaMotion.chromeTransition,
         ...getShapeRadii(shape),
         ...style,
       }}
@@ -76,10 +91,9 @@ export default function PrimaryCTA({
           position: 'absolute',
           inset: 1,
           borderRadius: 'inherit',
-          background:
-            'linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 34%, rgba(255,255,255,0) 100%)',
+          background: ctaChrome.leadSheen,
           opacity: disabled ? 0.34 : showActiveChrome ? 0.44 : 0.38,
-          transition: `opacity ${motion.panel}`,
+          transition: primaryCtaMotion.overlayTransition,
           pointerEvents: 'none',
         }}
       />
@@ -91,11 +105,10 @@ export default function PrimaryCTA({
           bottom: '-18%',
           left: '-26%',
           width: '30%',
-          background:
-            'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.34) 48%, rgba(255,255,255,0) 100%)',
+          background: ctaChrome.sweep,
           opacity: disabled ? 0 : showActiveChrome ? 1 : 0,
           transform: showActiveChrome ? 'translateX(260%) skewX(-18deg)' : 'translateX(-10px) skewX(-18deg)',
-          transition: `opacity ${motion.screen}, transform ${motion.screen}`,
+          transition: primaryCtaMotion.sweepTransition,
           pointerEvents: 'none',
         }}
       />
@@ -106,13 +119,14 @@ export default function PrimaryCTA({
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 12,
-          fontFamily: typography.bodyText.fontFamily,
-          fontSize: 12,
-          fontWeight: 700,
-          lineHeight: 1,
-          letterSpacing: '0.1em',
-          textTransform: 'uppercase',
+          gap: primaryCtaMetrics.contentGap,
+          fontFamily: typography.eyebrowLabel.fontFamily,
+          fontSize: typography.eyebrowLabel.fontSize,
+          fontWeight: primaryCtaMetrics.strongLabelWeight,
+          lineHeight: typography.eyebrowLabel.lineHeight,
+          letterSpacing: typography.eyebrowLabel.letterSpacing,
+          textTransform: typography.eyebrowLabel.textTransform,
+          ...contentStyle,
         }}
       >
         {icon}

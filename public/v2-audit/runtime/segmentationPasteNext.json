@@ -1,0 +1,593 @@
+{
+  "screenId": "segmentationPasteNext",
+  "baseUrl": "http://127.0.0.1:4178",
+  "route": "#v2/segmentationPasteNext",
+  "generatedAt": "2026-04-03T15:34:05.398Z",
+  "status": "pass",
+  "failingGateCount": 0,
+  "failingGates": [],
+  "stressLabel": "viewport-stress",
+  "stressMode": "css-zoom-approximation",
+  "viewportChecks": [
+    {
+      "viewport": {
+        "label": "desktop-compact",
+        "width": 1366,
+        "height": 768
+      },
+      "metrics": {
+        "totalElements": 117,
+        "maxDomDepth": 13,
+        "maxWrapperChain": 2,
+        "maxNestedSurfaceChain": 5,
+        "minTextInset": 23,
+        "insetIssues": [],
+        "spacingValues": [
+          8,
+          12,
+          20,
+          24
+        ],
+        "invalidSpacingValues": [],
+        "layerAncestryIssues": [],
+        "emptyContainers": [],
+        "passThroughContainers": [],
+        "containmentIssues": [],
+        "fixedSizeIssues": [],
+        "overlapIssues": [],
+        "primaryCoverage": 0.464,
+        "primaryCenterOffset": 24.38,
+        "missingDebugItems": [],
+        "compositionIntegrity": {
+          "fillsCenter": true,
+          "workspaceActionAttachment": true
+        },
+        "contractAuditAvailable": true,
+        "orphanOverrideKeys": [],
+        "missingRenderedContractContainers": [],
+        "extraRenderedContainers": []
+      },
+      "rows": [
+        {
+          "gate": "desktop-compact wrapper depth",
+          "pass": true,
+          "detail": "max wrapper chain 2"
+        },
+        {
+          "gate": "desktop-compact overlap check",
+          "pass": true,
+          "detail": "no text/control overlaps detected"
+        },
+        {
+          "gate": "desktop-compact layer ancestry",
+          "pass": true,
+          "detail": "all latter-layer containers sit inside lower-layer ancestors"
+        },
+        {
+          "gate": "desktop-compact empty containers",
+          "pass": true,
+          "detail": "no empty containers"
+        },
+        {
+          "gate": "desktop-compact pass-through containers",
+          "pass": true,
+          "detail": "no dead pass-through containers"
+        },
+        {
+          "gate": "desktop-compact child containment",
+          "pass": true,
+          "detail": "all direct children fit inside their owners"
+        },
+        {
+          "gate": "desktop-compact fixed structural sizing",
+          "pass": true,
+          "detail": "no unapproved fixed positive width/height values on structural containers"
+        },
+        {
+          "gate": "desktop-compact readable inset",
+          "pass": true,
+          "detail": "min inset 23px"
+        },
+        {
+          "gate": "desktop-compact padding discipline",
+          "pass": true,
+          "detail": "values 8, 12, 20, 24"
+        },
+        {
+          "gate": "desktop-compact debug coverage",
+          "pass": true,
+          "detail": "all required meaningful items are named in debug"
+        },
+        {
+          "gate": "desktop-compact full-height composition",
+          "pass": true,
+          "detail": "Layer3 fills the center field and workspace/action stay attached"
+        }
+      ],
+      "screenshotPath": "/artifacts/qa/segmentationPasteNext-desktop-compact.png"
+    },
+    {
+      "viewport": {
+        "label": "desktop-standard",
+        "width": 1440,
+        "height": 900
+      },
+      "metrics": {
+        "totalElements": 117,
+        "maxDomDepth": 13,
+        "maxWrapperChain": 2,
+        "maxNestedSurfaceChain": 5,
+        "minTextInset": 23,
+        "insetIssues": [],
+        "spacingValues": [
+          8,
+          12,
+          20,
+          24
+        ],
+        "invalidSpacingValues": [],
+        "layerAncestryIssues": [],
+        "emptyContainers": [],
+        "passThroughContainers": [],
+        "containmentIssues": [],
+        "fixedSizeIssues": [],
+        "overlapIssues": [],
+        "primaryCoverage": 0.464,
+        "primaryCenterOffset": 25.7,
+        "missingDebugItems": [],
+        "compositionIntegrity": {
+          "fillsCenter": true,
+          "workspaceActionAttachment": true
+        },
+        "contractAuditAvailable": true,
+        "orphanOverrideKeys": [],
+        "missingRenderedContractContainers": [],
+        "extraRenderedContainers": []
+      },
+      "rows": [
+        {
+          "gate": "desktop-standard wrapper depth",
+          "pass": true,
+          "detail": "max wrapper chain 2"
+        },
+        {
+          "gate": "desktop-standard overlap check",
+          "pass": true,
+          "detail": "no text/control overlaps detected"
+        },
+        {
+          "gate": "desktop-standard layer ancestry",
+          "pass": true,
+          "detail": "all latter-layer containers sit inside lower-layer ancestors"
+        },
+        {
+          "gate": "desktop-standard empty containers",
+          "pass": true,
+          "detail": "no empty containers"
+        },
+        {
+          "gate": "desktop-standard pass-through containers",
+          "pass": true,
+          "detail": "no dead pass-through containers"
+        },
+        {
+          "gate": "desktop-standard child containment",
+          "pass": true,
+          "detail": "all direct children fit inside their owners"
+        },
+        {
+          "gate": "desktop-standard fixed structural sizing",
+          "pass": true,
+          "detail": "no unapproved fixed positive width/height values on structural containers"
+        },
+        {
+          "gate": "desktop-standard readable inset",
+          "pass": true,
+          "detail": "min inset 23px"
+        },
+        {
+          "gate": "desktop-standard padding discipline",
+          "pass": true,
+          "detail": "values 8, 12, 20, 24"
+        },
+        {
+          "gate": "desktop-standard primary width",
+          "pass": true,
+          "detail": "coverage 46.4%"
+        },
+        {
+          "gate": "desktop-standard orphan overrides",
+          "pass": true,
+          "detail": "all container override keys map to declared contract containers"
+        },
+        {
+          "gate": "desktop-standard contract/container mismatch",
+          "pass": true,
+          "detail": "rendered debug containers match the declared contract"
+        },
+        {
+          "gate": "desktop-standard debug coverage",
+          "pass": true,
+          "detail": "all required meaningful items are named in debug"
+        },
+        {
+          "gate": "desktop-standard full-height composition",
+          "pass": true,
+          "detail": "Layer3 fills the center field and workspace/action stay attached"
+        }
+      ],
+      "screenshotPath": "/artifacts/qa/segmentationPasteNext-desktop-standard.png"
+    },
+    {
+      "viewport": {
+        "label": "desktop-wide",
+        "width": 1920,
+        "height": 1080
+      },
+      "metrics": {
+        "totalElements": 117,
+        "maxDomDepth": 13,
+        "maxWrapperChain": 2,
+        "maxNestedSurfaceChain": 5,
+        "minTextInset": 23,
+        "insetIssues": [],
+        "spacingValues": [
+          8,
+          12,
+          20,
+          24
+        ],
+        "invalidSpacingValues": [],
+        "layerAncestryIssues": [],
+        "emptyContainers": [],
+        "passThroughContainers": [],
+        "containmentIssues": [],
+        "fixedSizeIssues": [],
+        "overlapIssues": [],
+        "primaryCoverage": 0.464,
+        "primaryCenterOffset": 34.27,
+        "missingDebugItems": [],
+        "compositionIntegrity": {
+          "fillsCenter": true,
+          "workspaceActionAttachment": true
+        },
+        "contractAuditAvailable": true,
+        "orphanOverrideKeys": [],
+        "missingRenderedContractContainers": [],
+        "extraRenderedContainers": []
+      },
+      "rows": [
+        {
+          "gate": "desktop-wide wrapper depth",
+          "pass": true,
+          "detail": "max wrapper chain 2"
+        },
+        {
+          "gate": "desktop-wide overlap check",
+          "pass": true,
+          "detail": "no text/control overlaps detected"
+        },
+        {
+          "gate": "desktop-wide layer ancestry",
+          "pass": true,
+          "detail": "all latter-layer containers sit inside lower-layer ancestors"
+        },
+        {
+          "gate": "desktop-wide empty containers",
+          "pass": true,
+          "detail": "no empty containers"
+        },
+        {
+          "gate": "desktop-wide pass-through containers",
+          "pass": true,
+          "detail": "no dead pass-through containers"
+        },
+        {
+          "gate": "desktop-wide child containment",
+          "pass": true,
+          "detail": "all direct children fit inside their owners"
+        },
+        {
+          "gate": "desktop-wide fixed structural sizing",
+          "pass": true,
+          "detail": "no unapproved fixed positive width/height values on structural containers"
+        },
+        {
+          "gate": "desktop-wide readable inset",
+          "pass": true,
+          "detail": "min inset 23px"
+        },
+        {
+          "gate": "desktop-wide padding discipline",
+          "pass": true,
+          "detail": "values 8, 12, 20, 24"
+        },
+        {
+          "gate": "desktop-wide debug coverage",
+          "pass": true,
+          "detail": "all required meaningful items are named in debug"
+        },
+        {
+          "gate": "desktop-wide full-height composition",
+          "pass": true,
+          "detail": "Layer3 fills the center field and workspace/action stay attached"
+        }
+      ],
+      "screenshotPath": "/artifacts/qa/segmentationPasteNext-desktop-wide.png"
+    }
+  ],
+  "zoomChecks": [
+    {
+      "zoomState": {
+        "label": "high-zoom",
+        "factor": 2
+      },
+      "metrics": {
+        "totalElements": 112,
+        "maxDomDepth": 13,
+        "maxWrapperChain": 2,
+        "maxNestedSurfaceChain": 5,
+        "minTextInset": 23,
+        "insetIssues": [],
+        "spacingValues": [
+          8,
+          12,
+          20,
+          24
+        ],
+        "invalidSpacingValues": [],
+        "layerAncestryIssues": [],
+        "emptyContainers": [],
+        "passThroughContainers": [],
+        "containmentIssues": [
+          {
+            "container": "Layer3_SegmentationNext_OperationalStack",
+            "child": "Layer4_SegmentationNext_ActionBand"
+          }
+        ],
+        "fixedSizeIssues": [],
+        "overlapIssues": [],
+        "primaryCoverage": 0.464,
+        "primaryCenterOffset": 12.84,
+        "missingDebugItems": [],
+        "compositionIntegrity": {
+          "fillsCenter": true,
+          "workspaceActionAttachment": true
+        },
+        "contractAuditAvailable": true,
+        "orphanOverrideKeys": [],
+        "missingRenderedContractContainers": [],
+        "extraRenderedContainers": []
+      },
+      "rows": [
+        {
+          "gate": "viewport-stress high-zoom overlap check",
+          "pass": true,
+          "detail": "no text/control overlaps detected"
+        },
+        {
+          "gate": "viewport-stress high-zoom readable inset",
+          "pass": true,
+          "detail": "min inset 23px"
+        },
+        {
+          "gate": "viewport-stress high-zoom full-height composition",
+          "pass": true,
+          "detail": "Layer3 fills the center field and workspace/action stay attached"
+        }
+      ],
+      "screenshotPath": "/artifacts/qa/segmentationPasteNext-zoom-high-zoom.png"
+    },
+    {
+      "zoomState": {
+        "label": "very-high-zoom",
+        "factor": 4
+      },
+      "metrics": {
+        "totalElements": 92,
+        "maxDomDepth": 13,
+        "maxWrapperChain": 2,
+        "maxNestedSurfaceChain": 5,
+        "minTextInset": 23,
+        "insetIssues": [],
+        "spacingValues": [
+          8,
+          12,
+          20,
+          24
+        ],
+        "invalidSpacingValues": [],
+        "layerAncestryIssues": [],
+        "emptyContainers": [
+          {
+            "container": "Layer1_Body_NavigationRail",
+            "layer": "Layer1"
+          }
+        ],
+        "passThroughContainers": [],
+        "containmentIssues": [
+          {
+            "container": "Layer1_Header_CenterLane",
+            "child": "step_bar"
+          },
+          {
+            "container": "Layer3_SegmentationNext_OperationalStack",
+            "child": "Layer4_SegmentationNext_WorkspaceBand"
+          },
+          {
+            "container": "Layer3_SegmentationNext_OperationalStack",
+            "child": "Layer4_SegmentationNext_ActionBand"
+          }
+        ],
+        "fixedSizeIssues": [],
+        "overlapIssues": [],
+        "primaryCoverage": 0.464,
+        "primaryCenterOffset": 6.41,
+        "missingDebugItems": [],
+        "compositionIntegrity": {
+          "fillsCenter": true,
+          "workspaceActionAttachment": true
+        },
+        "contractAuditAvailable": true,
+        "orphanOverrideKeys": [],
+        "missingRenderedContractContainers": [],
+        "extraRenderedContainers": []
+      },
+      "rows": [
+        {
+          "gate": "viewport-stress very-high-zoom overlap check",
+          "pass": true,
+          "detail": "no text/control overlaps detected"
+        },
+        {
+          "gate": "viewport-stress very-high-zoom readable inset",
+          "pass": true,
+          "detail": "min inset 23px"
+        },
+        {
+          "gate": "viewport-stress very-high-zoom full-height composition",
+          "pass": true,
+          "detail": "Layer3 fills the center field and workspace/action stay attached"
+        }
+      ],
+      "screenshotPath": "/artifacts/qa/segmentationPasteNext-zoom-very-high-zoom.png"
+    }
+  ],
+  "viewportStressChecks": [
+    {
+      "zoomState": {
+        "label": "high-zoom",
+        "factor": 2
+      },
+      "metrics": {
+        "totalElements": 112,
+        "maxDomDepth": 13,
+        "maxWrapperChain": 2,
+        "maxNestedSurfaceChain": 5,
+        "minTextInset": 23,
+        "insetIssues": [],
+        "spacingValues": [
+          8,
+          12,
+          20,
+          24
+        ],
+        "invalidSpacingValues": [],
+        "layerAncestryIssues": [],
+        "emptyContainers": [],
+        "passThroughContainers": [],
+        "containmentIssues": [
+          {
+            "container": "Layer3_SegmentationNext_OperationalStack",
+            "child": "Layer4_SegmentationNext_ActionBand"
+          }
+        ],
+        "fixedSizeIssues": [],
+        "overlapIssues": [],
+        "primaryCoverage": 0.464,
+        "primaryCenterOffset": 12.84,
+        "missingDebugItems": [],
+        "compositionIntegrity": {
+          "fillsCenter": true,
+          "workspaceActionAttachment": true
+        },
+        "contractAuditAvailable": true,
+        "orphanOverrideKeys": [],
+        "missingRenderedContractContainers": [],
+        "extraRenderedContainers": []
+      },
+      "rows": [
+        {
+          "gate": "viewport-stress high-zoom overlap check",
+          "pass": true,
+          "detail": "no text/control overlaps detected"
+        },
+        {
+          "gate": "viewport-stress high-zoom readable inset",
+          "pass": true,
+          "detail": "min inset 23px"
+        },
+        {
+          "gate": "viewport-stress high-zoom full-height composition",
+          "pass": true,
+          "detail": "Layer3 fills the center field and workspace/action stay attached"
+        }
+      ],
+      "screenshotPath": "/artifacts/qa/segmentationPasteNext-zoom-high-zoom.png"
+    },
+    {
+      "zoomState": {
+        "label": "very-high-zoom",
+        "factor": 4
+      },
+      "metrics": {
+        "totalElements": 92,
+        "maxDomDepth": 13,
+        "maxWrapperChain": 2,
+        "maxNestedSurfaceChain": 5,
+        "minTextInset": 23,
+        "insetIssues": [],
+        "spacingValues": [
+          8,
+          12,
+          20,
+          24
+        ],
+        "invalidSpacingValues": [],
+        "layerAncestryIssues": [],
+        "emptyContainers": [
+          {
+            "container": "Layer1_Body_NavigationRail",
+            "layer": "Layer1"
+          }
+        ],
+        "passThroughContainers": [],
+        "containmentIssues": [
+          {
+            "container": "Layer1_Header_CenterLane",
+            "child": "step_bar"
+          },
+          {
+            "container": "Layer3_SegmentationNext_OperationalStack",
+            "child": "Layer4_SegmentationNext_WorkspaceBand"
+          },
+          {
+            "container": "Layer3_SegmentationNext_OperationalStack",
+            "child": "Layer4_SegmentationNext_ActionBand"
+          }
+        ],
+        "fixedSizeIssues": [],
+        "overlapIssues": [],
+        "primaryCoverage": 0.464,
+        "primaryCenterOffset": 6.41,
+        "missingDebugItems": [],
+        "compositionIntegrity": {
+          "fillsCenter": true,
+          "workspaceActionAttachment": true
+        },
+        "contractAuditAvailable": true,
+        "orphanOverrideKeys": [],
+        "missingRenderedContractContainers": [],
+        "extraRenderedContainers": []
+      },
+      "rows": [
+        {
+          "gate": "viewport-stress very-high-zoom overlap check",
+          "pass": true,
+          "detail": "no text/control overlaps detected"
+        },
+        {
+          "gate": "viewport-stress very-high-zoom readable inset",
+          "pass": true,
+          "detail": "min inset 23px"
+        },
+        {
+          "gate": "viewport-stress very-high-zoom full-height composition",
+          "pass": true,
+          "detail": "Layer3 fills the center field and workspace/action stay attached"
+        }
+      ],
+      "screenshotPath": "/artifacts/qa/segmentationPasteNext-zoom-very-high-zoom.png"
+    }
+  ]
+}

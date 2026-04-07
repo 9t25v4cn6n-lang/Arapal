@@ -1,23 +1,15 @@
 import { useState } from 'react'
 import layoutContract from './EditorPanelsLabScreen.contract'
 import EditorSurface from '../../foundation/primitives/EditorSurface'
-import SourceIntakeBrand from '../../foundation/primitives/SourceIntakeBrand'
 import {
-  DimmedStageOverlayPreview,
-  EditorFooterPreview,
-  EditorTopbarPreview,
+  EditorFormattingToolbarPreview,
   ExpandedFocusPanelPreview,
-  FeedbackBlockPreview,
-  FloatingPanelHeaderPreview,
-  FloatingResizeAffordancePreview,
   FloatingSupportPreview,
   LexicographyEntryRowPreview,
-  LexicographySupportCardPreview,
+  ModeSurfaceMarksPreview,
   NumberedTakeawayPreview,
-  OperationalPanelPreview,
   OptionsPopoverPreview,
-  PanelCornerCasingPreview,
-  SupportPanelCardPreview,
+  SupportCardFamilyPreview,
   SupportRailCardPreview,
 } from '../../foundation/lab-previews/editorPanels'
 import { LabGenericCard, LabScaffold, LabSection } from '../../foundation/primitives/LabBoard'
@@ -32,14 +24,15 @@ export default function EditorPanelsLabScreen({ route, shell }) {
     <>
       <LabSection
         title="Editor family"
-        description="The editor family should feel calm, precise, and premium. This is one of the main visual anchors of the product."
-        columns="1fr"
+        description="Approve the editor itself first, then the attached mode marks that sit on related screens."
+        columns="repeat(2, minmax(0, 1fr))"
       >
         <LabGenericCard
           title="Editor surface"
           status="Active extraction"
           note="Includes the attached corner casing, topbar chrome, watermark, and footer rhythm."
           minHeight={0}
+          gridColumn="1 / -1"
         >
           <EditorSurface
             value={editorValue}
@@ -49,86 +42,63 @@ export default function EditorPanelsLabScreen({ route, shell }) {
             minHeight={420}
           />
         </LabGenericCard>
-      </LabSection>
-
-      <LabSection
-        title="Editor sub-parts"
-        description="These live inside the editor family, but we still review them as distinct generics."
-      >
         <LabGenericCard
-          title="Source intake brand"
-          status="Active extraction"
-          note="Segmentation-specific identity cluster that likely belongs to the operational editor family."
-          minHeight={130}
+          title="Mode surface marks"
+          status="Locked"
+          note="Use the same mark structure across screens, with screen-specific icon + copy variants rather than bespoke layouts."
+          minHeight={0}
         >
-          <div style={{ display: 'flex', alignItems: 'center', minHeight: 68 }}>
-            <SourceIntakeBrand />
-          </div>
+          <ModeSurfaceMarksPreview />
         </LabGenericCard>
-        <LabGenericCard title="Editor topbar" status="Candidate" note="Window buttons, eyebrow, and seal treatment." minHeight={0}>
-          <EditorTopbarPreview />
-        </LabGenericCard>
-        <LabGenericCard title="Editor footer" status="Candidate" note="Shortcut hint, keycaps, and footer meta rhythm." minHeight={0}>
-          <EditorFooterPreview />
-        </LabGenericCard>
-        <LabGenericCard title="Editor watermark treatment" status="Candidate" note="Opacity, position, and visual restraint." minHeight={0}>
-          <div style={{ position: 'relative', minHeight: 150, borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: '#fff', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', right: 24, bottom: 18, fontFamily: '"Playfair Display", Georgia, serif', fontSize: 42, lineHeight: 1, letterSpacing: '-0.06em', color: 'rgba(37, 99, 235, 0.085)' }}>Arapal</div>
-          </div>
-        </LabGenericCard>
-        <LabGenericCard title="Panel corner casing" status="Candidate" note="Attached to the editor/panel family, never floating independently." minHeight={0}>
-          <PanelCornerCasingPreview />
+        <LabGenericCard
+          title="Editor formatting toolbar"
+          status="Candidate"
+          note="Text-capable editor variant for study and patching. Includes deterministic tools like case change, special characters, NBSP, and a future QA check action."
+          minHeight={0}
+        >
+          <EditorFormattingToolbarPreview />
         </LabGenericCard>
       </LabSection>
 
       <LabSection
-        title="Panel families"
-        description="Panels should share a family resemblance even when their use differs."
+        title="Support panel family"
+        description="There should be one support-card styling family, then content-specific variants like lexicography or guidance inside it."
       >
-        <LabGenericCard title="Operational panel" status="Candidate" note="Core surface for controlled preparation and approval flows." minHeight={0}>
-          <OperationalPanelPreview />
-        </LabGenericCard>
-        <LabGenericCard title="Options popover" status="Candidate" note="Advanced segmentation menu and similar overlays should come from one family." minHeight={0}>
+        <LabGenericCard title="Options popover" status="Locked" note="Exact V2 segmentation menu family with the same indents, spacing, and preference rows." minHeight={0}>
           <OptionsPopoverPreview />
         </LabGenericCard>
-        <LabGenericCard title="Support panel card" status="Candidate" note="Study support family from the right rail." minHeight={0}>
-          <SupportPanelCardPreview />
+        <LabGenericCard title="Support card family" status="Locked" note="Use one V1 study-shell card styling, then apply tone + content variants like lexicography or guidance." minHeight={360} displayAlign="stretch" displayJustify="stretch" gridColumn="1 / -1">
+          <SupportCardFamilyPreview />
         </LabGenericCard>
-        <LabGenericCard title="Lexicography support card" status="Candidate" note="One of the strongest concrete support-card references from the study shell." minHeight={0}>
-          <LexicographySupportCardPreview />
-        </LabGenericCard>
-        <LabGenericCard title="Support rail card" status="Candidate" note="Collapsed preview card for right-rail support." minHeight={0}>
+        <LabGenericCard title="Support rail card" status="Locked" note="Collapsed preview card for right-rail support, using tone-matched premium hover/fill." minHeight={360}>
           <SupportRailCardPreview />
         </LabGenericCard>
-        <LabGenericCard title="Floating support preview" status="Candidate" note="Pinned or hovered preview surface from the collapsed support rail." minHeight={0}>
+        <LabGenericCard title="Floating support preview" status="Candidate" note="Pinned or hovered preview surface from the collapsed support rail." minHeight={360}>
           <FloatingSupportPreview />
         </LabGenericCard>
       </LabSection>
 
       <LabSection
-        title="Expanded and floating support surfaces"
-        description="These are the parts of the study shell that feel powerful and reusable, but need a more explicit system home."
+        title="Focused support states"
+        description="These are the V1 study-shell states that matter: collapsed rail, floating preview, and focused expanded support."
       >
-        <LabGenericCard title="Expanded focus panel" status="Candidate" note="Dimmed-background, front-and-center expansion for support content such as lexicography." minHeight={0}>
+        <LabGenericCard
+          title="Expanded focus support surface"
+          status="Candidate"
+          note="Use the dimmed-background, front-and-center V1 study-shell expansion as one combined state, not as separate fake generics."
+          minHeight={520}
+          gridColumn="1 / -1"
+          displayAlign="stretch"
+          displayJustify="stretch"
+        >
           <ExpandedFocusPanelPreview />
         </LabGenericCard>
-        <LabGenericCard title="Expandable support modal" status="Candidate" note="Large focused support view with proper temporary dominance." minHeight={0}>
-          <ExpandedFocusPanelPreview />
-        </LabGenericCard>
-        <LabGenericCard title="Dimmed stage overlay" status="Candidate" note="Shared focused-overlay treatment used when a support surface takes temporary center stage." minHeight={0}>
-          <DimmedStageOverlayPreview />
-        </LabGenericCard>
-        <LabGenericCard title="Floating panel header + actions" status="Candidate" note="Header strip for floating support surfaces, including close and pin controls." minHeight={0}>
-          <div style={{ borderRadius: radius[16], overflow: 'hidden', border: `1px solid ${colors.lineSoft}` }}>
-            <FloatingPanelHeaderPreview />
-          </div>
-        </LabGenericCard>
-        <LabGenericCard title="Floating panel resize affordance" status="Candidate" note="Should become a defined floating-panel capability rather than staying a local trick." minHeight={0}>
-          <FloatingResizeAffordancePreview />
-        </LabGenericCard>
-        <LabGenericCard title="Feedback block" status="Candidate" note="Reusable feedback excerpt used inside support cards and expanded panels." minHeight={0}>
-          <FeedbackBlockPreview />
-        </LabGenericCard>
+      </LabSection>
+
+      <LabSection
+        title="Support content blocks"
+        description="Keep only the lower-level inner patterns that are genuinely likely to repeat across support surfaces."
+      >
         <LabGenericCard title="Numbered takeaway item" status="Candidate" note="Ordered advice block for remediation and expanded support reading." minHeight={0}>
           <NumberedTakeawayPreview />
         </LabGenericCard>

@@ -30,7 +30,7 @@ export default function createLabBoardContract({ screenId, screenName }) {
         flexDirection: 'column',
         alignItems: 'stretch',
         justifyContent: 'flex-start',
-        padding: `${spacing[16]} 0`,
+        padding: `${spacing[16]}px 0`,
         gap: spacing[20],
         overflow: 'auto',
         textAlign: 'left',
@@ -51,6 +51,9 @@ export default function createLabBoardContract({ screenId, screenName }) {
         gap: spacing[20],
         overflow: 'visible',
         textAlign: 'left',
+        style: {
+          flexShrink: 0,
+        },
       },
       {
         name: 'Layer3_Lab_Content',
@@ -65,6 +68,9 @@ export default function createLabBoardContract({ screenId, screenName }) {
         gap: spacing[16],
         overflow: 'visible',
         textAlign: 'left',
+        style: {
+          flexShrink: 0,
+        },
       },
       {
         name: 'Layer3_Lab_RightRail',

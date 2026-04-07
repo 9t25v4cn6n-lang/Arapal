@@ -106,7 +106,7 @@ export function PreferenceToggleRowPreview() {
             borderRadius: radius[16],
             border: `1px solid ${row.active ? 'rgba(191, 219, 254, 0.96)' : colors.lineSoft}`,
             background: row.active ? 'rgba(239, 246, 255, 0.78)' : 'rgba(255, 255, 255, 0.92)',
-            padding: `${spacing[12]} ${spacing[16]}`,
+            padding: `${spacing[12]}px ${spacing[16]}px`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -382,7 +382,7 @@ export function EditorToolbarControlsPreview() {
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: spacing[16],
-          padding: `0 ${spacing[16]}`,
+          padding: `0 ${spacing[16]}px`,
           boxShadow: '0 1px 0 rgba(255,255,255,0.72) inset',
         }}
       >
@@ -465,7 +465,7 @@ export function ModeIconSetPreview() {
             display: 'grid',
             justifyItems: 'center',
             gap: spacing[8],
-            padding: `${spacing[8]} ${spacing[10]}`,
+            padding: `${spacing[8]}px ${spacing[10]}px`,
           }}
         >
           <div style={{ color: colors.accentStrong, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{item.icon}</div>
@@ -478,10 +478,10 @@ export function ModeIconSetPreview() {
   )
 }
 
-export function SplitCTAPreview({ showMenu = false }) {
+export function SplitCTAPreview({ showMenu = false, initialMethod = 'ai', initialStyle = 'meaning' }) {
   const [isOpen, setIsOpen] = useState(showMenu)
-  const [method, setMethod] = useState('ai')
-  const [style, setStyle] = useState('meaning')
+  const [method, setMethod] = useState(initialMethod)
+  const [style, setStyle] = useState(initialStyle)
 
   const options = useMemo(
     () => [
@@ -576,7 +576,7 @@ export function SplitCTAPreview({ showMenu = false }) {
                       border: `1px solid ${isSelected ? 'rgba(147, 197, 253, 0.96)' : 'transparent'}`,
                       borderRadius: radius[16],
                       background: isSelected ? 'rgba(239, 246, 255, 0.82)' : 'transparent',
-                      padding: `${spacing[12]} ${spacing[14]}`,
+                      padding: `${spacing[12]}px ${spacing[14]}px`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',

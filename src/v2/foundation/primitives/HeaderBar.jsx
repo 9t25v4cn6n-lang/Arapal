@@ -9,7 +9,7 @@ export function HeaderBrand() {
         alignItems: 'center',
         gap: spacing[8],
         margin: 0,
-        padding: `0 ${spacing[16]}`,
+        padding: `0 ${spacing[16]}px`,
         minHeight: '32px',
         border: `1px solid ${colors.lineSoft}`,
         borderRadius: radius.pill,
@@ -39,7 +39,7 @@ export function HeaderCenter({ route }) {
     <div
       style={{
         display: 'grid',
-        gap: '4px',
+        gap: spacing[4],
         justifyItems: 'center',
       }}
     >
@@ -78,4 +78,3 @@ export function HeaderMeta({ route }) {
     </p>
   )
 }
-

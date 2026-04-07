@@ -8,5 +8,3 @@ export const controlSizing = {
     iconPx: 18,
   },
 }
-
-export default controlSizing

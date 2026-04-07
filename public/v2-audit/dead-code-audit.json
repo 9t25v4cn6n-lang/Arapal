@@ -1,0 +1,3382 @@
+{
+  "lane": "dead-code",
+  "generatedAt": "2026-04-07T17:33:36.890Z",
+  "findings": [
+    {
+      "id": "dead-code:3b5421f61587",
+      "lane": "dead-code",
+      "ruleId": "unused-file",
+      "title": "Unused file candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-file",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/lanes/static-doctrine/rules/cssTemplateRules.ts",
+      "line": null,
+      "column": null,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "/src/v2/audit/lanes/static-doctrine/rules/cssTemplateRules.ts is not reachable from the configured product or tooling entry roots.",
+      "rationale": "Dead files create misleading repo noise and make the system harder to trust.",
+      "evidence": {
+        "excerpt": "Included as audit framework support scope.",
+        "details": [
+          "scope=tooling-support",
+          "usedByLiveProduct=false"
+        ]
+      },
+      "suggestedFix": "Delete the file if it is truly unused, or wire it into an explicit entry/closure if it is intentionally standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-file",
+        "tooling-support",
+        "audit-suite"
+      ],
+      "fingerprint": "3b5421f615875fe7fedebd6a18e9658e6951d23b",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:93966851a0d0",
+      "lane": "dead-code",
+      "ruleId": "unused-file",
+      "title": "Unused file candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-file",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/foundation/debug/V2DebugInspector.jsx",
+      "line": null,
+      "column": null,
+      "screenId": null,
+      "fileKind": "debug",
+      "scope": "debug",
+      "ownerLayer": "tooling-support",
+      "message": "/src/v2/foundation/debug/V2DebugInspector.jsx is not reachable from the configured product or tooling entry roots.",
+      "rationale": "Dead files create misleading repo noise and make the system harder to trust.",
+      "evidence": {
+        "excerpt": "Included as debug support scope.",
+        "details": [
+          "scope=debug",
+          "usedByLiveProduct=false"
+        ]
+      },
+      "suggestedFix": "Delete the file if it is truly unused, or wire it into an explicit entry/closure if it is intentionally standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-file",
+        "debug",
+        "debug"
+      ],
+      "fingerprint": "93966851a0d0f0dcf851394fdc63c44148bbd803",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:902b56a0b199",
+      "lane": "dead-code",
+      "ruleId": "unused-file",
+      "title": "Unused file candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-file",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/foundation/debug/structureAudit.js",
+      "line": null,
+      "column": null,
+      "screenId": null,
+      "fileKind": "debug",
+      "scope": "debug",
+      "ownerLayer": "tooling-support",
+      "message": "/src/v2/foundation/debug/structureAudit.js is not reachable from the configured product or tooling entry roots.",
+      "rationale": "Dead files create misleading repo noise and make the system harder to trust.",
+      "evidence": {
+        "excerpt": "Included as debug support scope.",
+        "details": [
+          "scope=debug",
+          "usedByLiveProduct=false"
+        ]
+      },
+      "suggestedFix": "Delete the file if it is truly unused, or wire it into an explicit entry/closure if it is intentionally standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-file",
+        "debug",
+        "debug"
+      ],
+      "fingerprint": "902b56a0b199b6c4aa748ccb730b126848784651",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:a145e2f6e01e",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/app/auditRegistry.js",
+      "line": 50,
+      "column": 1,
+      "screenId": null,
+      "fileKind": "framework-adapter",
+      "scope": "tooling-support",
+      "ownerLayer": "shared-layout",
+      "message": "Export \"default\" from /src/v2/app/auditRegistry.js is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "default",
+        "details": [
+          "importers=3",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "default"
+      ],
+      "fingerprint": "a145e2f6e01e1cfeb3f9a948f6a4368911556aef",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:ab6f535d8542",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/core/fileInventory.ts",
+      "line": 99,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"summarizeInventoryByScope\" from /src/v2/audit/core/fileInventory.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "summarizeInventoryByScope",
+        "details": [
+          "importers=2",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "ab6f535d8542099acac95714481a61e35eed6f2c",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:66c6bde21a5f",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/core/fileInventory.ts",
+      "line": 106,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"summarizeInventoryProductVsTooling\" from /src/v2/audit/core/fileInventory.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "summarizeInventoryProductVsTooling",
+        "details": [
+          "importers=2",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "66c6bde21a5f4932ec8689b8cf8ed96fd8db2fad",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:485510c772d7",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/core/reportSummary.ts",
+      "line": 19,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"summarizeFindingsByScreen\" from /src/v2/audit/core/reportSummary.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "summarizeFindingsByScreen",
+        "details": [
+          "importers=1",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "485510c772d78e33064087fac4c3e8e214fbc13f",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:edda16cab598",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/lanes/duplication/signatureHelpers.ts",
+      "line": 233,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"deriveRepresentativeScreenId\" from /src/v2/audit/lanes/duplication/signatureHelpers.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "deriveRepresentativeScreenId",
+        "details": [
+          "importers=2",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "edda16cab59810422659b9a15df84563aa877469",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:8a6aa678e4e8",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/lanes/duplication/signatureHelpers.ts",
+      "line": 252,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"isToolingOnlyOccurrences\" from /src/v2/audit/lanes/duplication/signatureHelpers.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "isToolingOnlyOccurrences",
+        "details": [
+          "importers=2",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "8a6aa678e4e8d5d6f9c5c97a4a6bbe72bc06227f",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:2eb0c35714b0",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/lanes/runtime-qa/gateDefinitions.ts",
+      "line": 17,
+      "column": 14,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"runtimeQaGateDefinitions\" from /src/v2/audit/lanes/runtime-qa/gateDefinitions.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "runtimeQaGateDefinitions",
+        "details": [
+          "importers=1",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "2eb0c35714b0ca72267e3b447207332e08983b1a",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:f364590eeadb",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/lanes/static-doctrine/ruleHelpers.ts",
+      "line": 141,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"getExpressionRootIdentifiers\" from /src/v2/audit/lanes/static-doctrine/ruleHelpers.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "getExpressionRootIdentifiers",
+        "details": [
+          "importers=7",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "f364590eeadb9b2b8847d45c74c1f8e1cb7dd2e2",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:690bdde83369",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/lanes/static-doctrine/ruleHelpers.ts",
+      "line": 209,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"expressionUsesOnlyAllowedRoots\" from /src/v2/audit/lanes/static-doctrine/ruleHelpers.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "expressionUsesOnlyAllowedRoots",
+        "details": [
+          "importers=7",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "690bdde833696a2457150c99f17afc06eca76e13",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:246d7aaac747",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/policy/findingSchema.ts",
+      "line": 1,
+      "column": 14,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"auditLaneIds\" from /src/v2/audit/policy/findingSchema.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "auditLaneIds",
+        "details": [
+          "importers=37",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "246d7aaac7474d25837ed8bc4c2ba85bf220b001",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:1bbe2fc40a5c",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/policy/findingSchema.ts",
+      "line": 10,
+      "column": 14,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"auditSeverities\" from /src/v2/audit/policy/findingSchema.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "auditSeverities",
+        "details": [
+          "importers=37",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "1bbe2fc40a5ce1bad77c45535b909c682854dbd8",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:b55f354fad3b",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/policy/findingSchema.ts",
+      "line": 11,
+      "column": 14,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"auditConfidences\" from /src/v2/audit/policy/findingSchema.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "auditConfidences",
+        "details": [
+          "importers=37",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "b55f354fad3b6ac46b33403804c83bee9e39dd65",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:570c3b798653",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/policy/findingSchema.ts",
+      "line": 12,
+      "column": 14,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"findingClassifications\" from /src/v2/audit/policy/findingSchema.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "findingClassifications",
+        "details": [
+          "importers=37",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "570c3b798653610f271121b3fbb61fbb6552b6e9",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:1c9f588a4330",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/policy/findingSchema.ts",
+      "line": 20,
+      "column": 14,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"auditFileKinds\" from /src/v2/audit/policy/findingSchema.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "auditFileKinds",
+        "details": [
+          "importers=37",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "1c9f588a4330800b3a349e46de7296dcd00d4b05",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:5c8fa767cc0d",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/policy/findingSchema.ts",
+      "line": 36,
+      "column": 14,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"auditScopes\" from /src/v2/audit/policy/findingSchema.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "auditScopes",
+        "details": [
+          "importers=37",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "5c8fa767cc0d1d0a90a1f0fdfed5931d62b2111b",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:4ffd6a3a6ed5",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/policy/findingSchema.ts",
+      "line": 48,
+      "column": 14,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"auditOwnerLayers\" from /src/v2/audit/policy/findingSchema.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "auditOwnerLayers",
+        "details": [
+          "importers=37",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "4ffd6a3a6ed58ac1e8bea6458fb6906360fd735e",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:a85fb04606a4",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/policy/findingSchema.ts",
+      "line": 61,
+      "column": 14,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"findingStatuses\" from /src/v2/audit/policy/findingSchema.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "findingStatuses",
+        "details": [
+          "importers=37",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "a85fb04606a4aee21f1dafe8c4a1f8c8c40cf0de",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:8c7644d42415",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/policy/findingSchema.ts",
+      "line": 62,
+      "column": 14,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"laneStatuses\" from /src/v2/audit/policy/findingSchema.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "laneStatuses",
+        "details": [
+          "importers=37",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "8c7644d42415ce37326612b98bfdab810d474f2f",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:2c9067c7514b",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/policy/findingSchema.ts",
+      "line": 63,
+      "column": 14,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"diffStatuses\" from /src/v2/audit/policy/findingSchema.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "diffStatuses",
+        "details": [
+          "importers=37",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "2c9067c7514b00f5f824ace5410cbce62eae6222",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:ef197a39eb5e",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/policy/findingSchema.ts",
+      "line": 64,
+      "column": 14,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"auditScoreGroupIds\" from /src/v2/audit/policy/findingSchema.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "auditScoreGroupIds",
+        "details": [
+          "importers=37",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "ef197a39eb5ef68949e1408727db8d3858a759a0",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:d78949b28daf",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/policy/scopePolicy.ts",
+      "line": 44,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"toProjectPath\" from /src/v2/audit/policy/scopePolicy.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "toProjectPath",
+        "details": [
+          "importers=9",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "d78949b28dafc21355ba3b53e2f50f8a3b604a47",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:192244ca6bd7",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/policy/scopePolicy.ts",
+      "line": 48,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"matchesProjectSubpath\" from /src/v2/audit/policy/scopePolicy.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "matchesProjectSubpath",
+        "details": [
+          "importers=9",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "192244ca6bd7e1ba411b85614fb840eca8d65930",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:5375fc6a9193",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/policy/scopePolicy.ts",
+      "line": 61,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"isPathInSharedFoundationRoots\" from /src/v2/audit/policy/scopePolicy.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "isPathInSharedFoundationRoots",
+        "details": [
+          "importers=9",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "5375fc6a91939e527a9636fad12b35dbc472260e",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:07cbdd59a4e8",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/policy/scopePolicy.ts",
+      "line": 65,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"isPathExplicitlyExcludedFromSharedFoundation\" from /src/v2/audit/policy/scopePolicy.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "isPathExplicitlyExcludedFromSharedFoundation",
+        "details": [
+          "importers=9",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "07cbdd59a4e8eca40ca00cacbf90f757704e147e",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:f2e3572be0c0",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/policy/scopePolicy.ts",
+      "line": 69,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"classifyFileKind\" from /src/v2/audit/policy/scopePolicy.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "classifyFileKind",
+        "details": [
+          "importers=9",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "f2e3572be0c0d655bd84db6b252d2b6d2c508a79",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:bdb87db3c9f2",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/policy/scopePolicy.ts",
+      "line": 133,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"determineOwnerLayer\" from /src/v2/audit/policy/scopePolicy.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "determineOwnerLayer",
+        "details": [
+          "importers=9",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "bdb87db3c9f206b1fe8c9a2b0600565c672a230f",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:ff9b91902641",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/audit/policy/scopePolicy.ts",
+      "line": 158,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "message": "Export \"determineScope\" from /src/v2/audit/policy/scopePolicy.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "determineScope",
+        "details": [
+          "importers=9",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "tooling-support",
+        "named"
+      ],
+      "fingerprint": "ff9b91902641d119602a7a586c0309c16f6b1245",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:4b7abf83a4a7",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/foundation/lab-previews/patterns.jsx",
+      "line": 500,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "message": "Export \"SegmentationOperationalWorkspacePreview\" from /src/v2/foundation/lab-previews/patterns.jsx is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "SegmentationOperationalWorkspacePreview",
+        "details": [
+          "importers=1",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "lab",
+        "named"
+      ],
+      "fingerprint": "4b7abf83a4a775451159f5b4b86fd3fcf737207a",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:029386a29cc6",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/foundation/lab-previews/patterns.jsx",
+      "line": 632,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "message": "Export \"PatchingCorrectionShellPreview\" from /src/v2/foundation/lab-previews/patterns.jsx is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "PatchingCorrectionShellPreview",
+        "details": [
+          "importers=1",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "lab",
+        "named"
+      ],
+      "fingerprint": "029386a29cc64e05f5e02ade3ff5821c06936313",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:99a4e9f59a3b",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/foundation/lab-previews/patterns.jsx",
+      "line": 680,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "message": "Export \"ExamsFocusShellPreview\" from /src/v2/foundation/lab-previews/patterns.jsx is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "ExamsFocusShellPreview",
+        "details": [
+          "importers=1",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "lab",
+        "named"
+      ],
+      "fingerprint": "99a4e9f59a3bfba27410cd25d2e53e8e098cfde2",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:78dc749d4338",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/foundation/lab-previews/patterns.jsx",
+      "line": 723,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "message": "Export \"CenteredSuccessReviewStagePreview\" from /src/v2/foundation/lab-previews/patterns.jsx is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "CenteredSuccessReviewStagePreview",
+        "details": [
+          "importers=1",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "lab",
+        "named"
+      ],
+      "fingerprint": "78dc749d43384481bfcf911641b5944cd2578689",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:8ffa815d0ec7",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/foundation/primitives/LabBoard.jsx",
+      "line": 84,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "message": "Export \"LabDisplayStage\" from /src/v2/foundation/primitives/LabBoard.jsx is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "LabDisplayStage",
+        "details": [
+          "importers=7",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "lab",
+        "named"
+      ],
+      "fingerprint": "8ffa815d0ec7dee9b79bd90dad44a6c0e3b555d8",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:7a146be39b84",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/foundation/primitives/LabBoard.jsx",
+      "line": 192,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "message": "Export \"LabPlaceholderCard\" from /src/v2/foundation/primitives/LabBoard.jsx is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "LabPlaceholderCard",
+        "details": [
+          "importers=7",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "lab",
+        "named"
+      ],
+      "fingerprint": "7a146be39b84d76812152ae67cef61c6d4e0f507",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:1fcaf8a08f41",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/screens/ControlsLab/ControlsLabScreen.contract.ts",
+      "line": 3,
+      "column": 14,
+      "screenId": "ControlsLab",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "message": "Export \"layoutContract\" from /src/v2/screens/ControlsLab/ControlsLabScreen.contract.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "layoutContract",
+        "details": [
+          "importers=2",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "lab",
+        "named"
+      ],
+      "fingerprint": "1fcaf8a08f419150fce8d137fd530254d5aff674",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:35ea5b95b375",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/screens/EditorPanelsLab/EditorPanelsLabScreen.contract.ts",
+      "line": 3,
+      "column": 14,
+      "screenId": "EditorPanelsLab",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "message": "Export \"layoutContract\" from /src/v2/screens/EditorPanelsLab/EditorPanelsLabScreen.contract.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "layoutContract",
+        "details": [
+          "importers=2",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "lab",
+        "named"
+      ],
+      "fingerprint": "35ea5b95b3756044b727836bdd8feee838472ea9",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:aabd9fb6f9c6",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/screens/FoundationLab/FoundationLabScreen.contract.ts",
+      "line": 3,
+      "column": 14,
+      "screenId": "FoundationLab",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "message": "Export \"layoutContract\" from /src/v2/screens/FoundationLab/FoundationLabScreen.contract.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "layoutContract",
+        "details": [
+          "importers=2",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "lab",
+        "named"
+      ],
+      "fingerprint": "aabd9fb6f9c6d0d585375fcebedb53a29a01b26c",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:386e99cae9fc",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/screens/MotionInteractionLab/MotionInteractionLabScreen.contract.ts",
+      "line": 3,
+      "column": 14,
+      "screenId": "MotionInteractionLab",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "message": "Export \"layoutContract\" from /src/v2/screens/MotionInteractionLab/MotionInteractionLabScreen.contract.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "layoutContract",
+        "details": [
+          "importers=2",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "lab",
+        "named"
+      ],
+      "fingerprint": "386e99cae9fcba0739f07de3590d10aebb278849",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:8eda865d1ef3",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/screens/PatternLab/PatternLabScreen.contract.ts",
+      "line": 3,
+      "column": 14,
+      "screenId": "PatternLab",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "message": "Export \"layoutContract\" from /src/v2/screens/PatternLab/PatternLabScreen.contract.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "layoutContract",
+        "details": [
+          "importers=2",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "lab",
+        "named"
+      ],
+      "fingerprint": "8eda865d1ef34684ce727a1f6476777f2d5a8815",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:130414715f82",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/screens/QualityDashboard/QualityDashboardScreen.contract.ts",
+      "line": 3,
+      "column": 14,
+      "screenId": "QualityDashboard",
+      "fileKind": "dashboard",
+      "scope": "dashboard",
+      "ownerLayer": "tooling-support",
+      "message": "Export \"layoutContract\" from /src/v2/screens/QualityDashboard/QualityDashboardScreen.contract.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "layoutContract",
+        "details": [
+          "importers=2",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "dashboard",
+        "named"
+      ],
+      "fingerprint": "130414715f82529bb845f401205acfa2e1e3cd10",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:45633c11b787",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/screens/TypographyTokensLab/TypographyTokensLabScreen.contract.ts",
+      "line": 3,
+      "column": 14,
+      "screenId": "TypographyTokensLab",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "message": "Export \"layoutContract\" from /src/v2/screens/TypographyTokensLab/TypographyTokensLabScreen.contract.ts is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "layoutContract",
+        "details": [
+          "importers=2",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "lab",
+        "named"
+      ],
+      "fingerprint": "45633c11b787a79ade66d69d72e31fff984df185",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "status": "current"
+    }
+  ],
+  "auditedFiles": [
+    {
+      "file": "/scripts/run-v2-audit-suite.mjs",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/scripts/run-v2-screen-qa.mjs",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/scripts/run-v2-static-audit.mjs",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/AppV2.jsx",
+      "fileKind": "framework-adapter",
+      "scope": "tooling-support",
+      "ownerLayer": "shared-layout",
+      "included": true,
+      "includeReason": "Visible to audit as shared/tooling support but not counted as product foundation.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/app/auditRegistry.js",
+      "fileKind": "framework-adapter",
+      "scope": "tooling-support",
+      "ownerLayer": "shared-layout",
+      "included": true,
+      "includeReason": "Visible to audit as shared/tooling support but not counted as product foundation.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/app/routeRegistry.ts",
+      "fileKind": "framework-adapter",
+      "scope": "tooling-support",
+      "ownerLayer": "shared-layout",
+      "included": true,
+      "includeReason": "Visible to audit as shared/tooling support but not counted as product foundation.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/aggregate/buildAuditSuite.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/aggregate/diffFindings.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/aggregate/normalizeArchitecture.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/aggregate/normalizeDeadCode.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/aggregate/normalizeDuplication.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/aggregate/normalizeRuntimeQa.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/aggregate/normalizeStaticDoctrine.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/aggregate/publishAuditSuite.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/aggregate/scoreAuditSuite.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/core/fileInventory.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/core/fingerprint.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/core/importGraph.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/core/jsonLoad.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/core/repoPaths.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/core/reportSummary.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/architecture/cycleDetection.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/architecture/graphBuilder.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/architecture/parser.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/architecture/runArchitectureLane.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/architecture/types.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/dead-code/policy.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/dead-code/runDeadCodeLane.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/dead-code/types.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/dead-code/usageCollector.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/duplication/collectors.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/duplication/policy.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/duplication/runDuplicationLane.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/duplication/signatureHelpers.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/duplication/types.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/runtime-qa/gateDefinitions.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/runtime-qa/publishHelpers.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/runtime-qa/runRuntimeQaLane.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/runtime-qa/types.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/static-doctrine/contractRegistry.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/static-doctrine/fallbackScan.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/static-doctrine/parser.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/static-doctrine/ruleDefinitions.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/static-doctrine/ruleHelpers.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/static-doctrine/rules/cssTemplateRules.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/static-doctrine/rules/overrideAndContractRules.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/static-doctrine/rules/styleLiteralRules.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/static-doctrine/rules/templateLiteralRules.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/static-doctrine/runStaticDoctrineLane.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/lanes/static-doctrine/types.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/policy/architecturePolicy.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/policy/findingSchema.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/policy/scopePolicy.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/audit/policy/suppressions.ts",
+      "fileKind": "audit-suite",
+      "scope": "tooling-support",
+      "ownerLayer": "audit-framework",
+      "included": true,
+      "includeReason": "Included as audit framework support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/foundation/debug/V2DebugInspector.jsx",
+      "fileKind": "debug",
+      "scope": "debug",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as debug support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/foundation/debug/structureAudit.js",
+      "fileKind": "debug",
+      "scope": "debug",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as debug support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/foundation/lab-previews/controls.jsx",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as lab/tooling support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/foundation/lab-previews/editorPanels.jsx",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as lab/tooling support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/foundation/lab-previews/interactions.jsx",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as lab/tooling support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/foundation/lab-previews/patterns.jsx",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as lab/tooling support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/foundation/layout/BodyBackdropItems.jsx",
+      "fileKind": "shared-layout",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-layout",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/layout/ScreenContractRenderer.jsx",
+      "fileKind": "framework-adapter",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "contract-layer",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/layout/bodyBackdropPresets.jsx",
+      "fileKind": "shared-layout",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-layout",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/layout/createLabBoardContract.ts",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as lab/tooling support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/foundation/layout/createScreenLayoutContract.ts",
+      "fileKind": "framework-adapter",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "contract-layer",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/layout/shellSizing.ts",
+      "fileKind": "shared-layout",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-layout",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/layout/universalShell.ts",
+      "fileKind": "shared-layout",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-layout",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/BackPill.jsx",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/EditorSurface.jsx",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/HeaderBar.jsx",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/IconActionButton.jsx",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/LabBoard.jsx",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as lab/tooling support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/foundation/primitives/NavigationRail.jsx",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/PrimaryCTA.jsx",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/ScreenScaffoldPlaceholder.jsx",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/SegmentationOptionsPopover.jsx",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/SourceIntakeBrand.jsx",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/SplitCTA.jsx",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/StepBar.jsx",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/V2ScreenFrame.jsx",
+      "fileKind": "framework-adapter",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-layout",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/ctaChromePresets.js",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/identityBadgePresets.js",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/useNavigationRailState.js",
+      "fileKind": "shared-primitive",
+      "scope": "tooling-support",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Visible to audit as shared/tooling support but not counted as product foundation.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/foundation/tokens/colors.ts",
+      "fileKind": "token-definition",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "token-layer",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/tokens/controlSizing.ts",
+      "fileKind": "token-definition",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "token-layer",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/tokens/elevation.ts",
+      "fileKind": "token-definition",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "token-layer",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/tokens/index.ts",
+      "fileKind": "token-definition",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "token-layer",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/tokens/motion.ts",
+      "fileKind": "token-definition",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "token-layer",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/tokens/radius.ts",
+      "fileKind": "token-definition",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "token-layer",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/tokens/spacing.ts",
+      "fileKind": "token-definition",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "token-layer",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/tokens/surfacePadding.ts",
+      "fileKind": "token-definition",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "token-layer",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/tokens/typography.ts",
+      "fileKind": "token-definition",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "token-layer",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/ControlsLab/ControlsLabScreen.contract.ts",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as lab/tooling support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/screens/ControlsLab/ControlsLabScreen.jsx",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as lab/tooling support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/screens/EditorPanelsLab/EditorPanelsLabScreen.contract.ts",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as lab/tooling support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/screens/EditorPanelsLab/EditorPanelsLabScreen.jsx",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as lab/tooling support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/screens/Exams/ExamsScreen.contract.ts",
+      "fileKind": "screen-contract",
+      "scope": "live-product",
+      "ownerLayer": "contract-layer",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/Exams/ExamsScreen.jsx",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/FoundationLab/FoundationLabScreen.contract.ts",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as lab/tooling support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/screens/FoundationLab/FoundationLabScreen.jsx",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as lab/tooling support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/screens/MotionInteractionLab/MotionInteractionLabScreen.contract.ts",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as lab/tooling support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/screens/MotionInteractionLab/MotionInteractionLabScreen.jsx",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as lab/tooling support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/screens/PatternLab/PatternLabScreen.contract.ts",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as lab/tooling support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/screens/PatternLab/PatternLabScreen.jsx",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as lab/tooling support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/screens/ProjectHome/ProjectHomeScreen.contract.ts",
+      "fileKind": "screen-contract",
+      "scope": "live-product",
+      "ownerLayer": "contract-layer",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/ProjectHome/ProjectHomeScreen.jsx",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/Projects/ProjectsScreen.contract.ts",
+      "fileKind": "screen-contract",
+      "scope": "live-product",
+      "ownerLayer": "contract-layer",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/Projects/ProjectsScreen.jsx",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/QualityDashboard/QualityDashboardScreen.contract.ts",
+      "fileKind": "dashboard",
+      "scope": "dashboard",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as dashboard support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/screens/QualityDashboard/QualityDashboardScreen.jsx",
+      "fileKind": "dashboard",
+      "scope": "dashboard",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as dashboard support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/screens/SegmentationLoading/SegmentationLoadingScreen.contract.ts",
+      "fileKind": "screen-contract",
+      "scope": "live-product",
+      "ownerLayer": "contract-layer",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/SegmentationLoading/SegmentationLoadingScreen.jsx",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.contract.ts",
+      "fileKind": "screen-contract",
+      "scope": "live-product",
+      "ownerLayer": "contract-layer",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.jsx",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/SegmentationReview/SegmentationReviewScreen.contract.ts",
+      "fileKind": "screen-contract",
+      "scope": "live-product",
+      "ownerLayer": "contract-layer",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/SegmentationReview/SegmentationReviewScreen.jsx",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/SegmentationSuccess/SegmentationSuccessScreen.contract.ts",
+      "fileKind": "screen-contract",
+      "scope": "live-product",
+      "ownerLayer": "contract-layer",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/SegmentationSuccess/SegmentationSuccessScreen.jsx",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/SegmentationTransition/SegmentationTransitionScreen.contract.ts",
+      "fileKind": "screen-contract",
+      "scope": "live-product",
+      "ownerLayer": "contract-layer",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/SegmentationTransition/SegmentationTransitionScreen.jsx",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/StudyWorkspace/StudyWorkspaceScreen.contract.ts",
+      "fileKind": "screen-contract",
+      "scope": "live-product",
+      "ownerLayer": "contract-layer",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/StudyWorkspace/StudyWorkspaceScreen.jsx",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/TypographyTokensLab/TypographyTokensLabScreen.contract.ts",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as lab/tooling support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/screens/TypographyTokensLab/TypographyTokensLabScreen.jsx",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as lab/tooling support scope.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/screens/labRoutes.ts",
+      "fileKind": "lab",
+      "scope": "lab",
+      "ownerLayer": "tooling-support",
+      "included": true,
+      "includeReason": "Included as lab/tooling support scope.",
+      "usedByLiveProduct": false
+    }
+  ],
+  "excludedFiles": [
+    {
+      "file": "/src/v2/screens/AppLaunch/AppLaunchScreen.contract.ts",
+      "fileKind": "ignored",
+      "scope": "ignored",
+      "ownerLayer": "unknown",
+      "included": false,
+      "includeReason": "Excluded by explicit ignored-scope policy.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/screens/AppLaunch/AppLaunchScreen.jsx",
+      "fileKind": "ignored",
+      "scope": "ignored",
+      "ownerLayer": "unknown",
+      "included": false,
+      "includeReason": "Excluded by explicit ignored-scope policy.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/screens/SegmentationPaste/SegmentationPasteScreen.contract.ts",
+      "fileKind": "ignored",
+      "scope": "ignored",
+      "ownerLayer": "unknown",
+      "included": false,
+      "includeReason": "Excluded by explicit ignored-scope policy.",
+      "usedByLiveProduct": false
+    },
+    {
+      "file": "/src/v2/screens/SegmentationPaste/SegmentationPasteScreen.jsx",
+      "fileKind": "ignored",
+      "scope": "ignored",
+      "ownerLayer": "unknown",
+      "included": false,
+      "includeReason": "Excluded by explicit ignored-scope policy.",
+      "usedByLiveProduct": false
+    }
+  ],
+  "summary": {
+    "findingCount": 43,
+    "productFindingCount": 0,
+    "toolingFindingCount": 43,
+    "byRule": {
+      "unused-file": 3,
+      "unused-export": 40
+    },
+    "byScope": {
+      "tooling-support": 28,
+      "debug": 2,
+      "lab": 12,
+      "dashboard": 1
+    },
+    "topFiles": [
+      {
+        "file": "/src/v2/audit/policy/findingSchema.ts",
+        "count": 11
+      },
+      {
+        "file": "/src/v2/audit/policy/scopePolicy.ts",
+        "count": 7
+      },
+      {
+        "file": "/src/v2/foundation/lab-previews/patterns.jsx",
+        "count": 4
+      },
+      {
+        "file": "/src/v2/audit/core/fileInventory.ts",
+        "count": 2
+      },
+      {
+        "file": "/src/v2/audit/lanes/duplication/signatureHelpers.ts",
+        "count": 2
+      },
+      {
+        "file": "/src/v2/audit/lanes/static-doctrine/ruleHelpers.ts",
+        "count": 2
+      },
+      {
+        "file": "/src/v2/foundation/primitives/LabBoard.jsx",
+        "count": 2
+      },
+      {
+        "file": "/src/v2/app/auditRegistry.js",
+        "count": 1
+      }
+    ]
+  },
+  "raw": {
+    "usage": {
+      "entryRoots": {
+        "product": [
+          "/src/v2/AppV2.jsx",
+          "/src/v2/app/routeRegistry.ts"
+        ],
+        "tooling": [
+          "/scripts/run-v2-audit-suite.mjs",
+          "/scripts/run-v2-screen-qa.mjs",
+          "/scripts/run-v2-static-audit.mjs",
+          "/src/v2/screens/QualityDashboard/QualityDashboardScreen.jsx",
+          "/src/v2/screens/labRoutes.ts"
+        ]
+      },
+      "closure": {
+        "product": [
+          "/src/v2/AppV2.jsx",
+          "/src/v2/app/auditRegistry.js",
+          "/src/v2/app/routeRegistry.ts",
+          "/src/v2/foundation/lab-previews/controls.jsx",
+          "/src/v2/foundation/lab-previews/editorPanels.jsx",
+          "/src/v2/foundation/lab-previews/interactions.jsx",
+          "/src/v2/foundation/lab-previews/patterns.jsx",
+          "/src/v2/foundation/layout/BodyBackdropItems.jsx",
+          "/src/v2/foundation/layout/ScreenContractRenderer.jsx",
+          "/src/v2/foundation/layout/bodyBackdropPresets.jsx",
+          "/src/v2/foundation/layout/createLabBoardContract.ts",
+          "/src/v2/foundation/layout/createScreenLayoutContract.ts",
+          "/src/v2/foundation/layout/shellSizing.ts",
+          "/src/v2/foundation/layout/universalShell.ts",
+          "/src/v2/foundation/primitives/BackPill.jsx",
+          "/src/v2/foundation/primitives/EditorSurface.jsx",
+          "/src/v2/foundation/primitives/HeaderBar.jsx",
+          "/src/v2/foundation/primitives/IconActionButton.jsx",
+          "/src/v2/foundation/primitives/LabBoard.jsx",
+          "/src/v2/foundation/primitives/NavigationRail.jsx",
+          "/src/v2/foundation/primitives/PrimaryCTA.jsx",
+          "/src/v2/foundation/primitives/ScreenScaffoldPlaceholder.jsx",
+          "/src/v2/foundation/primitives/SegmentationOptionsPopover.jsx",
+          "/src/v2/foundation/primitives/SourceIntakeBrand.jsx",
+          "/src/v2/foundation/primitives/SplitCTA.jsx",
+          "/src/v2/foundation/primitives/StepBar.jsx",
+          "/src/v2/foundation/primitives/V2ScreenFrame.jsx",
+          "/src/v2/foundation/primitives/ctaChromePresets.js",
+          "/src/v2/foundation/primitives/identityBadgePresets.js",
+          "/src/v2/foundation/primitives/useNavigationRailState.js",
+          "/src/v2/foundation/tokens/colors.ts",
+          "/src/v2/foundation/tokens/controlSizing.ts",
+          "/src/v2/foundation/tokens/elevation.ts",
+          "/src/v2/foundation/tokens/index.ts",
+          "/src/v2/foundation/tokens/motion.ts",
+          "/src/v2/foundation/tokens/radius.ts",
+          "/src/v2/foundation/tokens/spacing.ts",
+          "/src/v2/foundation/tokens/surfacePadding.ts",
+          "/src/v2/foundation/tokens/typography.ts",
+          "/src/v2/screens/AppLaunch/AppLaunchScreen.contract.ts",
+          "/src/v2/screens/AppLaunch/AppLaunchScreen.jsx",
+          "/src/v2/screens/ControlsLab/ControlsLabScreen.contract.ts",
+          "/src/v2/screens/ControlsLab/ControlsLabScreen.jsx",
+          "/src/v2/screens/EditorPanelsLab/EditorPanelsLabScreen.contract.ts",
+          "/src/v2/screens/EditorPanelsLab/EditorPanelsLabScreen.jsx",
+          "/src/v2/screens/Exams/ExamsScreen.contract.ts",
+          "/src/v2/screens/Exams/ExamsScreen.jsx",
+          "/src/v2/screens/FoundationLab/FoundationLabScreen.contract.ts",
+          "/src/v2/screens/FoundationLab/FoundationLabScreen.jsx",
+          "/src/v2/screens/MotionInteractionLab/MotionInteractionLabScreen.contract.ts",
+          "/src/v2/screens/MotionInteractionLab/MotionInteractionLabScreen.jsx",
+          "/src/v2/screens/PatternLab/PatternLabScreen.contract.ts",
+          "/src/v2/screens/PatternLab/PatternLabScreen.jsx",
+          "/src/v2/screens/ProjectHome/ProjectHomeScreen.contract.ts",
+          "/src/v2/screens/ProjectHome/ProjectHomeScreen.jsx",
+          "/src/v2/screens/Projects/ProjectsScreen.contract.ts",
+          "/src/v2/screens/Projects/ProjectsScreen.jsx",
+          "/src/v2/screens/QualityDashboard/QualityDashboardScreen.contract.ts",
+          "/src/v2/screens/QualityDashboard/QualityDashboardScreen.jsx",
+          "/src/v2/screens/SegmentationLoading/SegmentationLoadingScreen.contract.ts",
+          "/src/v2/screens/SegmentationLoading/SegmentationLoadingScreen.jsx",
+          "/src/v2/screens/SegmentationPaste/SegmentationPasteScreen.contract.ts",
+          "/src/v2/screens/SegmentationPaste/SegmentationPasteScreen.jsx",
+          "/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.contract.ts",
+          "/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.jsx",
+          "/src/v2/screens/SegmentationReview/SegmentationReviewScreen.contract.ts",
+          "/src/v2/screens/SegmentationReview/SegmentationReviewScreen.jsx",
+          "/src/v2/screens/SegmentationSuccess/SegmentationSuccessScreen.contract.ts",
+          "/src/v2/screens/SegmentationSuccess/SegmentationSuccessScreen.jsx",
+          "/src/v2/screens/SegmentationTransition/SegmentationTransitionScreen.contract.ts",
+          "/src/v2/screens/SegmentationTransition/SegmentationTransitionScreen.jsx",
+          "/src/v2/screens/StudyWorkspace/StudyWorkspaceScreen.contract.ts",
+          "/src/v2/screens/StudyWorkspace/StudyWorkspaceScreen.jsx",
+          "/src/v2/screens/TypographyTokensLab/TypographyTokensLabScreen.contract.ts",
+          "/src/v2/screens/TypographyTokensLab/TypographyTokensLabScreen.jsx",
+          "/src/v2/screens/labRoutes.ts"
+        ],
+        "tooling": [
+          "/scripts/run-v2-audit-suite.mjs",
+          "/scripts/run-v2-screen-qa.mjs",
+          "/scripts/run-v2-static-audit.mjs",
+          "/src/v2/app/auditRegistry.js",
+          "/src/v2/audit/aggregate/buildAuditSuite.ts",
+          "/src/v2/audit/aggregate/diffFindings.ts",
+          "/src/v2/audit/aggregate/normalizeArchitecture.ts",
+          "/src/v2/audit/aggregate/normalizeDeadCode.ts",
+          "/src/v2/audit/aggregate/normalizeDuplication.ts",
+          "/src/v2/audit/aggregate/normalizeRuntimeQa.ts",
+          "/src/v2/audit/aggregate/normalizeStaticDoctrine.ts",
+          "/src/v2/audit/aggregate/publishAuditSuite.ts",
+          "/src/v2/audit/aggregate/scoreAuditSuite.ts",
+          "/src/v2/audit/core/fileInventory.ts",
+          "/src/v2/audit/core/fingerprint.ts",
+          "/src/v2/audit/core/importGraph.ts",
+          "/src/v2/audit/core/jsonLoad.ts",
+          "/src/v2/audit/core/repoPaths.ts",
+          "/src/v2/audit/core/reportSummary.ts",
+          "/src/v2/audit/lanes/architecture/cycleDetection.ts",
+          "/src/v2/audit/lanes/architecture/graphBuilder.ts",
+          "/src/v2/audit/lanes/architecture/parser.ts",
+          "/src/v2/audit/lanes/architecture/runArchitectureLane.ts",
+          "/src/v2/audit/lanes/architecture/types.ts",
+          "/src/v2/audit/lanes/dead-code/policy.ts",
+          "/src/v2/audit/lanes/dead-code/runDeadCodeLane.ts",
+          "/src/v2/audit/lanes/dead-code/types.ts",
+          "/src/v2/audit/lanes/dead-code/usageCollector.ts",
+          "/src/v2/audit/lanes/duplication/collectors.ts",
+          "/src/v2/audit/lanes/duplication/policy.ts",
+          "/src/v2/audit/lanes/duplication/runDuplicationLane.ts",
+          "/src/v2/audit/lanes/duplication/signatureHelpers.ts",
+          "/src/v2/audit/lanes/duplication/types.ts",
+          "/src/v2/audit/lanes/runtime-qa/gateDefinitions.ts",
+          "/src/v2/audit/lanes/runtime-qa/publishHelpers.ts",
+          "/src/v2/audit/lanes/runtime-qa/runRuntimeQaLane.ts",
+          "/src/v2/audit/lanes/runtime-qa/types.ts",
+          "/src/v2/audit/lanes/static-doctrine/contractRegistry.ts",
+          "/src/v2/audit/lanes/static-doctrine/fallbackScan.ts",
+          "/src/v2/audit/lanes/static-doctrine/parser.ts",
+          "/src/v2/audit/lanes/static-doctrine/ruleDefinitions.ts",
+          "/src/v2/audit/lanes/static-doctrine/ruleHelpers.ts",
+          "/src/v2/audit/lanes/static-doctrine/rules/overrideAndContractRules.ts",
+          "/src/v2/audit/lanes/static-doctrine/rules/styleLiteralRules.ts",
+          "/src/v2/audit/lanes/static-doctrine/rules/templateLiteralRules.ts",
+          "/src/v2/audit/lanes/static-doctrine/runStaticDoctrineLane.ts",
+          "/src/v2/audit/lanes/static-doctrine/types.ts",
+          "/src/v2/audit/policy/architecturePolicy.ts",
+          "/src/v2/audit/policy/findingSchema.ts",
+          "/src/v2/audit/policy/scopePolicy.ts",
+          "/src/v2/audit/policy/suppressions.ts",
+          "/src/v2/foundation/layout/BodyBackdropItems.jsx",
+          "/src/v2/foundation/layout/ScreenContractRenderer.jsx",
+          "/src/v2/foundation/layout/bodyBackdropPresets.jsx",
+          "/src/v2/foundation/layout/createLabBoardContract.ts",
+          "/src/v2/foundation/layout/createScreenLayoutContract.ts",
+          "/src/v2/foundation/layout/shellSizing.ts",
+          "/src/v2/foundation/layout/universalShell.ts",
+          "/src/v2/foundation/primitives/HeaderBar.jsx",
+          "/src/v2/foundation/primitives/IconActionButton.jsx",
+          "/src/v2/foundation/primitives/LabBoard.jsx",
+          "/src/v2/foundation/primitives/NavigationRail.jsx",
+          "/src/v2/foundation/primitives/V2ScreenFrame.jsx",
+          "/src/v2/foundation/primitives/identityBadgePresets.js",
+          "/src/v2/foundation/tokens/colors.ts",
+          "/src/v2/foundation/tokens/controlSizing.ts",
+          "/src/v2/foundation/tokens/elevation.ts",
+          "/src/v2/foundation/tokens/index.ts",
+          "/src/v2/foundation/tokens/motion.ts",
+          "/src/v2/foundation/tokens/radius.ts",
+          "/src/v2/foundation/tokens/spacing.ts",
+          "/src/v2/foundation/tokens/surfacePadding.ts",
+          "/src/v2/foundation/tokens/typography.ts",
+          "/src/v2/screens/QualityDashboard/QualityDashboardScreen.contract.ts",
+          "/src/v2/screens/QualityDashboard/QualityDashboardScreen.jsx",
+          "/src/v2/screens/labRoutes.ts"
+        ],
+        "combined": [
+          "/scripts/run-v2-audit-suite.mjs",
+          "/scripts/run-v2-screen-qa.mjs",
+          "/scripts/run-v2-static-audit.mjs",
+          "/src/v2/AppV2.jsx",
+          "/src/v2/app/auditRegistry.js",
+          "/src/v2/app/routeRegistry.ts",
+          "/src/v2/audit/aggregate/buildAuditSuite.ts",
+          "/src/v2/audit/aggregate/diffFindings.ts",
+          "/src/v2/audit/aggregate/normalizeArchitecture.ts",
+          "/src/v2/audit/aggregate/normalizeDeadCode.ts",
+          "/src/v2/audit/aggregate/normalizeDuplication.ts",
+          "/src/v2/audit/aggregate/normalizeRuntimeQa.ts",
+          "/src/v2/audit/aggregate/normalizeStaticDoctrine.ts",
+          "/src/v2/audit/aggregate/publishAuditSuite.ts",
+          "/src/v2/audit/aggregate/scoreAuditSuite.ts",
+          "/src/v2/audit/core/fileInventory.ts",
+          "/src/v2/audit/core/fingerprint.ts",
+          "/src/v2/audit/core/importGraph.ts",
+          "/src/v2/audit/core/jsonLoad.ts",
+          "/src/v2/audit/core/repoPaths.ts",
+          "/src/v2/audit/core/reportSummary.ts",
+          "/src/v2/audit/lanes/architecture/cycleDetection.ts",
+          "/src/v2/audit/lanes/architecture/graphBuilder.ts",
+          "/src/v2/audit/lanes/architecture/parser.ts",
+          "/src/v2/audit/lanes/architecture/runArchitectureLane.ts",
+          "/src/v2/audit/lanes/architecture/types.ts",
+          "/src/v2/audit/lanes/dead-code/policy.ts",
+          "/src/v2/audit/lanes/dead-code/runDeadCodeLane.ts",
+          "/src/v2/audit/lanes/dead-code/types.ts",
+          "/src/v2/audit/lanes/dead-code/usageCollector.ts",
+          "/src/v2/audit/lanes/duplication/collectors.ts",
+          "/src/v2/audit/lanes/duplication/policy.ts",
+          "/src/v2/audit/lanes/duplication/runDuplicationLane.ts",
+          "/src/v2/audit/lanes/duplication/signatureHelpers.ts",
+          "/src/v2/audit/lanes/duplication/types.ts",
+          "/src/v2/audit/lanes/runtime-qa/gateDefinitions.ts",
+          "/src/v2/audit/lanes/runtime-qa/publishHelpers.ts",
+          "/src/v2/audit/lanes/runtime-qa/runRuntimeQaLane.ts",
+          "/src/v2/audit/lanes/runtime-qa/types.ts",
+          "/src/v2/audit/lanes/static-doctrine/contractRegistry.ts",
+          "/src/v2/audit/lanes/static-doctrine/fallbackScan.ts",
+          "/src/v2/audit/lanes/static-doctrine/parser.ts",
+          "/src/v2/audit/lanes/static-doctrine/ruleDefinitions.ts",
+          "/src/v2/audit/lanes/static-doctrine/ruleHelpers.ts",
+          "/src/v2/audit/lanes/static-doctrine/rules/overrideAndContractRules.ts",
+          "/src/v2/audit/lanes/static-doctrine/rules/styleLiteralRules.ts",
+          "/src/v2/audit/lanes/static-doctrine/rules/templateLiteralRules.ts",
+          "/src/v2/audit/lanes/static-doctrine/runStaticDoctrineLane.ts",
+          "/src/v2/audit/lanes/static-doctrine/types.ts",
+          "/src/v2/audit/policy/architecturePolicy.ts",
+          "/src/v2/audit/policy/findingSchema.ts",
+          "/src/v2/audit/policy/scopePolicy.ts",
+          "/src/v2/audit/policy/suppressions.ts",
+          "/src/v2/foundation/lab-previews/controls.jsx",
+          "/src/v2/foundation/lab-previews/editorPanels.jsx",
+          "/src/v2/foundation/lab-previews/interactions.jsx",
+          "/src/v2/foundation/lab-previews/patterns.jsx",
+          "/src/v2/foundation/layout/BodyBackdropItems.jsx",
+          "/src/v2/foundation/layout/ScreenContractRenderer.jsx",
+          "/src/v2/foundation/layout/bodyBackdropPresets.jsx",
+          "/src/v2/foundation/layout/createLabBoardContract.ts",
+          "/src/v2/foundation/layout/createScreenLayoutContract.ts",
+          "/src/v2/foundation/layout/shellSizing.ts",
+          "/src/v2/foundation/layout/universalShell.ts",
+          "/src/v2/foundation/primitives/BackPill.jsx",
+          "/src/v2/foundation/primitives/EditorSurface.jsx",
+          "/src/v2/foundation/primitives/HeaderBar.jsx",
+          "/src/v2/foundation/primitives/IconActionButton.jsx",
+          "/src/v2/foundation/primitives/LabBoard.jsx",
+          "/src/v2/foundation/primitives/NavigationRail.jsx",
+          "/src/v2/foundation/primitives/PrimaryCTA.jsx",
+          "/src/v2/foundation/primitives/ScreenScaffoldPlaceholder.jsx",
+          "/src/v2/foundation/primitives/SegmentationOptionsPopover.jsx",
+          "/src/v2/foundation/primitives/SourceIntakeBrand.jsx",
+          "/src/v2/foundation/primitives/SplitCTA.jsx",
+          "/src/v2/foundation/primitives/StepBar.jsx",
+          "/src/v2/foundation/primitives/V2ScreenFrame.jsx",
+          "/src/v2/foundation/primitives/ctaChromePresets.js",
+          "/src/v2/foundation/primitives/identityBadgePresets.js",
+          "/src/v2/foundation/primitives/useNavigationRailState.js",
+          "/src/v2/foundation/tokens/colors.ts",
+          "/src/v2/foundation/tokens/controlSizing.ts",
+          "/src/v2/foundation/tokens/elevation.ts",
+          "/src/v2/foundation/tokens/index.ts",
+          "/src/v2/foundation/tokens/motion.ts",
+          "/src/v2/foundation/tokens/radius.ts",
+          "/src/v2/foundation/tokens/spacing.ts",
+          "/src/v2/foundation/tokens/surfacePadding.ts",
+          "/src/v2/foundation/tokens/typography.ts",
+          "/src/v2/screens/AppLaunch/AppLaunchScreen.contract.ts",
+          "/src/v2/screens/AppLaunch/AppLaunchScreen.jsx",
+          "/src/v2/screens/ControlsLab/ControlsLabScreen.contract.ts",
+          "/src/v2/screens/ControlsLab/ControlsLabScreen.jsx",
+          "/src/v2/screens/EditorPanelsLab/EditorPanelsLabScreen.contract.ts",
+          "/src/v2/screens/EditorPanelsLab/EditorPanelsLabScreen.jsx",
+          "/src/v2/screens/Exams/ExamsScreen.contract.ts",
+          "/src/v2/screens/Exams/ExamsScreen.jsx",
+          "/src/v2/screens/FoundationLab/FoundationLabScreen.contract.ts",
+          "/src/v2/screens/FoundationLab/FoundationLabScreen.jsx",
+          "/src/v2/screens/MotionInteractionLab/MotionInteractionLabScreen.contract.ts",
+          "/src/v2/screens/MotionInteractionLab/MotionInteractionLabScreen.jsx",
+          "/src/v2/screens/PatternLab/PatternLabScreen.contract.ts",
+          "/src/v2/screens/PatternLab/PatternLabScreen.jsx",
+          "/src/v2/screens/ProjectHome/ProjectHomeScreen.contract.ts",
+          "/src/v2/screens/ProjectHome/ProjectHomeScreen.jsx",
+          "/src/v2/screens/Projects/ProjectsScreen.contract.ts",
+          "/src/v2/screens/Projects/ProjectsScreen.jsx",
+          "/src/v2/screens/QualityDashboard/QualityDashboardScreen.contract.ts",
+          "/src/v2/screens/QualityDashboard/QualityDashboardScreen.jsx",
+          "/src/v2/screens/SegmentationLoading/SegmentationLoadingScreen.contract.ts",
+          "/src/v2/screens/SegmentationLoading/SegmentationLoadingScreen.jsx",
+          "/src/v2/screens/SegmentationPaste/SegmentationPasteScreen.contract.ts",
+          "/src/v2/screens/SegmentationPaste/SegmentationPasteScreen.jsx",
+          "/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.contract.ts",
+          "/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.jsx",
+          "/src/v2/screens/SegmentationReview/SegmentationReviewScreen.contract.ts",
+          "/src/v2/screens/SegmentationReview/SegmentationReviewScreen.jsx",
+          "/src/v2/screens/SegmentationSuccess/SegmentationSuccessScreen.contract.ts",
+          "/src/v2/screens/SegmentationSuccess/SegmentationSuccessScreen.jsx",
+          "/src/v2/screens/SegmentationTransition/SegmentationTransitionScreen.contract.ts",
+          "/src/v2/screens/SegmentationTransition/SegmentationTransitionScreen.jsx",
+          "/src/v2/screens/StudyWorkspace/StudyWorkspaceScreen.contract.ts",
+          "/src/v2/screens/StudyWorkspace/StudyWorkspaceScreen.jsx",
+          "/src/v2/screens/TypographyTokensLab/TypographyTokensLabScreen.contract.ts",
+          "/src/v2/screens/TypographyTokensLab/TypographyTokensLabScreen.jsx",
+          "/src/v2/screens/labRoutes.ts"
+        ]
+      },
+      "graphStatus": "ready",
+      "resolutionMode": "relative-import-only",
+      "unresolvedImportCount": 0,
+      "unresolvedImports": [],
+      "parsedFileCount": 129,
+      "fallbackFileCount": 0,
+      "failedFileCount": 0
+    },
+    "staleSuppressions": [],
+    "staleConfig": [],
+    "productVsTooling": {
+      "product": 0,
+      "tooling": 43
+    },
+    "byRule": {
+      "unused-file": 3,
+      "unused-export": 40
+    },
+    "topCandidateFiles": [
+      {
+        "file": "/src/v2/audit/policy/findingSchema.ts",
+        "count": 11
+      },
+      {
+        "file": "/src/v2/audit/policy/scopePolicy.ts",
+        "count": 7
+      },
+      {
+        "file": "/src/v2/foundation/lab-previews/patterns.jsx",
+        "count": 4
+      },
+      {
+        "file": "/src/v2/audit/core/fileInventory.ts",
+        "count": 2
+      },
+      {
+        "file": "/src/v2/audit/lanes/duplication/signatureHelpers.ts",
+        "count": 2
+      },
+      {
+        "file": "/src/v2/audit/lanes/static-doctrine/ruleHelpers.ts",
+        "count": 2
+      },
+      {
+        "file": "/src/v2/foundation/primitives/LabBoard.jsx",
+        "count": 2
+      },
+      {
+        "file": "/src/v2/app/auditRegistry.js",
+        "count": 1
+      }
+    ]
+  },
+  "status": "ready",
+  "message": null
+}

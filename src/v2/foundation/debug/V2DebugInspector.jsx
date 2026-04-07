@@ -35,12 +35,15 @@ export default function V2DebugInspector({
   contract,
   isOpen,
   activeContainerName,
+  activeItemName,
   lockedContainerName,
   liveDetails,
+  structureAudit,
   onOpen,
   onClose,
   onHoverContainer,
   onLeaveContainer,
+  onSelectItem,
   onToggleLock,
 }) {
   const [panelOffset, setPanelOffset] = useState({ x: 0, y: 0 })
@@ -113,7 +116,7 @@ export default function V2DebugInspector({
     bottom: '18px',
     zIndex: 99998,
     minHeight: '42px',
-    padding: `0 ${spacing[16]}`,
+    padding: `0 ${spacing[16]}px`,
     border: `1px solid ${colors.accentMist}`,
     borderRadius: radius.pill,
     background: 'rgba(255, 255, 255, 0.96)',
@@ -151,7 +154,7 @@ export default function V2DebugInspector({
   }
 
   const toolbarStyle = {
-    padding: `${spacing[12]} ${spacing[16]}`,
+    padding: `${spacing[12]}px ${spacing[16]}px`,
     borderBottom: `1px solid ${colors.lineSoft}`,
     display: 'flex',
     alignItems: 'center',
@@ -161,7 +164,7 @@ export default function V2DebugInspector({
 
   const moveHandleStyle = {
     minHeight: '32px',
-    padding: `0 ${spacing[12]}`,
+    padding: `0 ${spacing[12]}px`,
     border: `1px solid ${colors.lineSoft}`,
     borderRadius: radius.pill,
     background: colors.surfaceSoft,
@@ -194,7 +197,7 @@ export default function V2DebugInspector({
     border: `1px solid ${colors.lineSoft}`,
     borderRadius: radius[12],
     background: colors.surfacePrimary,
-    padding: `${spacing[12]} ${spacing[12]}`,
+    padding: `${spacing[12]}px ${spacing[12]}px`,
     textAlign: 'left',
     transition: `background-color ${motion.micro}, border-color ${motion.micro}, box-shadow ${motion.micro}`,
     cursor: 'pointer',
@@ -308,6 +311,11 @@ export default function V2DebugInspector({
           {liveDetails ? (
             <div style={{ display: 'grid', gap: spacing[8] }}>
               <div style={{ ...typography.monoMeta, color: colors.accentStrong }}>{liveDetails.name}</div>
+              {liveDetails.items?.length ? (
+                <div style={{ ...typography.bodyText, fontSize: '14px', color: colors.textBody }}>
+                  Items: {liveDetails.items.map((item) => item.name).join(', ')}
+                </div>
+              ) : null}
               <div style={{ ...typography.bodyText, fontSize: '14px', color: colors.textBody }}>
                 Layer: {liveDetails.layer}
               </div>
@@ -326,6 +334,65 @@ export default function V2DebugInspector({
               <div style={{ ...typography.bodyText, fontSize: '14px', color: colors.textBody }}>
                 Overflow: {liveDetails.overflow}
               </div>
+              {liveDetails.items?.length ? (
+                <div style={{ display: 'grid', gap: spacing[6], marginTop: spacing[4] }}>
+                  <div style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>Named Items</div>
+                  {liveDetails.items.map((item) => (
+                    <button
+                      key={item.name}
+                      type="button"
+                      onClick={() => onSelectItem(item.name)}
+                      style={{
+                        ...itemButtonBase,
+                        padding: `${spacing[8]}px ${spacing[12]}px`,
+                        display: 'grid',
+                        gap: spacing[4],
+                        borderColor: activeItemName === item.name ? colors.accentSoft : colors.lineSoft,
+                        background: activeItemName === item.name ? colors.accentWash : colors.surfacePrimary,
+                        boxShadow: activeItemName === item.name ? elevation.raised : 'none',
+                      }}
+                    >
+                      <div style={{ ...typography.monoMeta, color: colors.accentStrong }}>{item.name}</div>
+                      <div style={{ ...typography.bodyText, fontSize: '13px', color: colors.textSoft }}>
+                        {item.tag} • {item.owner}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+              {liveDetails.activeItem ? (
+                <div style={{ display: 'grid', gap: spacing[6], marginTop: spacing[4] }}>
+                  <div style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>Selected Item</div>
+                  <div
+                    style={{
+                      border: `1px solid ${colors.lineSoft}`,
+                      borderRadius: radius[12],
+                      background: colors.surfacePrimary,
+                      padding: `${spacing[10]}px ${spacing[12]}px`,
+                      display: 'grid',
+                      gap: spacing[4],
+                    }}
+                  >
+                    <div style={{ ...typography.monoMeta, color: colors.accentStrong }}>
+                      {liveDetails.activeItem.name}
+                    </div>
+                    <div style={{ ...typography.bodyText, fontSize: '13px', color: colors.textBody }}>
+                      Owner: {liveDetails.activeItem.owner}
+                    </div>
+                    <div style={{ ...typography.bodyText, fontSize: '13px', color: colors.textBody }}>
+                      Rect: {formatRect(liveDetails.activeItem.width)} × {formatRect(liveDetails.activeItem.height)}
+                    </div>
+                    <div style={{ ...typography.bodyText, fontSize: '13px', color: colors.textBody }}>
+                      Tag: {liveDetails.activeItem.tag}
+                    </div>
+                    {liveDetails.activeItem.text ? (
+                      <div style={{ ...typography.bodyText, fontSize: '13px', color: colors.textSoft }}>
+                        Text: {liveDetails.activeItem.text}
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              ) : null}
             </div>
           ) : (
             <p
@@ -337,6 +404,109 @@ export default function V2DebugInspector({
               }}
             >
               Open the panel, then hover a container or lock one from the list to inspect live DOM values.
+            </p>
+          )}
+        </section>
+
+        <section style={layerCardStyle}>
+          <p
+            style={{
+              ...typography.eyebrowLabel,
+              margin: 0,
+              color: colors.textSoft,
+            }}
+          >
+            Structure Audit
+          </p>
+
+          {structureAudit ? (
+            <div style={{ display: 'grid', gap: spacing[8] }}>
+              <div style={{ ...typography.monoMeta, color: colors.accentStrong }}>{structureAudit.rootLabel}</div>
+              <div style={{ ...typography.bodyText, fontSize: '14px', color: colors.textBody }}>
+                Elements: {structureAudit.totalElements}
+              </div>
+              <div style={{ ...typography.bodyText, fontSize: '14px', color: colors.textBody }}>
+                DOM depth: {structureAudit.maxDomDepth}
+              </div>
+              <div style={{ ...typography.bodyText, fontSize: '14px', color: colors.textBody }}>
+                Wrapper chain: {structureAudit.maxWrapperChain}
+              </div>
+              <div style={{ ...typography.bodyText, fontSize: '14px', color: colors.textBody }}>
+                Nested surfaces: {structureAudit.maxNestedSurfaceChain}
+              </div>
+              <div style={{ ...typography.bodyText, fontSize: '14px', color: colors.textBody }}>
+                Min text inset: {structureAudit.minTextInset === null ? 'n/a' : `${structureAudit.minTextInset}px`}
+              </div>
+
+              {structureAudit.findings.length > 0 ? (
+                <div style={{ display: 'grid', gap: spacing[6], marginTop: spacing[4] }}>
+                  {structureAudit.findings.map((finding) => (
+                    <div
+                      key={finding}
+                      style={{
+                        ...typography.bodyText,
+                        fontSize: '13px',
+                        lineHeight: 1.45,
+                        color: '#b45309',
+                        padding: `${spacing[8]}px ${spacing[10]}px`,
+                        borderRadius: radius[12],
+                        border: '1px solid rgba(253, 230, 138, 0.96)',
+                        background: 'rgba(255, 251, 235, 0.96)',
+                      }}
+                    >
+                      {finding}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div
+                  style={{
+                    ...typography.bodyText,
+                    fontSize: '13px',
+                    lineHeight: 1.45,
+                    color: '#047857',
+                    padding: `${spacing[8]}px ${spacing[10]}px`,
+                    borderRadius: radius[12],
+                    border: '1px solid rgba(167, 243, 208, 0.96)',
+                    background: 'rgba(236, 253, 245, 0.96)',
+                  }}
+                >
+                  No structural findings for the audited container.
+                </div>
+              )}
+
+              {structureAudit.insetIssues.length > 0 ? (
+                <div style={{ display: 'grid', gap: spacing[6], marginTop: spacing[4] }}>
+                  {structureAudit.insetIssues.map((issue) => (
+                    <div
+                      key={`${issue.text}-${issue.surface}`}
+                      style={{
+                        ...typography.bodyText,
+                        fontSize: '13px',
+                        lineHeight: 1.45,
+                        color: colors.textBody,
+                        padding: `${spacing[8]}px ${spacing[10]}px`,
+                        borderRadius: radius[12],
+                        border: `1px solid ${colors.lineSoft}`,
+                        background: colors.surfacePrimary,
+                      }}
+                    >
+                      <strong>{issue.text}</strong> sits at {issue.inset}px inside <strong>{issue.surface}</strong>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ) : (
+            <p
+              style={{
+                ...typography.bodyText,
+                margin: 0,
+                fontSize: '14px',
+                color: colors.textSoft,
+              }}
+            >
+              Hover or lock a container to audit wrapper complexity, nested surfaces, and readable inset issues.
             </p>
           )}
         </section>

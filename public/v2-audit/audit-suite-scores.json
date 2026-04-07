@@ -1,0 +1,157 @@
+{
+  "generatedAt": "2026-04-07T17:33:37.149Z",
+  "schemaVersion": 2,
+  "scores": {
+    "productQuality": 98.8,
+    "auditTrust": 99,
+    "groups": [
+      {
+        "id": "product-quality",
+        "label": "Product quality",
+        "maxScore": 100,
+        "score": 98.8,
+        "components": [
+          {
+            "id": "doctrine-hygiene",
+            "label": "Doctrine hygiene",
+            "score": 95,
+            "maxScore": 100,
+            "deduction": 5,
+            "budget": 325,
+            "weightedDebt": 15.05,
+            "findingCount": 13,
+            "suppressedFindingCount": 0,
+            "laneIds": [
+              "static-doctrine"
+            ],
+            "notes": [
+              "Static doctrine findings are product-quality debt only when they land in live-product or shared-product-foundation scope."
+            ]
+          },
+          {
+            "id": "runtime-integrity",
+            "label": "Runtime integrity",
+            "score": 100,
+            "maxScore": 100,
+            "deduction": 0,
+            "budget": 55,
+            "weightedDebt": 0,
+            "findingCount": 0,
+            "suppressedFindingCount": 0,
+            "laneIds": [
+              "runtime-qa"
+            ],
+            "notes": [
+              "Rendered QA findings carry full product-quality weight because they reflect runtime truth."
+            ]
+          },
+          {
+            "id": "architecture-hygiene",
+            "label": "Architecture hygiene",
+            "score": 100,
+            "maxScore": 100,
+            "deduction": 0,
+            "budget": 60,
+            "weightedDebt": 0,
+            "findingCount": 0,
+            "suppressedFindingCount": 0,
+            "laneIds": [
+              "architecture"
+            ],
+            "notes": [
+              "Only product-scope architecture findings affect this component."
+            ]
+          },
+          {
+            "id": "dead-code-hygiene",
+            "label": "Dead-code hygiene",
+            "score": 100,
+            "maxScore": 100,
+            "deduction": 0,
+            "budget": 80,
+            "weightedDebt": 0,
+            "findingCount": 0,
+            "suppressedFindingCount": 0,
+            "laneIds": [
+              "dead-code"
+            ],
+            "notes": [
+              "Unused product code matters more here than tooling-only leftovers."
+            ]
+          },
+          {
+            "id": "duplication-hygiene",
+            "label": "Duplication hygiene",
+            "score": 99,
+            "maxScore": 100,
+            "deduction": 1,
+            "budget": 28,
+            "weightedDebt": 0.1,
+            "findingCount": 1,
+            "suppressedFindingCount": 0,
+            "laneIds": [
+              "duplication"
+            ],
+            "notes": [
+              "This component stays conservative and only reacts to high-signal duplication clusters."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "audit-trust",
+        "label": "Audit trust",
+        "maxScore": 100,
+        "score": 99,
+        "components": [
+          {
+            "id": "audit-trustworthiness",
+            "label": "Audit trustworthiness",
+            "score": 99,
+            "maxScore": 100,
+            "deduction": 1,
+            "budget": 90,
+            "weightedDebt": 0.96,
+            "findingCount": 445,
+            "suppressedFindingCount": 0,
+            "laneIds": [
+              "static-doctrine",
+              "runtime-qa",
+              "architecture",
+              "dead-code",
+              "duplication"
+            ],
+            "notes": [
+              "Audit-rule-fix and low-confidence findings affect trust more than product quality.",
+              "Stale suppressions (0), invalid suppressions (0), and degraded lanes (0) add direct trust debt."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metadata": {
+    "severityWeights": {
+      "error": 7,
+      "warn": 3,
+      "info": 1
+    },
+    "confidenceMultipliers": {
+      "high": 1,
+      "medium": 0.7,
+      "low": 0.4
+    },
+    "suppressedFindingMultiplier": {
+      "productQuality": 0.35,
+      "auditTrust": 0.6
+    },
+    "budgets": {
+      "doctrine-hygiene": 325,
+      "runtime-integrity": 55,
+      "architecture-hygiene": 60,
+      "dead-code-hygiene": 80,
+      "duplication-hygiene": 28,
+      "audit-trustworthiness": 90
+    }
+  }
+}

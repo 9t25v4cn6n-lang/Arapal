@@ -1,12 +1,22 @@
 import { Scissors } from 'lucide-react'
-import { colors, radius, spacing } from '../tokens'
+import { colors, radius, spacing, typography } from '../tokens'
+import { getIdentityBadgeStyle, identityBadgeChrome } from './identityBadgePresets'
+
+const sourceIntakeBrandMetrics = {
+  badgeSize: '32px',
+  textStackGap: '3px',
+  titleFontWeight: 600,
+}
 
 export default function SourceIntakeBrand({
   title = 'Source Intake',
   subtitle = 'Segmentation',
+  icon = <Scissors size={16} strokeWidth={1.9} />,
+  debugItem,
 }) {
   return (
     <div
+      data-debug-item={debugItem}
       style={{
         display: 'inline-flex',
         alignItems: 'center',
@@ -16,28 +26,28 @@ export default function SourceIntakeBrand({
     >
       <div
         style={{
-          width: '32px',
-          height: '32px',
-          borderRadius: radius.pill,
+          ...getIdentityBadgeStyle({
+            size: sourceIntakeBrandMetrics.badgeSize,
+            radiusValue: radius.pill,
+            shadowValue: identityBadgeChrome.intakeSurfaceShadow,
+          }),
           border: `1px solid ${colors.lineStrong}`,
-          background: `linear-gradient(180deg, ${colors.accentWash} 0%, ${colors.accentMist} 100%)`,
-          color: colors.accentBase,
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.92), 0 16px 28px rgba(37, 99, 235, 0.12)',
-          flexShrink: 0,
         }}
       >
-        <Scissors size={16} strokeWidth={1.9} />
+        {icon}
       </div>
-      <div style={{ display: 'grid', gap: '3px' }}>
+      <div style={{ display: 'grid', gap: sourceIntakeBrandMetrics.textStackGap, minWidth: 0 }}>
         <p
           style={{
             margin: 0,
-            fontSize: '14px',
-            lineHeight: 1,
-            fontWeight: 600,
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            fontFamily: typography.bodyText.fontFamily,
+            fontSize: typography.bodyText.fontSize,
+            lineHeight: typography.bodyText.lineHeight,
+            fontWeight: sourceIntakeBrandMetrics.titleFontWeight,
             letterSpacing: '0.15em',
             textTransform: 'uppercase',
             color: colors.textStrong,
@@ -48,10 +58,15 @@ export default function SourceIntakeBrand({
         <p
           style={{
             margin: 0,
-            fontSize: '10px',
-            lineHeight: 1,
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            fontFamily: typography.eyebrowLabel.fontFamily,
+            fontSize: typography.eyebrowLabel.fontSize,
+            lineHeight: typography.eyebrowLabel.lineHeight,
             letterSpacing: '0.2em',
-            textTransform: 'uppercase',
+            textTransform: typography.eyebrowLabel.textTransform,
             color: colors.textSoft,
           }}
         >

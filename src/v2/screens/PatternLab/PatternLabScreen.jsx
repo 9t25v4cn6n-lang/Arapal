@@ -1,24 +1,14 @@
 import layoutContract from './PatternLabScreen.contract'
 import {
-  BestInClassTranslationPreview,
-  DiscussionSummaryNotesPreview,
-  DiscussionFlowPreview,
-  ExamsFocusShellPreview,
-  GradeCirclePreview,
-  PassReflectionPreview,
-  PatchingShellPreview,
-  ProjectHomeDestinationCardPreview,
-  ProjectsIndexShellPreview,
-  QuickLexChipTooltipPreview,
-  ReviewRemediationStatePreview,
-  SegmentTreeFolderRowPreview,
-  SegmentTreeRowFamilyPreview,
-  SegmentationSuccessStagePreview,
-  SegmentationWorkspacePatternPreview,
-  StudyWorkspaceShellPreview,
-  SupportRailFloatingSystemPreview,
-  WorkspaceCardFamilyPreview,
-  YourTranslationPreview,
+  HomeCommandDeckPreview,
+  Layer1UniversalShellPreview,
+  Layer2DefaultSplitPreview,
+  Layer2CenteredEntryPreview,
+  Layer34CenteredBandsPreview,
+  Layer34FullWidthWorkPreview,
+  Layer5ContentOwnerPreview,
+  ProjectsBrowseShellPreview,
+  StudyAnchoredWorkspacePreview,
 } from '../../foundation/lab-previews/patterns'
 import { LabGenericCard, LabScaffold, LabSection } from '../../foundation/primitives/LabBoard'
 
@@ -26,120 +16,164 @@ export default function PatternLabScreen({ route, shell }) {
   const content = (
     <>
       <LabSection
-        title="Layout patterns"
-        description="These are repeatable structural shells pulled directly from the current workspace and segmentation references."
+        title="Shared Screen Layers"
+        description="These are the normalized shell generics and base stage families. They are diagram-led so we can lock the actual layer math before product styling."
       >
-        <LabGenericCard title="Study three-pane workspace layout" status="Candidate" note="Stable left, dominant center, support on the right." minHeight={0}>
-          <StudyWorkspaceShellPreview />
+        <LabGenericCard
+          title="1. Layer 1 universal shell"
+          status="Locked"
+          note="Base screen shell: 14x1 header, 1x8 left rail, and 13x8 body field."
+          minHeight={0}
+          displayMode="stretch"
+          displayPadding={0}
+        >
+          <Layer1UniversalShellPreview />
         </LabGenericCard>
-        <LabGenericCard title="Segmentation operational center-band layout" status="Candidate" note="The center stack uses the contracted 1 / 2 / 1 / 10 / 3 band logic." minHeight={0}>
-          <SegmentationWorkspacePatternPreview />
+        <LabGenericCard
+          title="2. Layer 2 default split"
+          status="Locked"
+          note="Normalized body split: 2.5x8 / 8x8 / 2.5x8. In implementation this is the shared `160 / flexible / 160` body-field contract."
+          minHeight={0}
+          displayMode="stretch"
+          displayPadding={0}
+        >
+          <Layer2DefaultSplitPreview />
         </LabGenericCard>
-        <LabGenericCard title="Success-stage centered flow layout" status="Candidate" note="Centered ceremonial handoff pattern after segmentation or success moments." minHeight={0}>
-          <SegmentationSuccessStagePreview />
+        <LabGenericCard
+          title="6. Centered stage stack"
+          status="Locked"
+          note="One centered stage pattern for entry, exams, and success/review states: `8x1.5 / 8x5 / 8x1.5`."
+          minHeight={0}
+          displayMode="stretch"
+          displayPadding={0}
+        >
+          <Layer2CenteredEntryPreview />
+        </LabGenericCard>
+      </LabSection>
+
+      <LabSection title="Layer 3 / 4 Base Patterns" description="These are the reusable body-stage patterns that later screens inherit rather than reinvent.">
+        <LabGenericCard
+          title="3. Operational center-band stack"
+          status="Locked"
+          note="Operational workspace stack: `8x0.5 / 8x1 / 8x0.5 / 8x4 / 8x2`, usually with `2.5x8` support rails."
+          minHeight={0}
+          displayMode="stretch"
+          displayPadding={0}
+        >
+          <Layer34CenteredBandsPreview />
+        </LabGenericCard>
+        <LabGenericCard
+          title="4. Full-width work stage"
+          status="Locked"
+          note="A full-width main work zone with symmetric `2 / 4 / 2` vertical rhythm. The middle work field spans the whole 13-unit body."
+          minHeight={0}
+          displayMode="stretch"
+          displayPadding={0}
+        >
+          <Layer34FullWidthWorkPreview />
         </LabGenericCard>
       </LabSection>
 
       <LabSection
-        title="Mode patterns"
-        description="These are repeated mode-level compositions. They become easier once the primitive layer is approved."
+        title="Layer 5 Example"
+        description="This shows the next ownership step inside the screen body: a focused content owner living inside the established shell."
       >
-        <LabGenericCard title="Project Home command deck" status="Candidate" note="Large destination surfaces and one clear next action." minHeight={0}>
-          <ProjectHomeDestinationCardPreview />
-        </LabGenericCard>
-        <LabGenericCard title="Source intake / segmentation operational workspace" status="Candidate" note="First pattern to prove after primitive extraction." minHeight={0}>
-          <SegmentationWorkspacePatternPreview />
-        </LabGenericCard>
-        <LabGenericCard title="Study workspace main loop shell" status="Candidate" note="Primary product shell: source, editor, support, result." minHeight={0}>
-          <StudyWorkspaceShellPreview />
-        </LabGenericCard>
-        <LabGenericCard title="Segmentation success stage" status="Candidate" note="Success-state family for post-publish handoff." minHeight={0}>
-          <SegmentationSuccessStagePreview />
+        <LabGenericCard
+          title="5. Layer 5 content owner"
+          status="Locked"
+          note="A centered content owner living inside the existing shell structure rather than redefining the shell itself."
+          minHeight={0}
+          displayMode="stretch"
+          displayPadding={0}
+          gridColumn="1 / -1"
+        >
+          <Layer5ContentOwnerPreview />
         </LabGenericCard>
       </LabSection>
 
       <LabSection
-        title="Study-specific patterns"
-        description="These come mostly from the current study shell and should be reviewed as related families."
+        title="Mode-Level Screen Patterns"
+        description="These are the mode-level screen families built on top of the shared layer grammar. The point is to show which screens share a pattern family, not to duplicate the same structure under different names."
       >
-        <LabGenericCard title="Segment tree row family" status="Candidate" note="Hierarchy, active state, and segment-state icon language." minHeight={0}>
-          <SegmentTreeRowFamilyPreview />
+        <LabGenericCard
+          title="7. Hero / two-up / footer shell"
+          status="Locked"
+          note="Shared family for Home and Patching: one dominant top band, a symmetric two-up middle zone, and one lower action or summary band."
+          minHeight={0}
+          displayMode="stretch"
+          displayPadding={0}
+        >
+          <HomeCommandDeckPreview />
         </LabGenericCard>
-        <LabGenericCard title="Segment tree folder row" status="Candidate" note="Folder/header row variant in the study tree." minHeight={0}>
-          <SegmentTreeFolderRowPreview />
-        </LabGenericCard>
-        <LabGenericCard title="Support rail + floating preview system" status="Candidate" note="Promising, but still needs structural audit." minHeight={0}>
-          <SupportRailFloatingSystemPreview />
-        </LabGenericCard>
-        <LabGenericCard title="Workspace card family" status="Needs redesign" note="Important, but not yet fit to freeze visually." minHeight={0}>
-          <WorkspaceCardFamilyPreview />
-        </LabGenericCard>
-        <LabGenericCard title="Review / remediation support states" status="Candidate" note="Reusable support-state surfaces for study and exams." minHeight={0}>
-          <ReviewRemediationStatePreview />
-        </LabGenericCard>
-        <LabGenericCard title="Quick lex term chip / tooltip" status="Candidate" note="A small but distinctive study-support pattern." minHeight={0}>
-          <QuickLexChipTooltipPreview />
-        </LabGenericCard>
-        <LabGenericCard title="Grade circle" status="Candidate" note="Assessment summary element used in the right support family." minHeight={0}>
-          <GradeCirclePreview />
-        </LabGenericCard>
-      </LabSection>
 
-      <LabSection
-        title="Pass and reflection patterns"
-        description="These are some of the strongest existing repeated surfaces in the study screen and should inform future extraction."
-      >
-        <LabGenericCard title="Best in class translation card" status="Candidate" note="Submitted-state center card with success tone and pin behavior." minHeight={0}>
-          <BestInClassTranslationPreview />
+        <LabGenericCard
+          title="8. Segmentation uses pattern 3"
+          status="Locked"
+          note="Segmentation does not need its own separate base pattern here. It is the main screen that consumes the operational center-band stack."
+          minHeight={0}
+          displayMode="stretch"
+          displayPadding={0}
+          empty
+        >
+          <div />
         </LabGenericCard>
-        <LabGenericCard title="Your translation card" status="Candidate" note="Submitted-state comparison card beside the reference answer." minHeight={0}>
-          <YourTranslationPreview />
-        </LabGenericCard>
-        <LabGenericCard title="Discussion summary + notes card" status="Candidate" note="Reflection surface with empty state, manual note composer, and saved note items." minHeight={0}>
-          <DiscussionSummaryNotesPreview />
-        </LabGenericCard>
-        <LabGenericCard title="Submission jump bar" status="Candidate" note="Bottom anchored jump-and-continue bar used on submitted/pass states." minHeight={0}>
-          <div style={{ minHeight: 78, borderRadius: '16px', border: '1px solid rgba(219, 228, 239, 0.96)', background: 'rgba(255,255,255,0.98)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', gap: '12px' }}>
-            <span style={{ fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif', fontSize: 12, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#64748B' }}>Jump to</span>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              {['Source', 'Best in Class', 'Your Translation', 'Discussion'].map((item) => (
-                <span key={item} style={{ minHeight: 32, padding: '0 12px', borderRadius: '999px', border: '1px solid rgba(219, 228, 239, 0.96)', background: item === 'Your Translation' ? 'rgba(239, 246, 255, 0.96)' : '#fff', color: item === 'Your Translation' ? '#1D4ED8' : '#64748B', display: 'inline-flex', alignItems: 'center', fontSize: 12, fontWeight: 700 }}>{item}</span>
-              ))}
-            </div>
-          </div>
-        </LabGenericCard>
-      </LabSection>
 
-      <LabSection
-        title="Attached discussion patterns"
-        description="These feel like a real reusable family, even if they still need stronger extraction."
-      >
-        <LabGenericCard title="Docked discussion companion" status="Candidate" note="Attached side experience that keeps the user in the current segment context." minHeight={0}>
-          <DiscussionFlowPreview />
+        <LabGenericCard
+          title="9. Study three-pane shell"
+          status="Locked"
+          note="Stable three-pane family: left orientation lane, dominant center work stack, and one attached right support lane. Card subdivision lives inside the support lane, not at this pattern level."
+          minHeight={0}
+          displayMode="stretch"
+          displayPadding={0}
+        >
+          <StudyAnchoredWorkspacePreview />
         </LabGenericCard>
-        <LabGenericCard title="Floating discussion panel" status="Candidate" note="Detached but still attached-to-context discussion surface." minHeight={0}>
-          <DiscussionFlowPreview />
-        </LabGenericCard>
-        <LabGenericCard title="Focused discussion modal" status="Candidate" note="Expanded discussion state with dimmed backdrop and centered focus." minHeight={0}>
-          <DiscussionFlowPreview />
-        </LabGenericCard>
-        <LabGenericCard title="Discussion composer + summary flow" status="Candidate" note="Input, send, summarise, and save as one coherent repeated pattern." minHeight={0}>
-          <DiscussionFlowPreview />
-        </LabGenericCard>
-      </LabSection>
 
-      <LabSection
-        title="Needs redesign / deferred"
-        description="These exist in the product map, but are not yet strong reference sources."
-      >
-        <LabGenericCard title="Projects index shell" status="Needs redesign" note="Current product surface is too early to freeze." minHeight={0}>
-          <ProjectsIndexShellPreview />
+        <LabGenericCard
+          title="10. Browse + content shell"
+          status="Locked"
+          note="Shared browse/index family: one stable browse or filter lane and one larger content field. Internal cards are not defined at this pattern level."
+          minHeight={0}
+          displayMode="stretch"
+          displayPadding={0}
+        >
+          <ProjectsBrowseShellPreview />
         </LabGenericCard>
-        <LabGenericCard title="Exams focus shell" status="Needs redesign" note="Mode is important, but current implementation is weak." minHeight={0}>
-          <ExamsFocusShellPreview />
+
+        <LabGenericCard
+          title="11. Patching uses pattern 7"
+          status="Locked"
+          note="Patching does not need a wholly separate base pattern here. It shares the hero / two-up / footer family and differentiates itself through content and tone."
+          minHeight={0}
+          displayMode="stretch"
+          displayPadding={0}
+          empty
+        >
+          <div />
         </LabGenericCard>
-        <LabGenericCard title="Patching / corrections shell" status="Deferred" note="Generated from doctrine; needs stronger product reference later." minHeight={0}>
-          <PatchingShellPreview />
+
+        <LabGenericCard
+          title="12. Exams use pattern 6"
+          status="Locked"
+          note="Exams use the centered stage stack rather than needing a separate base shell here."
+          minHeight={0}
+          displayMode="stretch"
+          displayPadding={0}
+          empty
+        >
+          <div />
+        </LabGenericCard>
+
+        <LabGenericCard
+          title="13. Success / review use pattern 6"
+          status="Locked"
+          note="Centered success and review states also use the same centered stage stack."
+          minHeight={0}
+          displayMode="stretch"
+          displayPadding={0}
+          empty
+        >
+          <div />
         </LabGenericCard>
       </LabSection>
     </>
@@ -151,8 +185,8 @@ export default function PatternLabScreen({ route, shell }) {
       route={route}
       shell={shell}
       eyebrow="Patterns"
-      title="Repeated screen-pattern families."
-      intro="These are the larger repeated compositions that sit above single primitives and below full product screens."
+      title="Locked screen pattern families."
+      intro="This board is now a frozen reference layer for the locked screen-pattern grammar: shared shell, shared stage families, and the current mode mappings for Home, Segmentation, Study, Projects, Patching, Exams, and centered success/review screens."
       content={content}
     />
   )

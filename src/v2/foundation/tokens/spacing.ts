@@ -10,5 +10,3 @@ export const spacing = {
   48: '48px',
   64: '64px',
 }
-
-export default spacing

@@ -4,7 +4,7 @@ function EmptyBackdrop() {
   return null
 }
 
-export const bodyBackdropPresets = {
+const bodyBackdropPresets = {
   default: BodyBackdropItems,
   none: EmptyBackdrop,
 }
@@ -12,5 +12,3 @@ export const bodyBackdropPresets = {
 export function resolveBodyBackdropPreset(presetName = 'default') {
   return bodyBackdropPresets[presetName] ?? bodyBackdropPresets.default
 }
-
-export default bodyBackdropPresets

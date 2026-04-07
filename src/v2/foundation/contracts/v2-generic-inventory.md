@@ -14,6 +14,12 @@ Use it to decide what should be:
 - locked
 - deferred
 
+See also:
+
+- `AGENTS.md` for product constitution
+- `v2-canon.md` for the concise rule canon
+- `foundation-contracts.md` for implementation doctrine
+
 ## Source Hierarchy
 - `Current app` = product truth
 - `Old app` = visual/detail truth when stronger
@@ -58,6 +64,10 @@ Use it to decide what should be:
 ## Review Boards
 These visual boards are where generics are judged before they are reused in product screens.
 
+Current rule:
+- the board set is now frozen as a reference layer
+- reopen a board only if a real product gap appears or a locked generic fails under real use
+
 | Board | Route | Focus |
 | --- | --- | --- |
 | Lab index | `foundationLab` | entry point for the review workflow |
@@ -84,23 +94,15 @@ This is the review map. A generic is not considered system-ready until it has be
 - Action pill
 
 ### Editor + Panels Lab
+- Mode surface marks
 - Source intake brand
-- Operational panel
 - Editor surface
-- Editor topbar
-- Editor footer
-- Panel corner casing
+- Editor formatting toolbar
 - Options popover
-- Support panel card
-- Lexicography support card
+- Support card family
 - Support rail card
 - Floating support preview
-- Expandable support modal
-- Expanded focus panel
-- Dimmed stage overlay
-- Floating panel header + actions
-- Floating panel resize affordance
-- Feedback block
+- Expanded focus support surface
 - Numbered takeaway item
 - Lexicography entry row
 
@@ -108,12 +110,10 @@ This is the review map. A generic is not considered system-ready until it has be
 - Typography role system
 - Blue/slate semantic palette
 - Stage backdrop / watermark treatment
-- Editor watermark treatment
+- Readable inset / padding discipline
 - Panel border / radius / shadow language
-- Primary CTA sheen / highlight language
-- Support panel tone system
+- Semantic surface tone palette
 - Editor chrome opacity rules
-- Home hero / door card treatment
 
 ### Motion + Interaction Lab
 - Utility control hover reveal
@@ -136,32 +136,20 @@ This is the review map. A generic is not considered system-ready until it has be
 - Reduced motion fallbacks
 
 ### Pattern Lab
-- Study three-pane workspace layout
-- Segmentation operational center-band layout
-- Success-stage centered flow layout
-- Segment tree row
-- Segment tree folder row
-- Quick lex term chip/tooltip
-- Grade circle
-- Project home destination card
-- Workspace card family (`source`, `editor`, `result`, `support-inline`)
-- Project Home command deck
-- Source intake / segmentation operational workspace
-- Study workspace main loop shell
-- Support rail + floating preview system
-- Review / remediation support state set
-- Segmentation success stage
-- Best in class translation card
-- Your translation card
-- Discussion summary + notes card
-- Submission jump bar
-- Docked discussion companion
-- Floating discussion panel
-- Focused discussion modal
-- Discussion composer + summary flow
-- Exams focus shell
-- Projects index shell
-- Patching / corrections shell
+- Layer 1 universal shell
+- Layer 2 default split
+- Operational center-band stack
+- Full-width work stage
+- Layer 5 content owner
+- Centered stage stack
+- Hero / two-up / footer shell
+- Study three-pane shell
+- Browse + content shell
+- Pattern mappings:
+  - Segmentation -> Operational center-band stack
+  - Patching -> Hero / two-up / footer shell
+  - Exams -> Centered stage stack
+  - Success / review -> Centered stage stack
 
 ## Layout Generics
 | Item | Product source | Visual source | Final design confidence | Repeatability confidence | Status | Notes |
@@ -170,9 +158,11 @@ This is the review map. A generic is not considered system-ready until it has be
 | Canonical shell sizing math | Current V2 shell | Current app study shell behavior | 5 | 5 | Locked | Nav collapsed/expanded and center-yield logic are system-level. |
 | Contract renderer + debug-named containers | Current V2 | N/A | 5 | 5 | Locked | Core engineering asset. |
 | Default V2 body backdrop preset | Current V2 | Current app atmosphere + old app watermark cues | 4 | 5 | Locked | Shared preset; screens may opt into bespoke presets later. |
-| Study three-pane workspace layout | Current app | Current app study screen | 4 | 5 | Candidate | Product-critical screen pattern. |
-| Segmentation operational center-band layout | Current app | Current app segmentation + V2 contract | 4 | 4 | Candidate | Keep `1 / 2 / 1 / 10 / 3` style as screen-pattern logic. |
-| Success-stage centered flow layout | Current app | Old app segmentation success | 3 | 4 | Candidate | Needs formal screen-pattern extraction later. |
+| Study three-pane workspace layout | Current app | Current app study screen | 5 | 5 | Locked | Product-critical shell pattern; internal support-card subdivision belongs below pattern level. |
+| Segmentation operational center-band layout | Current app | Current app segmentation + V2 contract | 5 | 5 | Locked | Canonical operational stage family now uses the approved centered stack `0.4 / 0.25 / 0.1 / 0.5 / 0.1 / 0.25 / 0.4 / 5 / 2` inside layout-owned Layer 2 gutters. |
+| Centered stage stack | Current app intro/exams/success | Current app + old app centered stages | 5 | 5 | Locked | Shared family for entry, exams, and success/review states. |
+| Full-width work stage | Current app | Current app segmentation + study | 4 | 5 | Locked | Shared family where the main work zone spans the full `13x` body. |
+| Layer 5 content owner | Current V2 | Current app centered surfaces | 4 | 5 | Locked | Focused content owner inside the established shell, not a shell replacement. |
 
 ## Primitive Generics
 | Item | Product source | Visual source | Final design confidence | Repeatability confidence | Status | Notes |
@@ -183,26 +173,27 @@ This is the review map. A generic is not considered system-ready until it has be
 | Utility icon control (`pin`, `back`, `expand`, `collapse`, `close`) | Current app | Current app study shell | 5 | 5 | Locked | Small utility control family; shared hover box pattern. |
 | Back pill | Current app segmentation | Old app segmentation | 4 | 4 | Locked | Directional action variant in the shared action-control family. |
 | Step bar | Current app segmentation | Old app segmentation | 4 | 4 | Locked | Applies to multi-step operational flows and now has a shared V2 primitive path. |
-| Source intake brand | Current app segmentation | Old app segmentation | 4 | 3 | Active extraction | Segmentation-specific identity cluster that should live under the operational editor family. |
+| Source intake brand | Current app segmentation | Old app segmentation | 4 | 4 | Locked | Segmentation-specific identity cluster now lives as a shared operational-shell primitive. |
+| Mode surface marks | Current V2 | Current app + V2 | 4 | 4 | Locked | Shared icon + title/subtitle mark structure for mode-bound editor surfaces. |
 | Operational panel | Current app segmentation | Old app segmentation | 5 | 5 | Candidate | High-value base family for operational screens. |
-| Editor surface | Current app segmentation + study | Old app segmentation editor chrome | 5 | 5 | Active extraction | Major missing primitive. |
-| Editor topbar | Current app segmentation + study | Old app segmentation editor chrome | 4 | 5 | Candidate | Should sit under the editor family. |
-| Editor footer | Current app segmentation + study | Old app segmentation editor chrome | 4 | 5 | Candidate | Includes shortcut and meta patterns. |
-| Panel corner casing | Current app segmentation | Old app segmentation | 4 | 4 | Candidate | Must stay attached to editor/panel family. |
+| Editor surface | Current app segmentation + study | Old app segmentation editor chrome | 5 | 5 | Locked | Shared editor surface with band/slot ownership, edge-safe inset geometry, and direct debug coverage. |
+| Editor topbar | Current app segmentation + study | Old app segmentation editor chrome | 4 | 5 | Deferred | Reviewed as part of the Editor surface family, not as a standalone generic. |
+| Editor footer | Current app segmentation + study | Old app segmentation editor chrome | 4 | 5 | Deferred | Reviewed as part of the Editor surface family, not as a standalone generic. |
+| Panel corner casing | Current app segmentation | Old app segmentation | 4 | 4 | Deferred | Must stay attached to the Editor surface family, not reviewed separately. |
+| Editor formatting toolbar | Current study/editor needs | V1 translation controls + V2 editor family | 3 | 4 | Candidate | Text-capable editor variant with formatting controls and a future deterministic QA Check action. |
 | Primary CTA | Current app segmentation/home | Old app segmentation CTA finesse | 5 | 5 | Locked | Canonical premium primary action treatment. |
 | Split CTA | Current app segmentation | Old app segmentation | 5 | 5 | Locked | Very important shared primitive. Chevron direction is state-driven, not a separate generic. |
-| Options popover | Current app segmentation | Old app segmentation advanced menu | 4 | 5 | Candidate | Outside-click dismissal should be standard. |
+| Options popover | Current app segmentation | Old app segmentation advanced menu | 4 | 5 | Locked | Exact shared segmentation popover family. Outside-click dismissal should be standard. |
 | Preference toggle row | Current app segmentation | Old app segmentation | 4 | 5 | Locked | Shared settings-style row with label, meta, and toggle state. |
 | Segment tree row | Current app study | Current app study left pane | 4 | 5 | Candidate | Includes folder/leaf/state icon treatment. |
 | Segment tree folder row | Current app study | Current app study left pane | 4 | 5 | Candidate | Related to tree row but distinct variant. |
 | Status chip / badge | Current app study + segmentation | Current app | 4 | 5 | Candidate | Good shared semantic primitive. |
 | Action pill | Current app study | Current app study center pane | 3 | 4 | Candidate | Worth extracting after core panels/buttons. |
-| Support panel card | Current app study | Current app study right pane | 5 | 5 | Candidate | Strong candidate for support family. |
-| Lexicography support card | Current app study | Current app study right pane | 5 | 5 | Candidate | One of the clearest concrete support-card references in the app. |
-| Support rail card (collapsed preview card) | Current app study | Current app study right pane | 4 | 5 | Candidate | Useful for collapsed support mode. |
+| Support card family | Current app study | Current app study right pane | 5 | 5 | Locked | One shared support-card chrome family with content/tone variants like guidance and lexicography. |
+| Support rail card (collapsed preview card) | Current app study | Current app study right pane | 4 | 5 | Locked | Useful for collapsed support mode with tone-matched premium hover/fill. |
 | Floating support preview | Current app study | Current app study right pane | 4 | 4 | Candidate | Visually strong; still needs structural audit. |
-| Expandable support modal | Current app study | Current app study right pane | 4 | 4 | Candidate | Related to support panel family. |
-| Expanded focus panel | Current app study | Current app study right pane | 4 | 4 | Candidate | Front-and-center expanded support state that likely belongs to a shared overlay family. |
+| Expandable support modal | Current app study | Current app study right pane | 4 | 4 | Deferred | Consolidated into the Expanded focus support surface state family. |
+| Expanded focus support surface | Current app study | Current app study right pane | 4 | 4 | Candidate | Front-and-center expanded support state with dimmed backdrop and full lexicography table. |
 | Floating panel header + actions | Current app study | Current app study right pane | 4 | 4 | Candidate | Includes title row, pin/close controls, and drag affordance. |
 | Floating panel resize affordance | Current app study | Current app study right pane | 3 | 3 | Candidate | Useful, but needs deliberate product-level rules. |
 | Feedback block | Current app study | Current app study right pane | 4 | 4 | Candidate | Reusable in review/assessment surfaces. |
@@ -223,60 +214,62 @@ This is the review map. A generic is not considered system-ready until it has be
 | Typography role system | Current V2 contracts | Current app + old app | 5 | 5 | Locked | Keep tokenized, not screen-local. |
 | Blue/slate semantic palette | Current V2 contracts | Current app segmentation | 5 | 5 | Locked | Foundation-level. |
 | Stage backdrop / watermark treatment | Current V2 backdrop | Current app + old app | 4 | 5 | Locked | Shared preset system exists; more bespoke presets can come later. |
-| Editor watermark treatment | Current app segmentation | Old app segmentation | 4 | 4 | Candidate | Should live under editor family, not as ad hoc text. |
+| Editor watermark treatment | Current app segmentation | Old app segmentation | 4 | 4 | Deferred | Reviewed inside the Editor surface family, not on the Typography board. |
 | Panel border / radius / shadow language | Current V2 + current app | Current app home/study/segmentation | 4 | 5 | Candidate | Needs stronger implementation centralization. |
-| Primary CTA sheen / highlight language | Current app segmentation | Old app segmentation | 5 | 5 | Candidate | Important premium-system detail. |
+| Readable inset / padding discipline | Current V2 doctrine | Current app + V2 | 5 | 5 | Locked | Every text-bearing surface must preserve the minimum readable inset from edge to text. |
+| Primary CTA sheen / highlight language | Current app segmentation | Old app segmentation | 5 | 5 | Locked | Owned and judged on the Controls board as part of the Primary CTA family. |
 | Utility hover box treatment | Current app study | Current app study | 5 | 5 | Locked | Shared small-control style. |
-| Support panel tone system | Current app study | Current app study right pane | 4 | 5 | Candidate | Blue/purple/orange/emerald/rose tones need canonization rules. |
-| Editor chrome opacity rules | Current app segmentation | Old app segmentation | 4 | 4 | Candidate | Needed because recent drift showed how easy this is to get wrong. |
-| Home hero / door card treatment | Current app home | Current app home | 4 | 4 | Candidate | Likely close to final. |
+| Semantic surface tone palette | Current app study | Current app study + success/fail states | 4 | 5 | Locked | Tone primarily affects surface, border, shadow, icon, and occasionally short titles; body/support text remain neutral by default. |
+| Editor chrome opacity rules | Current app segmentation | Old app segmentation | 4 | 4 | Locked | Standardized values should be shared rather than re-decided per screen. |
+| Home hero / door card treatment | Current app home | Current app home | 4 | 4 | Candidate | Reviewed on the Pattern board, not Typography. |
 
 ## Interaction Generics
 | Item | Product source | Visual source | Final design confidence | Repeatability confidence | Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
 | Navigation hover-expand + pin/unpin | Current app study | Current app study | 5 | 5 | Locked | Contract-level shell behavior. |
-| Utility control hover reveal | Current app study | Current app study | 5 | 5 | Active extraction | Shared for pin/back/expand/collapse. |
+| Utility control hover reveal | Current app study | Current app study | 5 | 5 | Locked | Shared hover-box treatment for pin, back, expand, collapse, and related mini-controls. |
 | Outside-click dismissal for overlays | Current app patterns | Current app + V2 | 5 | 5 | Locked | Standard unless a surface is pinned. |
 | Escape-to-close overlays | Current app patterns | Current app + V2 | 5 | 5 | Locked | Same rule family as outside-click. |
 | Segment tree expand/collapse | Current app study | Current app study | 4 | 5 | Candidate | Reusable within hierarchical lists. |
 | Support-panel collapse/expand | Current app study | Current app study | 4 | 5 | Candidate | Important workspace interaction pattern. |
 | Hover preview + pin-to-keep-open | Current app study | Current app study right pane | 3 | 4 | Candidate | Promising, but needs audit before canonization. |
 | Floating panel drag/resize | Current app study | Current app study right pane | 2 | 3 | Candidate | Powerful, but should be treated cautiously. |
-| Float / dock support panel | Current app study | Current app study center pane | 4 | 4 | Candidate | Clear interaction family for detaching support without losing context. |
+| Float / dock support panel | Current app study | Current app study center pane | 4 | 4 | Candidate | Current study implementation is the reference to preserve when systematizing this family. |
 | Split CTA open/select/close behavior | Current app segmentation | Old app segmentation | 5 | 5 | Candidate | Needs systemization with CTA primitive. |
 | Focused expand with dim backdrop | Current app study | Current app study center pane | 4 | 4 | Candidate | Shared overlay behavior candidate for support-focused reading modes. |
 | Support preview reveal motion | Current app study | Current app study right pane | 3 | 4 | Candidate | Part interaction, part motion; should be reviewed as a distinct family. |
-| Editor shortcut hint behavior | Current app segmentation | Old app segmentation | 3 | 3 | Candidate | Nice-to-have, lower priority. |
+| Control hover hints / shortcut hints | Current app segmentation + study | Current app + old app | 4 | 4 | Candidate | Useful broader rule: controls should expose a helpful hover hint when meaning is not already obvious. |
 
 ## Motion Generics
 | Item | Product source | Visual source | Final design confidence | Repeatability confidence | Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
 | Hover/focus micro-motion | Current V2 contracts | Current app study/segmentation | 5 | 5 | Locked | Tokenized durations/easing already defined. |
 | Menu/panel open motion | Current V2 contracts | Current app study/segmentation | 4 | 5 | Candidate | Needs reusable implementation helpers. |
-| Screen intro/transition motion | Current V2 contracts | Current app segmentation | 3 | 4 | Candidate | Contracted, but not yet fully implemented as a system. |
+| Screen intro/transition motion | Current V2 contracts | Current app segmentation | 4 | 4 | Candidate | Strong current reference; preserve the existing motion character while systematizing it later. |
 | Focused expand with dim backdrop | Current app study | Current app study | 4 | 4 | Candidate | Transition family for taking a support surface into temporary focus. |
 | Support preview reveal motion | Current app study | Current app study | 3 | 4 | Candidate | Hover-preview motion should clarify, not surprise. |
-| CTA sheen sweep | Current app segmentation | Old app segmentation | 5 | 5 | Candidate | Strong shared premium detail. |
+| CTA sheen sweep | Current app segmentation | Old app segmentation | 5 | 5 | Locked | Shared premium detail reserved for large ceremonial CTAs. |
 | Hover lift for primary surfaces | Current app home/segmentation | Current app | 4 | 5 | Candidate | Should be tied to elevation scale. |
-| Reduced motion fallbacks | V2 requirement | N/A | 5 | 5 | Deferred | Must be implemented before finalization. |
+| Reduced motion fallbacks | V2 requirement | N/A | 5 | 5 | Deferred | Important, but intentionally left for late stabilization rather than current review focus. |
 
 ## Screen-Pattern Generics
 | Item | Product source | Visual source | Final design confidence | Repeatability confidence | Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| Project Home command deck | Current app home | Current app home | 4 | 5 | Candidate | Strong mode-level pattern. |
-| Source intake / segmentation operational workspace | Current app segmentation | Old app segmentation | 5 | 5 | Candidate | First pattern to prove after primitive extraction. |
-| Study workspace main loop shell | Current app study | Current app study | 5 | 5 | Candidate | Product-critical mode pattern. |
+| Hero / two-up / footer shell | Current app home + patching doctrine | Current app home | 5 | 5 | Locked | Shared mode-level family for Home and current Patching direction. |
+| Source intake / segmentation operational workspace | Current app segmentation | Old app segmentation | 5 | 5 | Locked | Mapped to the locked operational center-band stack rather than treated as its own separate family. |
+| Study workspace main loop shell | Current app study | Current app study | 5 | 5 | Locked | Mapped to the locked study three-pane shell. |
+| Browse + content shell | Current app projects | Current app projects | 4 | 5 | Locked | Shared browse/index family with one stable browse lane and one larger content field. |
 | Support rail + floating preview system | Current app study | Current app study | 3 | 4 | Candidate | Good, but still needs structural audit. |
 | Review / remediation support state set | Current app study | Current app study | 4 | 4 | Candidate | Useful across study and exams. |
-| Segmentation success stage | Current app segmentation | Old app segmentation | 3 | 4 | Candidate | Should become a reusable success-stage pattern. |
+| Segmentation success stage | Current app segmentation | Old app segmentation | 4 | 5 | Locked | Mapped to the locked centered stage stack. |
 | Best in class / your translation comparison stack | Current app study | Current app study | 4 | 4 | Candidate | Submitted-state center-lane pattern with compare and pin behaviors. |
 | Discussion summary + notes flow | Current app study | Current app study | 4 | 4 | Candidate | Submitted-state reflection pattern with empty and populated states. |
 | Docked discussion companion | Current app study | Current app study | 4 | 4 | Candidate | Attached help surface that preserves segment context. |
 | Floating discussion panel | Current app study | Current app study | 3 | 4 | Candidate | Detachable discussion state that may generalize beyond one screen. |
 | Focused discussion modal | Current app study | Current app study | 3 | 4 | Candidate | Expanded discussion mode with dimmed backdrop and centered focus. |
-| Exams focus shell | Current app exams | Current app exams | 2 | 4 | Needs redesign | Product mode exists, but current implementation is weak. |
-| Projects index shell | Current app projects | Current app projects | 2 | 4 | Needs redesign | Early-state product surface. |
-| Patching / corrections shell | Current app doctrine only | N/A | 1 | 3 | Deferred | Needs proper reference work before extraction. |
+| Exams focus shell | Current app exams | Current app exams | 4 | 5 | Locked | Mapped to the locked centered stage stack. |
+| Projects index shell | Current app projects | Current app projects | 4 | 5 | Locked | Mapped to the locked browse + content shell. |
+| Patching / corrections shell | Current patching doctrine | Home + current correction flow direction | 4 | 4 | Locked | Current base direction is the hero / two-up / footer family; only extract a new family later if real product structure proves different. |
 
 ## Immediate Extraction Wave
 These are the highest-value items to extract next before rebuilding more full screens.
@@ -295,3 +288,4 @@ These are the highest-value items to extract next before rebuilding more full sc
 - When a generic is reviewed and approved, update `Status` to `Locked`.
 - Once locked, the V2 implementation becomes canonical and future screens must consume it rather than restyling locally.
 - If a screen needs something genuinely bespoke, document it as a screen-pattern exception rather than silently mutating a shared generic.
+- Labs are now frozen reference boards by default; do not keep expanding them unless a real product gap appears.

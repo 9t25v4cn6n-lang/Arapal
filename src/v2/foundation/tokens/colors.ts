@@ -17,5 +17,3 @@ export const colors = {
   success: '#16A34A',
   review: '#D97706',
 }
-
-export default colors

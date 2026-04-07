@@ -13,7 +13,7 @@ export default function AppLaunchScreen({ route, shell }) {
 
   const secondaryButtonStyle = {
     minHeight: '48px',
-    padding: `0 ${spacing[20]}`,
+    padding: `0 ${spacing[20]}px`,
     border: `1px solid ${colors.lineSoft}`,
     borderRadius: radius.pill,
     background: colors.surfacePrimary,

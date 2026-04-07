@@ -1,5 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
-import V2DebugInspector from '../debug/V2DebugInspector'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { colors, elevation } from '../tokens'
 import { resolveBodyBackdropPreset } from './bodyBackdropPresets'
 
@@ -11,7 +10,7 @@ function readDebugInitiallyEnabled() {
   return new URLSearchParams(window.location.search).get('v2Debug') === '1'
 }
 
-function collectLiveDetails(rootNode, containerMap, containerName) {
+function collectLiveDetails(rootNode, containerMap, containerName, selectedItem) {
   if (!rootNode || !containerName) {
     return null
   }
@@ -24,6 +23,25 @@ function collectLiveDetails(rootNode, containerMap, containerName) {
   const container = containerMap.get(containerName)
   const rect = node.getBoundingClientRect()
   const computed = window.getComputedStyle(node)
+  const itemNodes = Array.from(node.querySelectorAll('[data-debug-item]')).filter((itemNode) => itemNode instanceof HTMLElement)
+  const items = itemNodes.map((itemNode) => {
+    const itemRect = itemNode.getBoundingClientRect()
+    const owner = itemNode.closest('[data-debug-name]')?.dataset.debugName ?? containerName
+    const rawText = itemNode.innerText?.trim() || itemNode.textContent?.trim() || ''
+
+    return {
+      name: itemNode.dataset.debugItem,
+      width: itemRect.width,
+      height: itemRect.height,
+      owner,
+      tag: itemNode.tagName.toLowerCase(),
+      text: rawText ? rawText.slice(0, 80) : null,
+    }
+  })
+  const activeItem =
+    selectedItem && selectedItem.containerName === containerName
+      ? items.find((item) => item.name === selectedItem.itemName) ?? null
+      : null
 
   return {
     name: containerName,
@@ -34,6 +52,8 @@ function collectLiveDetails(rootNode, containerMap, containerName) {
     padding: computed.padding,
     gap: computed.gap,
     overflow: `${computed.overflowX} / ${computed.overflowY}`,
+    items,
+    activeItem,
   }
 }
 
@@ -44,6 +64,32 @@ function composeEventHandlers(...handlers) {
         handler(event)
       }
     })
+  }
+}
+
+function buildRuntimeContractMeta(contract, containerOverrides, rootNode) {
+  const contractContainerNames = contract.containers.map((container) => container.name)
+  const contractContainerNameSet = new Set(contractContainerNames)
+  const overrideKeys = Object.keys(containerOverrides ?? {})
+  const unusedOverrideKeys = overrideKeys.filter((containerName) => !contractContainerNameSet.has(containerName))
+  const renderedContainerNames = rootNode
+    ? [
+        rootNode.dataset.debugName,
+        ...Array.from(rootNode.querySelectorAll('[data-debug-name]'))
+          .map((node) => node.dataset.debugName)
+          .filter(Boolean),
+      ].filter(Boolean)
+    : []
+  const renderedContainerNameSet = new Set(renderedContainerNames)
+
+  return {
+    screenId: contract.screenId ?? null,
+    screenName: contract.screenName ?? null,
+    contractContainerNames,
+    overrideKeys,
+    unusedOverrideKeys,
+    missingRenderedContainers: contractContainerNames.filter((containerName) => !renderedContainerNameSet.has(containerName)),
+    extraRenderedContainers: renderedContainerNames.filter((containerName) => !contractContainerNameSet.has(containerName)),
   }
 }
 
@@ -83,12 +129,15 @@ function getContainerStyle(container, override, isActive) {
   return style
 }
 
-export default function ScreenContractRenderer({ contract, slotContent = {}, containerOverrides = {} }) {
+export default function ScreenContractRenderer({ contract, slotContent = {}, containerOverrides = {}, debugTools = null }) {
   const rootRef = useRef(null)
   const [isDebugOpen, setIsDebugOpen] = useState(readDebugInitiallyEnabled)
   const [hoveredContainerName, setHoveredContainerName] = useState(null)
   const [lockedContainerName, setLockedContainerName] = useState(null)
-  const debugEnabled = isDebugOpen
+  const [selectedItem, setSelectedItem] = useState(null)
+  const InspectorComponent = debugTools?.InspectorComponent ?? null
+  const collectStructureAudit = debugTools?.collectStructureAudit ?? null
+  const debugEnabled = Boolean(InspectorComponent) && isDebugOpen
 
   const containerMap = useMemo(
     () => new Map(contract.containers.map((container) => [container.name, container])),
@@ -113,8 +162,45 @@ export default function ScreenContractRenderer({ contract, slotContent = {}, con
   }, [contract.containers])
 
   const activeContainerName = lockedContainerName || hoveredContainerName
-  const liveDetails = debugEnabled ? collectLiveDetails(rootRef.current, containerMap, activeContainerName) : null
+  const liveDetails = debugEnabled
+    ? collectLiveDetails(rootRef.current, containerMap, activeContainerName, selectedItem)
+    : null
+  const structureAudit =
+    debugEnabled && typeof collectStructureAudit === 'function'
+      ? collectStructureAudit(rootRef.current, activeContainerName || contract.rootContainerName)
+      : null
   const BodyBackdropPreset = resolveBodyBackdropPreset(contract.bodyBackdrop?.preset)
+
+  useEffect(() => {
+    if (!selectedItem) {
+      return
+    }
+
+    if (!activeContainerName || selectedItem.containerName !== activeContainerName) {
+      setSelectedItem(null)
+    }
+  }, [activeContainerName, selectedItem])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return undefined
+    }
+
+    const runtimeMeta = buildRuntimeContractMeta(contract, containerOverrides, rootRef.current)
+    window.__ARAPAL_V2_CONTRACT_META__ = runtimeMeta
+
+    if (rootRef.current instanceof HTMLElement) {
+      rootRef.current.dataset.debugScreenId = contract.screenId ?? ''
+      rootRef.current.dataset.debugContractContainerCount = String(runtimeMeta.contractContainerNames.length)
+      rootRef.current.dataset.debugUnusedOverrides = runtimeMeta.unusedOverrideKeys.join(',')
+    }
+
+    return () => {
+      if (window.__ARAPAL_V2_CONTRACT_META__?.screenId === contract.screenId) {
+        delete window.__ARAPAL_V2_CONTRACT_META__
+      }
+    }
+  }, [contract, containerOverrides])
 
   const renderContainer = (containerName) => {
     const container = containerMap.get(containerName)
@@ -147,6 +233,8 @@ export default function ScreenContractRenderer({ contract, slotContent = {}, con
         ref={container.name === contract.rootContainerName ? rootRef : undefined}
         data-debug-layer={container.layer}
         data-debug-name={container.name}
+        data-debug-allow-empty={container.allowEmpty ? 'true' : undefined}
+        data-debug-semantic-role={container.semanticRole ?? undefined}
         style={getContainerStyle(container, override, isActive)}
         onMouseEnter={shouldAttachMouseEnter ? handleMouseEnter : undefined}
         onMouseLeave={shouldAttachMouseLeave ? handleMouseLeave : undefined}
@@ -161,28 +249,50 @@ export default function ScreenContractRenderer({ contract, slotContent = {}, con
   return (
     <>
       {renderContainer(contract.rootContainerName)}
-      <V2DebugInspector
-        contract={contract}
-        isOpen={isDebugOpen}
-        activeContainerName={activeContainerName}
-        lockedContainerName={lockedContainerName}
-        liveDetails={liveDetails}
-        onOpen={() => setIsDebugOpen(true)}
-        onClose={() => {
-          setIsDebugOpen(false)
-          setHoveredContainerName(null)
-          setLockedContainerName(null)
-        }}
-        onHoverContainer={setHoveredContainerName}
-        onLeaveContainer={() => {
-          if (!lockedContainerName) {
+      {InspectorComponent ? (
+        <InspectorComponent
+          contract={contract}
+          isOpen={isDebugOpen}
+          activeContainerName={activeContainerName}
+          lockedContainerName={lockedContainerName}
+          liveDetails={liveDetails}
+          structureAudit={structureAudit}
+          onOpen={() => setIsDebugOpen(true)}
+          onClose={() => {
+            setIsDebugOpen(false)
             setHoveredContainerName(null)
-          }
-        }}
-        onToggleLock={(containerName) => {
-          setLockedContainerName((current) => (current === containerName ? null : containerName))
-        }}
-      />
+            setLockedContainerName(null)
+            setSelectedItem(null)
+          }}
+          onHoverContainer={setHoveredContainerName}
+          onLeaveContainer={() => {
+            if (!lockedContainerName) {
+              setHoveredContainerName(null)
+            }
+          }}
+          onToggleLock={(containerName) => {
+            setLockedContainerName((current) => (current === containerName ? null : containerName))
+            setSelectedItem(null)
+          }}
+          activeItemName={selectedItem?.itemName ?? null}
+          onSelectItem={(itemName) => {
+            if (!activeContainerName || !itemName) {
+              return
+            }
+
+            setSelectedItem((current) => {
+              if (current?.containerName === activeContainerName && current.itemName === itemName) {
+                return null
+              }
+
+              return {
+                containerName: activeContainerName,
+                itemName,
+              }
+            })
+          }}
+        />
+      ) : null}
     </>
   )
 }

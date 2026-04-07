@@ -10,12 +10,16 @@ import MotionInteractionLabScreen from '../screens/MotionInteractionLab/MotionIn
 import motionInteractionLabLayoutContract from '../screens/MotionInteractionLab/MotionInteractionLabScreen.contract'
 import PatternLabScreen from '../screens/PatternLab/PatternLabScreen'
 import patternLabLayoutContract from '../screens/PatternLab/PatternLabScreen.contract'
+import QualityDashboardScreen from '../screens/QualityDashboard/QualityDashboardScreen'
+import qualityDashboardLayoutContract from '../screens/QualityDashboard/QualityDashboardScreen.contract'
 import ProjectHomeScreen from '../screens/ProjectHome/ProjectHomeScreen'
 import projectHomeLayoutContract from '../screens/ProjectHome/ProjectHomeScreen.contract'
 import ProjectsScreen from '../screens/Projects/ProjectsScreen'
 import projectsLayoutContract from '../screens/Projects/ProjectsScreen.contract'
 import SegmentationPasteScreen from '../screens/SegmentationPaste/SegmentationPasteScreen'
 import segmentationPasteLayoutContract from '../screens/SegmentationPaste/SegmentationPasteScreen.contract'
+import SegmentationPasteNextScreen from '../screens/SegmentationPasteNext/SegmentationPasteNextScreen'
+import segmentationPasteNextLayoutContract from '../screens/SegmentationPasteNext/SegmentationPasteNextScreen.contract'
 import SegmentationTransitionScreen from '../screens/SegmentationTransition/SegmentationTransitionScreen'
 import segmentationTransitionLayoutContract from '../screens/SegmentationTransition/SegmentationTransitionScreen.contract'
 import SegmentationLoadingScreen from '../screens/SegmentationLoading/SegmentationLoadingScreen'
@@ -179,6 +183,27 @@ export const routeRegistry = {
       },
     },
   },
+  qualityDashboard: {
+    id: 'qualityDashboard',
+    label: 'Quality Dashboard',
+    component: QualityDashboardScreen,
+    layoutContract: qualityDashboardLayoutContract,
+    shell: {
+      showRail: false,
+      header: {
+        modeLabel: 'Quality Dashboard',
+        description: 'Hybrid health board for static repo audit and rendered QA',
+      },
+      rail: {
+        visible: false,
+        groupId: 'foundationLab',
+        label: 'Quality Dashboard',
+        shortLabel: 'QD',
+        order: 11,
+        routeId: 'qualityDashboard',
+      },
+    },
+  },
   projectHome: {
     id: 'projectHome',
     label: 'Project Home',
@@ -242,6 +267,28 @@ export const routeRegistry = {
         iconKey: 'segmentation',
         order: 40,
         routeId: 'segmentationPaste',
+      },
+    },
+  },
+  segmentationPasteNext: {
+    id: 'segmentationPasteNext',
+    label: 'Segmentation Paste Next',
+    component: SegmentationPasteNextScreen,
+    layoutContract: segmentationPasteNextLayoutContract,
+    shell: {
+      showRail: true,
+      header: {
+        modeLabel: 'Source + Segmentation',
+        description: 'Parallel rebuild review route',
+      },
+      rail: {
+        visible: false,
+        groupId: 'segmentation',
+        label: 'Source + Segmentation',
+        shortLabel: 'SG',
+        iconKey: 'segmentation',
+        order: 40,
+        routeId: 'segmentationPasteNext',
       },
     },
   },

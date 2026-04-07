@@ -1,0 +1,150 @@
+{
+  "generatedAt": "2026-04-07T17:33:37.149Z",
+  "schemaVersion": 2,
+  "summary": {
+    "status": "ready",
+    "baselineFound": true,
+    "comparedAt": "2026-04-07T17:33:37.149Z",
+    "previousGeneratedAt": "2026-04-04T21:22:16.461Z",
+    "currentGeneratedAt": "2026-04-07T17:33:37.149Z",
+    "new": 1,
+    "resolved": 0,
+    "persisted": 444,
+    "changed": 0,
+    "changedByField": {
+      "severity": 0,
+      "confidence": 0,
+      "classification": 0,
+      "suppression": 0
+    },
+    "laneDeltas": [
+      {
+        "kind": "lane",
+        "key": "dead-code",
+        "label": "dead-code",
+        "current": 43,
+        "previous": 43,
+        "delta": 0
+      },
+      {
+        "kind": "lane",
+        "key": "duplication",
+        "label": "duplication",
+        "current": 2,
+        "previous": 1,
+        "delta": 1
+      },
+      {
+        "kind": "lane",
+        "key": "static-doctrine",
+        "label": "static-doctrine",
+        "current": 400,
+        "previous": 400,
+        "delta": 0
+      }
+    ],
+    "ruleDeltas": [
+      {
+        "kind": "rule",
+        "key": "hardcoded-color",
+        "label": "hardcoded-color",
+        "current": 182,
+        "previous": 182,
+        "delta": 0
+      },
+      {
+        "kind": "rule",
+        "key": "hardcoded-motion",
+        "label": "hardcoded-motion",
+        "current": 4,
+        "previous": 4,
+        "delta": 0
+      },
+      {
+        "kind": "rule",
+        "key": "hardcoded-radius",
+        "label": "hardcoded-radius",
+        "current": 13,
+        "previous": 13,
+        "delta": 0
+      },
+      {
+        "kind": "rule",
+        "key": "hardcoded-spacing",
+        "label": "hardcoded-spacing",
+        "current": 26,
+        "previous": 26,
+        "delta": 0
+      },
+      {
+        "kind": "rule",
+        "key": "hardcoded-typography",
+        "label": "hardcoded-typography",
+        "current": 173,
+        "previous": 173,
+        "delta": 0
+      },
+      {
+        "kind": "rule",
+        "key": "repeated-style-bundle",
+        "label": "repeated-style-bundle",
+        "current": 1,
+        "previous": 1,
+        "delta": 0
+      },
+      {
+        "kind": "rule",
+        "key": "screen-local-bespoke-variant",
+        "label": "screen-local-bespoke-variant",
+        "current": 2,
+        "previous": 2,
+        "delta": 0
+      },
+      {
+        "kind": "rule",
+        "key": "shared-primitive-variant-drift",
+        "label": "shared-primitive-variant-drift",
+        "current": 1,
+        "previous": 0,
+        "delta": 1
+      },
+      {
+        "kind": "rule",
+        "key": "unused-export",
+        "label": "unused-export",
+        "current": 40,
+        "previous": 40,
+        "delta": 0
+      },
+      {
+        "kind": "rule",
+        "key": "unused-file",
+        "label": "unused-file",
+        "current": 3,
+        "previous": 3,
+        "delta": 0
+      }
+    ],
+    "topRegressions": [
+      {
+        "kind": "lane",
+        "key": "duplication",
+        "label": "duplication",
+        "current": 2,
+        "previous": 1,
+        "delta": 1
+      },
+      {
+        "kind": "rule",
+        "key": "shared-primitive-variant-drift",
+        "label": "shared-primitive-variant-drift",
+        "current": 1,
+        "previous": 0,
+        "delta": 1
+      }
+    ],
+    "topImprovements": [],
+    "message": null
+  },
+  "resolvedFindings": []
+}

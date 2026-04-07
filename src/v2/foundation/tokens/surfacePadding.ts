@@ -1,0 +1,25 @@
+import { spacing } from './spacing'
+
+export const surfacePadding = {
+  minimumReadableInset: spacing[16],
+  compact: spacing[16],
+  standard: spacing[20],
+  comfortable: spacing[24],
+  modal: spacing[32],
+  roundedRowInline: spacing[32],
+  roundedRowBlock: spacing[16],
+  compactShell: spacing[16],
+  displayStage: spacing[20],
+  labCard: spacing[20],
+  labSection: spacing[20],
+  panelHeaderX: spacing[16],
+  panelBody: `${spacing[20]} ${spacing[20]} ${spacing[24]}`,
+  panelBodyComfortable: `${spacing[24]} ${spacing[24]} ${spacing[32]}`,
+  popoverBody: spacing[16],
+  editorFrame: spacing[24],
+  editorHeaderX: spacing[24],
+  editorBody: `${spacing[24]} ${spacing[24]} ${spacing[32]}`,
+  editorFooterX: spacing[24],
+  modalBody: spacing[32],
+  railShell: `${spacing[16]} ${spacing[12]} ${spacing[20]}`,
+}

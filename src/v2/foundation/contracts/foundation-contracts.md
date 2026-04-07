@@ -23,6 +23,7 @@ If a future implementation conflicts with this file, this file wins until it is 
 
 V2 has two contract layers:
 
+- `v2-canon.md` is the concise collaboration canon
 - this file is the human-readable foundation contract
 - each screen also exports one executable `layoutContract`
 
@@ -32,6 +33,8 @@ Rules:
 - the debug tool consumes the same screen `layoutContract` plus live DOM values
 - there is no second handwritten manifest for debug
 - contracts live in the repo, not only in chat
+- `v2-canon.md` should stay short and reviewable
+- this file may be more detailed, but should not conflict with `v2-canon.md`
 
 ## 3. AppV2 Architecture
 
@@ -114,13 +117,13 @@ Header row:
 - `Layer1_Header_Row`
   - full-width header row container
 - `Layer1_Header_StartLane`
-  - position: `x 0->6`, `y 0->1.5`
+  - position: `x 0->3`, `y 0->1`
   - alignment: `left + middle`
 - `Layer1_Header_CenterLane`
-  - position: `x 6->24`, `y 0->1.5`
+  - position: `x 3->11`, `y 0->1`
   - alignment: `center + middle`
 - `Layer1_Header_EndLane`
-  - position: `x 24->30`, `y 0->1.5`
+  - position: `x 11->14`, `y 0->1`
   - alignment: `right + middle`
 
 Body row:
@@ -128,7 +131,7 @@ Body row:
 - `Layer1_Body_Row`
   - full-width body row container
 - `Layer1_Body_NavigationRail`
-  - position: `x 0->1.5`, `y 1.5->18.5`
+  - position: `x 0->1`, `y 1->9`
   - alignment: `left + top`
   - always present
 - `Layer1_Navigation_HeaderBand`
@@ -141,8 +144,8 @@ Body row:
 - `Layer1_Navigation_PrimaryList`
   - shared rail primary navigation list container
 - `Layer1_Body_ScreenBodyField`
-  - position: `x 1.5->30`, `y 1.5->18.5`
-  - width: `28.5`
+  - position: `x 1->14`, `y 1->9`
+  - width: `13`
   - alignment: `left + top`
 
 Rules:
@@ -156,7 +159,7 @@ Inside `Layer1_Body_ScreenBodyField`, the default split for most screens uses fi
 
 The body field also owns one explicit backdrop container so the working field has a declared background layer from day one.
 
-At the 30-unit frame this resolves to:
+At the normalized `14x9` frame this resolves to:
 
 - `Layer2_Body_Backdrop`
   - declared backdrop container for the body field
@@ -166,18 +169,18 @@ At the 30-unit frame this resolves to:
 - `Layer2_Body_DefaultSplit`
   - default split container inside `Layer1_Body_ScreenBodyField`
 - `Layer2_Body_ContentStartRail`
-  - position: `x 1.5->7.2`
-  - width: `5.7`
+  - position: `x 1->3.5`
+  - width: `2.5`
   - fixed width rail
   - alignment: `left + top`
 - `Layer2_Body_ContentCenterField`
-  - position: `x 7.2->24.3`
-  - width: `17.1`
+  - position: `x 3.5->11.5`
+  - width: `8`
   - only flexible width region in the default split
   - alignment: `center + top`
 - `Layer2_Body_ContentEndRail`
-  - position: `x 24.3->30`
-  - width: `5.7`
+  - position: `x 11.5->14`
+  - width: `2.5`
   - fixed width rail
   - alignment: `right + top`
 
@@ -185,9 +188,10 @@ Rules:
 
 - Layer 1 is universal
 - Layer 2 is the default on most screens
-- `Layer2_Body_ContentStartRail` does not flex its width
-- `Layer2_Body_ContentEndRail` does not flex its width
-- `Layer2_Body_ContentCenterField` is the only region that yields when the shell tightens
+- collapsed Layer 2 default split = `3.5 / 6.5 / 3.5`
+- expanded Layer 2 default split = `1.25 / 8.5 / 1.25`
+- left and right gutters yield symmetrically before the center fails
+- a screen may represent outer gutters as layout-owned tracks instead of empty child containers when those gutters do not own content
 - `Layer2_Body_Backdrop` is part of the default shell, not an optional decoration
 - every screen contract declares a `bodyBackdrop.preset`
 - the default preset is the shared AraPal V2 backdrop
@@ -200,25 +204,26 @@ Rules:
 
 ### 5.3 Shell Sizing Contract
 
-Shell sizing is canonical and derived from the shared 30-unit reference frame.
+Shell sizing is canonical and derived from the shared normalized `14x9` reference frame, then translated into stable desktop tokens.
 
 Canonical shell widths:
 
-- `Layer1_Body_NavigationRail` collapsed width = `1.5` units
-- `Layer1_Body_NavigationRail` expanded width = `5.7` units
-- `Layer2_Body_ContentStartRail` width = `5.7` units
-- `Layer2_Body_ContentCenterField` width = `17.1` units at the standard collapsed shell state
-- `Layer2_Body_ContentEndRail` width = `5.7` units
+- `Layer1_Header_Row` height = `0.5 / 9` normalized screen height = `50px`
+- `Layer1_Body_NavigationRail` collapsed width = `0.5 / 14` normalized screen width = `51.429px`
+- `Layer1_Body_NavigationRail` expanded width = `3 / 14` normalized screen width = `308.571px`
+- `Layer2` collapsed split inside the body field = `3.5 / 6.5 / 3.5`
+- `Layer2` expanded split inside the body field = `1.25 / 8.5 / 1.25`
 
 Expanded-shell rule:
 
-- when the navigation rail expands, only the center field gives
-- expanded shell math becomes `5.7 / 5.7 / 12.9 / 5.7`
+- when the navigation rail expands, it consumes `3 / 14` of the screen width
+- the remaining body field keeps a symmetric gutter / center / gutter split of `1.25 / 8.5 / 1.25`
+- under additional pressure, gutters continue yielding symmetrically before the center fails
 - do not widen or narrow shell containers ad hoc after screenshot review
 
 Implementation rule:
 
-- shell sizes are translated once into runtime pixels from the shared reference frame
+- shell sizes are translated once into runtime pixels from the shared normalized grammar
 - screens consume those values; they do not invent their own shell widths
 
 ### 5.4 Layer 3 And Beyond
@@ -239,6 +244,56 @@ Rules:
 - Layer 4 exists only when explicitly declared
 - no hidden structural helper wrappers
 - if it owns layout responsibility, it must become a declared container
+- if a structural owner has children, those children must either span the owner end-to-end as declared bands/slots or be explicitly declared structural spacers
+- no meaningful leaf should float directly inside a large structural owner
+
+### 5.5 Screen QA Gates
+
+Every approved screen must pass the shared screen QA workflow or explicitly document why a gate is wrong and has been updated.
+
+Required gates:
+
+- wrapper depth
+- overlap check
+- layer ancestry
+- empty containers
+- pass-through containers
+- child containment
+- fixed structural sizing
+- readable inset
+- padding discipline
+- debug coverage
+- full-height composition
+- ordered gutter yield
+- orphan overrides
+- contract/container mismatch
+
+Rules:
+
+- QA semantics must be modeled explicitly, not hidden behind blanket skips
+- shell-owned inset lanes, structural spacers, and full-span bands should be represented as first-class contract semantics
+- if a structural owner declares full-span children, QA should confirm those children fill the owner end-to-end or are explicitly declared spacers
+- if a gate fails, either the screen is wrong or the gate semantics are wrong; decide which and fix it deliberately
+- zero orphan overrides
+- zero contract/container mismatches
+- closure requires build pass, QA pass, and regression notes across `1366x768`, `1440x900`, and `1920x1080`
+
+### 5.6 Hybrid Health Workflow
+
+AraPal quality should be judged by a hybrid system, not by code reading alone and not by screenshots alone.
+
+Required layers:
+
+- static repo audit
+- runtime screen QA
+- dashboard aggregation
+
+Rules:
+
+- static audit inspects repo code directly for doctrine drift, bespoke debt, and contract hygiene
+- runtime QA validates rendered behavior at canonical viewports and zoom states
+- the dashboard reports both together so the system reveals where code truth and rendered truth diverge
+- do not hand-curate dashboard state; it must be generated from scripts
 
 ## 6. Container And Item Contract
 
@@ -355,6 +410,52 @@ Rules:
 - parent containers own spacing rhythm
 - repeated structures use repeated spacing
 
+### 9.1.1 Surface Padding Roles
+
+Use these shared padding roles for panels and editor-like surfaces:
+
+- `compact inset` = `16`
+- `standard inset` = `20`
+- `comfortable inset` = `24`
+- `modal inset` = `32`
+- `rounded row inline` = `32`
+- `rounded row block` = `16`
+- `compact shell inset` = `16`
+- `display stage inset` = `20`
+- `panel header inline` = `16`
+- `panel body` = `20 / 20 / 24`
+- `floating panel body` = `24 / 24 / 32`
+- `modal body` = `32`
+- `editor body` = `24 / 24 / 32`
+
+Rules:
+
+- text must never visually collide with surface edges
+- every text-bearing surface must use a shared padding role, not an ad hoc value
+- `standard` is the default for most cards, panels, and review surfaces
+- `comfortable` is the default for reading-first or editor-like surfaces
+- `compact` is for denser rows or smaller utility surfaces only
+- `modal` is for focused expanded surfaces and dialogs
+- rounded bounded rows use the rounded-row inset, not the flat minimum, because the corner curve reduces the optical reading area
+- support cards, popovers, and floating panels inherit shared padding roles before any mode-specific tweaks
+- if a panel feels cramped, fix the surface padding role first, not the child text block
+- attached chrome such as casing, marks, and watermarks must sit outside or behind the content padding, never inside the reading area
+
+### 9.1.2 Minimum Readable Inset Rule
+
+Every card, panel, row block, and text-bearing surface must preserve a minimum readable inset from the outer edge.
+
+Shared minimum:
+
+- `minimum readable inset` = `16`
+
+Rules:
+
+- body text, labels, metadata, and titles must never visually touch or crowd the outer edge of a surface
+- if a surface carries text, its internal padding must be at least the minimum readable inset unless a stronger shared role applies
+- repeated preview boards and internal review surfaces must obey the same inset rule, not a reduced ad hoc version
+- if text appears cramped, fix the parent padding role or shared inset token first
+
 ### 9.2 Color Roles
 
 Use the existing AraPal blue/slate system as the V2 base.
@@ -382,6 +483,9 @@ Meaning rules:
 
 - blue = primary action, active state, trusted emphasis
 - green = success and ready state only
+- semantic surface tones primarily affect surface, border, shadow, and icon treatment
+- body and support text stay neutral by default
+- short titles may adopt the semantic tone only when readability remains strong
 - amber = review and softer warning only
 - destructive color visuals are deferred for now, but token slots must be left open
 

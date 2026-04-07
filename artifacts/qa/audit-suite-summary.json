@@ -1,0 +1,1704 @@
+{
+  "generatedAt": "2026-04-07T17:33:37.149Z",
+  "schemaVersion": 2,
+  "laneBreakdown": [
+    {
+      "lane": "static-doctrine",
+      "findingCount": 400,
+      "auditedFileCount": 74,
+      "excludedFileCount": 4,
+      "status": "ready",
+      "message": null
+    },
+    {
+      "lane": "runtime-qa",
+      "findingCount": 0,
+      "auditedFileCount": 1,
+      "excludedFileCount": 0,
+      "status": "ready",
+      "message": null
+    },
+    {
+      "lane": "dead-code",
+      "findingCount": 43,
+      "auditedFileCount": 125,
+      "excludedFileCount": 4,
+      "status": "ready",
+      "message": null
+    },
+    {
+      "lane": "architecture",
+      "findingCount": 0,
+      "auditedFileCount": 125,
+      "excludedFileCount": 4,
+      "status": "ready",
+      "message": null
+    },
+    {
+      "lane": "duplication",
+      "findingCount": 2,
+      "auditedFileCount": 125,
+      "excludedFileCount": 4,
+      "status": "ready",
+      "message": null
+    }
+  ],
+  "metadata": {
+    "inventoryMode": "hybrid-path-plus-import-closure",
+    "importClosureMode": "relative-import-only",
+    "publicPathsSanitized": true
+  },
+  "totals": {
+    "findings": 445,
+    "productDebtFindings": 14,
+    "toolingDebtFindings": 431,
+    "suppressedFindings": 0,
+    "auditedFiles": 125,
+    "excludedFiles": 4
+  },
+  "bySeverity": {
+    "info": 244,
+    "warn": 201
+  },
+  "byConfidence": {
+    "medium": 400,
+    "high": 44,
+    "low": 1
+  },
+  "byClassification": {
+    "real-code-fix": 441,
+    "doctrine-decision-needed": 3,
+    "low-confidence-review": 1
+  },
+  "byFileKind": {
+    "debug": 37,
+    "lab": 351,
+    "shared-layout": 9,
+    "shared-primitive": 2,
+    "dashboard": 15,
+    "live-screen": 3,
+    "audit-suite": 27,
+    "framework-adapter": 1
+  },
+  "byOwnerLayer": {
+    "tooling-support": 403,
+    "shared-layout": 10,
+    "shared-primitive": 2,
+    "screen": 3,
+    "audit-framework": 27
+  },
+  "byScope": {
+    "debug": 37,
+    "lab": 351,
+    "shared-product-foundation": 11,
+    "dashboard": 15,
+    "live-product": 3,
+    "tooling-support": 28
+  },
+  "byScreen": {
+    "SegmentationPasteNext": 3,
+    "ControlsLab": 1,
+    "EditorPanelsLab": 1,
+    "FoundationLab": 1,
+    "MotionInteractionLab": 1,
+    "PatternLab": 1,
+    "QualityDashboard": 1,
+    "TypographyTokensLab": 1
+  },
+  "productVsTooling": {
+    "product": {
+      "findings": 14,
+      "auditedFiles": 47
+    },
+    "tooling": {
+      "findings": 431,
+      "auditedFiles": 78
+    }
+  },
+  "suppressions": {
+    "configuredCount": 0,
+    "activeCount": 0,
+    "suppressedFindingCount": 0,
+    "staleCount": 0,
+    "invalidCount": 0,
+    "byLane": {},
+    "staleIds": [],
+    "invalidIds": []
+  },
+  "scores": {
+    "productQuality": 98.8,
+    "auditTrust": 99,
+    "groups": [
+      {
+        "id": "product-quality",
+        "label": "Product quality",
+        "maxScore": 100,
+        "score": 98.8,
+        "components": [
+          {
+            "id": "doctrine-hygiene",
+            "label": "Doctrine hygiene",
+            "score": 95,
+            "maxScore": 100,
+            "deduction": 5,
+            "budget": 325,
+            "weightedDebt": 15.05,
+            "findingCount": 13,
+            "suppressedFindingCount": 0,
+            "laneIds": [
+              "static-doctrine"
+            ],
+            "notes": [
+              "Static doctrine findings are product-quality debt only when they land in live-product or shared-product-foundation scope."
+            ]
+          },
+          {
+            "id": "runtime-integrity",
+            "label": "Runtime integrity",
+            "score": 100,
+            "maxScore": 100,
+            "deduction": 0,
+            "budget": 55,
+            "weightedDebt": 0,
+            "findingCount": 0,
+            "suppressedFindingCount": 0,
+            "laneIds": [
+              "runtime-qa"
+            ],
+            "notes": [
+              "Rendered QA findings carry full product-quality weight because they reflect runtime truth."
+            ]
+          },
+          {
+            "id": "architecture-hygiene",
+            "label": "Architecture hygiene",
+            "score": 100,
+            "maxScore": 100,
+            "deduction": 0,
+            "budget": 60,
+            "weightedDebt": 0,
+            "findingCount": 0,
+            "suppressedFindingCount": 0,
+            "laneIds": [
+              "architecture"
+            ],
+            "notes": [
+              "Only product-scope architecture findings affect this component."
+            ]
+          },
+          {
+            "id": "dead-code-hygiene",
+            "label": "Dead-code hygiene",
+            "score": 100,
+            "maxScore": 100,
+            "deduction": 0,
+            "budget": 80,
+            "weightedDebt": 0,
+            "findingCount": 0,
+            "suppressedFindingCount": 0,
+            "laneIds": [
+              "dead-code"
+            ],
+            "notes": [
+              "Unused product code matters more here than tooling-only leftovers."
+            ]
+          },
+          {
+            "id": "duplication-hygiene",
+            "label": "Duplication hygiene",
+            "score": 99,
+            "maxScore": 100,
+            "deduction": 1,
+            "budget": 28,
+            "weightedDebt": 0.1,
+            "findingCount": 1,
+            "suppressedFindingCount": 0,
+            "laneIds": [
+              "duplication"
+            ],
+            "notes": [
+              "This component stays conservative and only reacts to high-signal duplication clusters."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "audit-trust",
+        "label": "Audit trust",
+        "maxScore": 100,
+        "score": 99,
+        "components": [
+          {
+            "id": "audit-trustworthiness",
+            "label": "Audit trustworthiness",
+            "score": 99,
+            "maxScore": 100,
+            "deduction": 1,
+            "budget": 90,
+            "weightedDebt": 0.96,
+            "findingCount": 445,
+            "suppressedFindingCount": 0,
+            "laneIds": [
+              "static-doctrine",
+              "runtime-qa",
+              "architecture",
+              "dead-code",
+              "duplication"
+            ],
+            "notes": [
+              "Audit-rule-fix and low-confidence findings affect trust more than product quality.",
+              "Stale suppressions (0), invalid suppressions (0), and degraded lanes (0) add direct trust debt."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "inventory": {
+    "auditedFiles": [
+      {
+        "file": "/scripts/run-v2-audit-suite.mjs",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/scripts/run-v2-audit-suite.mjs",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/scripts/run-v2-screen-qa.mjs",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/scripts/run-v2-screen-qa.mjs",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/scripts/run-v2-static-audit.mjs",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/scripts/run-v2-static-audit.mjs",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/AppV2.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/AppV2.jsx",
+        "fileKind": "framework-adapter",
+        "scope": "tooling-support",
+        "ownerLayer": "shared-layout",
+        "included": true,
+        "includeReason": "Visible to audit as shared/tooling support but not counted as product foundation.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/app/auditRegistry.js",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/app/auditRegistry.js",
+        "fileKind": "framework-adapter",
+        "scope": "tooling-support",
+        "ownerLayer": "shared-layout",
+        "included": true,
+        "includeReason": "Visible to audit as shared/tooling support but not counted as product foundation.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/app/routeRegistry.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/app/routeRegistry.ts",
+        "fileKind": "framework-adapter",
+        "scope": "tooling-support",
+        "ownerLayer": "shared-layout",
+        "included": true,
+        "includeReason": "Visible to audit as shared/tooling support but not counted as product foundation.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/aggregate/buildAuditSuite.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/aggregate/buildAuditSuite.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/aggregate/diffFindings.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/aggregate/diffFindings.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/aggregate/normalizeArchitecture.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/aggregate/normalizeArchitecture.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/aggregate/normalizeDeadCode.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/aggregate/normalizeDeadCode.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/aggregate/normalizeDuplication.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/aggregate/normalizeDuplication.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/aggregate/normalizeRuntimeQa.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/aggregate/normalizeRuntimeQa.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/aggregate/normalizeStaticDoctrine.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/aggregate/normalizeStaticDoctrine.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/aggregate/publishAuditSuite.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/aggregate/publishAuditSuite.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/aggregate/scoreAuditSuite.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/aggregate/scoreAuditSuite.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/core/fileInventory.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/core/fileInventory.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/core/fingerprint.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/core/fingerprint.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/core/importGraph.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/core/importGraph.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/core/jsonLoad.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/core/jsonLoad.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/core/repoPaths.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/core/repoPaths.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/core/reportSummary.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/core/reportSummary.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/architecture/cycleDetection.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/architecture/cycleDetection.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/architecture/graphBuilder.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/architecture/graphBuilder.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/architecture/parser.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/architecture/parser.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/architecture/runArchitectureLane.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/architecture/runArchitectureLane.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/architecture/types.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/architecture/types.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/dead-code/policy.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/dead-code/policy.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/dead-code/runDeadCodeLane.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/dead-code/runDeadCodeLane.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/dead-code/types.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/dead-code/types.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/dead-code/usageCollector.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/dead-code/usageCollector.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/duplication/collectors.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/duplication/collectors.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/duplication/policy.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/duplication/policy.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/duplication/runDuplicationLane.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/duplication/runDuplicationLane.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/duplication/signatureHelpers.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/duplication/signatureHelpers.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/duplication/types.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/duplication/types.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/runtime-qa/gateDefinitions.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/runtime-qa/gateDefinitions.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/runtime-qa/publishHelpers.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/runtime-qa/publishHelpers.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/runtime-qa/runRuntimeQaLane.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/runtime-qa/runRuntimeQaLane.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/runtime-qa/types.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/runtime-qa/types.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/static-doctrine/contractRegistry.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/static-doctrine/contractRegistry.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/static-doctrine/fallbackScan.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/static-doctrine/fallbackScan.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/static-doctrine/parser.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/static-doctrine/parser.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/static-doctrine/ruleDefinitions.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/static-doctrine/ruleDefinitions.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/static-doctrine/ruleHelpers.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/static-doctrine/ruleHelpers.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/static-doctrine/rules/cssTemplateRules.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/static-doctrine/rules/cssTemplateRules.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/static-doctrine/rules/overrideAndContractRules.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/static-doctrine/rules/overrideAndContractRules.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/static-doctrine/rules/styleLiteralRules.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/static-doctrine/rules/styleLiteralRules.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/static-doctrine/rules/templateLiteralRules.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/static-doctrine/rules/templateLiteralRules.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/static-doctrine/runStaticDoctrineLane.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/static-doctrine/runStaticDoctrineLane.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/lanes/static-doctrine/types.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/lanes/static-doctrine/types.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/policy/architecturePolicy.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/policy/architecturePolicy.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/policy/findingSchema.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/policy/findingSchema.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/policy/scopePolicy.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/policy/scopePolicy.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/audit/policy/suppressions.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/audit/policy/suppressions.ts",
+        "fileKind": "audit-suite",
+        "scope": "tooling-support",
+        "ownerLayer": "audit-framework",
+        "included": true,
+        "includeReason": "Included as audit framework support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/foundation/debug/V2DebugInspector.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/debug/V2DebugInspector.jsx",
+        "fileKind": "debug",
+        "scope": "debug",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as debug support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/foundation/debug/structureAudit.js",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/debug/structureAudit.js",
+        "fileKind": "debug",
+        "scope": "debug",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as debug support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/foundation/lab-previews/controls.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/lab-previews/controls.jsx",
+        "fileKind": "lab",
+        "scope": "lab",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as lab/tooling support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/foundation/lab-previews/editorPanels.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/lab-previews/editorPanels.jsx",
+        "fileKind": "lab",
+        "scope": "lab",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as lab/tooling support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/foundation/lab-previews/interactions.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/lab-previews/interactions.jsx",
+        "fileKind": "lab",
+        "scope": "lab",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as lab/tooling support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/foundation/lab-previews/patterns.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/lab-previews/patterns.jsx",
+        "fileKind": "lab",
+        "scope": "lab",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as lab/tooling support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/foundation/layout/BodyBackdropItems.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/layout/BodyBackdropItems.jsx",
+        "fileKind": "shared-layout",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-layout",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/layout/ScreenContractRenderer.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/layout/ScreenContractRenderer.jsx",
+        "fileKind": "framework-adapter",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "contract-layer",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/layout/bodyBackdropPresets.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/layout/bodyBackdropPresets.jsx",
+        "fileKind": "shared-layout",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-layout",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/layout/createLabBoardContract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/layout/createLabBoardContract.ts",
+        "fileKind": "lab",
+        "scope": "lab",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as lab/tooling support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/foundation/layout/createScreenLayoutContract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/layout/createScreenLayoutContract.ts",
+        "fileKind": "framework-adapter",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "contract-layer",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/layout/shellSizing.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/layout/shellSizing.ts",
+        "fileKind": "shared-layout",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-layout",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/layout/universalShell.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/layout/universalShell.ts",
+        "fileKind": "shared-layout",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-layout",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/primitives/BackPill.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/BackPill.jsx",
+        "fileKind": "shared-primitive",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-primitive",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/primitives/EditorSurface.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/EditorSurface.jsx",
+        "fileKind": "shared-primitive",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-primitive",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/primitives/HeaderBar.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/HeaderBar.jsx",
+        "fileKind": "shared-primitive",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-primitive",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/primitives/IconActionButton.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/IconActionButton.jsx",
+        "fileKind": "shared-primitive",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-primitive",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/primitives/LabBoard.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/LabBoard.jsx",
+        "fileKind": "lab",
+        "scope": "lab",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as lab/tooling support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/foundation/primitives/NavigationRail.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/NavigationRail.jsx",
+        "fileKind": "shared-primitive",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-primitive",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/primitives/PrimaryCTA.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/PrimaryCTA.jsx",
+        "fileKind": "shared-primitive",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-primitive",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/primitives/ScreenScaffoldPlaceholder.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/ScreenScaffoldPlaceholder.jsx",
+        "fileKind": "shared-primitive",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-primitive",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/primitives/SegmentationOptionsPopover.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/SegmentationOptionsPopover.jsx",
+        "fileKind": "shared-primitive",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-primitive",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/primitives/SourceIntakeBrand.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/SourceIntakeBrand.jsx",
+        "fileKind": "shared-primitive",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-primitive",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/primitives/SplitCTA.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/SplitCTA.jsx",
+        "fileKind": "shared-primitive",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-primitive",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/primitives/StepBar.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/StepBar.jsx",
+        "fileKind": "shared-primitive",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-primitive",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/primitives/V2ScreenFrame.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/V2ScreenFrame.jsx",
+        "fileKind": "framework-adapter",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-layout",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/primitives/ctaChromePresets.js",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/ctaChromePresets.js",
+        "fileKind": "shared-primitive",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-primitive",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/primitives/identityBadgePresets.js",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/identityBadgePresets.js",
+        "fileKind": "shared-primitive",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-primitive",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/primitives/useNavigationRailState.js",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/useNavigationRailState.js",
+        "fileKind": "shared-primitive",
+        "scope": "tooling-support",
+        "ownerLayer": "shared-primitive",
+        "included": true,
+        "includeReason": "Visible to audit as shared/tooling support but not counted as product foundation.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/foundation/tokens/colors.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/tokens/colors.ts",
+        "fileKind": "token-definition",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "token-layer",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/tokens/controlSizing.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/tokens/controlSizing.ts",
+        "fileKind": "token-definition",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "token-layer",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/tokens/elevation.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/tokens/elevation.ts",
+        "fileKind": "token-definition",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "token-layer",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/tokens/index.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/tokens/index.ts",
+        "fileKind": "token-definition",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "token-layer",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/tokens/motion.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/tokens/motion.ts",
+        "fileKind": "token-definition",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "token-layer",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/tokens/radius.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/tokens/radius.ts",
+        "fileKind": "token-definition",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "token-layer",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/tokens/spacing.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/tokens/spacing.ts",
+        "fileKind": "token-definition",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "token-layer",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/tokens/surfacePadding.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/tokens/surfacePadding.ts",
+        "fileKind": "token-definition",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "token-layer",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/tokens/typography.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/tokens/typography.ts",
+        "fileKind": "token-definition",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "token-layer",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/ControlsLab/ControlsLabScreen.contract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/ControlsLab/ControlsLabScreen.contract.ts",
+        "fileKind": "lab",
+        "scope": "lab",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as lab/tooling support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/screens/ControlsLab/ControlsLabScreen.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/ControlsLab/ControlsLabScreen.jsx",
+        "fileKind": "lab",
+        "scope": "lab",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as lab/tooling support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/screens/EditorPanelsLab/EditorPanelsLabScreen.contract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/EditorPanelsLab/EditorPanelsLabScreen.contract.ts",
+        "fileKind": "lab",
+        "scope": "lab",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as lab/tooling support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/screens/EditorPanelsLab/EditorPanelsLabScreen.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/EditorPanelsLab/EditorPanelsLabScreen.jsx",
+        "fileKind": "lab",
+        "scope": "lab",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as lab/tooling support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/screens/Exams/ExamsScreen.contract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Exams/ExamsScreen.contract.ts",
+        "fileKind": "screen-contract",
+        "scope": "live-product",
+        "ownerLayer": "contract-layer",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/Exams/ExamsScreen.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Exams/ExamsScreen.jsx",
+        "fileKind": "live-screen",
+        "scope": "live-product",
+        "ownerLayer": "screen",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/FoundationLab/FoundationLabScreen.contract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/FoundationLab/FoundationLabScreen.contract.ts",
+        "fileKind": "lab",
+        "scope": "lab",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as lab/tooling support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/screens/FoundationLab/FoundationLabScreen.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/FoundationLab/FoundationLabScreen.jsx",
+        "fileKind": "lab",
+        "scope": "lab",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as lab/tooling support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/screens/MotionInteractionLab/MotionInteractionLabScreen.contract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/MotionInteractionLab/MotionInteractionLabScreen.contract.ts",
+        "fileKind": "lab",
+        "scope": "lab",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as lab/tooling support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/screens/MotionInteractionLab/MotionInteractionLabScreen.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/MotionInteractionLab/MotionInteractionLabScreen.jsx",
+        "fileKind": "lab",
+        "scope": "lab",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as lab/tooling support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/screens/PatternLab/PatternLabScreen.contract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/PatternLab/PatternLabScreen.contract.ts",
+        "fileKind": "lab",
+        "scope": "lab",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as lab/tooling support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/screens/PatternLab/PatternLabScreen.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/PatternLab/PatternLabScreen.jsx",
+        "fileKind": "lab",
+        "scope": "lab",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as lab/tooling support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/screens/ProjectHome/ProjectHomeScreen.contract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/ProjectHome/ProjectHomeScreen.contract.ts",
+        "fileKind": "screen-contract",
+        "scope": "live-product",
+        "ownerLayer": "contract-layer",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/ProjectHome/ProjectHomeScreen.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/ProjectHome/ProjectHomeScreen.jsx",
+        "fileKind": "live-screen",
+        "scope": "live-product",
+        "ownerLayer": "screen",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/Projects/ProjectsScreen.contract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Projects/ProjectsScreen.contract.ts",
+        "fileKind": "screen-contract",
+        "scope": "live-product",
+        "ownerLayer": "contract-layer",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/Projects/ProjectsScreen.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Projects/ProjectsScreen.jsx",
+        "fileKind": "live-screen",
+        "scope": "live-product",
+        "ownerLayer": "screen",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/QualityDashboard/QualityDashboardScreen.contract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/QualityDashboard/QualityDashboardScreen.contract.ts",
+        "fileKind": "dashboard",
+        "scope": "dashboard",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as dashboard support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/screens/QualityDashboard/QualityDashboardScreen.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/QualityDashboard/QualityDashboardScreen.jsx",
+        "fileKind": "dashboard",
+        "scope": "dashboard",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as dashboard support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/screens/SegmentationLoading/SegmentationLoadingScreen.contract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/SegmentationLoading/SegmentationLoadingScreen.contract.ts",
+        "fileKind": "screen-contract",
+        "scope": "live-product",
+        "ownerLayer": "contract-layer",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/SegmentationLoading/SegmentationLoadingScreen.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/SegmentationLoading/SegmentationLoadingScreen.jsx",
+        "fileKind": "live-screen",
+        "scope": "live-product",
+        "ownerLayer": "screen",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.contract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.contract.ts",
+        "fileKind": "screen-contract",
+        "scope": "live-product",
+        "ownerLayer": "contract-layer",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.jsx",
+        "fileKind": "live-screen",
+        "scope": "live-product",
+        "ownerLayer": "screen",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/SegmentationReview/SegmentationReviewScreen.contract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/SegmentationReview/SegmentationReviewScreen.contract.ts",
+        "fileKind": "screen-contract",
+        "scope": "live-product",
+        "ownerLayer": "contract-layer",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/SegmentationReview/SegmentationReviewScreen.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/SegmentationReview/SegmentationReviewScreen.jsx",
+        "fileKind": "live-screen",
+        "scope": "live-product",
+        "ownerLayer": "screen",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/SegmentationSuccess/SegmentationSuccessScreen.contract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/SegmentationSuccess/SegmentationSuccessScreen.contract.ts",
+        "fileKind": "screen-contract",
+        "scope": "live-product",
+        "ownerLayer": "contract-layer",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/SegmentationSuccess/SegmentationSuccessScreen.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/SegmentationSuccess/SegmentationSuccessScreen.jsx",
+        "fileKind": "live-screen",
+        "scope": "live-product",
+        "ownerLayer": "screen",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/SegmentationTransition/SegmentationTransitionScreen.contract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/SegmentationTransition/SegmentationTransitionScreen.contract.ts",
+        "fileKind": "screen-contract",
+        "scope": "live-product",
+        "ownerLayer": "contract-layer",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/SegmentationTransition/SegmentationTransitionScreen.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/SegmentationTransition/SegmentationTransitionScreen.jsx",
+        "fileKind": "live-screen",
+        "scope": "live-product",
+        "ownerLayer": "screen",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/StudyWorkspace/StudyWorkspaceScreen.contract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/StudyWorkspace/StudyWorkspaceScreen.contract.ts",
+        "fileKind": "screen-contract",
+        "scope": "live-product",
+        "ownerLayer": "contract-layer",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/StudyWorkspace/StudyWorkspaceScreen.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/StudyWorkspace/StudyWorkspaceScreen.jsx",
+        "fileKind": "live-screen",
+        "scope": "live-product",
+        "ownerLayer": "screen",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/TypographyTokensLab/TypographyTokensLabScreen.contract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/TypographyTokensLab/TypographyTokensLabScreen.contract.ts",
+        "fileKind": "lab",
+        "scope": "lab",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as lab/tooling support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/screens/TypographyTokensLab/TypographyTokensLabScreen.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/TypographyTokensLab/TypographyTokensLabScreen.jsx",
+        "fileKind": "lab",
+        "scope": "lab",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as lab/tooling support scope.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/screens/labRoutes.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/labRoutes.ts",
+        "fileKind": "lab",
+        "scope": "lab",
+        "ownerLayer": "tooling-support",
+        "included": true,
+        "includeReason": "Included as lab/tooling support scope.",
+        "usedByLiveProduct": false
+      }
+    ],
+    "excludedFiles": [
+      {
+        "file": "/src/v2/screens/AppLaunch/AppLaunchScreen.contract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/AppLaunch/AppLaunchScreen.contract.ts",
+        "fileKind": "ignored",
+        "scope": "ignored",
+        "ownerLayer": "unknown",
+        "included": false,
+        "includeReason": "Excluded by explicit ignored-scope policy.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/screens/AppLaunch/AppLaunchScreen.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/AppLaunch/AppLaunchScreen.jsx",
+        "fileKind": "ignored",
+        "scope": "ignored",
+        "ownerLayer": "unknown",
+        "included": false,
+        "includeReason": "Excluded by explicit ignored-scope policy.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/screens/SegmentationPaste/SegmentationPasteScreen.contract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/SegmentationPaste/SegmentationPasteScreen.contract.ts",
+        "fileKind": "ignored",
+        "scope": "ignored",
+        "ownerLayer": "unknown",
+        "included": false,
+        "includeReason": "Excluded by explicit ignored-scope policy.",
+        "usedByLiveProduct": false
+      },
+      {
+        "file": "/src/v2/screens/SegmentationPaste/SegmentationPasteScreen.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/SegmentationPaste/SegmentationPasteScreen.jsx",
+        "fileKind": "ignored",
+        "scope": "ignored",
+        "ownerLayer": "unknown",
+        "included": false,
+        "includeReason": "Excluded by explicit ignored-scope policy.",
+        "usedByLiveProduct": false
+      }
+    ]
+  },
+  "diff": {
+    "status": "ready",
+    "baselineFound": true,
+    "comparedAt": "2026-04-07T17:33:37.149Z",
+    "previousGeneratedAt": "2026-04-04T21:22:16.461Z",
+    "currentGeneratedAt": "2026-04-07T17:33:37.149Z",
+    "new": 1,
+    "resolved": 0,
+    "persisted": 444,
+    "changed": 0,
+    "changedByField": {
+      "severity": 0,
+      "confidence": 0,
+      "classification": 0,
+      "suppression": 0
+    },
+    "laneDeltas": [
+      {
+        "kind": "lane",
+        "key": "dead-code",
+        "label": "dead-code",
+        "current": 43,
+        "previous": 43,
+        "delta": 0
+      },
+      {
+        "kind": "lane",
+        "key": "duplication",
+        "label": "duplication",
+        "current": 2,
+        "previous": 1,
+        "delta": 1
+      },
+      {
+        "kind": "lane",
+        "key": "static-doctrine",
+        "label": "static-doctrine",
+        "current": 400,
+        "previous": 400,
+        "delta": 0
+      }
+    ],
+    "ruleDeltas": [
+      {
+        "kind": "rule",
+        "key": "hardcoded-color",
+        "label": "hardcoded-color",
+        "current": 182,
+        "previous": 182,
+        "delta": 0
+      },
+      {
+        "kind": "rule",
+        "key": "hardcoded-motion",
+        "label": "hardcoded-motion",
+        "current": 4,
+        "previous": 4,
+        "delta": 0
+      },
+      {
+        "kind": "rule",
+        "key": "hardcoded-radius",
+        "label": "hardcoded-radius",
+        "current": 13,
+        "previous": 13,
+        "delta": 0
+      },
+      {
+        "kind": "rule",
+        "key": "hardcoded-spacing",
+        "label": "hardcoded-spacing",
+        "current": 26,
+        "previous": 26,
+        "delta": 0
+      },
+      {
+        "kind": "rule",
+        "key": "hardcoded-typography",
+        "label": "hardcoded-typography",
+        "current": 173,
+        "previous": 173,
+        "delta": 0
+      },
+      {
+        "kind": "rule",
+        "key": "repeated-style-bundle",
+        "label": "repeated-style-bundle",
+        "current": 1,
+        "previous": 1,
+        "delta": 0
+      },
+      {
+        "kind": "rule",
+        "key": "screen-local-bespoke-variant",
+        "label": "screen-local-bespoke-variant",
+        "current": 2,
+        "previous": 2,
+        "delta": 0
+      },
+      {
+        "kind": "rule",
+        "key": "shared-primitive-variant-drift",
+        "label": "shared-primitive-variant-drift",
+        "current": 1,
+        "previous": 0,
+        "delta": 1
+      },
+      {
+        "kind": "rule",
+        "key": "unused-export",
+        "label": "unused-export",
+        "current": 40,
+        "previous": 40,
+        "delta": 0
+      },
+      {
+        "kind": "rule",
+        "key": "unused-file",
+        "label": "unused-file",
+        "current": 3,
+        "previous": 3,
+        "delta": 0
+      }
+    ],
+    "topRegressions": [
+      {
+        "kind": "lane",
+        "key": "duplication",
+        "label": "duplication",
+        "current": 2,
+        "previous": 1,
+        "delta": 1
+      },
+      {
+        "kind": "rule",
+        "key": "shared-primitive-variant-drift",
+        "label": "shared-primitive-variant-drift",
+        "current": 1,
+        "previous": 0,
+        "delta": 1
+      }
+    ],
+    "topImprovements": [],
+    "message": null
+  },
+  "baseline": {
+    "currentGeneratedAt": "2026-04-07T17:33:37.149Z",
+    "previousGeneratedAt": "2026-04-04T21:22:16.461Z",
+    "status": "loaded",
+    "message": null
+  }
+}

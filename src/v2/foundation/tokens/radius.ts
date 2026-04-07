@@ -5,5 +5,3 @@ export const radius = {
   32: '32px',
   pill: '999px',
 }
-
-export default radius

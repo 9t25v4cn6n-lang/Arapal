@@ -35,6 +35,12 @@ export const labRoutes = [
     title: 'Pattern Lab',
     description: 'Repeated screen patterns and mode-level building blocks.',
   },
+  {
+    id: 'qualityDashboard',
+    label: 'Quality Dashboard',
+    title: 'Quality Dashboard',
+    description: 'Hybrid health view for static repo audit and rendered runtime QA.',
+  },
 ]
 
 export function getLabRoute(routeId) {

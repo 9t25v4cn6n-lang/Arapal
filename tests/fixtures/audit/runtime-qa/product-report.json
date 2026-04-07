@@ -1,0 +1,67 @@
+{
+  "screenId": "segmentationPasteNext",
+  "route": "#v2/segmentationPasteNext",
+  "generatedAt": "2026-04-03T12:00:00.000Z",
+  "status": "fail",
+  "failingGateCount": 2,
+  "failingGates": [
+    "desktop-standard overlap check",
+    "viewport-stress high-zoom ordered gutter yield"
+  ],
+  "stressLabel": "viewport-stress",
+  "stressMode": "css-zoom-approximation",
+  "viewportChecks": [
+    {
+      "viewport": {
+        "label": "desktop-standard",
+        "width": 1440,
+        "height": 900
+      },
+      "rows": [
+        {
+          "gate": "desktop-standard overlap check",
+          "pass": false,
+          "detail": "button overlaps text"
+        },
+        {
+          "gate": "desktop-standard debug coverage",
+          "pass": true,
+          "detail": "all required meaningful items are named in debug"
+        }
+      ],
+      "screenshotPath": "/artifacts/qa/segmentationPasteNext-desktop-standard.png"
+    }
+  ],
+  "zoomChecks": [
+    {
+      "zoomState": {
+        "label": "high-zoom",
+        "factor": 2
+      },
+      "rows": [
+        {
+          "gate": "viewport-stress high-zoom ordered gutter yield",
+          "pass": false,
+          "detail": "center offset 22px; coverage 43.2% vs 46.4%"
+        }
+      ],
+      "screenshotPath": "/artifacts/qa/segmentationPasteNext-zoom-high-zoom.png"
+    }
+  ],
+  "viewportStressChecks": [
+    {
+      "zoomState": {
+        "label": "high-zoom",
+        "factor": 2
+      },
+      "rows": [
+        {
+          "gate": "viewport-stress high-zoom ordered gutter yield",
+          "pass": false,
+          "detail": "center offset 22px; coverage 43.2% vs 46.4%"
+        }
+      ],
+      "screenshotPath": "/artifacts/qa/segmentationPasteNext-zoom-high-zoom.png"
+    }
+  ]
+}

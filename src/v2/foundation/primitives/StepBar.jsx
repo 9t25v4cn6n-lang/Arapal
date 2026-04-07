@@ -1,8 +1,9 @@
 import { colors, radius, spacing, typography } from '../tokens'
 
-export default function StepBar({ steps = [], currentIndex = 0 }) {
+export default function StepBar({ steps = [], currentIndex = 0, debugItem }) {
   return (
     <div
+      data-debug-item={debugItem}
       style={{
         display: 'inline-flex',
         alignItems: 'center',
@@ -24,8 +25,9 @@ export default function StepBar({ steps = [], currentIndex = 0 }) {
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '10px',
-                lineHeight: 1,
+                fontFamily: typography.eyebrowLabel.fontFamily,
+                fontSize: typography.eyebrowLabel.fontSize,
+                lineHeight: typography.eyebrowLabel.lineHeight,
                 background:
                   state === 'current'
                     ? colors.accentBase

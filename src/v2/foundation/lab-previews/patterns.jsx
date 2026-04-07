@@ -1,334 +1,764 @@
-import { BookOpen, CheckCircle2, FileText, MessageSquare, Pin, ScrollText, Sparkles } from 'lucide-react'
-import { colors, radius, spacing, typography } from '../tokens'
+import { radius, spacing, typography } from '../tokens'
 
-function frameStyle() {
-  return {
-    borderRadius: radius[16],
-    border: `1px solid ${colors.lineSoft}`,
-    background: 'rgba(248, 251, 255, 0.96)',
-    padding: spacing[12],
-  }
+const diagram = {
+  stage: '#175f7d',
+  layer1: '#29a5d4',
+  bodyField: '#d3d3d3',
+  layer2: '#1f7729',
+  layer34: '#f3772f',
+  line: '#0d4760',
+  badge: '#f03ad8',
+  text: '#ffffff',
 }
 
-export function SegmentTreeRowFamilyPreview() {
+const shellRatio = {
+  width: 14,
+  height: 9,
+  header: 1,
+  rail: 1,
+  bodyWidth: 13,
+  bodyHeight: 8,
+}
+
+const layer2Split = [2.5, 8, 2.5]
+const layer34CenteredRows = [0.5, 1, 0.5, 4, 2]
+const layer34FullRows = [2, 4, 2]
+const layer34TopBandRows = [0.5, 1, 0.5]
+const centeredEntryColumns = [2.5, 8, 2.5]
+const centeredEntryRows = [1.5, 5, 1.5]
+const homeCommandDeckRows = [2, 4, 2]
+const heroTwoUpFooterRows = [2, 4, 2]
+const heroTwoUpFooterColumns = [6.5, 6.5]
+const studyLeftRows = [1.5, 5, 1.5]
+const studyCenterRows = [1.5, 4.5, 2]
+const studyRightRows = [1, 3, 1, 3]
+const layer5Columns = [2, 9, 2]
+const layer5Rows = [1.5, 5, 1.5]
+const projectsColumns = [4, 9]
+const projectsRows = [1.5, 4.5, 2]
+const patchingRows = [1.5, 4.5, 2]
+const examColumns = [2, 9, 2]
+const examRows = [1, 5, 2]
+const successColumns = [2, 9, 2]
+const successRows = [1.5, 4.5, 2]
+
+function formatRatioValue(value) {
+  return Number.isInteger(value) ? String(value) : String(value).replace(/\.0$/, '')
+}
+
+function ratioLabel(width, height) {
+  return `${formatRatioValue(width)}x${formatRatioValue(height)}`
+}
+
+function frTemplate(values) {
+  return values.map((value) => `${value}fr`).join(' ')
+}
+
+function DiagramCanvas({ index, children }) {
   return (
-    <div style={{ ...frameStyle(), display: 'grid', gap: spacing[8] }}>
-      <div style={{ minHeight: 38, borderRadius: radius[12], background: 'rgba(239, 246, 255, 0.94)', border: `1px solid rgba(191, 219, 254, 0.96)`, display: 'flex', alignItems: 'center', gap: spacing[8], padding: `0 ${spacing[12]}` }}>
-        <span style={{ fontSize: 14, color: colors.textSoft }}>▾</span>
-        <span style={{ ...typography.bodyText, fontWeight: 700, color: colors.textStrong }}>Chapter 2: Prayer</span>
+    <div
+      style={{
+        position: 'relative',
+        width: '100%',
+        aspectRatio: '14 / 9',
+        borderRadius: radius[16],
+        background: diagram.stage,
+        border: `2px solid ${diagram.line}`,
+        padding: spacing[16],
+        boxSizing: 'border-box',
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: 42,
+          height: 42,
+          display: 'grid',
+          placeItems: 'center',
+          background: diagram.badge,
+          color: '#fff',
+          borderRight: `2px solid ${diagram.line}`,
+          borderBottom: `2px solid ${diagram.line}`,
+          fontFamily: typography.bodyText.fontFamily,
+          fontSize: 16,
+          fontWeight: 700,
+          zIndex: 2,
+        }}
+      >
+        {index}
       </div>
-      {['2.1 Times of Prayer', '2.2 Conditions', '2.3 Jumu’ah'].map((item, index) => (
-        <div key={item} style={{ minHeight: 36, marginLeft: spacing[20], borderRadius: radius[12], background: index === 1 ? 'rgba(239, 246, 255, 0.88)' : '#fff', border: `1px solid ${colors.lineSoft}`, display: 'flex', alignItems: 'center', gap: spacing[8], padding: `0 ${spacing[12]}` }}>
-          <span style={{ width: 8, height: 8, borderRadius: radius.pill, background: index === 1 ? colors.accentBase : 'rgba(148, 163, 184, 0.64)' }} />
-          <span style={{ ...typography.bodyText, fontSize: 14, color: index === 1 ? colors.accentStrong : colors.textBody }}>{item}</span>
-        </div>
-      ))}
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(14, minmax(0, 1fr))',
+          gridTemplateRows: 'repeat(9, minmax(0, 1fr))',
+        }}
+      >
+        {children}
+      </div>
     </div>
   )
 }
 
-export function SegmentTreeFolderRowPreview() {
+function Layer1Base({ bodyChildren, bodyBackground = diagram.bodyField }) {
   return (
-    <div style={{ ...frameStyle(), display: 'grid', gap: spacing[8] }}>
-      <div style={{ minHeight: 40, borderRadius: radius[12], border: `1px solid ${colors.lineSoft}`, background: '#fff', display: 'flex', alignItems: 'center', gap: spacing[10], padding: `0 ${spacing[12]}` }}>
-        <span style={{ fontSize: 14, color: colors.textSoft }}>▸</span>
-        <BookOpen size={16} strokeWidth={1.8} color={colors.textSoft} />
-        <span style={{ ...typography.bodyText, fontWeight: 700, color: colors.textStrong }}>Chapter 3: Fasting</span>
+    <>
+      <div
+        style={{
+          gridColumn: '1 / span 14',
+          gridRow: '1 / span 1',
+          background: diagram.layer1,
+          border: `2px solid ${diagram.line}`,
+          display: 'grid',
+          placeItems: 'center',
+          color: diagram.text,
+          fontFamily: typography.bodyText.fontFamily,
+          fontSize: 16,
+          fontWeight: 700,
+        }}
+      >
+        {ratioLabel(shellRatio.width, shellRatio.header)}
       </div>
+
+      <div
+        style={{
+          gridColumn: '1 / span 1',
+          gridRow: '2 / span 8',
+          background: diagram.layer1,
+          borderLeft: `2px solid ${diagram.line}`,
+          borderRight: `2px solid ${diagram.line}`,
+          borderBottom: `2px solid ${diagram.line}`,
+          display: 'grid',
+          placeItems: 'center',
+        }}
+      >
+        <span
+          style={{
+            color: diagram.text,
+            fontFamily: typography.bodyText.fontFamily,
+            fontSize: 16,
+            fontWeight: 700,
+            lineHeight: 1.1,
+            textAlign: 'center',
+            whiteSpace: 'pre-line',
+          }}
+        >
+          {`${formatRatioValue(shellRatio.rail)}\nx\n${formatRatioValue(shellRatio.bodyHeight)}`}
+        </span>
+      </div>
+
+      <div
+        style={{
+          gridColumn: '2 / span 13',
+          gridRow: '2 / span 8',
+          background: bodyBackground,
+          borderRight: `2px solid ${diagram.line}`,
+          borderBottom: `2px solid ${diagram.line}`,
+          position: 'relative',
+        }}
+      >
+        {bodyChildren}
+      </div>
+    </>
+  )
+}
+
+function centeredLabel(text, size = 16) {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        inset: 0,
+        display: 'grid',
+        placeItems: 'center',
+        pointerEvents: 'none',
+      }}
+    >
+      <span
+        style={{
+          color: diagram.text,
+          fontFamily: typography.bodyText.fontFamily,
+          fontSize: size,
+          fontWeight: 700,
+          textAlign: 'center',
+        }}
+      >
+        {text}
+      </span>
     </div>
   )
 }
 
-export function QuickLexChipTooltipPreview() {
+function fillGrid({ columns, rows = '1fr', children }) {
   return (
-    <div style={frameStyle()}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: spacing[12], flexWrap: 'wrap' }}>
-        <button type="button" style={{ minHeight: 28, border: 'none', padding: '4px 12px', background: '#f1f5f9', color: '#45556c', display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 500 }}>
-          <Sparkles size={14} strokeWidth={1.8} />
-          miṣr jāmiʿ
-        </button>
-        <div style={{ width: 220, borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: '#fff', padding: spacing[12], boxShadow: '0 10px 24px rgba(15,23,42,0.1)' }}>
-          <p style={{ ...typography.bodyText, margin: 0, fontWeight: 700, color: colors.textStrong }}>Comprehensive city</p>
-          <p style={{ ...typography.bodyText, margin: `${spacing[8]} 0 0`, fontSize: 14, color: colors.textSoft }}>Place with ruler and judge who enforces legal judgments.</p>
-        </div>
-      </div>
+    <div
+      style={{
+        position: 'absolute',
+        inset: 0,
+        display: 'grid',
+        gridTemplateColumns: columns,
+        gridTemplateRows: rows,
+      }}
+    >
+      {children}
     </div>
   )
 }
 
-export function GradeCirclePreview() {
+function diagramBlock({ background, label, labelSize = 16, borderLeft = false, borderRight = true, borderTop = false, borderBottom = false, children }) {
   return (
-    <div style={frameStyle()}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: spacing[16] }}>
-        <div style={{ width: 96, height: 96, borderRadius: radius.pill, border: '8px solid rgba(22, 163, 74, 0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: colors.success, fontFamily: typography.displayTitle.fontFamily, fontSize: 34 }}>
-          A
-        </div>
-        <div style={{ display: 'grid', gap: spacing[8] }}>
-          <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>Your grade</p>
-          <p style={{ ...typography.bodyText, margin: 0, fontWeight: 700, color: colors.textStrong }}>Pass with attribution fixes noted.</p>
-        </div>
-      </div>
+    <div
+      style={{
+        position: 'relative',
+        background,
+        borderLeft: borderLeft ? `2px solid ${diagram.line}` : 'none',
+        borderRight: borderRight ? `2px solid ${diagram.line}` : 'none',
+        borderTop: borderTop ? `2px solid ${diagram.line}` : 'none',
+        borderBottom: borderBottom ? `2px solid ${diagram.line}` : 'none',
+        overflow: 'hidden',
+      }}
+    >
+      {label ? centeredLabel(label, labelSize) : null}
+      {children}
     </div>
   )
 }
 
-export function ProjectHomeDestinationCardPreview() {
+export function Layer1UniversalShellPreview() {
   return (
-    <div style={frameStyle()}>
-      <article style={{ borderRadius: radius[24], border: `1px solid ${colors.lineSoft}`, background: '#fff', boxShadow: '0 10px 22px rgba(15,23,42,0.08)', padding: spacing[18], display: 'grid', gap: spacing[12] }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: spacing[12] }}>
-          <span style={{ minHeight: 28, padding: '0 10px', borderRadius: radius.pill, background: 'rgba(239, 246, 255, 0.94)', color: colors.accentStrong, display: 'inline-flex', alignItems: 'center', fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>AR</span>
-          <span style={{ ...typography.monoMeta, color: colors.textSoft }}>Seg 3</span>
-        </div>
-        <h3 style={{ ...typography.cardTitle, margin: 0, fontSize: 28, color: colors.textStrong }}>Friday Prayer</h3>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: spacing[12] }}>
-          <div>
-            <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>Status</p>
-            <p style={{ ...typography.bodyText, margin: `${spacing[8]} 0 0`, fontWeight: 600, color: colors.textBody }}>Ready to continue</p>
+    <DiagramCanvas index="1">
+      <Layer1Base bodyChildren={centeredLabel(ratioLabel(shellRatio.bodyWidth, shellRatio.bodyHeight), 20)} />
+    </DiagramCanvas>
+  )
+}
+
+export function Layer2DefaultSplitPreview() {
+  return (
+    <DiagramCanvas index="2">
+      <Layer1Base
+        bodyBackground="transparent"
+        bodyChildren={
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'grid',
+              gridTemplateColumns: frTemplate(layer2Split),
+            }}
+          >
+            <div style={{ position: 'relative', background: diagram.layer2, borderLeft: `2px solid ${diagram.line}`, borderRight: `2px solid ${diagram.line}` }}>
+              {centeredLabel(ratioLabel(layer2Split[0], shellRatio.bodyHeight))}
+            </div>
+            <div style={{ position: 'relative', background: diagram.layer2, borderRight: `2px solid ${diagram.line}` }}>
+              {centeredLabel(ratioLabel(layer2Split[1], shellRatio.bodyHeight))}
+            </div>
+            <div style={{ position: 'relative', background: diagram.layer2, borderRight: `2px solid ${diagram.line}` }}>
+              {centeredLabel(ratioLabel(layer2Split[2], shellRatio.bodyHeight))}
+            </div>
           </div>
-          <span style={{ ...typography.bodyText, fontWeight: 700, color: colors.accentStrong }}>→</span>
-        </div>
-      </article>
-    </div>
+        }
+      />
+    </DiagramCanvas>
   )
 }
 
-export function ProjectsIndexShellPreview() {
+export function Layer34CenteredBandsPreview() {
   return (
-    <div style={{ ...frameStyle(), display: 'grid', gap: spacing[12] }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: spacing[12] }}>
-        {['Active', 'Review', 'Archived'].map((item, index) => (
-          <div key={item} style={{ minHeight: 140, borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: index === 0 ? 'rgba(239, 246, 255, 0.96)' : '#fff', padding: spacing[14], display: 'grid', gap: spacing[10] }}>
-            <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>{item}</p>
-            <p style={{ ...typography.bodyText, margin: 0, fontWeight: 700, color: colors.textStrong }}>Friday Prayer</p>
-            <p style={{ ...typography.bodyText, margin: 0, fontSize: 14, color: colors.textSoft }}>Project list shell with intentional grouping, not a crowded dashboard table.</p>
+    <DiagramCanvas index="3">
+      <Layer1Base
+        bodyBackground="transparent"
+        bodyChildren={
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'grid',
+              gridTemplateColumns: frTemplate(layer2Split),
+            }}
+          >
+            <div style={{ position: 'relative', background: diagram.layer2, borderLeft: `2px solid ${diagram.line}`, borderRight: `2px solid ${diagram.line}` }}>
+              {centeredLabel(ratioLabel(layer2Split[0], shellRatio.bodyHeight))}
+            </div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateRows: frTemplate(layer34CenteredRows),
+                borderRight: `2px solid ${diagram.line}`,
+              }}
+            >
+              {layer34CenteredRows.map((height, index) => (
+                <div
+                  key={`${height}-${index}`}
+                  style={{
+                    position: 'relative',
+                    background: diagram.layer34,
+                    borderBottom: index === layer34CenteredRows.length - 1 ? 'none' : `2px solid ${diagram.line}`,
+                  }}
+                >
+                  {centeredLabel(ratioLabel(layer2Split[1], height))}
+                </div>
+              ))}
+            </div>
+            <div style={{ position: 'relative', background: diagram.layer2, borderRight: `2px solid ${diagram.line}` }}>
+              {centeredLabel(ratioLabel(layer2Split[2], shellRatio.bodyHeight))}
+            </div>
           </div>
-        ))}
-      </div>
-    </div>
+        }
+      />
+    </DiagramCanvas>
   )
 }
 
-export function WorkspaceCardFamilyPreview() {
-  const cards = [
-    { label: 'Source', icon: ScrollText, tone: 'rgba(239, 246, 255, 0.94)' },
-    { label: 'Editor', icon: FileText, tone: 'rgba(255, 255, 255, 0.98)' },
-    { label: 'Result', icon: CheckCircle2, tone: 'rgba(220, 252, 231, 0.84)' },
-    { label: 'Support', icon: BookOpen, tone: 'rgba(243, 232, 255, 0.84)' },
-  ]
-
+export function Layer34FullWidthWorkPreview() {
   return (
-    <div style={{ ...frameStyle(), display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: spacing[12] }}>
-      {cards.map(({ label, icon: Icon, tone }) => (
-        <div key={label} style={{ minHeight: 110, borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: tone, padding: spacing[14], display: 'grid', gap: spacing[10] }}>
-          <Icon size={18} strokeWidth={1.8} color={colors.textSoft} />
-          <p style={{ ...typography.bodyText, margin: 0, fontWeight: 700, color: colors.textStrong }}>{label}</p>
-        </div>
-      ))}
-    </div>
+    <DiagramCanvas index="4">
+      <Layer1Base
+        bodyBackground="transparent"
+        bodyChildren={
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'grid',
+              gridTemplateRows: frTemplate(layer34FullRows),
+            }}
+          >
+            <div style={{ display: 'grid', gridTemplateColumns: frTemplate(layer2Split), borderBottom: `2px solid ${diagram.line}` }}>
+              <div style={{ position: 'relative', background: diagram.layer2, borderLeft: `2px solid ${diagram.line}`, borderRight: `2px solid ${diagram.line}` }}>
+                {centeredLabel(ratioLabel(layer2Split[0], layer34FullRows[0]))}
+              </div>
+              <div style={{ display: 'grid', gridTemplateRows: frTemplate(layer34TopBandRows), borderRight: `2px solid ${diagram.line}` }}>
+                {layer34TopBandRows.map((height, index) => (
+                  <div
+                    key={`${height}-${index}`}
+                    style={{
+                      position: 'relative',
+                      background: diagram.layer34,
+                      borderBottom: index === layer34TopBandRows.length - 1 ? 'none' : `2px solid ${diagram.line}`,
+                    }}
+                  >
+                    {centeredLabel(ratioLabel(layer2Split[1], height))}
+                  </div>
+                ))}
+              </div>
+              <div style={{ position: 'relative', background: diagram.layer2, borderRight: `2px solid ${diagram.line}` }}>
+                {centeredLabel(ratioLabel(layer2Split[2], layer34FullRows[0]))}
+              </div>
+            </div>
+            <div style={{ position: 'relative', background: diagram.layer34, borderLeft: `2px solid ${diagram.line}`, borderRight: `2px solid ${diagram.line}`, borderBottom: `2px solid ${diagram.line}` }}>
+              {centeredLabel(ratioLabel(shellRatio.bodyWidth, layer34FullRows[1]), 20)}
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: frTemplate(layer2Split) }}>
+              <div style={{ position: 'relative', background: diagram.layer2, borderLeft: `2px solid ${diagram.line}`, borderRight: `2px solid ${diagram.line}` }}>
+                {centeredLabel(ratioLabel(layer2Split[0], layer34FullRows[2]))}
+              </div>
+              <div style={{ position: 'relative', background: diagram.layer34, borderRight: `2px solid ${diagram.line}` }}>
+                {centeredLabel(ratioLabel(layer2Split[1], layer34FullRows[2]))}
+              </div>
+              <div style={{ position: 'relative', background: diagram.layer2, borderRight: `2px solid ${diagram.line}` }}>
+                {centeredLabel(ratioLabel(layer2Split[2], layer34FullRows[2]))}
+              </div>
+            </div>
+          </div>
+        }
+      />
+    </DiagramCanvas>
   )
 }
 
-export function SegmentationWorkspacePatternPreview() {
+export function Layer5ContentOwnerPreview() {
   return (
-    <div style={{ ...frameStyle(), display: 'grid', gap: spacing[12] }}>
-      {[
-        ['Mode band', 44],
-        ['Header band', 72],
-        ['Context band', 44],
-        ['Workspace band', 200],
-        ['Action band', 86],
-      ].map(([label, height], index) => (
-        <div key={label} style={{ minHeight: height, borderRadius: radius[16], border: `1px solid ${index === 3 ? 'rgba(191, 219, 254, 0.96)' : colors.lineSoft}`, background: index === 3 ? 'rgba(255,255,255,0.98)' : 'rgba(248, 251, 255, 0.98)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ ...typography.eyebrowLabel, color: colors.textSoft }}>{label}</span>
-        </div>
-      ))}
-    </div>
+    <DiagramCanvas index="5">
+      <Layer1Base
+        bodyChildren={
+          fillGrid({
+            columns: frTemplate(layer5Columns),
+            rows: frTemplate(layer5Rows),
+            children: (
+              <>
+                <div />
+                <div />
+                <div />
+                <div />
+                {diagramBlock({
+                  background: diagram.layer34,
+                  label: ratioLabel(layer5Columns[1], layer5Rows[1]),
+                  labelSize: 20,
+                  border: false,
+                  borderRight: false,
+                  borderBottom: false,
+                })}
+                <div />
+                <div />
+                <div />
+                <div />
+              </>
+            ),
+          })
+        }
+      />
+    </DiagramCanvas>
   )
 }
 
-export function StudyWorkspaceShellPreview() {
+export function Layer2CenteredEntryPreview() {
   return (
-    <div style={{ ...frameStyle(), display: 'grid', gridTemplateColumns: '112px minmax(0,1fr) 188px', gap: spacing[12], minHeight: 220 }}>
-      <div style={{ borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: '#fff' }} />
-      <div style={{ borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: 'rgba(255,255,255,0.98)', display: 'grid', placeItems: 'center' }}>
-        <span style={{ ...typography.bodyText, fontWeight: 700, color: colors.textStrong }}>Primary work lane</span>
-      </div>
-      <div style={{ borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: '#fff' }} />
-    </div>
+    <DiagramCanvas index="6">
+      <Layer1Base
+        bodyChildren={
+          fillGrid({
+            columns: frTemplate(centeredEntryColumns),
+            rows: frTemplate(centeredEntryRows),
+            children: (
+              <>
+                <div />
+                {diagramBlock({
+                  background: diagram.layer34,
+                  label: ratioLabel(centeredEntryColumns[1], centeredEntryRows[0]),
+                  borderRight: false,
+                  borderBottom: true,
+                })}
+                <div />
+                <div />
+                {diagramBlock({
+                  background: diagram.layer34,
+                  label: ratioLabel(centeredEntryColumns[1], centeredEntryRows[1]),
+                  labelSize: 20,
+                  borderRight: false,
+                  borderBottom: true,
+                })}
+                <div />
+                <div />
+                {diagramBlock({
+                  background: diagram.layer34,
+                  label: ratioLabel(centeredEntryColumns[1], centeredEntryRows[2]),
+                  borderRight: false,
+                })}
+                <div />
+              </>
+            ),
+          })
+        }
+      />
+    </DiagramCanvas>
   )
 }
 
-export function SupportRailFloatingSystemPreview() {
+export function HomeCommandDeckPreview() {
   return (
-    <div style={{ ...frameStyle(), display: 'flex', alignItems: 'flex-end', gap: spacing[12] }}>
-      <div style={{ width: 72, minHeight: 166, borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: '#fff' }} />
-      <div style={{ width: 232, minHeight: 146, borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: '#fff', boxShadow: '0 14px 32px rgba(15,23,42,0.14)', padding: spacing[14], display: 'grid', gap: spacing[8] }}>
-        <p style={{ ...typography.bodyText, margin: 0, fontWeight: 700, color: colors.textStrong }}>Floating preview</p>
-        <p style={{ ...typography.bodyText, margin: 0, fontSize: 14, color: colors.textSoft }}>Collapsed rail reveals a larger preview, which can later pin or expand.</p>
-      </div>
-    </div>
+    <DiagramCanvas index="7">
+      <Layer1Base
+        bodyChildren={
+          fillGrid({
+            columns: '1fr',
+            rows: frTemplate(heroTwoUpFooterRows),
+            children: (
+              <>
+                {diagramBlock({
+                  background: diagram.layer34,
+                  label: ratioLabel(shellRatio.bodyWidth, heroTwoUpFooterRows[0]),
+                  borderBottom: true,
+                })}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: frTemplate(heroTwoUpFooterColumns),
+                    borderBottom: `2px solid ${diagram.line}`,
+                  }}
+                >
+                  {heroTwoUpFooterColumns.map((width, index) => (
+                    <div
+                      key={`${width}-${index}`}
+                      style={{
+                        position: 'relative',
+                        background: diagram.layer34,
+                        borderRight: index === heroTwoUpFooterColumns.length - 1 ? 'none' : `2px solid ${diagram.line}`,
+                      }}
+                    >
+                      {centeredLabel(ratioLabel(width, heroTwoUpFooterRows[1]))}
+                    </div>
+                  ))}
+                </div>
+                {diagramBlock({
+                  background: diagram.layer34,
+                  label: ratioLabel(shellRatio.bodyWidth, heroTwoUpFooterRows[2]),
+                })}
+              </>
+            ),
+          })
+        }
+      />
+    </DiagramCanvas>
   )
 }
 
-export function ReviewRemediationStatePreview() {
+export function SegmentationOperationalWorkspacePreview() {
   return (
-    <div style={{ ...frameStyle(), display: 'grid', gap: spacing[12] }}>
-      <div style={{ borderRadius: radius[16], border: `1px solid rgba(254, 215, 170, 0.96)`, background: 'rgba(255, 247, 237, 0.96)', padding: spacing[14] }}>
-        <p style={{ ...typography.bodyText, margin: 0, fontWeight: 700, color: '#C2410C' }}>Needs repair</p>
-      </div>
-      <div style={{ borderRadius: radius[16], border: `1px solid rgba(191, 219, 254, 0.96)`, background: 'rgba(239, 246, 255, 0.96)', padding: spacing[14] }}>
-        <p style={{ ...typography.bodyText, margin: 0, fontWeight: 700, color: colors.accentStrong }}>Review guidance attached</p>
-      </div>
-    </div>
+    <DiagramCanvas index="8">
+      <Layer1Base
+        bodyBackground="transparent"
+        bodyChildren={
+          fillGrid({
+            columns: frTemplate(layer2Split),
+            children: (
+              <>
+                {diagramBlock({
+                  background: diagram.layer2,
+                  label: ratioLabel(layer2Split[0], shellRatio.bodyHeight),
+                  borderLeft: true,
+                  borderRight: true,
+                })}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateRows: frTemplate(layer34CenteredRows),
+                    borderRight: `2px solid ${diagram.line}`,
+                  }}
+                >
+                  {layer34CenteredRows.map((height, index) => (
+                    <div
+                      key={`${height}-${index}`}
+                      style={{
+                        position: 'relative',
+                        background: diagram.layer34,
+                        borderBottom: index === layer34CenteredRows.length - 1 ? 'none' : `2px solid ${diagram.line}`,
+                      }}
+                    >
+                      {centeredLabel(ratioLabel(layer2Split[1], height), index === 3 ? 20 : 16)}
+                    </div>
+                  ))}
+                </div>
+                {diagramBlock({
+                  background: diagram.layer2,
+                  label: ratioLabel(layer2Split[2], shellRatio.bodyHeight),
+                  borderRight: true,
+                })}
+              </>
+            ),
+          })
+        }
+      />
+    </DiagramCanvas>
+  )
+}
+
+export function StudyAnchoredWorkspacePreview() {
+  return (
+    <DiagramCanvas index="9">
+      <Layer1Base
+        bodyBackground="transparent"
+        bodyChildren={
+          fillGrid({
+            columns: frTemplate(layer2Split),
+            children: (
+              <>
+                {diagramBlock({
+                  background: diagram.layer2,
+                  label: ratioLabel(layer2Split[0], shellRatio.bodyHeight),
+                  borderLeft: true,
+                  borderRight: true,
+                })}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateRows: frTemplate(studyCenterRows),
+                    borderRight: `2px solid ${diagram.line}`,
+                  }}
+                >
+                  {studyCenterRows.map((height, index) => (
+                    <div
+                      key={`${height}-${index}`}
+                      style={{
+                        position: 'relative',
+                        background: diagram.layer34,
+                        borderBottom: index === studyCenterRows.length - 1 ? 'none' : `2px solid ${diagram.line}`,
+                      }}
+                    >
+                      {centeredLabel(ratioLabel(layer2Split[1], height), index === 1 ? 20 : 16)}
+                    </div>
+                  ))}
+                </div>
+                {diagramBlock({
+                  background: diagram.layer2,
+                  label: ratioLabel(layer2Split[2], shellRatio.bodyHeight),
+                  borderRight: true,
+                })}
+              </>
+            ),
+          })
+        }
+      />
+    </DiagramCanvas>
+  )
+}
+
+export function ProjectsBrowseShellPreview() {
+  return (
+    <DiagramCanvas index="10">
+      <Layer1Base
+        bodyChildren={
+          fillGrid({
+            columns: frTemplate(projectsColumns),
+            rows: '1fr',
+            children: (
+              <>
+                {diagramBlock({
+                  background: diagram.layer2,
+                  label: ratioLabel(projectsColumns[0], shellRatio.bodyHeight),
+                  labelSize: 20,
+                  borderLeft: false,
+                  borderRight: true,
+                })}
+                {diagramBlock({
+                  background: diagram.layer34,
+                  label: ratioLabel(projectsColumns[1], shellRatio.bodyHeight),
+                  labelSize: 20,
+                  borderRight: true,
+                })}
+              </>
+            ),
+          })
+        }
+      />
+    </DiagramCanvas>
+  )
+}
+
+export function PatchingCorrectionShellPreview() {
+  return (
+    <DiagramCanvas index="11">
+      <Layer1Base
+        bodyChildren={
+          fillGrid({
+            columns: '1fr',
+            rows: frTemplate(patchingRows),
+            children: (
+              <>
+                {diagramBlock({
+                  background: diagram.layer34,
+                  label: ratioLabel(shellRatio.bodyWidth, patchingRows[0]),
+                  borderBottom: true,
+                })}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                    borderBottom: `2px solid ${diagram.line}`,
+                  }}
+                >
+                  {[shellRatio.bodyWidth / 2, shellRatio.bodyWidth / 2].map((width, index) => (
+                    <div
+                      key={`${width}-${index}`}
+                      style={{
+                        position: 'relative',
+                        background: diagram.layer34,
+                        borderRight: index === 1 ? 'none' : `2px solid ${diagram.line}`,
+                      }}
+                    >
+                      {centeredLabel(ratioLabel(width, patchingRows[1]))}
+                    </div>
+                  ))}
+                </div>
+                {diagramBlock({
+                  background: diagram.layer34,
+                  label: ratioLabel(shellRatio.bodyWidth, patchingRows[2]),
+                })}
+              </>
+            ),
+          })
+        }
+      />
+    </DiagramCanvas>
   )
 }
 
 export function ExamsFocusShellPreview() {
   return (
-    <div style={{ ...frameStyle(), display: 'grid', gap: spacing[12] }}>
-      <div style={{ minHeight: 220, borderRadius: radius[24], border: `1px solid ${colors.lineSoft}`, background: '#fff', padding: spacing[18], display: 'grid', gridTemplateRows: 'auto 1fr auto', gap: spacing[14] }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: spacing[12] }}>
-          <div style={{ display: 'grid', gap: 4 }}>
-            <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.accentBase }}>Exam</p>
-            <p style={{ ...typography.bodyText, margin: 0, fontWeight: 700, color: colors.textStrong }}>Segment 2.2 Conditions</p>
-          </div>
-          <span style={{ ...typography.monoMeta, color: colors.textSoft }}>Autosaved</span>
-        </div>
-        <div style={{ borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: 'rgba(248, 250, 252, 0.92)', padding: spacing[16], display: 'grid', gap: spacing[10] }}>
-          <p style={{ ...typography.bodyText, margin: 0, color: colors.textBody }}>Translate the highlighted segment without opening the full study shell around it.</p>
-          <div style={{ minHeight: 70, borderRadius: radius[12], border: `1px solid ${colors.lineSoft}`, background: '#fff' }} />
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: spacing[12] }}>
-          <button type="button" style={{ minHeight: 40, padding: '0 16px', borderRadius: radius.pill, border: `1px solid ${colors.lineSoft}`, background: '#fff', color: colors.textSoft }}>Back to study</button>
-          <button type="button" style={{ minHeight: 40, padding: '0 18px', borderRadius: radius.pill, border: 'none', background: colors.accentBase, color: '#fff' }}>Submit</button>
-        </div>
-      </div>
-    </div>
+    <DiagramCanvas index="12">
+      <Layer1Base
+        bodyChildren={
+          fillGrid({
+            columns: frTemplate(examColumns),
+            rows: frTemplate(examRows),
+            children: (
+              <>
+                <div />
+                {diagramBlock({
+                  background: diagram.layer34,
+                  label: ratioLabel(examColumns[1], examRows[0]),
+                  borderRight: false,
+                  borderBottom: true,
+                })}
+                <div />
+                <div />
+                {diagramBlock({
+                  background: diagram.layer34,
+                  label: ratioLabel(examColumns[1], examRows[1]),
+                  labelSize: 20,
+                  borderRight: false,
+                  borderBottom: true,
+                })}
+                <div />
+                <div />
+                {diagramBlock({
+                  background: diagram.layer34,
+                  label: ratioLabel(examColumns[1], examRows[2]),
+                  borderRight: false,
+                })}
+                <div />
+              </>
+            ),
+          })
+        }
+      />
+    </DiagramCanvas>
   )
 }
 
-export function PatchingShellPreview() {
+export function CenteredSuccessReviewStagePreview() {
   return (
-    <div style={{ ...frameStyle(), display: 'grid', gap: spacing[12] }}>
-      <div style={{ minHeight: 220, borderRadius: radius[24], border: '1px solid rgba(254, 215, 170, 0.96)', background: 'rgba(255, 247, 237, 0.82)', padding: spacing[18], display: 'grid', gap: spacing[14] }}>
-        <div style={{ display: 'grid', gap: 6 }}>
-          <p style={{ ...typography.eyebrowLabel, margin: 0, color: '#C2410C' }}>Controlled correction workflow</p>
-          <p style={{ ...typography.bodyText, margin: 0, fontWeight: 700, color: colors.textStrong }}>Preview impact before committing a patch.</p>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: spacing[12] }}>
-          <div style={{ minHeight: 118, borderRadius: radius[16], border: `1px solid rgba(253, 186, 116, 0.96)`, background: 'rgba(255,255,255,0.94)', padding: spacing[14], display: 'grid', gap: spacing[10] }}>
-            <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>Current output</p>
-            <div style={{ borderRadius: radius[12], border: `1px solid ${colors.lineSoft}`, background: 'rgba(248, 250, 252, 0.92)', minHeight: 56 }} />
-          </div>
-          <div style={{ minHeight: 118, borderRadius: radius[16], border: `1px solid rgba(253, 186, 116, 0.96)`, background: 'rgba(255,255,255,0.94)', padding: spacing[14], display: 'grid', gap: spacing[10] }}>
-            <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textSoft }}>Patched output</p>
-            <div style={{ borderRadius: radius[12], border: `1px solid ${colors.lineSoft}`, background: 'rgba(255,255,255,0.98)', minHeight: 56 }} />
-          </div>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: spacing[12] }}>
-          <button type="button" style={{ minHeight: 38, padding: '0 14px', borderRadius: radius.pill, border: `1px solid rgba(253, 186, 116, 0.96)`, background: 'rgba(255,255,255,0.92)', color: '#9A3412' }}>Preview impact</button>
-          <button type="button" style={{ minHeight: 38, padding: '0 14px', borderRadius: radius.pill, border: 'none', background: '#EA580C', color: '#fff' }}>Apply patch</button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export function SegmentationSuccessStagePreview() {
-  return (
-    <div style={{ ...frameStyle(), display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 220 }}>
-      <div style={{ width: 360, borderRadius: radius[24], border: `1px solid ${colors.lineSoft}`, background: '#fff', padding: spacing[24], display: 'grid', gap: spacing[12], textAlign: 'center' }}>
-        <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.accentBase }}>Published</p>
-        <h3 style={{ ...typography.cardTitle, margin: 0, fontSize: 34, color: colors.textStrong }}>Segments ready</h3>
-        <p style={{ ...typography.bodyText, margin: 0, color: colors.textBody }}>Source preserved. Structure approved. Study can begin.</p>
-      </div>
-    </div>
-  )
-}
-
-export function PassReflectionPreview() {
-  return (
-    <div style={{ ...frameStyle(), display: 'grid', gap: spacing[12] }}>
-      <div style={{ borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: 'rgba(220, 252, 231, 0.84)', padding: spacing[14], display: 'flex', alignItems: 'center', gap: spacing[10] }}>
-        <CheckCircle2 size={16} strokeWidth={1.8} color={colors.success} />
-        <span style={{ ...typography.bodyText, fontWeight: 700, color: colors.textStrong }}>Best in class translation</span>
-        <button type="button" style={{ marginLeft: 'auto', minHeight: 30, padding: '0 12px', border: `1px solid rgba(134, 239, 172, 0.96)`, borderRadius: radius.pill, background: 'rgba(255,255,255,0.92)' }}>
-          <Pin size={13} strokeWidth={1.8} />
-        </button>
-      </div>
-      <div style={{ borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: '#fff', padding: spacing[14] }}>
-        <span style={{ ...typography.bodyText, fontWeight: 700, color: colors.textStrong }}>Your translation</span>
-      </div>
-      <div style={{ borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: 'rgba(248, 250, 252, 0.94)', padding: spacing[14] }}>
-        <span style={{ ...typography.bodyText, fontWeight: 700, color: colors.textStrong }}>Discussion + notes</span>
-      </div>
-    </div>
-  )
-}
-
-export function BestInClassTranslationPreview() {
-  return (
-    <div style={frameStyle()}>
-      <div style={{ borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: 'rgba(220, 252, 231, 0.84)', padding: spacing[14], display: 'grid', gap: spacing[10] }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: spacing[10] }}>
-          <CheckCircle2 size={16} strokeWidth={1.8} color={colors.success} />
-          <span style={{ ...typography.bodyText, fontWeight: 700, color: colors.textStrong }}>Best in class translation</span>
-          <button type="button" style={{ marginLeft: 'auto', minHeight: 30, padding: '0 12px', border: `1px solid rgba(134, 239, 172, 0.96)`, borderRadius: radius.pill, background: 'rgba(255,255,255,0.92)' }}>
-            <Pin size={13} strokeWidth={1.8} />
-          </button>
-        </div>
-        <p style={{ ...typography.bodyText, margin: 0, fontSize: 14, color: colors.textBody }}>Reference answer shown after submission as a calm success surface.</p>
-      </div>
-    </div>
-  )
-}
-
-export function YourTranslationPreview() {
-  return (
-    <div style={frameStyle()}>
-      <div style={{ borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: '#fff', padding: spacing[14], display: 'grid', gap: spacing[10] }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: spacing[10] }}>
-          <FileText size={16} strokeWidth={1.8} color={colors.textSoft} />
-          <span style={{ ...typography.bodyText, fontWeight: 700, color: colors.textStrong }}>Your translation</span>
-          <button type="button" style={{ marginLeft: 'auto', minHeight: 30, padding: '0 12px', border: `1px solid ${colors.lineSoft}`, borderRadius: radius.pill, background: '#fff' }}>
-            <Pin size={13} strokeWidth={1.8} />
-          </button>
-        </div>
-        <p style={{ ...typography.bodyText, margin: 0, fontSize: 14, color: colors.textBody }}>Comparison card for the user’s submitted translation.</p>
-      </div>
-    </div>
-  )
-}
-
-export function DiscussionSummaryNotesPreview() {
-  return (
-    <div style={frameStyle()}>
-      <div style={{ borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: 'rgba(248, 250, 252, 0.94)', padding: spacing[14], display: 'grid', gap: spacing[10] }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: spacing[10] }}>
-          <MessageSquare size={16} strokeWidth={1.8} color="#4F46E5" />
-          <span style={{ ...typography.bodyText, fontWeight: 700, color: colors.textStrong }}>Discussion summary + notes</span>
-        </div>
-        <p style={{ ...typography.bodyText, margin: 0, fontSize: 14, color: colors.textSoft }}>Saved discussion summary with manual notes attached beneath it.</p>
-      </div>
-    </div>
-  )
-}
-
-export function DiscussionFlowPreview() {
-  return (
-    <div style={{ ...frameStyle(), display: 'grid', gap: spacing[12] }}>
-      <div style={{ borderRadius: radius[16], border: `1px solid ${colors.lineSoft}`, background: '#fff', padding: spacing[14], display: 'grid', gap: spacing[8] }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: spacing[8] }}>
-          <MessageSquare size={16} strokeWidth={1.8} color="#4F46E5" />
-          <span style={{ ...typography.bodyText, fontWeight: 700, color: colors.textStrong }}>Segment discussion</span>
-        </div>
-        <div style={{ minHeight: 70, borderRadius: radius[12], background: 'rgba(248, 250, 252, 0.92)', border: `1px solid ${colors.lineSoft}` }} />
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: spacing[8] }}>
-          <div style={{ flex: 1, minHeight: 38, borderRadius: radius[12], border: `1px solid ${colors.lineSoft}`, background: '#fff' }} />
-          <button type="button" style={{ minWidth: 72, border: 'none', borderRadius: radius[12], background: colors.accentBase, color: '#fff' }}>Send</button>
-        </div>
-      </div>
-    </div>
+    <DiagramCanvas index="13">
+      <Layer1Base
+        bodyChildren={
+          fillGrid({
+            columns: frTemplate(successColumns),
+            rows: frTemplate(successRows),
+            children: (
+              <>
+                <div />
+                {diagramBlock({
+                  background: diagram.layer34,
+                  label: ratioLabel(successColumns[1], successRows[0]),
+                  borderRight: false,
+                  borderBottom: true,
+                })}
+                <div />
+                <div />
+                {diagramBlock({
+                  background: diagram.layer34,
+                  label: ratioLabel(successColumns[1], successRows[1]),
+                  labelSize: 20,
+                  borderRight: false,
+                  borderBottom: true,
+                })}
+                <div />
+                <div />
+                {diagramBlock({
+                  background: diagram.layer34,
+                  label: ratioLabel(successColumns[1], successRows[2]),
+                  borderRight: false,
+                })}
+                <div />
+              </>
+            ),
+          })
+        }
+      />
+    </DiagramCanvas>
   )
 }

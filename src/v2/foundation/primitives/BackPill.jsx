@@ -2,14 +2,55 @@ import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
 import { colors, motion, radius, spacing, typography } from '../tokens'
 
-export default function BackPill({ onClick, children = 'Back', icon = <ArrowLeft size={16} strokeWidth={1.9} />, style = {} }) {
+const backPillMetrics = {
+  minHeight: '42px',
+  minWidth: '104px',
+  inlineInset: `${spacing[12]} ${spacing[16]}`,
+  contentGap: spacing[8],
+  labelFontWeight: 600,
+  iconShiftIdle: '0px',
+  iconShiftElevated: '-2px',
+}
+
+const backPillChrome = {
+  idleSurface: 'linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 251, 255, 0.92) 100%)',
+  elevatedSurface: 'linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(239, 246, 255, 0.96) 100%)',
+  idleTone: colors.textSoft,
+  elevatedTone: colors.textBody,
+  idleIconTone: colors.accentBase,
+  elevatedIconTone: colors.accentStrong,
+  idleOutline: 'rgba(191, 219, 254, 0.62)',
+  elevatedOutline: 'rgba(147, 197, 253, 0.88)',
+  idleShadow:
+    'inset 0 1px 0 rgba(255, 255, 255, 0.92), 0 6px 16px rgba(148, 163, 184, 0.12), 0 2px 6px rgba(15, 23, 42, 0.04)',
+  elevatedShadow:
+    'inset 0 1px 0 rgba(255,255,255,0.96), 0 12px 24px rgba(37,99,235,0.12), 0 4px 10px rgba(15,23,42,0.05)',
+  focusOutline: '2px solid rgba(37, 99, 235, 0.32)',
+  sheenSurface:
+    'linear-gradient(180deg, rgba(255,255,255,0.34) 0%, rgba(255,255,255,0.12) 34%, rgba(255,255,255,0) 100%)',
+}
+
+const backPillMotion = {
+  chromeTransition: `background ${motion.panel}, border-color ${motion.micro}, box-shadow ${motion.panel}, color ${motion.micro}, transform ${motion.micro}`,
+  sheenTransition: `opacity ${motion.panel}`,
+  iconTransition: `transform ${motion.micro}, color ${motion.micro}`,
+}
+
+export default function BackPill({
+  onClick,
+  children = 'Back',
+  icon = <ArrowLeft size={16} strokeWidth={1.9} />,
+  style = {},
+  debugItem,
+}) {
   const [isHovered, setIsHovered] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
-  const showActiveChrome = isHovered || isFocused
+  const showElevatedChrome = isHovered || isFocused
 
   return (
     <button
       type="button"
+      data-debug-item={debugItem}
       onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -19,31 +60,29 @@ export default function BackPill({ onClick, children = 'Back', icon = <ArrowLeft
         position: 'relative',
         isolation: 'isolate',
         overflow: 'hidden',
-        border: `1px solid ${colors.lineSoft}`,
-        borderRadius: radius.pill,
-        background: showActiveChrome
-          ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 55%), linear-gradient(90deg, #2D6BF0 0%, #2563EB 42%, #1D4ED8 100%)'
-          : 'rgba(255, 255, 255, 0.92)',
-        color: showActiveChrome ? '#ffffff' : colors.textSoft,
-        minHeight: '42px',
-        padding: '0 22px',
+        border: `1px solid ${showElevatedChrome ? backPillChrome.elevatedOutline : backPillChrome.idleOutline}`,
+        borderRadius: radius[24],
+        background: showElevatedChrome ? backPillChrome.elevatedSurface : backPillChrome.idleSurface,
+        color: showElevatedChrome ? backPillChrome.elevatedTone : backPillChrome.idleTone,
+        minHeight: backPillMetrics.minHeight,
+        minWidth: backPillMetrics.minWidth,
+        padding: backPillMetrics.inlineInset,
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: spacing[8],
+        gap: backPillMetrics.contentGap,
         cursor: 'pointer',
-        fontFamily: typography.bodyText.fontFamily,
-        fontSize: '12px',
-        fontWeight: 600,
-        lineHeight: 1,
-        letterSpacing: '0.14em',
-        textTransform: 'uppercase',
-        boxShadow: showActiveChrome
-          ? 'inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -10px 18px rgba(22,78,199,0.16), 0 18px 34px rgba(37,99,235,0.18), 0 8px 18px rgba(29,78,216,0.08)'
-          : '0 1px 0 rgba(255, 255, 255, 0.6) inset',
-        outline: isFocused ? '2px solid rgba(37, 99, 235, 0.32)' : 'none',
+        fontFamily: typography.eyebrowLabel.fontFamily,
+        fontSize: typography.eyebrowLabel.fontSize,
+        fontWeight: backPillMetrics.labelFontWeight,
+        lineHeight: typography.eyebrowLabel.lineHeight,
+        letterSpacing: typography.eyebrowLabel.letterSpacing,
+        textTransform: typography.eyebrowLabel.textTransform,
+        boxShadow: showElevatedChrome ? backPillChrome.elevatedShadow : backPillChrome.idleShadow,
+        outline: isFocused ? backPillChrome.focusOutline : 'none',
         outlineOffset: '2px',
-        transition: `background ${motion.panel}, border-color ${motion.micro}, box-shadow ${motion.panel}, color ${motion.micro}, transform ${motion.micro}`,
+        transform: showElevatedChrome ? 'translateY(-1px)' : 'translateY(0)',
+        transition: backPillMotion.chromeTransition,
         ...style,
       }}
     >
@@ -53,10 +92,9 @@ export default function BackPill({ onClick, children = 'Back', icon = <ArrowLeft
           position: 'absolute',
           inset: 1,
           borderRadius: 'inherit',
-          background:
-            'linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 34%, rgba(255,255,255,0) 100%)',
-          opacity: showActiveChrome ? 0.42 : 0,
-          transition: `opacity ${motion.panel}`,
+          background: backPillChrome.sheenSurface,
+          opacity: showElevatedChrome ? 0.52 : 0.24,
+          transition: backPillMotion.sheenTransition,
           pointerEvents: 'none',
         }}
       />
@@ -67,11 +105,23 @@ export default function BackPill({ onClick, children = 'Back', icon = <ArrowLeft
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: spacing[8],
+          gap: backPillMetrics.contentGap,
         }}
       >
-        {icon}
-        {children}
+        <span
+          aria-hidden="true"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: showElevatedChrome ? backPillChrome.elevatedIconTone : backPillChrome.idleIconTone,
+            transform: `translateX(${showElevatedChrome ? backPillMetrics.iconShiftElevated : backPillMetrics.iconShiftIdle})`,
+            transition: backPillMotion.iconTransition,
+          }}
+        >
+          {icon}
+        </span>
+        <span>{children}</span>
       </span>
     </button>
   )

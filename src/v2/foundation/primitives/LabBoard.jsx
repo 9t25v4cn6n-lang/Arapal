@@ -1,5 +1,5 @@
 import V2ScreenFrame from './V2ScreenFrame'
-import { colors, elevation, radius, spacing, typography } from '../tokens'
+import { colors, elevation, radius, spacing, surfacePadding, typography } from '../tokens'
 import { labRoutes } from '../../screens/labRoutes'
 
 function getStatusTone(status) {
@@ -48,7 +48,7 @@ function sectionCardStyle() {
     border: `1px solid ${colors.lineSoft}`,
     borderRadius: radius[24],
     background: 'rgba(255, 255, 255, 0.96)',
-    padding: spacing[20],
+    padding: surfacePadding.labSection,
     boxShadow: elevation.flat,
   }
 }
@@ -87,16 +87,26 @@ export function LabDisplayStage({
   minHeight = 180,
   align = 'center',
   justify = 'center',
+  mode = 'centered',
+  padding = surfacePadding.displayStage,
 }) {
+  const stageStyle = {
+    minHeight,
+    borderRadius: radius[16],
+    border: `1px ${empty ? 'dashed' : 'solid'} ${empty ? 'rgba(203, 213, 225, 0.96)' : colors.lineSoft}`,
+    background: empty ? 'rgba(255, 255, 255, 0.72)' : 'rgba(248, 251, 255, 0.86)',
+    padding,
+    overflow: 'hidden',
+  }
+
+  if (mode === 'stretch') {
+    return <div style={stageStyle}>{children}</div>
+  }
+
   return (
     <div
       style={{
-        minHeight,
-        borderRadius: radius[16],
-        border: `1px ${empty ? 'dashed' : 'solid'} ${empty ? 'rgba(203, 213, 225, 0.96)' : colors.lineSoft}`,
-        background: empty ? 'rgba(255, 255, 255, 0.72)' : 'rgba(248, 251, 255, 0.86)',
-        padding: spacing[16],
-        overflow: 'hidden',
+        ...stageStyle,
         display: 'flex',
         alignItems: align,
         justifyContent: justify,
@@ -125,6 +135,8 @@ export function LabGenericCard({
   minHeight = 180,
   displayAlign = 'center',
   displayJustify = 'center',
+  displayMode = 'centered',
+  displayPadding = surfacePadding.displayStage,
   gridColumn,
 }) {
   return (
@@ -134,7 +146,7 @@ export function LabGenericCard({
         border: `1px ${empty ? 'dashed' : 'solid'} ${empty ? 'rgba(203, 213, 225, 0.96)' : colors.lineSoft}`,
         borderRadius: radius[24],
         background: empty ? 'rgba(248, 250, 252, 0.86)' : 'rgba(255, 255, 255, 0.98)',
-        padding: spacing[18],
+        padding: surfacePadding.labCard,
         boxShadow: empty ? 'none' : elevation.flat,
         display: 'flex',
         flexDirection: 'column',
@@ -163,7 +175,14 @@ export function LabGenericCard({
         </div>
         <LabStatusPill status={status} />
       </div>
-      <LabDisplayStage empty={empty} minHeight={minHeight} align={displayAlign} justify={displayJustify}>
+      <LabDisplayStage
+        empty={empty}
+        minHeight={minHeight}
+        align={displayAlign}
+        justify={displayJustify}
+        mode={displayMode}
+        padding={displayPadding}
+      >
         {children}
       </LabDisplayStage>
     </div>
@@ -263,23 +282,27 @@ function LabNav({ shell, route }) {
               borderRadius: radius[16],
               background: isActive ? 'rgba(239, 246, 255, 0.96)' : 'rgba(255, 255, 255, 0.92)',
               boxShadow: isActive ? elevation.flat : 'none',
-              padding: `${spacing[12]} ${spacing[14]}`,
+              padding: `${spacing[10]}px ${spacing[12]}px`,
               display: 'flex',
               flexDirection: 'column',
-              gap: spacing[6],
+              gap: spacing[4],
               cursor: 'pointer',
               textAlign: 'left',
             }}
           >
-            <span style={{ ...typography.eyebrowLabel, color: isActive ? colors.accentBase : colors.textSoft }}>
+            <span style={{ ...typography.eyebrowLabel, fontSize: 11, color: isActive ? colors.accentBase : colors.textSoft }}>
               {labRoute.label}
             </span>
             <span
               style={{
                 fontFamily: typography.bodyText.fontFamily,
-                fontSize: 14,
-                lineHeight: 1.45,
+                fontSize: 13,
+                lineHeight: 1.35,
                 color: colors.textBody,
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
               }}
             >
               {labRoute.description}
@@ -306,27 +329,71 @@ export function LabScaffold({
   const slots = {
     Layer3_Lab_LeftNav: <LabNav shell={shell} route={route} />,
     Layer3_Lab_Hero: (
-      <div style={{ ...cardStyle, padding: spacing[28] }}>
-        <p style={{ ...typography.eyebrowLabel, margin: `0 0 ${spacing[10]}`, color: colors.accentBase }}>{eyebrow}</p>
-        <h1
+      <div style={{ ...cardStyle, padding: spacing[6] }}>
+        <div
           style={{
-            margin: `0 0 ${spacing[12]}`,
-            fontFamily: typography.bodyText.fontFamily,
-            fontSize: 'clamp(26px, 2.3vw, 34px)',
-            lineHeight: 1.15,
-            fontWeight: 700,
-            color: colors.textStrong,
-            letterSpacing: '-0.02em',
+            borderRadius: radius[20],
+            padding: spacing[24],
+            display: 'grid',
+            gap: spacing[10],
           }}
         >
-          {title}
-        </h1>
-        <p style={{ ...typography.bodyText, margin: 0, maxWidth: '64ch', lineHeight: 1.6, color: colors.textBody }}>{intro}</p>
+          <p style={{ ...typography.eyebrowLabel, margin: 0, color: colors.accentBase }}>{eyebrow}</p>
+          <h1
+            style={{
+              margin: 0,
+              fontFamily: typography.bodyText.fontFamily,
+              fontSize: 'clamp(26px, 2.3vw, 34px)',
+              lineHeight: 1.15,
+              fontWeight: 700,
+              color: colors.textStrong,
+              letterSpacing: '-0.02em',
+            }}
+          >
+            {title}
+          </h1>
+          <p style={{ ...typography.bodyText, margin: 0, maxWidth: '64ch', lineHeight: 1.6, color: colors.textBody }}>{intro}</p>
+        </div>
       </div>
     ),
     Layer3_Lab_Content: content,
     Layer3_Lab_RightRail: rightRail,
   }
 
-  return <V2ScreenFrame contract={contract} route={route} shell={shell} screenSlots={slots} />
+  const labContainerOverrides = {
+    Layer2_Body_DefaultSplit: {
+      style: {
+        gridTemplateColumns: rightRail ? '224px minmax(0, 1fr) 160px' : '224px minmax(0, 1fr) 0px',
+      },
+    },
+    Layer2_Body_ContentStartRail: {
+      style: {
+        width: '224px',
+        minWidth: '224px',
+        maxWidth: '224px',
+      },
+    },
+    Layer2_Body_ContentEndRail: rightRail
+      ? {
+          style: {
+            width: '160px',
+            minWidth: '160px',
+            maxWidth: '160px',
+          },
+        }
+      : {
+          style: {
+            width: '0px',
+            minWidth: '0px',
+            maxWidth: '0px',
+            padding: '0',
+            gap: '0',
+            opacity: 0,
+            pointerEvents: 'none',
+            overflow: 'hidden',
+          },
+        },
+  }
+
+  return <V2ScreenFrame contract={contract} route={route} shell={shell} screenSlots={slots} containerOverrides={labContainerOverrides} />
 }

@@ -1,37 +1,66 @@
-const FRAME_WIDTH_PX = 1440
-const FRAME_WIDTH_UNITS = 30
-const FRAME_UNIT_PX = FRAME_WIDTH_PX / FRAME_WIDTH_UNITS
-
-function unitsToPx(units) {
-  return `${Number((units * FRAME_UNIT_PX).toFixed(2))}px`
+function roundPx(value) {
+  return `${Math.round(value * 1000) / 1000}px`
 }
+
+const canonicalViewport = {
+  widthPx: 1440,
+  heightPx: 900,
+}
+
+const normalizedFrame = {
+  widthUnits: 14,
+  heightUnits: 9,
+}
+
+const widthUnitPx = canonicalViewport.widthPx / normalizedFrame.widthUnits
+const heightUnitPx = canonicalViewport.heightPx / normalizedFrame.heightUnits
 
 export const shellSizing = {
-  frame: {
-    widthPx: FRAME_WIDTH_PX,
-    widthUnits: FRAME_WIDTH_UNITS,
-    unitPx: FRAME_UNIT_PX,
-  },
+  canonicalViewport,
+  normalizedFrame,
   header: {
-    heightPx: '72px',
+    heightUnits: 0.5,
+    heightPx: roundPx(heightUnitPx * 0.5),
+  },
+  layer1: {
+    widthUnitPx,
+    heightUnitPx,
+    headerHeightPx: roundPx(heightUnitPx * 0.5),
+    collapsedRailWidthPx: roundPx(widthUnitPx * 0.5),
   },
   navigationRail: {
-    collapsedUnits: 1.5,
-    expandedUnits: 5.7,
-    collapsedPx: unitsToPx(1.5),
-    expandedPx: unitsToPx(5.7),
+    collapsedUnits: 0.5,
+    expandedUnits: 3,
+    collapsedPx: roundPx(widthUnitPx * 0.5),
+    expandedPx: roundPx(widthUnitPx * 3),
   },
   defaultBodySplit: {
-    startRailUnits: 5.7,
-    centerUnits: 17.1,
-    endRailUnits: 5.7,
-    startRailPx: unitsToPx(5.7),
-    endRailPx: unitsToPx(5.7),
+    totalUnits: 13.5,
+    startRailUnits: 3.5,
+    centerUnits: 6.5,
+    endRailUnits: 3.5,
+    expandedStartRailUnits: 1.25,
+    expandedEndRailUnits: 1.25,
+    startRailPx: roundPx(widthUnitPx * 3.5),
+    centerPx: roundPx(widthUnitPx * 6.5),
+    endRailPx: roundPx(widthUnitPx * 3.5),
+    expandedStartRailPx: roundPx(widthUnitPx * 1.25),
+    expandedEndRailPx: roundPx(widthUnitPx * 1.25),
   },
 }
 
-export function getDefaultBodySplitColumns() {
-  return `${shellSizing.defaultBodySplit.startRailPx} minmax(0, 1fr) ${shellSizing.defaultBodySplit.endRailPx}`
+export function getLayer1BodyColumns({ isNavExpanded = false } = {}) {
+  const railUnits = isNavExpanded ? shellSizing.navigationRail.expandedUnits : shellSizing.navigationRail.collapsedUnits
+  const bodyUnits = shellSizing.normalizedFrame.widthUnits - railUnits
+
+  return `minmax(0, ${railUnits}fr) minmax(0, ${bodyUnits}fr)`
 }
 
-export default shellSizing
+export function getDefaultBodySplitColumns({ isNavExpanded = false } = {}) {
+  const { startRailUnits, centerUnits, endRailUnits, expandedStartRailUnits, expandedEndRailUnits } =
+    shellSizing.defaultBodySplit
+
+  return isNavExpanded
+    ? `minmax(0, ${expandedStartRailUnits}fr) minmax(0, ${centerUnits}fr) minmax(0, ${expandedEndRailUnits}fr)`
+    : `minmax(0, ${startRailUnits}fr) minmax(0, ${centerUnits}fr) minmax(0, ${endRailUnits}fr)`
+}

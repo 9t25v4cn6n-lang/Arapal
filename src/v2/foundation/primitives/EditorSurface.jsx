@@ -1,5 +1,55 @@
 import { useState } from 'react'
-import { colors, elevation, radius, spacing, typography } from '../tokens'
+import { colors, radius, spacing, surfacePadding, typography } from '../tokens'
+
+const editorSurfaceMetrics = {
+  cornerSize: 16,
+  cornerStrokeWidth: '1.5px',
+  cornerRadius: 14,
+  windowButtonGap: spacing[8],
+  windowDotSize: 8,
+  windowWideDotWidth: 18,
+  shortcutHeight: 20,
+  shortcutMinWidth: 20,
+  shortcutInlineInset: `0 ${spacing[4]}`,
+  headerBadgeHeight: 24,
+  headerBadgeInlineInset: `0 ${spacing[12]}`,
+  headerEyebrowTrack: '0.18em',
+  headerTextStackGap: 2,
+  footerTextTrack: '0.04em',
+  footerMetaTone: 'rgba(0, 0, 0, 0.2)',
+  shortcutTone: 'rgba(0, 0, 0, 0.25)',
+  eyebrowTone: 'rgba(0, 0, 0, 0.34)',
+  textareaTone: 'rgba(0, 0, 0, 0.8)',
+  watermarkLead: 1,
+}
+
+const editorSurfaceChrome = {
+  cornerStroke: 'rgba(37, 99, 235, 0.26)',
+  windowButtonFill: 'rgba(0, 0, 0, 0.08)',
+  shortcutOutline: '1px solid rgba(0, 0, 0, 0.08)',
+  shortcutSurface: 'rgba(255, 255, 255, 0.82)',
+  focusAuraSurface:
+    'linear-gradient(180deg, rgba(37, 99, 235, 0.18) 0%, rgba(37, 99, 235, 0.05) 50%, transparent 100%)',
+  frameOutlineActive: '1px solid rgba(37, 99, 235, 0.2)',
+  frameOutlineRest: '1px solid rgba(15, 23, 42, 0.08)',
+  frameShadowActive: '0 10px 40px rgba(37, 99, 235, 0.08)',
+  frameShadowRest: '0 2px 20px -4px rgba(0, 0, 0, 0.06)',
+  topWash: 'linear-gradient(180deg, rgba(37, 99, 235, 0.04) 0%, rgba(37, 99, 235, 0) 100%)',
+  footerRule:
+    'linear-gradient(90deg, rgba(37, 99, 235, 0) 0%, rgba(37, 99, 235, 0.16) 50%, rgba(37, 99, 235, 0) 100%)',
+  headerDivider: '1px solid rgba(0, 0, 0, 0.05)',
+  headerBadgeOutline: '1px solid rgba(37, 99, 235, 0.14)',
+  headerBadgeSurface: 'rgba(239, 246, 255, 0.9)',
+  headerBadgeTone: 'rgba(37, 99, 235, 0.72)',
+  headerBadgeHighlight: 'inset 0 1px 0 rgba(255, 255, 255, 0.72)',
+  watermarkTone: 'rgba(37, 99, 235, 0.085)',
+  watermarkShadow: '0 0 24px rgba(37, 99, 235, 0.06)',
+}
+
+const editorSurfaceMotion = {
+  focusAuraTransition: 'opacity 0.5s ease',
+  frameTransition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+}
 
 function Corner({ style }) {
   return (
@@ -7,9 +57,9 @@ function Corner({ style }) {
       aria-hidden="true"
       style={{
         position: 'absolute',
-        width: 16,
-        height: 16,
-        borderColor: 'rgba(37, 99, 235, 0.26)',
+        width: editorSurfaceMetrics.cornerSize,
+        height: editorSurfaceMetrics.cornerSize,
+        borderColor: editorSurfaceChrome.cornerStroke,
         borderStyle: 'solid',
         pointerEvents: 'none',
         zIndex: 2,
@@ -21,11 +71,54 @@ function Corner({ style }) {
 
 function WindowButtons() {
   return (
-    <div aria-hidden="true" style={{ display: 'inline-flex', gap: 8 }}>
-      <span style={{ width: 8, height: 8, borderRadius: radius.pill, background: 'rgba(0, 0, 0, 0.08)' }} />
-      <span style={{ width: 8, height: 8, borderRadius: radius.pill, background: 'rgba(0, 0, 0, 0.08)' }} />
-      <span style={{ width: 18, height: 8, borderRadius: radius.pill, background: 'rgba(0, 0, 0, 0.08)' }} />
+    <div aria-hidden="true" style={{ display: 'inline-flex', gap: editorSurfaceMetrics.windowButtonGap }}>
+      <span
+        style={{
+          width: editorSurfaceMetrics.windowDotSize,
+          height: editorSurfaceMetrics.windowDotSize,
+          borderRadius: radius.pill,
+          background: editorSurfaceChrome.windowButtonFill,
+        }}
+      />
+      <span
+        style={{
+          width: editorSurfaceMetrics.windowDotSize,
+          height: editorSurfaceMetrics.windowDotSize,
+          borderRadius: radius.pill,
+          background: editorSurfaceChrome.windowButtonFill,
+        }}
+      />
+      <span
+        style={{
+          width: editorSurfaceMetrics.windowWideDotWidth,
+          height: editorSurfaceMetrics.windowDotSize,
+          borderRadius: radius.pill,
+          background: editorSurfaceChrome.windowButtonFill,
+        }}
+      />
     </div>
+  )
+}
+
+function ShortcutKey({ children, scale }) {
+  return (
+    <span
+      style={{
+        minWidth: editorSurfaceMetrics.shortcutMinWidth,
+        height: editorSurfaceMetrics.shortcutHeight,
+        padding: editorSurfaceMetrics.shortcutInlineInset,
+        border: editorSurfaceChrome.shortcutOutline,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: editorSurfaceMetrics.shortcutTone,
+        fontSize: scale,
+        lineHeight: typography.eyebrowLabel.lineHeight,
+        background: editorSurfaceChrome.shortcutSurface,
+      }}
+    >
+      {children}
+    </span>
   )
 }
 
@@ -39,56 +132,83 @@ export default function EditorSurface({
   footerMeta = '',
   shortcutLabel = 'to paste',
   minHeight = 420,
+  fillHeight = false,
+  surfaceDebugItem = 'editor_surface',
   textareaDebugItem,
   readOnly = false,
 }) {
   const [isFocused, setIsFocused] = useState(false)
+  const frameInset = Number.parseInt(surfacePadding.editorFrame, 10)
+  const cornerInset = Math.max(Number.parseInt(spacing[4], 10), Math.round(frameInset * 0.25))
+  const frameRadius = 28
+  const headerInset = surfacePadding.editorHeaderX
+  const footerInset = surfacePadding.editorFooterX
+  const bodyInset = surfacePadding.editorBody
+  const decorativeWatermarkSize = `${Math.round(Number.parseFloat(typography.displayTitle.fontSize) * 0.667 * 1000) / 1000}px`
+  const slotRow = {
+    display: 'grid',
+    gridTemplateColumns: 'auto minmax(0, 1fr) auto',
+    alignItems: 'center',
+    columnGap: spacing[16],
+    width: '100%',
+    minWidth: 0,
+    minHeight: 0,
+  }
 
   return (
-    <div style={{ position: 'relative', width: '100%', minHeight }}>
+    <div
+      data-debug-item={surfaceDebugItem}
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: fillHeight ? '100%' : 'auto',
+        minHeight: minHeight + frameInset * 2,
+        padding: frameInset,
+        boxSizing: 'border-box',
+      }}
+    >
       <Corner
         style={{
-          top: 0,
-          left: 18,
-          borderWidth: '1.5px 0 0 1.5px',
-          borderTopLeftRadius: 14,
+          top: cornerInset,
+          left: cornerInset,
+          borderWidth: `${editorSurfaceMetrics.cornerStrokeWidth} 0 0 ${editorSurfaceMetrics.cornerStrokeWidth}`,
+          borderTopLeftRadius: editorSurfaceMetrics.cornerRadius,
         }}
       />
       <Corner
         style={{
-          top: 0,
-          right: 18,
-          borderWidth: '1.5px 1.5px 0 0',
-          borderTopRightRadius: 14,
+          top: cornerInset,
+          right: cornerInset,
+          borderWidth: `${editorSurfaceMetrics.cornerStrokeWidth} ${editorSurfaceMetrics.cornerStrokeWidth} 0 0`,
+          borderTopRightRadius: editorSurfaceMetrics.cornerRadius,
         }}
       />
       <Corner
         style={{
-          bottom: 0,
-          left: 18,
-          borderWidth: '0 0 1.5px 1.5px',
-          borderBottomLeftRadius: 14,
+          bottom: cornerInset,
+          left: cornerInset,
+          borderWidth: `0 0 ${editorSurfaceMetrics.cornerStrokeWidth} ${editorSurfaceMetrics.cornerStrokeWidth}`,
+          borderBottomLeftRadius: editorSurfaceMetrics.cornerRadius,
         }}
       />
       <Corner
         style={{
-          bottom: 0,
-          right: 18,
-          borderWidth: '0 1.5px 1.5px 0',
-          borderBottomRightRadius: 14,
+          bottom: cornerInset,
+          right: cornerInset,
+          borderWidth: `0 ${editorSurfaceMetrics.cornerStrokeWidth} ${editorSurfaceMetrics.cornerStrokeWidth} 0`,
+          borderBottomRightRadius: editorSurfaceMetrics.cornerRadius,
         }}
       />
 
       <div
         style={{
           position: 'absolute',
-          inset: -4,
-          borderRadius: 22,
-          background:
-            'linear-gradient(180deg, rgba(37, 99, 235, 0.18) 0%, rgba(37, 99, 235, 0.05) 50%, transparent 100%)',
+          inset: `${frameInset - 4}px`,
+          borderRadius: frameRadius,
+          background: editorSurfaceChrome.focusAuraSurface,
           opacity: isFocused ? 1 : 0,
           filter: 'blur(8px)',
-          transition: 'opacity 0.5s ease',
+          transition: editorSurfaceMotion.focusAuraTransition,
           pointerEvents: 'none',
         }}
       />
@@ -99,13 +219,14 @@ export default function EditorSurface({
           display: 'flex',
           flexDirection: 'column',
           width: '100%',
+          height: fillHeight ? '100%' : 'auto',
           minHeight,
           overflow: 'hidden',
-          borderRadius: 28,
-          border: isFocused ? '1px solid rgba(37, 99, 235, 0.2)' : '1px solid rgba(15, 23, 42, 0.08)',
+          borderRadius: frameRadius,
+          border: isFocused ? editorSurfaceChrome.frameOutlineActive : editorSurfaceChrome.frameOutlineRest,
           background: colors.surfacePrimary,
-          boxShadow: isFocused ? '0 10px 40px rgba(37, 99, 235, 0.08)' : '0 2px 20px -4px rgba(0, 0, 0, 0.06)',
-          transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+          boxShadow: isFocused ? editorSurfaceChrome.frameShadowActive : editorSurfaceChrome.frameShadowRest,
+          transition: editorSurfaceMotion.frameTransition,
         }}
       >
         <div
@@ -114,7 +235,7 @@ export default function EditorSurface({
             position: 'absolute',
             inset: '0 0 auto',
             height: 120,
-            background: 'linear-gradient(180deg, rgba(37, 99, 235, 0.04) 0%, rgba(37, 99, 235, 0) 100%)',
+            background: editorSurfaceChrome.topWash,
             pointerEvents: 'none',
           }}
         />
@@ -122,108 +243,158 @@ export default function EditorSurface({
           aria-hidden="true"
           style={{
             position: 'absolute',
-            inset: 'auto 28px 22px',
+            inset: `auto ${footerInset} 22px`,
             height: 1,
-            background:
-              'linear-gradient(90deg, rgba(37, 99, 235, 0) 0%, rgba(37, 99, 235, 0.16) 50%, rgba(37, 99, 235, 0) 100%)',
+            background: editorSurfaceChrome.footerRule,
             pointerEvents: 'none',
           }}
         />
 
         <div
+          data-debug-item="editor_header"
           style={{
             position: 'relative',
             zIndex: 1,
-            minHeight: 60,
-            padding: '14px 22px',
-            background: colors.surfacePrimary,
-            borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
+            minHeight: 48,
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: spacing[12],
+            alignItems: 'stretch',
+            justifyContent: 'stretch',
+            background: colors.surfacePrimary,
+            borderBottom: editorSurfaceChrome.headerDivider,
           }}
         >
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
-            <WindowButtons />
-            <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <span
-                style={{
-                  fontFamily: typography.bodyText.fontFamily,
-                  fontSize: 10,
-                  lineHeight: 1,
-                  letterSpacing: '0.18em',
-                  textTransform: 'uppercase',
-                  color: 'rgba(0, 0, 0, 0.34)',
-                }}
-              >
-                {eyebrow}
-              </span>
-            </div>
-          </div>
           <div
+            data-debug-item="editor_header_slots"
             style={{
-              minHeight: 28,
-              padding: '0 12px',
-              borderRadius: radius.pill,
-              border: '1px solid rgba(37, 99, 235, 0.14)',
-              background: 'rgba(239, 246, 255, 0.9)',
-              color: 'rgba(37, 99, 235, 0.72)',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontFamily: typography.bodyText.fontFamily,
-              fontSize: 10,
-              lineHeight: 1,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.72)',
-              flexShrink: 0,
+              ...slotRow,
+              padding: `0 ${headerInset}`,
             }}
           >
-            {seal}
+            <div
+              data-debug-item="editor_header_left_slot"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[12], minWidth: 0 }}
+            >
+              <WindowButtons />
+              <div
+                style={{
+                  minWidth: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: editorSurfaceMetrics.headerTextStackGap,
+                }}
+              >
+                <span
+                  style={{
+                    ...typography.eyebrowLabel,
+                    color: editorSurfaceMetrics.eyebrowTone,
+                    letterSpacing: editorSurfaceMetrics.headerEyebrowTrack,
+                  }}
+                >
+                  {eyebrow}
+                </span>
+              </div>
+            </div>
+
+            <div
+              data-debug-item="editor_header_center_spacer"
+              aria-hidden="true"
+              style={{ minWidth: 0, minHeight: 1 }}
+            />
+
+            <div
+              data-debug-item="editor_header_right_slot"
+              style={{ display: 'inline-flex', alignItems: 'center', justifySelf: 'end', minWidth: 0 }}
+            >
+              <div
+                style={{
+                  minHeight: editorSurfaceMetrics.headerBadgeHeight,
+                  padding: editorSurfaceMetrics.headerBadgeInlineInset,
+                  borderRadius: radius.pill,
+                  border: editorSurfaceChrome.headerBadgeOutline,
+                  background: editorSurfaceChrome.headerBadgeSurface,
+                  color: editorSurfaceChrome.headerBadgeTone,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontFamily: typography.eyebrowLabel.fontFamily,
+                  fontSize: typography.eyebrowLabel.fontSize,
+                  lineHeight: typography.eyebrowLabel.lineHeight,
+                  letterSpacing: typography.eyebrowLabel.letterSpacing,
+                  textTransform: typography.eyebrowLabel.textTransform,
+                  boxShadow: editorSurfaceChrome.headerBadgeHighlight,
+                  flexShrink: 0,
+                }}
+              >
+                {seal}
+              </div>
+            </div>
           </div>
         </div>
 
-        <textarea
-          data-debug-item={textareaDebugItem}
-          value={value}
-          onChange={(event) => onChange?.(event.target.value, event)}
-          placeholder={placeholder}
-          readOnly={readOnly}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+        <div
+          data-debug-item="editor_body_band"
           style={{
             position: 'relative',
             zIndex: 1,
-            width: '100%',
             flex: 1,
             minHeight: 0,
-            border: 'none',
-            resize: 'none',
-            outline: 'none',
-            padding: '28px 28px 30px',
+            display: 'flex',
+            alignItems: 'stretch',
+            justifyContent: 'stretch',
             background: colors.surfacePrimary,
-            color: 'rgba(0, 0, 0, 0.8)',
-            fontFamily: typography.bodyText.fontFamily,
-            fontSize: 16,
-            lineHeight: 1.9,
-            boxSizing: 'border-box',
           }}
-        />
+        >
+          <div
+            data-debug-item="editor_body_content"
+            style={{
+              position: 'relative',
+              width: '100%',
+              flex: 1,
+              minWidth: 0,
+              minHeight: 0,
+            }}
+          >
+            <textarea
+              data-debug-item={textareaDebugItem}
+              value={value}
+              onChange={(event) => onChange?.(event.target.value, event)}
+              placeholder={placeholder}
+              readOnly={readOnly}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              style={{
+                position: 'relative',
+                zIndex: 1,
+                width: '100%',
+                height: '100%',
+                minHeight: 0,
+                border: 'none',
+                resize: 'none',
+                outline: 'none',
+                padding: bodyInset,
+                background: colors.surfacePrimary,
+                color: editorSurfaceMetrics.textareaTone,
+                fontFamily: typography.bodyText.fontFamily,
+                fontSize: typography.bodyText.fontSize,
+                lineHeight: typography.bodyText.lineHeight,
+                boxSizing: 'border-box',
+              }}
+            />
+          </div>
+        </div>
 
         <div
           aria-hidden="true"
           style={{
             position: 'absolute',
-            right: 34,
-            bottom: 52,
+            right: footerInset,
+            bottom: 48,
             fontFamily: '"Playfair Display", Georgia, "Times New Roman", serif',
-            fontSize: 48,
-            lineHeight: 1,
+            fontSize: decorativeWatermarkSize,
+            lineHeight: editorSurfaceMetrics.watermarkLead,
             letterSpacing: '-0.06em',
-            color: 'rgba(37, 99, 235, 0.085)',
-            textShadow: '0 0 24px rgba(37, 99, 235, 0.06)',
+            color: editorSurfaceChrome.watermarkTone,
+            textShadow: editorSurfaceChrome.watermarkShadow,
             pointerEvents: 'none',
           }}
         >
@@ -231,71 +402,58 @@ export default function EditorSurface({
         </div>
 
         <div
+          data-debug-item="editor_footer"
           style={{
-            minHeight: 38,
-            padding: '0 20px',
-            borderTop: '1px solid rgba(0, 0, 0, 0.05)',
+            minHeight: 44,
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: spacing[12],
+            alignItems: 'stretch',
+            justifyContent: 'stretch',
+            background: colors.surfacePrimary,
+            borderTop: editorSurfaceChrome.headerDivider,
           }}
         >
           <div
+            data-debug-item="editor_footer_slots"
             style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              fontFamily: typography.bodyText.fontFamily,
-              fontSize: 12,
-              color: 'rgba(0, 0, 0, 0.2)',
+              ...slotRow,
+              padding: `0 ${footerInset}`,
             }}
           >
-            <span
+            <div
+              data-debug-item="editor_footer_left_slot"
               style={{
-                minWidth: 20,
-                height: 20,
-                padding: '0 4px',
-                border: '1px solid rgba(0, 0, 0, 0.08)',
                 display: 'inline-flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                color: 'rgba(0, 0, 0, 0.25)',
-                fontSize: 12,
-                lineHeight: 1,
-                background: 'rgba(255, 255, 255, 0.82)',
+                gap: spacing[8],
+                minWidth: 0,
+                fontFamily: typography.bodyText.fontFamily,
+                fontSize: typography.eyebrowLabel.fontSize,
+                color: editorSurfaceMetrics.footerMetaTone,
               }}
             >
-              ⌘
-            </span>
-            <span
+              <ShortcutKey scale={typography.eyebrowLabel.fontSize}>⌘</ShortcutKey>
+              <ShortcutKey scale={typography.eyebrowLabel.fontSize}>V</ShortcutKey>
+              <span>{shortcutLabel}</span>
+            </div>
+
+            <div
+              data-debug-item="editor_footer_center_spacer"
+              aria-hidden="true"
+              style={{ minWidth: 0, minHeight: 1 }}
+            />
+
+            <div
+              data-debug-item="editor_footer_right_slot"
               style={{
-                minWidth: 20,
-                height: 20,
-                padding: '0 4px',
-                border: '1px solid rgba(0, 0, 0, 0.08)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'rgba(0, 0, 0, 0.25)',
-                fontSize: 12,
-                lineHeight: 1,
-                background: 'rgba(255, 255, 255, 0.82)',
+                justifySelf: 'end',
+                fontFamily: typography.bodyText.fontFamily,
+                fontSize: typography.eyebrowLabel.fontSize,
+                color: editorSurfaceMetrics.footerMetaTone,
+                letterSpacing: editorSurfaceMetrics.footerTextTrack,
               }}
             >
-              V
-            </span>
-            <span>{shortcutLabel}</span>
-          </div>
-          <div
-            style={{
-              fontFamily: typography.bodyText.fontFamily,
-              fontSize: 12,
-              color: 'rgba(0, 0, 0, 0.2)',
-              letterSpacing: '0.04em',
-            }}
-          >
-            {footerMeta}
+              {footerMeta}
+            </div>
           </div>
         </div>
       </div>

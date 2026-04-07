@@ -1,0 +1,29 @@
+{
+  "screenId": "qualityDashboard",
+  "route": "#v2/qualityDashboard",
+  "generatedAt": "2026-04-03T12:00:00.000Z",
+  "status": "pass",
+  "failingGateCount": 0,
+  "failingGates": [],
+  "stressLabel": "viewport-stress",
+  "stressMode": "css-zoom-approximation",
+  "viewportChecks": [
+    {
+      "viewport": {
+        "label": "desktop-standard",
+        "width": 1440,
+        "height": 900
+      },
+      "rows": [
+        {
+          "gate": "desktop-standard wrapper depth",
+          "pass": true,
+          "detail": "max wrapper chain 2"
+        }
+      ],
+      "screenshotPath": "/artifacts/qa/qualityDashboard-desktop-standard.png"
+    }
+  ],
+  "zoomChecks": [],
+  "viewportStressChecks": []
+}

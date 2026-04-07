@@ -2,6 +2,7 @@ import { BookOpen, ClipboardList, FolderGit2, Home, Layers3, Pin, PinOff, SplitS
 import { useState } from 'react'
 import { colors, motion, radius, spacing, typography } from '../tokens'
 import IconActionButton from './IconActionButton'
+import { getIdentityBadgeStyle, identityBadgeChrome } from './identityBadgePresets'
 
 const iconMap = {
   home: Home,
@@ -9,6 +10,35 @@ const iconMap = {
   study: BookOpen,
   segmentation: SplitSquareVertical,
   exams: ClipboardList,
+}
+
+const navigationRailMetrics = {
+  collapsedWidth: '36px',
+  rowHeight: '40px',
+  expandedPadding: '0 12px 0 16px',
+  brandMarkSize: 36,
+  brandMarkFlex: '0 0 36px',
+  brandMarkRadius: radius[12],
+  brandArchTop: 6,
+  brandArchWidth: 14,
+  brandArchHeight: 7,
+  brandArchRadius: '999px 999px 0 0',
+  brandStemTop: 9,
+  brandStemWidth: 2,
+  brandStemHeight: 13,
+  brandStemRadius: radius.pill,
+  brandDotBottom: 6,
+  brandDotSize: 5,
+  brandDotRadius: radius.pill,
+  labelFontSize: '13px',
+  labelFontWeight: 600,
+  labelLineHeight: 1.2,
+  highlightedSurface: 'rgba(239, 246, 255, 0.92)',
+  inactiveTone: '#A1AEC1',
+}
+
+const navigationRailChrome = {
+  activeIndicatorShadow: '0 0 0 1px rgba(37, 99, 235, 0.04)',
 }
 
 export function getNavigationHeaderBandStyle(isExpanded) {
@@ -48,17 +78,17 @@ function getNavButtonStyle(isExpanded, isActive, isHovered) {
 
   return {
     position: 'relative',
-    width: isExpanded ? '100%' : '36px',
-    height: '40px',
+    width: isExpanded ? '100%' : navigationRailMetrics.collapsedWidth,
+    height: navigationRailMetrics.rowHeight,
     border: 'none',
     borderRadius: radius[12],
-    background: isHighlighted ? 'rgba(239, 246, 255, 0.92)' : 'transparent',
-    color: isHighlighted ? colors.accentStrong : '#A1AEC1',
+    background: isHighlighted ? navigationRailMetrics.highlightedSurface : 'transparent',
+    color: isHighlighted ? colors.accentStrong : navigationRailMetrics.inactiveTone,
     display: 'flex',
     alignItems: 'center',
     justifyContent: isExpanded ? 'flex-start' : 'center',
     gap: isExpanded ? spacing[12] : 0,
-    padding: isExpanded ? '0 12px 0 16px' : '0',
+    padding: isExpanded ? navigationRailMetrics.expandedPadding : '0',
     margin: isExpanded ? '0' : '0 auto',
     cursor: 'pointer',
     textAlign: 'left',
@@ -71,54 +101,51 @@ function NavigationRailBrandMark() {
     <div
       aria-hidden="true"
       style={{
+        ...getIdentityBadgeStyle({
+          size: navigationRailMetrics.brandMarkSize,
+          radiusValue: navigationRailMetrics.brandMarkRadius,
+          shadowValue: identityBadgeChrome.railSurfaceShadow,
+          flexValue: navigationRailMetrics.brandMarkFlex,
+        }),
         position: 'relative',
-        width: 36,
-        height: 36,
-        flex: '0 0 36px',
-        overflow: 'hidden',
-        borderRadius: 12,
-        border: '1px solid rgba(191, 219, 254, 0.96)',
-        background: 'linear-gradient(180deg, rgba(239, 246, 255, 0.98) 0%, rgba(219, 234, 254, 0.98) 100%)',
-        color: colors.accentBase,
-        boxShadow: '0 12px 24px rgba(37, 99, 235, 0.1), inset 0 1px 0 rgba(255,255,255,0.9)',
       }}
     >
       <span
         style={{
           position: 'absolute',
-          top: 6,
+          top: navigationRailMetrics.brandArchTop,
           left: '50%',
-          width: 14,
-          height: 7,
+          width: navigationRailMetrics.brandArchWidth,
+          height: navigationRailMetrics.brandArchHeight,
           border: '2px solid currentColor',
           borderBottom: 'none',
-          borderRadius: '999px 999px 0 0',
+          borderRadius: navigationRailMetrics.brandArchRadius,
           transform: 'translateX(-50%)',
         }}
       />
       <span
         style={{
           position: 'absolute',
-          top: 9,
+          top: navigationRailMetrics.brandStemTop,
           left: '50%',
-          width: 2,
-          height: 13,
+          width: navigationRailMetrics.brandStemWidth,
+          height: navigationRailMetrics.brandStemHeight,
           background: 'currentColor',
-          borderRadius: 999,
+          borderRadius: navigationRailMetrics.brandStemRadius,
           transform: 'translateX(-50%)',
         }}
       />
       <span
         style={{
           position: 'absolute',
-          bottom: 6,
+          bottom: navigationRailMetrics.brandDotBottom,
           left: '50%',
-          width: 5,
-          height: 5,
-          borderRadius: 999,
+          width: navigationRailMetrics.brandDotSize,
+          height: navigationRailMetrics.brandDotSize,
+          borderRadius: navigationRailMetrics.brandDotRadius,
           background: 'currentColor',
           transform: 'translateX(-50%)',
-          boxShadow: '8px 0 0 rgba(37, 99, 235, 0.24)',
+          boxShadow: identityBadgeChrome.railDotShadow,
         }}
       />
     </div>
@@ -194,7 +221,7 @@ export function NavigationRailItems({ shell }) {
                   width: '4px',
                   borderRadius: shell.isNavExpanded ? '0 999px 999px 0' : '999px',
                   background: colors.accentBase,
-                  boxShadow: '0 0 0 1px rgba(37, 99, 235, 0.04)',
+                  boxShadow: navigationRailChrome.activeIndicatorShadow,
                 }}
               />
             ) : null}
@@ -207,9 +234,9 @@ export function NavigationRailItems({ shell }) {
                 display: 'block',
                 flex: shell.isNavExpanded ? '1 1 auto' : '0 0 0px',
                 minWidth: 0,
-                fontSize: '13px',
-                fontWeight: 600,
-                lineHeight: 1.2,
+                fontSize: navigationRailMetrics.labelFontSize,
+                fontWeight: navigationRailMetrics.labelFontWeight,
+                lineHeight: navigationRailMetrics.labelLineHeight,
                 color: 'inherit',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',

@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-04-03T12:00:00.000Z",
+  "status": "ready",
+  "screens": [
+    {
+      "screenId": "segmentationPasteNext",
+      "route": "#v2/segmentationPasteNext",
+      "generatedAt": "2026-04-03T12:00:00.000Z",
+      "status": "fail",
+      "failingGateCount": 2,
+      "failingGates": [
+        "desktop-standard overlap check",
+        "viewport-stress high-zoom ordered gutter yield"
+      ],
+      "reportPath": "/v2-audit/runtime/segmentationPasteNext.json",
+      "viewportCount": 1,
+      "viewportStressCount": 1,
+      "stressLabel": "viewport-stress",
+      "stressMode": "css-zoom-approximation",
+      "screenshotCount": 2
+    },
+    {
+      "screenId": "qualityDashboard",
+      "route": "#v2/qualityDashboard",
+      "generatedAt": "2026-04-03T12:00:00.000Z",
+      "status": "pass",
+      "failingGateCount": 0,
+      "failingGates": [],
+      "reportPath": "/v2-audit/runtime/qualityDashboard.json",
+      "viewportCount": 1,
+      "viewportStressCount": 0,
+      "stressLabel": "viewport-stress",
+      "stressMode": "css-zoom-approximation",
+      "screenshotCount": 1
+    }
+  ],
+  "findingCount": 2
+}

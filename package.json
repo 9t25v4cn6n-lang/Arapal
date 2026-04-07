@@ -8,7 +8,16 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "snapshots": "playwright test tests/ui-snapshots.spec.js"
+    "snapshots": "playwright test tests/ui-snapshots.spec.js",
+    "qa:screen": "node scripts/run-v2-screen-qa.mjs",
+    "audit:static": "node --experimental-strip-types scripts/run-v2-static-audit.mjs",
+    "audit:suite": "npm run audit:static && node --experimental-strip-types scripts/run-v2-audit-suite.mjs",
+    "test:audit:static": "node --experimental-strip-types --test tests/audit/static-doctrine.test.mjs",
+    "test:audit:runtime": "node --experimental-strip-types --test tests/audit/runtime-qa-normalization.test.mjs",
+    "test:audit:architecture": "node --experimental-strip-types --test tests/audit/architecture-lane.test.mjs",
+    "test:audit:dead-code": "node --experimental-strip-types --test tests/audit/dead-code-lane.test.mjs",
+    "test:audit:duplication": "node --experimental-strip-types --test tests/audit/duplication-lane.test.mjs",
+    "test:audit:suite": "node --experimental-strip-types --test tests/audit/audit-suite-phase7.test.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.577.0",
@@ -16,6 +25,9 @@
     "react-dom": "^19.2.4"
   },
   "devDependencies": {
+    "@babel/parser": "^7.28.5",
+    "@babel/traverse": "^7.28.5",
+    "@babel/types": "^7.28.5",
     "@eslint/js": "^9.39.4",
     "@playwright/test": "^1.58.2",
     "@types/react": "^19.2.14",

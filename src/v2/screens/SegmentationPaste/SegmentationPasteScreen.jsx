@@ -1,12 +1,16 @@
 import {
   ArrowDown,
-  Check,
   ChevronUp,
   Edit3,
   Sparkles,
 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import BackPill from '../../foundation/primitives/BackPill'
+import SegmentationOptionsPopover, {
+  segmentationGranularityOptions as granularityOptions,
+  segmentationMethodOptions as methodOptions,
+  segmentationStyleOptions as styleOptions,
+} from '../../foundation/primitives/SegmentationOptionsPopover'
 import SourceIntakeBrand from '../../foundation/primitives/SourceIntakeBrand'
 import StepBar from '../../foundation/primitives/StepBar'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
@@ -287,206 +291,12 @@ const segmentationPasteStyles = `
     transform: scale(1.08);
   }
 
-  @keyframes v2-seg-paste-fade-up {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .v2-seg-paste__splitMenu {
-    position: absolute;
-    right: 0;
-    bottom: 24px;
-    width: 320px;
-    padding: 14px;
-    border: 1px solid rgba(191, 219, 254, 0.88);
-    border-radius: 24px;
-    background:
-      radial-gradient(circle at top left, rgba(239, 246, 255, 0.9) 0%, rgba(239, 246, 255, 0) 48%),
-      radial-gradient(circle at bottom right, rgba(219, 234, 254, 0.52) 0%, rgba(219, 234, 254, 0) 46%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0%, rgba(248, 251, 255, 0.94) 100%);
-    backdrop-filter: blur(18px) saturate(1.08);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.72),
-      0 32px 64px rgba(15, 23, 42, 0.16);
-    z-index: 80;
-    animation: v2-seg-paste-fade-up 0.2s ease both;
-  }
-
-  .v2-seg-paste__splitMenuSection + .v2-seg-paste__splitMenuSection {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid rgba(226, 232, 240, 0.9);
-  }
-
-  .v2-seg-paste__splitMenuLabel {
-    margin: 0 0 8px;
-    font-size: 10px;
-    line-height: 1;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: ${colors.textFaint};
-  }
-
-  .v2-seg-paste__splitMenuOption {
-    width: 100%;
-    min-height: 48px;
-    padding: 0 14px;
-    border: 1px solid transparent;
-    border-radius: 16px;
-    background: transparent;
-    color: ${colors.textBody};
-    display: inline-flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    cursor: pointer;
-    transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
-    text-align: left;
-  }
-
-  .v2-seg-paste__splitMenuOption:hover {
-    transform: translateY(-1px);
-    border-color: rgba(191, 219, 254, 0.88);
-    background: rgba(239, 246, 255, 0.74);
-  }
-
-  .v2-seg-paste__splitMenuOption.is-selected {
-    border-color: rgba(147, 197, 253, 0.92);
-    background: rgba(239, 246, 255, 0.86);
-    color: ${colors.accentStrong};
-  }
-
-  .v2-seg-paste__splitMenuOptionText {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-width: 0;
-    font-size: 13px;
-    line-height: 1.4;
-  }
-
-  .v2-seg-paste__splitMenuOptionText.is-stacked {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 3px;
-  }
-
-  .v2-seg-paste__splitMenuOptionTitle {
-    color: ${colors.textStrong};
-    font-size: 13px;
-    line-height: 1.2;
-  }
-
-  .v2-seg-paste__splitMenuOptionMeta {
-    color: ${colors.textSoft};
-    font-size: 12px;
-    line-height: 1.4;
-  }
-
-  .v2-seg-paste__splitMenuToggle {
-    width: 100%;
-    min-height: 48px;
-    padding: 0 14px;
-    border: 1px solid transparent;
-    border-radius: 16px;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    cursor: pointer;
-    transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
-    text-align: left;
-  }
-
-  .v2-seg-paste__splitMenuToggle:hover {
-    transform: translateY(-1px);
-    border-color: rgba(191, 219, 254, 0.88);
-    background: rgba(239, 246, 255, 0.74);
-  }
-
-  .v2-seg-paste__splitMenuToggleText {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-    text-align: left;
-    min-width: 0;
-  }
-
-  .v2-seg-paste__splitMenuToggleTitle {
-    font-size: 13px;
-    line-height: 1.2;
-    color: ${colors.textStrong};
-  }
-
-  .v2-seg-paste__splitMenuToggleMeta {
-    color: ${colors.textSoft};
-    font-size: 12px;
-    line-height: 1.4;
-  }
-
-  .v2-seg-paste__miniSwitch {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    width: 34px;
-    height: 20px;
-    border-radius: 999px;
-    background: rgba(148, 163, 184, 0.28);
-    transition: background-color 0.2s ease;
-    flex-shrink: 0;
-  }
-
-  .v2-seg-paste__miniSwitch.is-active {
-    background: rgba(37, 99, 235, 0.86);
-  }
-
-  .v2-seg-paste__miniSwitchThumb {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 16px;
-    height: 16px;
-    border-radius: 999px;
-    background: #ffffff;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.16);
-    transition: transform 0.2s ease;
-  }
-
-  .v2-seg-paste__miniSwitch.is-active .v2-seg-paste__miniSwitchThumb {
-    transform: translateX(14px);
-  }
 `
 
 const workspaceSteps = [
   { id: 'paste', label: 'Source' },
   { id: 'segment', label: 'Segment' },
   { id: 'review', label: 'Review' },
-]
-
-const methodOptions = [
-  { id: 'ai', label: 'AI proposal', icon: Sparkles },
-  { id: 'manual', label: 'Manual start', icon: Edit3 },
-]
-
-const styleOptions = [
-  { id: 'sentence', label: 'Sentence', meta: 'Split close to sentence boundaries' },
-  { id: 'meaning', label: 'Meaning groups', meta: 'Keep small ideas together' },
-  { id: 'topic', label: 'Topic-led', meta: 'Group around sub-topic shifts' },
-]
-
-const granularityOptions = [
-  { id: 'tight', label: 'Tighter', meta: 'Smaller, more frequent segments' },
-  { id: 'balanced', label: 'Balanced', meta: 'Default balance for most texts' },
-  { id: 'broad', label: 'Broader', meta: 'Fewer, larger sections' },
 ]
 
 function SourceMarker() {
@@ -521,52 +331,6 @@ function WindowButtons() {
       <span style={{ width: '8px', height: '8px', borderRadius: radius.pill, background: 'rgba(0, 0, 0, 0.08)' }} />
       <span style={{ width: '18px', height: '8px', borderRadius: radius.pill, background: 'rgba(0, 0, 0, 0.08)' }} />
     </div>
-  )
-}
-
-function SplitMenuSection({ label, children }) {
-  return (
-    <div className="v2-seg-paste__splitMenuSection">
-      <p className="v2-seg-paste__splitMenuLabel">{label}</p>
-      <div style={{ display: 'grid', gap: spacing[8] }}>{children}</div>
-    </div>
-  )
-}
-
-function SplitMenuOption({ active = false, icon: Icon, label, meta, stacked = false, onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cx('v2-seg-paste__splitMenuOption', active && 'is-selected')}
-    >
-      <span className={cx('v2-seg-paste__splitMenuOptionText', stacked && 'is-stacked')}>
-        {Icon ? <Icon size={15} strokeWidth={1.9} /> : null}
-        {meta ? (
-          <span className="v2-seg-paste__splitMenuOptionText is-stacked">
-            <span className="v2-seg-paste__splitMenuOptionTitle">{label}</span>
-            <span className="v2-seg-paste__splitMenuOptionMeta">{meta}</span>
-          </span>
-        ) : (
-          <span className="v2-seg-paste__splitMenuOptionTitle">{label}</span>
-        )}
-      </span>
-      {active ? <Check size={15} strokeWidth={1.9} /> : null}
-    </button>
-  )
-}
-
-function SplitMenuToggle({ active = false, title, meta, onClick }) {
-  return (
-    <button type="button" className="v2-seg-paste__splitMenuToggle" onClick={onClick}>
-      <span className="v2-seg-paste__splitMenuToggleText">
-        <span className="v2-seg-paste__splitMenuToggleTitle">{title}</span>
-        <span className="v2-seg-paste__splitMenuToggleMeta">{meta}</span>
-      </span>
-      <span className={cx('v2-seg-paste__miniSwitch', active && 'is-active')}>
-        <span className="v2-seg-paste__miniSwitchThumb" />
-      </span>
-    </button>
   )
 }
 
@@ -709,7 +473,7 @@ export default function SegmentationPasteScreen({ route, shell }) {
         <div
           style={{
             minHeight: '28px',
-            padding: `0 ${spacing[12]}`,
+            padding: `0 ${spacing[12]}px`,
             borderRadius: radius.pill,
             border: '1px solid rgba(37, 99, 235, 0.14)',
             background: 'rgba(239, 246, 255, 0.9)',
@@ -859,66 +623,35 @@ export default function SegmentationPasteScreen({ route, shell }) {
         </button>
 
         {isMenuOpen ? (
-          <div
-            role="menu"
-            aria-label="Segmentation options"
+          <SegmentationOptionsPopover
             ref={splitMenuRef}
-            className="v2-seg-paste__splitMenu"
-          >
-            <SplitMenuSection label="Method">
-              {methodOptions.map((option) => (
-                <SplitMenuOption
-                  key={option.id}
-                  active={method === option.id}
-                  icon={option.icon}
-                  label={option.label}
-                  onClick={() => setMethod(option.id)}
-                />
-              ))}
-            </SplitMenuSection>
-
-            <SplitMenuSection label="Segmentation style">
-              {styleOptions.map((option) => (
-                <SplitMenuOption
-                  key={option.id}
-                  active={style === option.id}
-                  label={option.label}
-                  meta={option.meta}
-                  stacked
-                  onClick={() => setStyle(option.id)}
-                />
-              ))}
-            </SplitMenuSection>
-
-            <SplitMenuSection label="Granularity">
-              {granularityOptions.map((option) => (
-                <SplitMenuOption
-                  key={option.id}
-                  active={granularity === option.id}
-                  label={option.label}
-                  meta={option.meta}
-                  stacked
-                  onClick={() => setGranularity(option.id)}
-                />
-              ))}
-            </SplitMenuSection>
-
-            <SplitMenuSection label="Preferences">
-              <SplitMenuToggle
-                active={quickMode}
-                title="Quick mode"
-                meta={quickMode ? 'Go straight to Segments Ready after the AI pass' : 'Open review first before showing Segments Ready'}
-                onClick={() => setQuickMode((current) => !current)}
-              />
-
-              <SplitMenuToggle
-                active={showSegmentationTransition}
-                title="Show segmentation animation"
-                meta="Let the text split visually before study"
-                onClick={() => setShowSegmentationTransition((current) => !current)}
-              />
-            </SplitMenuSection>
-          </div>
+            role="menu"
+            ariaLabel="Segmentation options"
+            containerStyle={{
+              position: 'absolute',
+              right: 0,
+              bottom: 24,
+              animation: 'v2-seg-paste-fade-up 0.2s ease both',
+            }}
+            methodOptions={methodOptions}
+            method={method}
+            onMethodChange={setMethod}
+            styleOptions={styleOptions}
+            selectedStyle={style}
+            onStyleChange={setStyle}
+            granularityOptions={granularityOptions}
+            granularity={granularity}
+            onGranularityChange={setGranularity}
+            quickMode={quickMode}
+            onQuickModeChange={setQuickMode}
+            quickModeMeta={
+              quickMode
+                ? 'Go straight to Segments Ready after the AI pass'
+                : 'Open review first before showing Segments Ready'
+            }
+            showSegmentationTransition={showSegmentationTransition}
+            onShowSegmentationTransitionChange={setShowSegmentationTransition}
+          />
         ) : null}
       </div>
     ),
