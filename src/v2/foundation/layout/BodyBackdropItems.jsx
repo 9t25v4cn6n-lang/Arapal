@@ -5,7 +5,7 @@ function wordStyle(position) {
     position: 'absolute',
     pointerEvents: 'none',
     fontFamily: '"Playfair Display", Georgia, serif',
-    fontSize: 'clamp(120px, 15vw, 220px)',
+    fontSize: 'clamp(116px, 14.6vw, 216px)',
     lineHeight: 0.84,
     letterSpacing: '-0.08em',
     color: 'rgba(37, 99, 235, 0.04)',

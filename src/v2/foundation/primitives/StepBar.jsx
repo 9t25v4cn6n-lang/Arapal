@@ -1,5 +1,30 @@
 import { colors, radius, spacing, typography } from '../tokens'
 
+export function StepNumberBadge({ children, background, color, style = {} }) {
+  return (
+    <div
+      style={{
+        width: '24px',
+        height: '24px',
+        borderRadius: radius.pill,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontFamily: typography.eyebrowLabel.fontFamily,
+        fontSize: '10px',
+        fontWeight: 700,
+        lineHeight: typography.eyebrowLabel.lineHeight,
+        letterSpacing: '0.01em',
+        background,
+        color,
+        ...style,
+      }}
+    >
+      {children}
+    </div>
+  )
+}
+
 export default function StepBar({ steps = [], currentIndex = 0, debugItem }) {
   return (
     <div
@@ -17,28 +42,18 @@ export default function StepBar({ steps = [], currentIndex = 0, debugItem }) {
 
         return (
           <div key={item.id ?? item.label ?? index} style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[8] }}>
-            <div
-              style={{
-                width: '24px',
-                height: '24px',
-                borderRadius: radius.pill,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontFamily: typography.eyebrowLabel.fontFamily,
-                fontSize: typography.eyebrowLabel.fontSize,
-                lineHeight: typography.eyebrowLabel.lineHeight,
-                background:
-                  state === 'current'
-                    ? colors.accentBase
-                    : state === 'complete'
-                      ? 'rgba(37, 99, 235, 0.18)'
-                      : 'rgba(148, 163, 184, 0.14)',
-                color: state === 'pending' ? colors.textFaint : '#ffffff',
-              }}
+            <StepNumberBadge
+              background={
+                state === 'current'
+                  ? colors.accentBase
+                  : state === 'complete'
+                    ? 'rgba(37, 99, 235, 0.18)'
+                    : 'rgba(148, 163, 184, 0.14)'
+              }
+              color={state === 'pending' ? colors.textFaint : '#ffffff'}
             >
               {index + 1}
-            </div>
+            </StepNumberBadge>
             <span
               style={{
                 ...typography.eyebrowLabel,

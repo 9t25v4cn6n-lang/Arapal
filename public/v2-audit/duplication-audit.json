@@ -1,6 +1,6 @@
 {
   "lane": "duplication",
-  "generatedAt": "2026-04-07T17:33:36.746Z",
+  "generatedAt": "2026-04-25T21:06:41.514Z",
   "findings": [
     {
       "id": "duplication:76e4935edcc9",
@@ -46,11 +46,59 @@
       ],
       "fingerprint": "76e4935edcc95a280033b1d8ff423a68706868a9",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.746Z",
+      "lastSeenAt": "2026-04-25T21:06:41.514Z",
       "status": "current"
     },
     {
-      "id": "duplication:2af6d8c411d1",
+      "id": "duplication:9ad35be78eb9",
+      "lane": "duplication",
+      "ruleId": "repeated-contract-fragment",
+      "title": "Repeated contract fragment",
+      "category": "duplication-hygiene",
+      "subcategory": "contract-fragment",
+      "severity": "info",
+      "confidence": "high",
+      "classification": "doctrine-decision-needed",
+      "file": "/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.contract.ts",
+      "line": 19,
+      "column": 5,
+      "screenId": null,
+      "fileKind": "screen-contract",
+      "scope": "live-product",
+      "ownerLayer": "contract-layer",
+      "message": "3 files repeat the same 3-occurrence pattern.",
+      "rationale": "When the same container fragment is copied across multiple contracts, it usually wants a shared contract helper or a more explicit generic container role.",
+      "evidence": {
+        "excerpt": "{ name: 'Layer2_Body_Backdrop', layer: 'Layer2', parent: 'Layer1_Body_ScreenBodyField', display: 'flex', layoutMode: 'flex', flexDirection: 'column', alignItems: 'stretch', justifyContent: 'stretch', padding: '0', gap: '0', overflow: 'hidden', textAlign: 'left', style: { gridColumn: '1', gridRow: '1', minWidth: 0, minHeight: 0, position: 'relative', pointerEvents: 'none', }, }",
+        "details": [
+          "quality=candidate-extraction",
+          "files=3",
+          "occurrences=3",
+          "distinctSignatures=1",
+          "file=/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.contract.ts",
+          "file=/src/v2/screens/SegmentationReview/SegmentationReviewScreen.contract.ts",
+          "file=/src/v2/screens/StudyWorkspace/StudyWorkspaceScreen.contract.ts",
+          "propertyNames=alignItems,display,flexDirection,gap,justifyContent,layoutMode,overflow,padding,style.gridColumn,style.gridRow,style.minHeight,style.minWidth,style.pointerEvents,style.position,textAlign"
+        ]
+      },
+      "suggestedFix": "Extract the repeated contract fragment into a shared helper or promote the structural role into an existing generic contract helper.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "duplication",
+        "repeated-contract-fragment",
+        "candidate-extraction",
+        "product"
+      ],
+      "fingerprint": "9ad35be78eb902e3972430861e7a539325c3b5cd",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-25T21:06:41.514Z",
+      "status": "current"
+    },
+    {
+      "id": "duplication:f62de5cd317b",
       "lane": "duplication",
       "ruleId": "shared-primitive-variant-drift",
       "title": "Shared primitive variant drift",
@@ -59,9 +107,9 @@
       "severity": "info",
       "confidence": "low",
       "classification": "low-confidence-review",
-      "file": "/src/v2/foundation/primitives/BackPill.jsx",
-      "line": 115,
-      "column": 18,
+      "file": "/src/v2/foundation/primitives/EditorSurface.jsx",
+      "line": 309,
+      "column": 24,
       "screenId": null,
       "fileKind": "shared-primitive",
       "scope": "shared-product-foundation",
@@ -69,15 +117,159 @@
       "message": "2 shared foundation files use the same style family with 2 bespoke literal bundles.",
       "rationale": "Shared foundation files should not solve the same presentational problem with slightly different bespoke bundles unless that variation is intentionally named.",
       "evidence": {
-        "excerpt": "{ width: backPillMetrics.iconOrbSize, height: backPillMetrics.iconOrbSize, borderRadius: radius.pill, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: showElevatedChrome ? backPillChrome.iconOrbSurfaceElevated : backPillChrome.iconOrbSurface, border: showElevatedChrome ? backPillChrome.iconOrbBorderElevated : backPillChrome.iconOrbBorder, boxShadow: backPillChrome.iconOrbShadow, color: colors.accentStrong, transition: backPillMotion.orbTransition, }",
+        "excerpt": "{ minHeight: editorSurfaceMetrics.headerBadgeHeight, padding: editorSurfaceMetrics.headerBadgeInlineInset, borderRadius: radius.pill, border: editorSurfaceChrome.headerBadgeOutline, background: editorSurfaceChrome.headerBadgeSurface, color: editorSurfaceChrome.headerBadgeTone, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontFamily: typography.eyebrowLabel.fontFamily, fontSize: typography.eyebrowLabel.fontSize, lineHeight: typography.eyebrowLabel.lineHeight, letterSpacing: typography.eyebrowLabel.letterSpacing, textTransform: typography.eyebrowLabel.textTransform, boxShadow: editorSurfaceChrome.headerBadgeHighlight, flexShrink: 0, }",
         "details": [
           "quality=harmless-repetition",
           "files=2",
           "occurrences=2",
           "distinctSignatures=2",
-          "file=/src/v2/foundation/primitives/BackPill.jsx",
-          "file=/src/v2/foundation/primitives/identityBadgePresets.js",
+          "file=/src/v2/foundation/primitives/EditorSurface.jsx",
+          "file=/src/v2/foundation/primitives/SegmentationFlowPrimitives.jsx",
           "distinctBundleCount=2",
+          "family=background|border|borderRadius|boxShadow|color|minHeight|padding"
+        ]
+      },
+      "suggestedFix": "Either promote the family into a named shared variant or collapse the slightly different bundles into one documented preset.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "duplication",
+        "shared-primitive-variant-drift",
+        "harmless-repetition",
+        "product"
+      ],
+      "fingerprint": "f62de5cd317b019dd0be471b0b3d239861cf9030",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-25T21:06:41.514Z",
+      "status": "current"
+    },
+    {
+      "id": "duplication:04a460990edb",
+      "lane": "duplication",
+      "ruleId": "shared-primitive-variant-drift",
+      "title": "Shared primitive variant drift",
+      "category": "duplication-hygiene",
+      "subcategory": "variant-drift",
+      "severity": "info",
+      "confidence": "low",
+      "classification": "low-confidence-review",
+      "file": "/src/v2/foundation/primitives/IconActionButton.jsx",
+      "line": 47,
+      "column": 14,
+      "screenId": null,
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "message": "2 shared foundation files use the same style family with 2 bespoke literal bundles.",
+      "rationale": "Shared foundation files should not solve the same presentational problem with slightly different bespoke bundles unless that variation is intentionally named.",
+      "evidence": {
+        "excerpt": "{ width: `${resolvedSize}px`, height: `${resolvedSize}px`, border: `1px solid ${isHighlighted ? colors.accentMist : 'transparent'}`, borderRadius: radius[12], background: isHighlighted ? colors.accentWash : 'transparent', color: isHighlighted ? colors.accentStrong : colors.textFaint, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: [ `background-color ${motion.micro}`, `border-color ${motion.micro}`, `color ${motion.micro}`, `box-shadow ${motion.micro}`, ].join(', '), ...style, }",
+        "details": [
+          "quality=harmless-repetition",
+          "files=2",
+          "occurrences=2",
+          "distinctSignatures=2",
+          "file=/src/v2/foundation/primitives/IconActionButton.jsx",
+          "file=/src/v2/foundation/primitives/SegmentationFlowPrimitives.jsx",
+          "distinctBundleCount=2",
+          "family=background|border|borderRadius|color|height|width"
+        ]
+      },
+      "suggestedFix": "Either promote the family into a named shared variant or collapse the slightly different bundles into one documented preset.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "duplication",
+        "shared-primitive-variant-drift",
+        "harmless-repetition",
+        "product"
+      ],
+      "fingerprint": "04a460990edb8e8c42c5737e9b3c41e30fcdf218",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-25T21:06:41.514Z",
+      "status": "current"
+    },
+    {
+      "id": "duplication:8f720bea5a55",
+      "lane": "duplication",
+      "ruleId": "shared-primitive-variant-drift",
+      "title": "Shared primitive variant drift",
+      "category": "duplication-hygiene",
+      "subcategory": "variant-drift",
+      "severity": "info",
+      "confidence": "low",
+      "classification": "low-confidence-review",
+      "file": "/src/v2/foundation/primitives/ScreenScaffoldPlaceholder.jsx",
+      "line": 5,
+      "column": 23,
+      "screenId": null,
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "message": "2 shared foundation files use the same style family with 2 bespoke literal bundles.",
+      "rationale": "Shared foundation files should not solve the same presentational problem with slightly different bespoke bundles unless that variation is intentionally named.",
+      "evidence": {
+        "excerpt": "{ width: 'min(720px, 100%)', alignSelf: 'center', padding: spacing[32], border: `1px solid ${colors.lineSoft}`, borderRadius: radius[32], background: 'rgba(255, 255, 255, 0.96)', boxShadow: elevation.rest, }",
+        "details": [
+          "quality=harmless-repetition",
+          "files=2",
+          "occurrences=2",
+          "distinctSignatures=2",
+          "file=/src/v2/foundation/primitives/ScreenScaffoldPlaceholder.jsx",
+          "file=/src/v2/foundation/primitives/SegmentationFlowPrimitives.jsx",
+          "distinctBundleCount=2",
+          "family=background|border|borderRadius|boxShadow|padding|width"
+        ]
+      },
+      "suggestedFix": "Either promote the family into a named shared variant or collapse the slightly different bundles into one documented preset.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "duplication",
+        "shared-primitive-variant-drift",
+        "harmless-repetition",
+        "product"
+      ],
+      "fingerprint": "8f720bea5a55bd4b1e5afb3318e457b1ff972882",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-25T21:06:41.514Z",
+      "status": "current"
+    },
+    {
+      "id": "duplication:139e03e40dbc",
+      "lane": "duplication",
+      "ruleId": "shared-primitive-variant-drift",
+      "title": "Shared primitive variant drift",
+      "category": "duplication-hygiene",
+      "subcategory": "variant-drift",
+      "severity": "info",
+      "confidence": "low",
+      "classification": "low-confidence-review",
+      "file": "/src/v2/foundation/primitives/identityBadgePresets.js",
+      "line": 13,
+      "column": 10,
+      "screenId": null,
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "message": "2 shared foundation files use the same style family with 3 bespoke literal bundles.",
+      "rationale": "Shared foundation files should not solve the same presentational problem with slightly different bespoke bundles unless that variation is intentionally named.",
+      "evidence": {
+        "excerpt": "{ position: 'absolute', top, right: '-11px', width: '22px', height: '22px', borderRadius: radius.pill, border: `1px solid ${flowChrome.blueLineStrong}`, background: flowChrome.whitePillSurface, color: colors.accentStrong, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxShadow: flowChrome.markerShadow, animationDelay: flowMetrics.markerPulseDelays[index] ?? flowMetrics.markerPulseDelays[0], }",
+        "details": [
+          "quality=harmless-repetition",
+          "files=2",
+          "occurrences=3",
+          "distinctSignatures=3",
+          "file=/src/v2/foundation/primitives/SegmentationFlowPrimitives.jsx",
+          "file=/src/v2/foundation/primitives/identityBadgePresets.js",
+          "distinctBundleCount=3",
           "family=background|border|borderRadius|boxShadow|color|height|width"
         ]
       },
@@ -92,9 +284,9 @@
         "harmless-repetition",
         "product"
       ],
-      "fingerprint": "2af6d8c411d1162b52fa97978eb695afde8cb7f0",
+      "fingerprint": "139e03e40dbcc5766a2fb14d49ea25061a64685f",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.746Z",
+      "lastSeenAt": "2026-04-25T21:06:41.514Z",
       "status": "current"
     }
   ],
@@ -667,6 +859,15 @@
       "usedByLiveProduct": true
     },
     {
+      "file": "/src/v2/foundation/layout/createFlowScreenLayoutContract.ts",
+      "fileKind": "shared-layout",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-layout",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
       "file": "/src/v2/foundation/layout/createLabBoardContract.ts",
       "fileKind": "lab",
       "scope": "lab",
@@ -704,6 +905,15 @@
     },
     {
       "file": "/src/v2/foundation/primitives/BackPill.jsx",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/DockableToolbar.jsx",
       "fileKind": "shared-primitive",
       "scope": "shared-product-foundation",
       "ownerLayer": "shared-primitive",
@@ -775,6 +985,15 @@
       "usedByLiveProduct": true
     },
     {
+      "file": "/src/v2/foundation/primitives/SegmentationFlowPrimitives.jsx",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
       "file": "/src/v2/foundation/primitives/SegmentationOptionsPopover.jsx",
       "fileKind": "shared-primitive",
       "scope": "shared-product-foundation",
@@ -811,6 +1030,15 @@
       "usedByLiveProduct": true
     },
     {
+      "file": "/src/v2/foundation/primitives/StudyWorkspacePrimitives.jsx",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
       "file": "/src/v2/foundation/primitives/V2ScreenFrame.jsx",
       "fileKind": "framework-adapter",
       "scope": "shared-product-foundation",
@@ -830,6 +1058,15 @@
     },
     {
       "file": "/src/v2/foundation/primitives/identityBadgePresets.js",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/segmentationFlowState.js",
       "fileKind": "shared-primitive",
       "scope": "shared-product-foundation",
       "ownerLayer": "shared-primitive",
@@ -893,6 +1130,15 @@
     },
     {
       "file": "/src/v2/foundation/tokens/radius.ts",
+      "fileKind": "token-definition",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "token-layer",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/tokens/segmentationFlow.ts",
       "fileKind": "token-definition",
       "scope": "shared-product-foundation",
       "ownerLayer": "token-layer",
@@ -1264,25 +1510,39 @@
     }
   ],
   "summary": {
-    "findingCount": 2,
-    "productFindingCount": 1,
+    "findingCount": 6,
+    "productFindingCount": 5,
     "toolingFindingCount": 1,
     "byRule": {
       "repeated-style-bundle": 1,
-      "shared-primitive-variant-drift": 1
+      "repeated-contract-fragment": 1,
+      "shared-primitive-variant-drift": 4
     },
     "byScope": {
       "lab": 1,
-      "shared-product-foundation": 1
+      "live-product": 1,
+      "shared-product-foundation": 4
     },
-    "clusterCount": 2,
+    "clusterCount": 6,
     "topFiles": [
       {
-        "file": "/src/v2/foundation/primitives/BackPill.jsx",
+        "file": "/src/v2/foundation/primitives/SegmentationFlowPrimitives.jsx",
+        "count": 4
+      },
+      {
+        "file": "/src/v2/foundation/primitives/EditorSurface.jsx",
+        "count": 1
+      },
+      {
+        "file": "/src/v2/foundation/primitives/IconActionButton.jsx",
         "count": 1
       },
       {
         "file": "/src/v2/foundation/primitives/identityBadgePresets.js",
+        "count": 1
+      },
+      {
+        "file": "/src/v2/foundation/primitives/ScreenScaffoldPlaceholder.jsx",
         "count": 1
       },
       {
@@ -1291,6 +1551,10 @@
       },
       {
         "file": "/src/v2/screens/EditorPanelsLab/EditorPanelsLabScreen.jsx",
+        "count": 1
+      },
+      {
+        "file": "/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.contract.ts",
         "count": 1
       }
     ]
@@ -1311,6 +1575,20 @@
         "representativeFile": "/src/v2/screens/ControlsLab/ControlsLabScreen.jsx"
       },
       {
+        "ruleId": "repeated-contract-fragment",
+        "scope": "live-product",
+        "quality": "candidate-extraction",
+        "fileCount": 3,
+        "occurrenceCount": 3,
+        "distinctSignatureCount": 1,
+        "files": [
+          "/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.contract.ts",
+          "/src/v2/screens/SegmentationReview/SegmentationReviewScreen.contract.ts",
+          "/src/v2/screens/StudyWorkspace/StudyWorkspaceScreen.contract.ts"
+        ],
+        "representativeFile": "/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.contract.ts"
+      },
+      {
         "ruleId": "shared-primitive-variant-drift",
         "scope": "shared-product-foundation",
         "quality": "harmless-repetition",
@@ -1318,27 +1596,79 @@
         "occurrenceCount": 2,
         "distinctSignatureCount": 2,
         "files": [
-          "/src/v2/foundation/primitives/BackPill.jsx",
+          "/src/v2/foundation/primitives/EditorSurface.jsx",
+          "/src/v2/foundation/primitives/SegmentationFlowPrimitives.jsx"
+        ],
+        "representativeFile": "/src/v2/foundation/primitives/EditorSurface.jsx"
+      },
+      {
+        "ruleId": "shared-primitive-variant-drift",
+        "scope": "shared-product-foundation",
+        "quality": "harmless-repetition",
+        "fileCount": 2,
+        "occurrenceCount": 2,
+        "distinctSignatureCount": 2,
+        "files": [
+          "/src/v2/foundation/primitives/IconActionButton.jsx",
+          "/src/v2/foundation/primitives/SegmentationFlowPrimitives.jsx"
+        ],
+        "representativeFile": "/src/v2/foundation/primitives/IconActionButton.jsx"
+      },
+      {
+        "ruleId": "shared-primitive-variant-drift",
+        "scope": "shared-product-foundation",
+        "quality": "harmless-repetition",
+        "fileCount": 2,
+        "occurrenceCount": 2,
+        "distinctSignatureCount": 2,
+        "files": [
+          "/src/v2/foundation/primitives/ScreenScaffoldPlaceholder.jsx",
+          "/src/v2/foundation/primitives/SegmentationFlowPrimitives.jsx"
+        ],
+        "representativeFile": "/src/v2/foundation/primitives/ScreenScaffoldPlaceholder.jsx"
+      },
+      {
+        "ruleId": "shared-primitive-variant-drift",
+        "scope": "shared-product-foundation",
+        "quality": "harmless-repetition",
+        "fileCount": 2,
+        "occurrenceCount": 3,
+        "distinctSignatureCount": 3,
+        "files": [
+          "/src/v2/foundation/primitives/SegmentationFlowPrimitives.jsx",
           "/src/v2/foundation/primitives/identityBadgePresets.js"
         ],
-        "representativeFile": "/src/v2/foundation/primitives/BackPill.jsx"
+        "representativeFile": "/src/v2/foundation/primitives/SegmentationFlowPrimitives.jsx"
       }
     ],
     "productVsTooling": {
-      "product": 1,
+      "product": 5,
       "tooling": 1
     },
     "byRule": {
       "repeated-style-bundle": 1,
-      "shared-primitive-variant-drift": 1
+      "repeated-contract-fragment": 1,
+      "shared-primitive-variant-drift": 4
     },
     "topRepeatedFiles": [
       {
-        "file": "/src/v2/foundation/primitives/BackPill.jsx",
+        "file": "/src/v2/foundation/primitives/SegmentationFlowPrimitives.jsx",
+        "count": 4
+      },
+      {
+        "file": "/src/v2/foundation/primitives/EditorSurface.jsx",
+        "count": 1
+      },
+      {
+        "file": "/src/v2/foundation/primitives/IconActionButton.jsx",
         "count": 1
       },
       {
         "file": "/src/v2/foundation/primitives/identityBadgePresets.js",
+        "count": 1
+      },
+      {
+        "file": "/src/v2/foundation/primitives/ScreenScaffoldPlaceholder.jsx",
         "count": 1
       },
       {
@@ -1348,10 +1678,14 @@
       {
         "file": "/src/v2/screens/EditorPanelsLab/EditorPanelsLabScreen.jsx",
         "count": 1
+      },
+      {
+        "file": "/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.contract.ts",
+        "count": 1
       }
     ],
     "parse": {
-      "parsedFileCount": 125,
+      "parsedFileCount": 131,
       "fallbackFileCount": 0,
       "failedFileCount": 0
     }

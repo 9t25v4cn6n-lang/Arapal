@@ -1,6 +1,6 @@
 {
   "lane": "dead-code",
-  "generatedAt": "2026-04-07T17:33:36.890Z",
+  "generatedAt": "2026-04-25T21:06:41.680Z",
   "findings": [
     {
       "id": "dead-code:3b5421f61587",
@@ -41,7 +41,7 @@
       ],
       "fingerprint": "3b5421f615875fe7fedebd6a18e9658e6951d23b",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -83,7 +83,7 @@
       ],
       "fingerprint": "93966851a0d0f0dcf851394fdc63c44148bbd803",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -125,7 +125,7 @@
       ],
       "fingerprint": "902b56a0b199b6c4aa748ccb730b126848784651",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -167,7 +167,7 @@
       ],
       "fingerprint": "a145e2f6e01e1cfeb3f9a948f6a4368911556aef",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -209,7 +209,7 @@
       ],
       "fingerprint": "ab6f535d8542099acac95714481a61e35eed6f2c",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -251,7 +251,7 @@
       ],
       "fingerprint": "66c6bde21a5f4932ec8689b8cf8ed96fd8db2fad",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -293,7 +293,7 @@
       ],
       "fingerprint": "485510c772d78e33064087fac4c3e8e214fbc13f",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -335,7 +335,7 @@
       ],
       "fingerprint": "edda16cab59810422659b9a15df84563aa877469",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -377,7 +377,7 @@
       ],
       "fingerprint": "8a6aa678e4e8d5d6f9c5c97a4a6bbe72bc06227f",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -419,7 +419,7 @@
       ],
       "fingerprint": "2eb0c35714b0ca72267e3b447207332e08983b1a",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -461,7 +461,7 @@
       ],
       "fingerprint": "f364590eeadb9b2b8847d45c74c1f8e1cb7dd2e2",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -503,7 +503,7 @@
       ],
       "fingerprint": "690bdde833696a2457150c99f17afc06eca76e13",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -545,7 +545,7 @@
       ],
       "fingerprint": "246d7aaac7474d25837ed8bc4c2ba85bf220b001",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -587,7 +587,7 @@
       ],
       "fingerprint": "1bbe2fc40a5ce1bad77c45535b909c682854dbd8",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -629,7 +629,7 @@
       ],
       "fingerprint": "b55f354fad3b6ac46b33403804c83bee9e39dd65",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -671,7 +671,7 @@
       ],
       "fingerprint": "570c3b798653610f271121b3fbb61fbb6552b6e9",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -713,7 +713,7 @@
       ],
       "fingerprint": "1c9f588a4330800b3a349e46de7296dcd00d4b05",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -755,7 +755,7 @@
       ],
       "fingerprint": "5c8fa767cc0d1d0a90a1f0fdfed5931d62b2111b",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -797,7 +797,7 @@
       ],
       "fingerprint": "4ffd6a3a6ed58ac1e8bea6458fb6906360fd735e",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -839,7 +839,7 @@
       ],
       "fingerprint": "a85fb04606a4aee21f1dafe8c4a1f8c8c40cf0de",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -881,7 +881,7 @@
       ],
       "fingerprint": "8c7644d42415ce37326612b98bfdab810d474f2f",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -923,7 +923,7 @@
       ],
       "fingerprint": "2c9067c7514b00f5f824ace5410cbce62eae6222",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -965,7 +965,7 @@
       ],
       "fingerprint": "ef197a39eb5ef68949e1408727db8d3858a759a0",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -1007,7 +1007,7 @@
       ],
       "fingerprint": "d78949b28dafc21355ba3b53e2f50f8a3b604a47",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -1049,7 +1049,7 @@
       ],
       "fingerprint": "192244ca6bd7e1ba411b85614fb840eca8d65930",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -1091,7 +1091,7 @@
       ],
       "fingerprint": "5375fc6a91939e527a9636fad12b35dbc472260e",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -1133,7 +1133,7 @@
       ],
       "fingerprint": "07cbdd59a4e8eca40ca00cacbf90f757704e147e",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -1175,7 +1175,7 @@
       ],
       "fingerprint": "f2e3572be0c0d655bd84db6b252d2b6d2c508a79",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -1217,7 +1217,7 @@
       ],
       "fingerprint": "bdb87db3c9f206b1fe8c9a2b0600565c672a230f",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -1259,7 +1259,7 @@
       ],
       "fingerprint": "ff9b91902641d119602a7a586c0309c16f6b1245",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -1301,7 +1301,7 @@
       ],
       "fingerprint": "4b7abf83a4a775451159f5b4b86fd3fcf737207a",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -1343,7 +1343,7 @@
       ],
       "fingerprint": "029386a29cc64e05f5e02ade3ff5821c06936313",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -1385,7 +1385,7 @@
       ],
       "fingerprint": "99a4e9f59a3bfba27410cd25d2e53e8e098cfde2",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -1427,7 +1427,7 @@
       ],
       "fingerprint": "78dc749d43384481bfcf911641b5944cd2578689",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -1469,7 +1469,7 @@
       ],
       "fingerprint": "8ffa815d0ec7dee9b79bd90dad44a6c0e3b555d8",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -1511,7 +1511,175 @@
       ],
       "fingerprint": "7a146be39b84d76812152ae67cef61c6d4e0f507",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:5fd1ffba09a6",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "warn",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/foundation/primitives/StudyWorkspacePrimitives.jsx",
+      "line": 1265,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "message": "Export \"StudyStatusChip\" from /src/v2/foundation/primitives/StudyWorkspacePrimitives.jsx is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "StudyStatusChip",
+        "details": [
+          "importers=1",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "shared-product-foundation",
+        "named"
+      ],
+      "fingerprint": "5fd1ffba09a628b6de4df7f27714ab1e6641665e",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:ef948f71e9b3",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "warn",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/foundation/primitives/StudyWorkspacePrimitives.jsx",
+      "line": 1308,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "message": "Export \"StudyPaneToggle\" from /src/v2/foundation/primitives/StudyWorkspacePrimitives.jsx is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "StudyPaneToggle",
+        "details": [
+          "importers=1",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "shared-product-foundation",
+        "named"
+      ],
+      "fingerprint": "ef948f71e9b3c7b2256287e65d377ddfe746ea0b",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:b478eb5b439e",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "warn",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/foundation/primitives/StudyWorkspacePrimitives.jsx",
+      "line": 1417,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "message": "Export \"StudyHeader\" from /src/v2/foundation/primitives/StudyWorkspacePrimitives.jsx is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "StudyHeader",
+        "details": [
+          "importers=1",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "shared-product-foundation",
+        "named"
+      ],
+      "fingerprint": "b478eb5b439ec7973767d09d52304f91bc78bfc5",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
+      "status": "current"
+    },
+    {
+      "id": "dead-code:4cd1900c9376",
+      "lane": "dead-code",
+      "ruleId": "unused-export",
+      "title": "Unused export candidate",
+      "category": "dead-code-hygiene",
+      "subcategory": "unused-export",
+      "severity": "warn",
+      "confidence": "high",
+      "classification": "real-code-fix",
+      "file": "/src/v2/foundation/primitives/StudyWorkspacePrimitives.jsx",
+      "line": 1555,
+      "column": 17,
+      "screenId": null,
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "message": "Export \"StudyRetryBanner\" from /src/v2/foundation/primitives/StudyWorkspacePrimitives.jsx is never imported by the audited repo graph.",
+      "rationale": "Unused exports make shared files look busier than they really are and hide real ownership.",
+      "evidence": {
+        "excerpt": "StudyRetryBanner",
+        "details": [
+          "importers=1",
+          "parseMode=ast"
+        ]
+      },
+      "suggestedFix": "Remove the unused export or move it behind a file that is explicitly meant to be standalone.",
+      "suggestedActionType": "review",
+      "autofixable": false,
+      "suppressed": false,
+      "suppressionReason": null,
+      "tags": [
+        "dead-code",
+        "unused-export",
+        "shared-product-foundation",
+        "named"
+      ],
+      "fingerprint": "4cd1900c9376bbcbfa3d08c7214ec7bdf469d32f",
+      "firstSeenAt": null,
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -1553,7 +1721,7 @@
       ],
       "fingerprint": "1fcaf8a08f419150fce8d137fd530254d5aff674",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -1595,7 +1763,7 @@
       ],
       "fingerprint": "35ea5b95b3756044b727836bdd8feee838472ea9",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -1637,7 +1805,7 @@
       ],
       "fingerprint": "aabd9fb6f9c6d0d585375fcebedb53a29a01b26c",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -1679,7 +1847,7 @@
       ],
       "fingerprint": "386e99cae9fcba0739f07de3590d10aebb278849",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -1721,7 +1889,7 @@
       ],
       "fingerprint": "8eda865d1ef34684ce727a1f6476777f2d5a8815",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -1763,7 +1931,7 @@
       ],
       "fingerprint": "130414715f82529bb845f401205acfa2e1e3cd10",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     },
     {
@@ -1805,7 +1973,7 @@
       ],
       "fingerprint": "45633c11b787a79ade66d69d72e31fff984df185",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-07T17:33:36.890Z",
+      "lastSeenAt": "2026-04-25T21:06:41.680Z",
       "status": "current"
     }
   ],
@@ -2441,6 +2609,16 @@
       "usedByLiveProduct": true
     },
     {
+      "file": "/src/v2/foundation/layout/createFlowScreenLayoutContract.ts",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/layout/createFlowScreenLayoutContract.ts",
+      "fileKind": "shared-layout",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-layout",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
       "file": "/src/v2/foundation/layout/createLabBoardContract.ts",
       "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/layout/createLabBoardContract.ts",
       "fileKind": "lab",
@@ -2483,6 +2661,16 @@
     {
       "file": "/src/v2/foundation/primitives/BackPill.jsx",
       "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/BackPill.jsx",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/DockableToolbar.jsx",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/DockableToolbar.jsx",
       "fileKind": "shared-primitive",
       "scope": "shared-product-foundation",
       "ownerLayer": "shared-primitive",
@@ -2561,6 +2749,16 @@
       "usedByLiveProduct": true
     },
     {
+      "file": "/src/v2/foundation/primitives/SegmentationFlowPrimitives.jsx",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/SegmentationFlowPrimitives.jsx",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
       "file": "/src/v2/foundation/primitives/SegmentationOptionsPopover.jsx",
       "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/SegmentationOptionsPopover.jsx",
       "fileKind": "shared-primitive",
@@ -2601,6 +2799,16 @@
       "usedByLiveProduct": true
     },
     {
+      "file": "/src/v2/foundation/primitives/StudyWorkspacePrimitives.jsx",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/StudyWorkspacePrimitives.jsx",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
       "file": "/src/v2/foundation/primitives/V2ScreenFrame.jsx",
       "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/V2ScreenFrame.jsx",
       "fileKind": "framework-adapter",
@@ -2623,6 +2831,16 @@
     {
       "file": "/src/v2/foundation/primitives/identityBadgePresets.js",
       "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/identityBadgePresets.js",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/segmentationFlowState.js",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/segmentationFlowState.js",
       "fileKind": "shared-primitive",
       "scope": "shared-product-foundation",
       "ownerLayer": "shared-primitive",
@@ -2693,6 +2911,16 @@
     {
       "file": "/src/v2/foundation/tokens/radius.ts",
       "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/tokens/radius.ts",
+      "fileKind": "token-definition",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "token-layer",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/tokens/segmentationFlow.ts",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/tokens/segmentationFlow.ts",
       "fileKind": "token-definition",
       "scope": "shared-product-foundation",
       "ownerLayer": "token-layer",
@@ -3104,17 +3332,18 @@
     }
   ],
   "summary": {
-    "findingCount": 43,
-    "productFindingCount": 0,
+    "findingCount": 47,
+    "productFindingCount": 4,
     "toolingFindingCount": 43,
     "byRule": {
       "unused-file": 3,
-      "unused-export": 40
+      "unused-export": 44
     },
     "byScope": {
       "tooling-support": 28,
       "debug": 2,
       "lab": 12,
+      "shared-product-foundation": 4,
       "dashboard": 1
     },
     "topFiles": [
@@ -3128,6 +3357,10 @@
       },
       {
         "file": "/src/v2/foundation/lab-previews/patterns.jsx",
+        "count": 4
+      },
+      {
+        "file": "/src/v2/foundation/primitives/StudyWorkspacePrimitives.jsx",
         "count": 4
       },
       {
@@ -3145,10 +3378,6 @@
       {
         "file": "/src/v2/foundation/primitives/LabBoard.jsx",
         "count": 2
-      },
-      {
-        "file": "/src/v2/app/auditRegistry.js",
-        "count": 1
       }
     ]
   },
@@ -3179,11 +3408,13 @@
           "/src/v2/foundation/layout/BodyBackdropItems.jsx",
           "/src/v2/foundation/layout/ScreenContractRenderer.jsx",
           "/src/v2/foundation/layout/bodyBackdropPresets.jsx",
+          "/src/v2/foundation/layout/createFlowScreenLayoutContract.ts",
           "/src/v2/foundation/layout/createLabBoardContract.ts",
           "/src/v2/foundation/layout/createScreenLayoutContract.ts",
           "/src/v2/foundation/layout/shellSizing.ts",
           "/src/v2/foundation/layout/universalShell.ts",
           "/src/v2/foundation/primitives/BackPill.jsx",
+          "/src/v2/foundation/primitives/DockableToolbar.jsx",
           "/src/v2/foundation/primitives/EditorSurface.jsx",
           "/src/v2/foundation/primitives/HeaderBar.jsx",
           "/src/v2/foundation/primitives/IconActionButton.jsx",
@@ -3191,13 +3422,16 @@
           "/src/v2/foundation/primitives/NavigationRail.jsx",
           "/src/v2/foundation/primitives/PrimaryCTA.jsx",
           "/src/v2/foundation/primitives/ScreenScaffoldPlaceholder.jsx",
+          "/src/v2/foundation/primitives/SegmentationFlowPrimitives.jsx",
           "/src/v2/foundation/primitives/SegmentationOptionsPopover.jsx",
           "/src/v2/foundation/primitives/SourceIntakeBrand.jsx",
           "/src/v2/foundation/primitives/SplitCTA.jsx",
           "/src/v2/foundation/primitives/StepBar.jsx",
+          "/src/v2/foundation/primitives/StudyWorkspacePrimitives.jsx",
           "/src/v2/foundation/primitives/V2ScreenFrame.jsx",
           "/src/v2/foundation/primitives/ctaChromePresets.js",
           "/src/v2/foundation/primitives/identityBadgePresets.js",
+          "/src/v2/foundation/primitives/segmentationFlowState.js",
           "/src/v2/foundation/primitives/useNavigationRailState.js",
           "/src/v2/foundation/tokens/colors.ts",
           "/src/v2/foundation/tokens/controlSizing.ts",
@@ -3205,6 +3439,7 @@
           "/src/v2/foundation/tokens/index.ts",
           "/src/v2/foundation/tokens/motion.ts",
           "/src/v2/foundation/tokens/radius.ts",
+          "/src/v2/foundation/tokens/segmentationFlow.ts",
           "/src/v2/foundation/tokens/spacing.ts",
           "/src/v2/foundation/tokens/surfacePadding.ts",
           "/src/v2/foundation/tokens/typography.ts",
@@ -3317,6 +3552,7 @@
           "/src/v2/foundation/tokens/index.ts",
           "/src/v2/foundation/tokens/motion.ts",
           "/src/v2/foundation/tokens/radius.ts",
+          "/src/v2/foundation/tokens/segmentationFlow.ts",
           "/src/v2/foundation/tokens/spacing.ts",
           "/src/v2/foundation/tokens/surfacePadding.ts",
           "/src/v2/foundation/tokens/typography.ts",
@@ -3385,11 +3621,13 @@
           "/src/v2/foundation/layout/BodyBackdropItems.jsx",
           "/src/v2/foundation/layout/ScreenContractRenderer.jsx",
           "/src/v2/foundation/layout/bodyBackdropPresets.jsx",
+          "/src/v2/foundation/layout/createFlowScreenLayoutContract.ts",
           "/src/v2/foundation/layout/createLabBoardContract.ts",
           "/src/v2/foundation/layout/createScreenLayoutContract.ts",
           "/src/v2/foundation/layout/shellSizing.ts",
           "/src/v2/foundation/layout/universalShell.ts",
           "/src/v2/foundation/primitives/BackPill.jsx",
+          "/src/v2/foundation/primitives/DockableToolbar.jsx",
           "/src/v2/foundation/primitives/EditorSurface.jsx",
           "/src/v2/foundation/primitives/HeaderBar.jsx",
           "/src/v2/foundation/primitives/IconActionButton.jsx",
@@ -3397,13 +3635,16 @@
           "/src/v2/foundation/primitives/NavigationRail.jsx",
           "/src/v2/foundation/primitives/PrimaryCTA.jsx",
           "/src/v2/foundation/primitives/ScreenScaffoldPlaceholder.jsx",
+          "/src/v2/foundation/primitives/SegmentationFlowPrimitives.jsx",
           "/src/v2/foundation/primitives/SegmentationOptionsPopover.jsx",
           "/src/v2/foundation/primitives/SourceIntakeBrand.jsx",
           "/src/v2/foundation/primitives/SplitCTA.jsx",
           "/src/v2/foundation/primitives/StepBar.jsx",
+          "/src/v2/foundation/primitives/StudyWorkspacePrimitives.jsx",
           "/src/v2/foundation/primitives/V2ScreenFrame.jsx",
           "/src/v2/foundation/primitives/ctaChromePresets.js",
           "/src/v2/foundation/primitives/identityBadgePresets.js",
+          "/src/v2/foundation/primitives/segmentationFlowState.js",
           "/src/v2/foundation/primitives/useNavigationRailState.js",
           "/src/v2/foundation/tokens/colors.ts",
           "/src/v2/foundation/tokens/controlSizing.ts",
@@ -3411,6 +3652,7 @@
           "/src/v2/foundation/tokens/index.ts",
           "/src/v2/foundation/tokens/motion.ts",
           "/src/v2/foundation/tokens/radius.ts",
+          "/src/v2/foundation/tokens/segmentationFlow.ts",
           "/src/v2/foundation/tokens/spacing.ts",
           "/src/v2/foundation/tokens/surfacePadding.ts",
           "/src/v2/foundation/tokens/typography.ts",
@@ -3457,19 +3699,19 @@
       "resolutionMode": "relative-import-only",
       "unresolvedImportCount": 0,
       "unresolvedImports": [],
-      "parsedFileCount": 129,
+      "parsedFileCount": 135,
       "fallbackFileCount": 0,
       "failedFileCount": 0
     },
     "staleSuppressions": [],
     "staleConfig": [],
     "productVsTooling": {
-      "product": 0,
+      "product": 4,
       "tooling": 43
     },
     "byRule": {
       "unused-file": 3,
-      "unused-export": 40
+      "unused-export": 44
     },
     "topCandidateFiles": [
       {
@@ -3482,6 +3724,10 @@
       },
       {
         "file": "/src/v2/foundation/lab-previews/patterns.jsx",
+        "count": 4
+      },
+      {
+        "file": "/src/v2/foundation/primitives/StudyWorkspacePrimitives.jsx",
         "count": 4
       },
       {
@@ -3499,10 +3745,6 @@
       {
         "file": "/src/v2/foundation/primitives/LabBoard.jsx",
         "count": 2
-      },
-      {
-        "file": "/src/v2/app/auditRegistry.js",
-        "count": 1
       }
     ]
   },

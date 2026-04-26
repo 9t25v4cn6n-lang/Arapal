@@ -631,6 +631,16 @@
       "usedByLiveProduct": true
     },
     {
+      "file": "/src/v2/foundation/layout/createFlowScreenLayoutContract.ts",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/layout/createFlowScreenLayoutContract.ts",
+      "fileKind": "shared-layout",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-layout",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
       "file": "/src/v2/foundation/layout/createLabBoardContract.ts",
       "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/layout/createLabBoardContract.ts",
       "fileKind": "lab",
@@ -673,6 +683,16 @@
     {
       "file": "/src/v2/foundation/primitives/BackPill.jsx",
       "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/BackPill.jsx",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/DockableToolbar.jsx",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/DockableToolbar.jsx",
       "fileKind": "shared-primitive",
       "scope": "shared-product-foundation",
       "ownerLayer": "shared-primitive",
@@ -751,6 +771,16 @@
       "usedByLiveProduct": true
     },
     {
+      "file": "/src/v2/foundation/primitives/SegmentationFlowPrimitives.jsx",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/SegmentationFlowPrimitives.jsx",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
       "file": "/src/v2/foundation/primitives/SegmentationOptionsPopover.jsx",
       "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/SegmentationOptionsPopover.jsx",
       "fileKind": "shared-primitive",
@@ -791,6 +821,16 @@
       "usedByLiveProduct": true
     },
     {
+      "file": "/src/v2/foundation/primitives/StudyWorkspacePrimitives.jsx",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/StudyWorkspacePrimitives.jsx",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
       "file": "/src/v2/foundation/primitives/V2ScreenFrame.jsx",
       "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/V2ScreenFrame.jsx",
       "fileKind": "framework-adapter",
@@ -813,6 +853,16 @@
     {
       "file": "/src/v2/foundation/primitives/identityBadgePresets.js",
       "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/identityBadgePresets.js",
+      "fileKind": "shared-primitive",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "shared-primitive",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/primitives/segmentationFlowState.js",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/segmentationFlowState.js",
       "fileKind": "shared-primitive",
       "scope": "shared-product-foundation",
       "ownerLayer": "shared-primitive",
@@ -883,6 +933,16 @@
     {
       "file": "/src/v2/foundation/tokens/radius.ts",
       "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/tokens/radius.ts",
+      "fileKind": "token-definition",
+      "scope": "shared-product-foundation",
+      "ownerLayer": "token-layer",
+      "included": true,
+      "includeReason": "Included by shared foundation policy and live-screen import closure.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/foundation/tokens/segmentationFlow.ts",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/tokens/segmentationFlow.ts",
       "fileKind": "token-definition",
       "scope": "shared-product-foundation",
       "ownerLayer": "token-layer",

@@ -144,7 +144,7 @@ export default function EditorSurface({
   const headerInset = surfacePadding.editorHeaderX
   const footerInset = surfacePadding.editorFooterX
   const bodyInset = surfacePadding.editorBody
-  const decorativeWatermarkSize = `${Math.round(Number.parseFloat(typography.displayTitle.fontSize) * 0.667 * 1000) / 1000}px`
+  const decorativeWatermarkSize = `${Math.max(24, Math.round((Number.parseFloat(typography.displayTitle.fontSize) * 0.667 - 4) * 1000) / 1000)}px`
   const slotRow = {
     display: 'grid',
     gridTemplateColumns: 'auto minmax(0, 1fr) auto',

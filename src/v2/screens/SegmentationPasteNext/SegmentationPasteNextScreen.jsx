@@ -7,6 +7,10 @@ import SegmentationOptionsPopover, {
   segmentationMethodOptions as methodOptions,
   segmentationStyleOptions as styleOptions,
 } from '../../foundation/primitives/SegmentationOptionsPopover'
+import {
+  readSegmentationFlowPreferences,
+  saveSegmentationFlowPreferences,
+} from '../../foundation/primitives/segmentationFlowState'
 import SourceIntakeBrand from '../../foundation/primitives/SourceIntakeBrand'
 import SplitCTA from '../../foundation/primitives/SplitCTA'
 import StepBar from '../../foundation/primitives/StepBar'
@@ -47,11 +51,13 @@ const segmentationPasteNextContainerOverrides = {
 
 export default function SegmentationPasteNextScreen({ route, shell }) {
   const [rawText, setRawText] = useState(initialText)
-  const [method, setMethod] = useState('ai')
+  const [method, setMethod] = useState(() => readSegmentationFlowPreferences().method)
   const [style, setStyle] = useState('meaning')
   const [granularity, setGranularity] = useState('balanced')
-  const [quickMode, setQuickMode] = useState(false)
-  const [showSegmentationTransition, setShowSegmentationTransition] = useState(true)
+  const [quickMode, setQuickMode] = useState(() => readSegmentationFlowPreferences().quickMode)
+  const [showSegmentationTransition, setShowSegmentationTransition] = useState(
+    () => readSegmentationFlowPreferences().showSegmentationTransition,
+  )
 
   const hasText = rawText.trim().length > 0
   const wordCount = hasText ? rawText.trim().split(/\s+/).length : 0
@@ -193,13 +199,24 @@ export default function SegmentationPasteNextScreen({ route, shell }) {
               ? <Edit3 size={16} strokeWidth={1.9} />
               : <Sparkles size={16} strokeWidth={1.9} />
           }
+          primaryContentStyle={{
+            fontSize: typography.ctaLabel.fontSize,
+            fontWeight: typography.ctaLabel.fontWeight,
+            letterSpacing: typography.ctaLabel.letterSpacing,
+          }}
           disabled={!hasText}
           onPrimaryClick={() => {
             if (!hasText) {
               return
             }
 
-            shell.navigate('segmentationTransition')
+            saveSegmentationFlowPreferences({
+              method: selectedMethod.id,
+              quickMode,
+              showSegmentationTransition,
+            })
+
+            shell.navigate(selectedMethod.id === 'manual' ? 'segmentationReview' : 'segmentationLoading')
           }}
           primaryDebugItem="primary_cta"
           tailDebugItem="split_cta_tail"

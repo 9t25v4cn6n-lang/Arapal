@@ -120,12 +120,12 @@ export default function PrimaryCTA({
           alignItems: 'center',
           justifyContent: 'center',
           gap: primaryCtaMetrics.contentGap,
-          fontFamily: typography.eyebrowLabel.fontFamily,
-          fontSize: typography.eyebrowLabel.fontSize,
+          fontFamily: typography.ctaLabel.fontFamily,
+          fontSize: typography.ctaLabel.fontSize,
           fontWeight: primaryCtaMetrics.strongLabelWeight,
-          lineHeight: typography.eyebrowLabel.lineHeight,
-          letterSpacing: typography.eyebrowLabel.letterSpacing,
-          textTransform: typography.eyebrowLabel.textTransform,
+          lineHeight: typography.ctaLabel.lineHeight,
+          letterSpacing: typography.ctaLabel.letterSpacing,
+          textTransform: typography.ctaLabel.textTransform,
           ...contentStyle,
         }}
       >

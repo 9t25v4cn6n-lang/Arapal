@@ -1,25 +1,25 @@
 {
-  "generatedAt": "2026-04-07T17:33:37.149Z",
+  "generatedAt": "2026-04-25T21:06:42.048Z",
   "schemaVersion": 2,
   "scores": {
-    "productQuality": 98.8,
-    "auditTrust": 99,
+    "productQuality": 81.2,
+    "auditTrust": 98,
     "groups": [
       {
         "id": "product-quality",
         "label": "Product quality",
         "maxScore": 100,
-        "score": 98.8,
+        "score": 81.2,
         "components": [
           {
             "id": "doctrine-hygiene",
             "label": "Doctrine hygiene",
-            "score": 95,
+            "score": 25,
             "maxScore": 100,
-            "deduction": 5,
+            "deduction": 75,
             "budget": 325,
-            "weightedDebt": 15.05,
-            "findingCount": 13,
+            "weightedDebt": 244.55,
+            "findingCount": 173,
             "suppressedFindingCount": 0,
             "laneIds": [
               "static-doctrine"
@@ -65,12 +65,12 @@
           {
             "id": "dead-code-hygiene",
             "label": "Dead-code hygiene",
-            "score": 100,
+            "score": 85,
             "maxScore": 100,
-            "deduction": 0,
+            "deduction": 15,
             "budget": 80,
-            "weightedDebt": 0,
-            "findingCount": 0,
+            "weightedDebt": 12,
+            "findingCount": 4,
             "suppressedFindingCount": 0,
             "laneIds": [
               "dead-code"
@@ -82,12 +82,12 @@
           {
             "id": "duplication-hygiene",
             "label": "Duplication hygiene",
-            "score": 99,
+            "score": 96,
             "maxScore": 100,
-            "deduction": 1,
+            "deduction": 4,
             "budget": 28,
-            "weightedDebt": 0.1,
-            "findingCount": 1,
+            "weightedDebt": 1.15,
+            "findingCount": 5,
             "suppressedFindingCount": 0,
             "laneIds": [
               "duplication"
@@ -102,17 +102,17 @@
         "id": "audit-trust",
         "label": "Audit trust",
         "maxScore": 100,
-        "score": 99,
+        "score": 98,
         "components": [
           {
             "id": "audit-trustworthiness",
             "label": "Audit trustworthiness",
-            "score": 99,
+            "score": 98,
             "maxScore": 100,
-            "deduction": 1,
+            "deduction": 2,
             "budget": 90,
-            "weightedDebt": 0.96,
-            "findingCount": 445,
+            "weightedDebt": 1.77,
+            "findingCount": 613,
             "suppressedFindingCount": 0,
             "laneIds": [
               "static-doctrine",

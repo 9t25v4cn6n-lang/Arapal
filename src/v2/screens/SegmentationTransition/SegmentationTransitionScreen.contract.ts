@@ -1,9 +1,8 @@
-import createScreenLayoutContract from '../../foundation/layout/createScreenLayoutContract'
+import createFlowScreenLayoutContract from '../../foundation/layout/createFlowScreenLayoutContract'
 
-const layoutContract = createScreenLayoutContract({
+const layoutContract = createFlowScreenLayoutContract({
   screenId: 'segmentationTransition',
   screenName: 'SegmentationTransitionScreen',
-  bodyBackdrop: { preset: 'default' },
 })
 
 export default layoutContract

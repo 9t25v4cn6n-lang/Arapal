@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-04-07T17:33:37.149Z",
+  "generatedAt": "2026-04-25T21:06:42.048Z",
   "schemaVersion": 2,
   "laneBreakdown": [
     {
       "lane": "static-doctrine",
-      "findingCount": 400,
-      "auditedFileCount": 74,
+      "findingCount": 560,
+      "auditedFileCount": 80,
       "excludedFileCount": 4,
       "status": "ready",
       "message": null
@@ -20,8 +20,8 @@
     },
     {
       "lane": "dead-code",
-      "findingCount": 43,
-      "auditedFileCount": 125,
+      "findingCount": 47,
+      "auditedFileCount": 131,
       "excludedFileCount": 4,
       "status": "ready",
       "message": null
@@ -29,15 +29,15 @@
     {
       "lane": "architecture",
       "findingCount": 0,
-      "auditedFileCount": 125,
+      "auditedFileCount": 131,
       "excludedFileCount": 4,
       "status": "ready",
       "message": null
     },
     {
       "lane": "duplication",
-      "findingCount": 2,
-      "auditedFileCount": 125,
+      "findingCount": 6,
+      "auditedFileCount": 131,
       "excludedFileCount": 4,
       "status": "ready",
       "message": null
@@ -49,54 +49,57 @@
     "publicPathsSanitized": true
   },
   "totals": {
-    "findings": 445,
-    "productDebtFindings": 14,
+    "findings": 613,
+    "productDebtFindings": 182,
     "toolingDebtFindings": 431,
     "suppressedFindings": 0,
-    "auditedFiles": 125,
+    "auditedFiles": 131,
     "excludedFiles": 4
   },
   "bySeverity": {
-    "info": 244,
-    "warn": 201
+    "info": 326,
+    "warn": 287
   },
   "byConfidence": {
-    "medium": 400,
-    "high": 44,
-    "low": 1
+    "medium": 557,
+    "high": 52,
+    "low": 4
   },
   "byClassification": {
-    "real-code-fix": 441,
-    "doctrine-decision-needed": 3,
-    "low-confidence-review": 1
+    "real-code-fix": 605,
+    "doctrine-decision-needed": 4,
+    "low-confidence-review": 4
   },
   "byFileKind": {
     "debug": 37,
     "lab": 351,
     "shared-layout": 9,
-    "shared-primitive": 2,
+    "shared-primitive": 165,
     "dashboard": 15,
-    "live-screen": 3,
+    "live-screen": 7,
     "audit-suite": 27,
-    "framework-adapter": 1
+    "framework-adapter": 1,
+    "screen-contract": 1
   },
   "byOwnerLayer": {
     "tooling-support": 403,
     "shared-layout": 10,
-    "shared-primitive": 2,
-    "screen": 3,
-    "audit-framework": 27
+    "shared-primitive": 165,
+    "screen": 7,
+    "audit-framework": 27,
+    "contract-layer": 1
   },
   "byScope": {
     "debug": 37,
     "lab": 351,
-    "shared-product-foundation": 11,
+    "shared-product-foundation": 174,
     "dashboard": 15,
-    "live-product": 3,
+    "live-product": 8,
     "tooling-support": 28
   },
   "byScreen": {
-    "SegmentationPasteNext": 3,
+    "SegmentationPasteNext": 4,
+    "StudyWorkspace": 3,
     "ControlsLab": 1,
     "EditorPanelsLab": 1,
     "FoundationLab": 1,
@@ -107,8 +110,8 @@
   },
   "productVsTooling": {
     "product": {
-      "findings": 14,
-      "auditedFiles": 47
+      "findings": 182,
+      "auditedFiles": 53
     },
     "tooling": {
       "findings": 431,
@@ -126,24 +129,24 @@
     "invalidIds": []
   },
   "scores": {
-    "productQuality": 98.8,
-    "auditTrust": 99,
+    "productQuality": 81.2,
+    "auditTrust": 98,
     "groups": [
       {
         "id": "product-quality",
         "label": "Product quality",
         "maxScore": 100,
-        "score": 98.8,
+        "score": 81.2,
         "components": [
           {
             "id": "doctrine-hygiene",
             "label": "Doctrine hygiene",
-            "score": 95,
+            "score": 25,
             "maxScore": 100,
-            "deduction": 5,
+            "deduction": 75,
             "budget": 325,
-            "weightedDebt": 15.05,
-            "findingCount": 13,
+            "weightedDebt": 244.55,
+            "findingCount": 173,
             "suppressedFindingCount": 0,
             "laneIds": [
               "static-doctrine"
@@ -189,12 +192,12 @@
           {
             "id": "dead-code-hygiene",
             "label": "Dead-code hygiene",
-            "score": 100,
+            "score": 85,
             "maxScore": 100,
-            "deduction": 0,
+            "deduction": 15,
             "budget": 80,
-            "weightedDebt": 0,
-            "findingCount": 0,
+            "weightedDebt": 12,
+            "findingCount": 4,
             "suppressedFindingCount": 0,
             "laneIds": [
               "dead-code"
@@ -206,12 +209,12 @@
           {
             "id": "duplication-hygiene",
             "label": "Duplication hygiene",
-            "score": 99,
+            "score": 96,
             "maxScore": 100,
-            "deduction": 1,
+            "deduction": 4,
             "budget": 28,
-            "weightedDebt": 0.1,
-            "findingCount": 1,
+            "weightedDebt": 1.15,
+            "findingCount": 5,
             "suppressedFindingCount": 0,
             "laneIds": [
               "duplication"
@@ -226,17 +229,17 @@
         "id": "audit-trust",
         "label": "Audit trust",
         "maxScore": 100,
-        "score": 99,
+        "score": 98,
         "components": [
           {
             "id": "audit-trustworthiness",
             "label": "Audit trustworthiness",
-            "score": 99,
+            "score": 98,
             "maxScore": 100,
-            "deduction": 1,
+            "deduction": 2,
             "budget": 90,
-            "weightedDebt": 0.96,
-            "findingCount": 445,
+            "weightedDebt": 1.77,
+            "findingCount": 613,
             "suppressedFindingCount": 0,
             "laneIds": [
               "static-doctrine",
@@ -887,6 +890,16 @@
         "usedByLiveProduct": true
       },
       {
+        "file": "/src/v2/foundation/layout/createFlowScreenLayoutContract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/layout/createFlowScreenLayoutContract.ts",
+        "fileKind": "shared-layout",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-layout",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
         "file": "/src/v2/foundation/layout/createLabBoardContract.ts",
         "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/layout/createLabBoardContract.ts",
         "fileKind": "lab",
@@ -929,6 +942,16 @@
       {
         "file": "/src/v2/foundation/primitives/BackPill.jsx",
         "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/BackPill.jsx",
+        "fileKind": "shared-primitive",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-primitive",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/primitives/DockableToolbar.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/DockableToolbar.jsx",
         "fileKind": "shared-primitive",
         "scope": "shared-product-foundation",
         "ownerLayer": "shared-primitive",
@@ -1007,6 +1030,16 @@
         "usedByLiveProduct": true
       },
       {
+        "file": "/src/v2/foundation/primitives/SegmentationFlowPrimitives.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/SegmentationFlowPrimitives.jsx",
+        "fileKind": "shared-primitive",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-primitive",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
         "file": "/src/v2/foundation/primitives/SegmentationOptionsPopover.jsx",
         "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/SegmentationOptionsPopover.jsx",
         "fileKind": "shared-primitive",
@@ -1047,6 +1080,16 @@
         "usedByLiveProduct": true
       },
       {
+        "file": "/src/v2/foundation/primitives/StudyWorkspacePrimitives.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/StudyWorkspacePrimitives.jsx",
+        "fileKind": "shared-primitive",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-primitive",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
         "file": "/src/v2/foundation/primitives/V2ScreenFrame.jsx",
         "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/V2ScreenFrame.jsx",
         "fileKind": "framework-adapter",
@@ -1069,6 +1112,16 @@
       {
         "file": "/src/v2/foundation/primitives/identityBadgePresets.js",
         "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/identityBadgePresets.js",
+        "fileKind": "shared-primitive",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "shared-primitive",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/primitives/segmentationFlowState.js",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/primitives/segmentationFlowState.js",
         "fileKind": "shared-primitive",
         "scope": "shared-product-foundation",
         "ownerLayer": "shared-primitive",
@@ -1139,6 +1192,16 @@
       {
         "file": "/src/v2/foundation/tokens/radius.ts",
         "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/tokens/radius.ts",
+        "fileKind": "token-definition",
+        "scope": "shared-product-foundation",
+        "ownerLayer": "token-layer",
+        "included": true,
+        "includeReason": "Included by shared foundation policy and live-screen import closure.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/foundation/tokens/segmentationFlow.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/foundation/tokens/segmentationFlow.ts",
         "fileKind": "token-definition",
         "scope": "shared-product-foundation",
         "ownerLayer": "token-layer",
@@ -1553,12 +1616,12 @@
   "diff": {
     "status": "ready",
     "baselineFound": true,
-    "comparedAt": "2026-04-07T17:33:37.149Z",
-    "previousGeneratedAt": "2026-04-04T21:22:16.461Z",
-    "currentGeneratedAt": "2026-04-07T17:33:37.149Z",
-    "new": 1,
-    "resolved": 0,
-    "persisted": 444,
+    "comparedAt": "2026-04-25T21:06:42.048Z",
+    "previousGeneratedAt": "2026-04-24T14:28:21.058Z",
+    "currentGeneratedAt": "2026-04-25T21:06:42.048Z",
+    "new": 22,
+    "resolved": 19,
+    "persisted": 591,
     "changed": 0,
     "changedByField": {
       "severity": 0,
@@ -1571,25 +1634,25 @@
         "kind": "lane",
         "key": "dead-code",
         "label": "dead-code",
-        "current": 43,
-        "previous": 43,
+        "current": 47,
+        "previous": 47,
         "delta": 0
       },
       {
         "kind": "lane",
         "key": "duplication",
         "label": "duplication",
-        "current": 2,
-        "previous": 1,
-        "delta": 1
+        "current": 6,
+        "previous": 6,
+        "delta": 0
       },
       {
         "kind": "lane",
         "key": "static-doctrine",
         "label": "static-doctrine",
-        "current": 400,
-        "previous": 400,
-        "delta": 0
+        "current": 560,
+        "previous": 557,
+        "delta": 3
       }
     ],
     "ruleDeltas": [
@@ -1597,40 +1660,48 @@
         "kind": "rule",
         "key": "hardcoded-color",
         "label": "hardcoded-color",
-        "current": 182,
-        "previous": 182,
-        "delta": 0
+        "current": 254,
+        "previous": 253,
+        "delta": 1
       },
       {
         "kind": "rule",
         "key": "hardcoded-motion",
         "label": "hardcoded-motion",
-        "current": 4,
-        "previous": 4,
+        "current": 6,
+        "previous": 6,
         "delta": 0
       },
       {
         "kind": "rule",
         "key": "hardcoded-radius",
         "label": "hardcoded-radius",
-        "current": 13,
-        "previous": 13,
+        "current": 17,
+        "previous": 17,
         "delta": 0
       },
       {
         "kind": "rule",
         "key": "hardcoded-spacing",
         "label": "hardcoded-spacing",
-        "current": 26,
-        "previous": 26,
-        "delta": 0
+        "current": 63,
+        "previous": 61,
+        "delta": 2
       },
       {
         "kind": "rule",
         "key": "hardcoded-typography",
         "label": "hardcoded-typography",
-        "current": 173,
-        "previous": 173,
+        "current": 215,
+        "previous": 215,
+        "delta": 0
+      },
+      {
+        "kind": "rule",
+        "key": "repeated-contract-fragment",
+        "label": "repeated-contract-fragment",
+        "current": 1,
+        "previous": 1,
         "delta": 0
       },
       {
@@ -1653,16 +1724,24 @@
         "kind": "rule",
         "key": "shared-primitive-variant-drift",
         "label": "shared-primitive-variant-drift",
-        "current": 1,
-        "previous": 0,
-        "delta": 1
+        "current": 4,
+        "previous": 4,
+        "delta": 0
+      },
+      {
+        "kind": "rule",
+        "key": "shell-override-touchpoint",
+        "label": "shell-override-touchpoint",
+        "current": 3,
+        "previous": 3,
+        "delta": 0
       },
       {
         "kind": "rule",
         "key": "unused-export",
         "label": "unused-export",
-        "current": 40,
-        "previous": 40,
+        "current": 44,
+        "previous": 44,
         "delta": 0
       },
       {
@@ -1677,18 +1756,26 @@
     "topRegressions": [
       {
         "kind": "lane",
-        "key": "duplication",
-        "label": "duplication",
-        "current": 2,
-        "previous": 1,
-        "delta": 1
+        "key": "static-doctrine",
+        "label": "static-doctrine",
+        "current": 560,
+        "previous": 557,
+        "delta": 3
       },
       {
         "kind": "rule",
-        "key": "shared-primitive-variant-drift",
-        "label": "shared-primitive-variant-drift",
-        "current": 1,
-        "previous": 0,
+        "key": "hardcoded-spacing",
+        "label": "hardcoded-spacing",
+        "current": 63,
+        "previous": 61,
+        "delta": 2
+      },
+      {
+        "kind": "rule",
+        "key": "hardcoded-color",
+        "label": "hardcoded-color",
+        "current": 254,
+        "previous": 253,
         "delta": 1
       }
     ],
@@ -1696,8 +1783,8 @@
     "message": null
   },
   "baseline": {
-    "currentGeneratedAt": "2026-04-07T17:33:37.149Z",
-    "previousGeneratedAt": "2026-04-04T21:22:16.461Z",
+    "currentGeneratedAt": "2026-04-25T21:06:42.048Z",
+    "previousGeneratedAt": "2026-04-24T14:28:21.058Z",
     "status": "loaded",
     "message": null
   }

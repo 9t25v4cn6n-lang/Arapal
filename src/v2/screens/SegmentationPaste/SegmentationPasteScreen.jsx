@@ -11,6 +11,10 @@ import SegmentationOptionsPopover, {
   segmentationMethodOptions as methodOptions,
   segmentationStyleOptions as styleOptions,
 } from '../../foundation/primitives/SegmentationOptionsPopover'
+import {
+  readSegmentationFlowPreferences,
+  saveSegmentationFlowPreferences,
+} from '../../foundation/primitives/segmentationFlowState'
 import SourceIntakeBrand from '../../foundation/primitives/SourceIntakeBrand'
 import StepBar from '../../foundation/primitives/StepBar'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
@@ -217,12 +221,12 @@ const segmentationPasteStyles = `
     align-items: center;
     justify-content: center;
     gap: 12px;
-    font-family: ${typography.bodyText.fontFamily};
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    font-family: ${typography.ctaLabel.fontFamily};
+    font-size: ${typography.ctaLabel.fontSize};
+    font-weight: ${typography.ctaLabel.fontWeight};
+    line-height: ${typography.ctaLabel.lineHeight};
+    letter-spacing: ${typography.ctaLabel.letterSpacing};
+    text-transform: ${typography.ctaLabel.textTransform};
   }
 
   .v2-seg-paste__splitButton {
@@ -336,12 +340,14 @@ function WindowButtons() {
 
 export default function SegmentationPasteScreen({ route, shell }) {
   const [rawText, setRawText] = useState('')
-  const [method, setMethod] = useState('ai')
+  const [method, setMethod] = useState(() => readSegmentationFlowPreferences().method)
   const [style, setStyle] = useState('meaning')
   const [granularity, setGranularity] = useState('balanced')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [quickMode, setQuickMode] = useState(false)
-  const [showSegmentationTransition, setShowSegmentationTransition] = useState(true)
+  const [quickMode, setQuickMode] = useState(() => readSegmentationFlowPreferences().quickMode)
+  const [showSegmentationTransition, setShowSegmentationTransition] = useState(
+    () => readSegmentationFlowPreferences().showSegmentationTransition,
+  )
   const splitButtonRef = useRef(null)
   const splitMenuRef = useRef(null)
 
@@ -595,7 +601,13 @@ export default function SegmentationPasteScreen({ route, shell }) {
               return
             }
 
-            shell.navigate('segmentationTransition')
+            saveSegmentationFlowPreferences({
+              method: selectedMethod.id,
+              quickMode,
+              showSegmentationTransition,
+            })
+
+            shell.navigate(selectedMethod.id === 'manual' ? 'segmentationReview' : 'segmentationLoading')
           }}
           className="v2-seg-paste__primaryButton"
         >
