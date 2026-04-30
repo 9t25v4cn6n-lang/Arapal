@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   StudyBottomBar,
   StudyDiscussionCompanion,
@@ -93,6 +93,14 @@ function readInitialFocusMode() {
   return new URLSearchParams(window.location.search).get('studyFocus') === '1'
 }
 
+function readInitialDiscussionOpen() {
+  if (typeof window === 'undefined') {
+    return false
+  }
+
+  return new URLSearchParams(window.location.search).get('studyDiscuss') === '1'
+}
+
 function createInitialSegmentRecords() {
   const initialStudyState = readInitialStudyState()
 
@@ -105,20 +113,22 @@ function createInitialSegmentRecords() {
   }
 }
 
-function getWorkspaceColumns({ focusMode, segmentRailCollapsed, supportRailCollapsed }) {
+function getWorkspaceColumns({ focusMode, segmentRailCollapsed, supportRailCollapsed, discussionMode = false }) {
   if (focusMode) {
     return '0px minmax(0, 1fr) 0px'
   }
 
   const segmentColumn = segmentRailCollapsed ? '72px' : 'minmax(208px, 240px)'
-  const supportColumn = supportRailCollapsed ? '72px' : 'minmax(308px, 340px)'
+  const supportColumn = discussionMode ? '0px' : supportRailCollapsed ? '72px' : 'minmax(308px, 340px)'
 
   return `${segmentColumn} minmax(0, 1fr) ${supportColumn}`
 }
 
 function getHeaderColumns() {
-  return 'minmax(280px, 1fr) minmax(260px, 420px) minmax(280px, 1fr)'
+  return 'minmax(0, 1fr) auto minmax(0, 1fr)'
 }
+
+const DISCUSSION_TRANSITION_MS = 220
 
 export default function StudyWorkspaceScreen({ route, shell }) {
   const [segmentRecords, setSegmentRecords] = useState(createInitialSegmentRecords)
@@ -127,7 +137,8 @@ export default function StudyWorkspaceScreen({ route, shell }) {
   const [supportRailCollapsed, setSupportRailCollapsed] = useState(false)
   const [focusMode, setFocusMode] = useState(readInitialFocusMode)
   const [sourceFontScale, setSourceFontScale] = useState(1)
-  const [discussionOpen, setDiscussionOpen] = useState(false)
+  const [discussionOpen, setDiscussionOpen] = useState(readInitialDiscussionOpen)
+  const [discussionClosing, setDiscussionClosing] = useState(false)
   const [manualNotesBySegment, setManualNotesBySegment] = useState({})
   const showSandboxControls = readSandboxControlsEnabled()
 
@@ -138,6 +149,29 @@ export default function StudyWorkspaceScreen({ route, shell }) {
   const currentManualNotes = manualNotesBySegment[currentSegment.id] ?? []
   const canGoPrevious = currentSegmentIndex > 0
   const canGoNext = currentSegmentIndex < fileSegments.length - 1
+  const discussionVisible = discussionOpen || discussionClosing
+  const discussionMode = discussionVisible && currentState !== 'submitted'
+
+  useEffect(() => {
+    if (!discussionClosing) {
+      return undefined
+    }
+
+    const timer = window.setTimeout(() => {
+      setDiscussionClosing(false)
+    }, DISCUSSION_TRANSITION_MS)
+
+    return () => window.clearTimeout(timer)
+  }, [discussionClosing])
+
+  useEffect(() => {
+    if (!readInitialDiscussionOpen()) {
+      return
+    }
+
+    setDiscussionClosing(false)
+    setDiscussionOpen(true)
+  }, [])
 
   const segmentMeta = useMemo(
     () => ({
@@ -151,6 +185,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
 
   const setCurrentSegmentSubmissionState = (submissionState, attempts) => {
     setDiscussionOpen(false)
+    setDiscussionClosing(false)
     setSegmentRecords((current) => ({
       ...current,
       [currentSegment.id]: {
@@ -163,6 +198,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
 
   const handleSubmit = () => {
     setDiscussionOpen(false)
+    setDiscussionClosing(false)
     setSegmentRecords((current) => {
       const existingRecord = current[currentSegment.id] ?? defaultSegmentRecords[currentSegment.id]
       const nextAttempts = (existingRecord.attempts ?? 0) + 1
@@ -185,22 +221,43 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     }))
   }
 
+  const toggleDiscussion = () => {
+    if (discussionOpen) {
+      setDiscussionOpen(false)
+      setDiscussionClosing(true)
+      return
+    }
+
+    setDiscussionClosing(false)
+    setDiscussionOpen(true)
+  }
+
+  const closeDiscussionImmediately = () => {
+    setDiscussionOpen(false)
+    setDiscussionClosing(false)
+  }
+
+  const closeDiscussion = () => {
+    setDiscussionOpen(false)
+    setDiscussionClosing(true)
+  }
+
   const goToPreviousSegment = () => {
     if (canGoPrevious) {
-      setDiscussionOpen(false)
+      closeDiscussionImmediately()
       setCurrentSegmentId(fileSegments[currentSegmentIndex - 1].id)
     }
   }
 
   const goToNextSegment = () => {
     if (canGoNext) {
-      setDiscussionOpen(false)
+      closeDiscussionImmediately()
       setCurrentSegmentId(fileSegments[currentSegmentIndex + 1].id)
     }
   }
 
   const selectSegment = (segmentId) => {
-    setDiscussionOpen(false)
+    closeDiscussionImmediately()
     setCurrentSegmentId(segmentId)
   }
 
@@ -223,7 +280,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     },
     Layer2_Study_WorkspaceRoot: {
       style: {
-        gridTemplateColumns: getWorkspaceColumns({ focusMode, segmentRailCollapsed, supportRailCollapsed }),
+        gridTemplateColumns: getWorkspaceColumns({ focusMode, segmentRailCollapsed, supportRailCollapsed, discussionMode }),
         transition: `grid-template-columns ${motion.panel}`,
       },
     },
@@ -234,10 +291,14 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     },
     Layer4_Study_PrimaryScroll: {
       style: {
-        padding: '16px 20% 24px',
+        padding:
+          discussionMode
+            ? '16px clamp(16px, 3vw, 40px) 24px'
+            : '16px 20% 24px',
+        transition: `padding ${motion.panel}`,
       },
     },
-    ...(supportRailCollapsed && !focusMode
+    ...(supportRailCollapsed && !focusMode && !discussionMode
       ? {
           Layer3_Study_SupportRail: {
             style: {
@@ -326,37 +387,78 @@ export default function StudyWorkspaceScreen({ route, shell }) {
           'study-v2',
           'study-v2__workLane',
           focusMode ? 'is-focused' : '',
+          discussionMode ? 'is-discussing' : '',
+          discussionClosing ? 'is-discussion-closing' : '',
         ].filter(Boolean).join(' ')}
         data-debug-item="study_primary_work_lane"
       >
-        <div className="study-v2__studyStack">
-          <StudySourceCard
-            sourceText={arabicSource}
-            onPrevious={goToPreviousSegment}
-            onNext={goToNextSegment}
-            canPrevious={canGoPrevious}
-            canNext={canGoNext}
-            showSegmentNavigation={currentState !== 'submitted'}
-            fontScale={sourceFontScale}
-            onDecreaseFont={() => setSourceFontScale((current) => Math.max(0.72, Number((current - 0.08).toFixed(2))))}
-            onIncreaseFont={() => setSourceFontScale((current) => Math.min(1.44, Number((current + 0.08).toFixed(2))))}
-          />
-          {currentState === 'submitted' ? (
-            <>
-              <StudySubmittedStack
-                bestTranslation={bestInClassTranslation}
-                userTranslation={userTranslation}
-                onDiscuss={() => setDiscussionOpen(true)}
-                manualNotes={currentManualNotes}
-                onAddManualNote={addManualNote}
+        {currentState === 'submitted' ? (
+          <div className="study-v2__studyStack">
+            <StudySourceCard
+              sourceText={arabicSource}
+              onPrevious={goToPreviousSegment}
+              onNext={goToNextSegment}
+              canPrevious={canGoPrevious}
+              canNext={canGoNext}
+              showSegmentNavigation
+              fontScale={sourceFontScale}
+              onDecreaseFont={() => setSourceFontScale((current) => Math.max(0.72, Number((current - 0.08).toFixed(2))))}
+              onIncreaseFont={() => setSourceFontScale((current) => Math.min(1.44, Number((current + 0.08).toFixed(2))))}
+            />
+            <StudySubmittedStack
+              bestTranslation={bestInClassTranslation}
+              userTranslation={userTranslation}
+              onDiscuss={() => {
+                setDiscussionClosing(false)
+                setDiscussionOpen(true)
+              }}
+              manualNotes={currentManualNotes}
+              onAddManualNote={addManualNote}
+            />
+            <StudySubmissionNavigator onJumpTo={jumpToStudyAnchor} notesAvailable={currentManualNotes.length > 0} />
+            {discussionVisible ? <StudyDiscussionCompanion onClose={closeDiscussion} /> : null}
+          </div>
+        ) : (
+          <div
+            className={[
+              'study-v2__composer',
+              discussionMode ? 'is-discussing' : '',
+              discussionClosing ? 'is-discussion-closing' : '',
+            ].filter(Boolean).join(' ')}
+            data-debug-item="study_discussion_composer"
+          >
+            <div className="study-v2__composerSource">
+              <StudySourceCard
+                sourceText={arabicSource}
+                onPrevious={goToPreviousSegment}
+                onNext={goToNextSegment}
+                canPrevious={canGoPrevious}
+                canNext={canGoNext}
+                showSegmentNavigation
+                fontScale={sourceFontScale}
+                onDecreaseFont={() => setSourceFontScale((current) => Math.max(0.72, Number((current - 0.08).toFixed(2))))}
+                onIncreaseFont={() => setSourceFontScale((current) => Math.min(1.44, Number((current + 0.08).toFixed(2))))}
               />
-              <StudySubmissionNavigator onJumpTo={jumpToStudyAnchor} notesAvailable={currentManualNotes.length > 0} />
-              {discussionOpen ? <StudyDiscussionCompanion onClose={() => setDiscussionOpen(false)} /> : null}
-            </>
-          ) : (
-            <StudyQuickLexicography terms={lexicographyTerms} />
-          )}
-        </div>
+            </div>
+            <div className="study-v2__composerLex">
+              <StudyQuickLexicography terms={lexicographyTerms} />
+            </div>
+            <div className="study-v2__composerEditor">
+              <StudyTranslationEditor
+                failed={currentState === 'failed'}
+                onSubmit={handleSubmit}
+                onDiscuss={toggleDiscussion}
+                discussionOpen={discussionVisible}
+                focusMode={focusMode}
+                docked
+                fillHeight={discussionMode}
+              />
+            </div>
+            <div className="study-v2__composerCompanion">
+              {discussionVisible ? <StudyDiscussionCompanion onClose={closeDiscussion} /> : null}
+            </div>
+          </div>
+        )}
       </div>
     ),
     Layer4_Study_ActionRegion: currentState === 'submitted' ? (
@@ -369,26 +471,8 @@ export default function StudyWorkspaceScreen({ route, shell }) {
         canPrevious={canGoPrevious}
         canNext={canGoNext}
       />
-    ) : discussionOpen ? (
-      <div className={['study-v2', 'study-v2__editorDock', focusMode ? 'is-focused' : ''].filter(Boolean).join(' ')}>
-        <StudyTranslationEditor
-          failed={currentState === 'failed'}
-          onSubmit={handleSubmit}
-          onDiscuss={() => setDiscussionOpen(true)}
-          focusMode={focusMode}
-          docked
-        />
-        <StudyDiscussionCompanion onClose={() => setDiscussionOpen(false)} />
-      </div>
-    ) : (
-      <StudyTranslationEditor
-        failed={currentState === 'failed'}
-        onSubmit={handleSubmit}
-        onDiscuss={() => setDiscussionOpen(true)}
-        focusMode={focusMode}
-      />
-    ),
-    Layer3_Study_SupportRail: (
+    ) : null,
+    Layer3_Study_SupportRail: discussionMode ? null : (
       <StudySupportRail
         state={currentState}
         collapsed={supportRailCollapsed}

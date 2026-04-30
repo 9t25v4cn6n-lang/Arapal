@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import {
   AlertTriangle,
   AlignCenter,
@@ -329,7 +330,7 @@ const studyCss = `
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: var(--study-space-12);
+    gap: 0;
   }
 
   .study-v2__shellContextIdentity {
@@ -337,60 +338,69 @@ const studyCss = `
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     align-items: center;
-    gap: var(--study-space-12);
+    gap: var(--study-space-16);
     justify-self: start;
   }
 
   .study-v2__shellBookMark {
-    width: var(--study-space-28);
-    height: var(--study-space-28);
+    width: 36px;
+    height: 36px;
     border: 0;
-    border-radius: var(--study-radius-12);
-    background: color-mix(in srgb, var(--study-accent-wash) 34%, transparent);
+    border-radius: var(--study-radius-14, 14px);
+    background: color-mix(in srgb, var(--study-accent-wash) 52%, transparent);
     color: var(--study-accent-strong);
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--study-accent-mist) 42%, transparent);
   }
 
   .study-v2__shellIdentity {
     min-width: 0;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 2px;
+    align-items: center;
+    min-height: 36px;
   }
 
   .study-v2__shellTitleLine {
     min-width: 0;
     display: flex;
     align-items: baseline;
-    gap: var(--study-space-8);
+    gap: var(--study-space-10, 10px);
   }
 
   .study-v2__shellTitleText {
-    min-width: 0;
+    flex: 0 0 auto;
     color: var(--study-text-strong);
     font-family: var(--study-body-font);
-    font-size: 16.5px;
+    font-size: 19px;
     line-height: 1.08;
-    font-weight: 820;
-    letter-spacing: -0.012em;
+    font-weight: 845;
+    letter-spacing: -0.024em;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  }
+
+  .study-v2__shellTitleDivider {
+    width: 4px;
+    height: 4px;
+    border-radius: var(--study-pill);
+    background: color-mix(in srgb, var(--study-text-faint) 72%, transparent);
+    flex: 0 0 auto;
+    transform: translateY(-2px);
   }
 
   .study-v2__shellProjectText {
     min-width: 0;
+    flex: 1 1 auto;
     overflow: hidden;
     text-overflow: ellipsis;
     color: color-mix(in srgb, var(--study-text-body) 82%, var(--study-text-soft));
     font-family: var(--study-body-font);
-    font-size: 12px;
-    line-height: 1.12;
-    font-weight: 650;
+    font-size: 14px;
+    line-height: 1.14;
+    font-weight: 635;
     letter-spacing: 0.01em;
+    white-space: nowrap;
   }
 
   .study-v2__shellMetaLine {
@@ -477,12 +487,13 @@ const studyCss = `
   }
 
   .study-v2__shellProgress {
-    min-width: 260px;
+    width: 320px;
+    max-width: 32vw;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 3px;
+    gap: var(--study-space-6, 6px);
     padding: 0;
     color: var(--study-text-body);
     white-space: nowrap;
@@ -490,46 +501,61 @@ const studyCss = `
 
   .study-v2__shellProgressLabel {
     color: var(--study-text-body);
-    font-size: 12px;
-    line-height: 1;
-    font-weight: 750;
-    letter-spacing: 0;
-    text-transform: none;
+    font-size: var(--study-control-size);
+    line-height: var(--study-control-line);
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
   }
 
-  .study-v2__shellProgressTrack {
-    width: min(260px, 22vw);
-    height: 5px;
+  .study-v2__shellProgressBars {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .study-v2__shellProgressBar {
+    width: clamp(46px, 3.6vw, 54px);
+    height: 6px;
     border-radius: var(--study-pill);
-    background: color-mix(in srgb, var(--study-accent-mist) 52%, var(--study-line-soft));
-    overflow: hidden;
+    background: color-mix(in srgb, var(--study-accent-mist) 38%, var(--study-line-soft));
+    transition: background-color var(--study-motion-panel), transform var(--study-motion-panel), opacity var(--study-motion-panel);
   }
 
-  .study-v2__shellProgressFill {
-    display: block;
-    width: var(--study-shell-progress, 0%);
-    height: 100%;
-    border-radius: inherit;
+  .study-v2__shellProgressBar.is-active {
     background: linear-gradient(90deg, var(--study-accent), var(--study-accent-strong));
+    transform: scaleY(1.06);
   }
 
   .study-v2__shellFocusButton {
-    min-height: calc(var(--study-space-24) + var(--study-space-8));
-    border: 1px solid color-mix(in srgb, var(--study-line-soft) 86%, transparent);
-    border-radius: var(--study-pill);
-    background: rgba(255,255,255,0.78);
+    min-height: 36px;
+    border: 1px solid color-mix(in srgb, var(--study-line-soft) 74%, transparent);
+    border-radius: var(--study-radius-14, 14px);
+    background: color-mix(in srgb, var(--study-surface) 72%, transparent);
     color: var(--study-text-body);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: var(--study-space-8);
     padding: 0 var(--study-space-12);
-    font-size: var(--study-control-size);
+    font-size: 13px;
     line-height: var(--study-control-line);
-    font-weight: var(--study-control-weight);
+    font-weight: 720;
     cursor: pointer;
     white-space: nowrap;
-    box-shadow: 0 var(--study-space-4) var(--study-space-12) color-mix(in srgb, var(--study-text-strong) 3%, transparent);
+    box-shadow: none;
+    transition:
+      background-color var(--study-motion-micro),
+      border-color var(--study-motion-micro),
+      color var(--study-motion-micro),
+      box-shadow var(--study-motion-micro);
+  }
+
+  .study-v2__shellFocusButton:hover {
+    border-color: color-mix(in srgb, var(--study-accent-mist) 82%, transparent);
+    background: color-mix(in srgb, var(--study-accent-wash) 48%, var(--study-surface));
+    color: var(--study-accent-strong);
   }
 
   .study-v2__shellFocusButton.is-active {
@@ -596,6 +622,7 @@ const studyCss = `
     display: flex;
     flex-direction: column;
     gap: var(--study-space-20);
+    transition: max-width var(--study-motion-panel);
   }
 
   .study-v2__workLane.is-focused {
@@ -605,10 +632,7 @@ const studyCss = `
 
   .study-v2__workLane.is-discussing {
     width: 100%;
-    max-width: 980px;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    align-items: start;
+    max-width: 1400px;
   }
 
   .study-v2__studyStack {
@@ -618,6 +642,109 @@ const studyCss = `
     gap: var(--study-space-20);
   }
 
+  .study-v2__composer {
+    width: 100%;
+    min-width: 0;
+    display: grid;
+    min-height: 100%;
+    grid-template-columns: minmax(0, 1fr) 0px;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "source companion"
+      "lex companion"
+      ". companion"
+      "editor companion";
+    align-items: stretch;
+    column-gap: 0;
+    row-gap: var(--study-space-20);
+    transition:
+      grid-template-columns var(--study-motion-panel),
+      column-gap var(--study-motion-panel),
+      row-gap var(--study-motion-panel);
+  }
+
+  .study-v2__composer.is-discussing {
+    grid-template-columns: minmax(0, 1.18fr) minmax(340px, 0.82fr);
+    grid-template-rows: auto minmax(360px, 1fr);
+    grid-template-areas:
+      "source source"
+      "editor companion";
+    min-height: clamp(690px, calc(100vh - 190px), 860px);
+    column-gap: var(--study-space-20);
+    align-items: stretch;
+  }
+
+  .study-v2__composerSource {
+    grid-area: source;
+    min-width: 0;
+    transition: transform var(--study-motion-panel), opacity var(--study-motion-panel);
+  }
+
+  .study-v2__composerLex {
+    grid-area: lex;
+    min-width: 0;
+    overflow: hidden;
+    max-height: 160px;
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      max-height 180ms cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 180ms cubic-bezier(0.4, 0, 0.2, 1),
+      transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .study-v2__composer.is-discussing .study-v2__composerLex {
+    display: none;
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+  }
+
+  .study-v2__composerEditor {
+    grid-area: editor;
+    min-width: 0;
+    min-height: 0;
+    align-self: end;
+    transition:
+      transform var(--study-motion-panel),
+      opacity var(--study-motion-panel);
+  }
+
+  .study-v2__composerCompanion {
+    grid-area: companion;
+    min-height: 0;
+    min-width: 0;
+    align-self: stretch;
+    opacity: 0;
+    transform: translateX(28px);
+    pointer-events: none;
+    transition:
+      opacity 220ms cubic-bezier(0.2, 0.8, 0.2, 1) 70ms,
+      transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1) 70ms;
+  }
+
+  .study-v2__composer.is-discussing .study-v2__composerCompanion {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  .study-v2__composerCompanion > .study-v2__discussion {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .study-v2__composer.is-discussing .study-v2__composerEditor {
+    align-self: stretch;
+  }
+
+  .study-v2__composer.is-discussion-closing .study-v2__composerCompanion {
+    opacity: 0;
+    transform: translateX(18px);
+    transition-delay: 0ms;
+  }
+
   .study-v2__sourceGroup {
     display: flex;
     flex-direction: column;
@@ -625,7 +752,7 @@ const studyCss = `
   }
 
   .study-v2__navRow {
-    min-height: calc(var(--study-space-32) + var(--study-space-24) + var(--study-space-4));
+    min-height: var(--study-space-32);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -739,7 +866,7 @@ const studyCss = `
   }
 
   .study-v2__sourceBody {
-    min-height: 294px;
+    min-height: 0;
     max-height: 294px;
     overflow: auto;
     overscroll-behavior: contain;
@@ -845,23 +972,80 @@ const studyCss = `
     max-width: none;
   }
 
-  .study-v2__editorDock {
-    flex: 0 0 auto;
-    padding: 0 clamp(48px, 6vw, 104px) var(--study-space-24);
-    display: grid;
-    grid-template-columns: minmax(0, 980px) minmax(320px, 380px);
+  .study-v2__editor.is-fillHeight,
+  .study-v2__editor.is-fillHeight .study-v2__editorLane,
+  .study-v2__editor.is-fillHeight .study-v2__panel {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .study-v2__editor.is-fillHeight .study-v2__editorLane,
+  .study-v2__editor.is-fillHeight .study-v2__panel {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .study-v2__editor.is-fillHeight .study-v2__editorBody {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .study-v2__editor.is-fillHeight .study-v2__textarea {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    overflow: auto;
+  }
+
+  .study-v2__editor.is-expanded {
+    position: fixed;
+    inset: clamp(var(--study-space-24), 4vw, 64px);
+    z-index: 95;
+    width: auto;
+    height: auto;
+    min-height: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: end;
-    gap: var(--study-space-20);
-    background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--study-bg-bottom) 70%, transparent));
+    background: color-mix(in srgb, var(--study-bg-top) 70%, rgba(15, 23, 42, 0.18));
+    backdrop-filter: blur(18px);
   }
 
-  .study-v2__editorDock.is-focused {
-    grid-template-columns: minmax(0, min(100%, 920px)) minmax(320px, 380px);
+  .study-v2__editor.is-expanded .study-v2__editorLane {
+    width: min(1120px, 100%);
+    max-width: 1120px;
+    height: min(760px, 100%);
+    display: flex;
   }
 
-  .study-v2__editorDock .study-v2__discussion {
-    min-height: 100%;
+  .study-v2__editor.is-expanded .study-v2__panel,
+  .study-v2__editor.is-expanded .study-v2__editorBody {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .study-v2__editor.is-expanded .study-v2__textarea {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    overflow: auto;
+  }
+
+  @media (max-width: 980px) {
+    .study-v2__composer,
+    .study-v2__composer.is-discussing {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto auto auto auto;
+      grid-template-areas:
+        "source"
+        "lex"
+        "editor"
+        "companion";
+      column-gap: 0;
+    }
   }
 
   .study-v2__editorBody {
@@ -873,10 +1057,12 @@ const studyCss = `
 
   .study-v2__textarea {
     width: 100%;
-    min-height: 132px;
+    min-height: 106px;
+    max-height: min(18vh, 152px);
     border: 0;
     outline: none;
-    resize: vertical;
+    resize: none;
+    overflow-y: hidden;
     background: transparent;
     color: var(--study-text-body);
     font-family: var(--study-body-font);
@@ -886,6 +1072,12 @@ const studyCss = `
 
   .study-v2__textarea::placeholder {
     color: var(--study-text-soft);
+  }
+
+  .study-v2__editor.is-fillHeight .study-v2__textarea,
+  .study-v2__editor.is-expanded .study-v2__textarea {
+    max-height: none;
+    overflow: auto;
   }
 
   .study-v2__editorFooter {
@@ -962,14 +1154,43 @@ const studyCss = `
 
   .study-v2__supportTitle {
     margin: 0;
+    min-width: 0;
+    flex: 1 1 auto;
     color: var(--study-text-strong);
     font-size: var(--study-section-size);
     line-height: var(--study-section-line);
     font-weight: var(--study-section-weight);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .study-v2__supportExpand {
     margin-left: auto;
+  }
+
+  .study-v2__supportCardActions {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--study-space-4, 4px);
+    opacity: 0.72;
+    transition: opacity var(--study-motion-micro);
+  }
+
+  .study-v2__supportCard:hover .study-v2__supportCardActions,
+  .study-v2__supportCard:focus-within .study-v2__supportCardActions {
+    opacity: 1;
+  }
+
+  .study-v2__supportCardHeader.is-draggable {
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+  }
+
+  .study-v2__supportCardHeader.is-draggable:active {
+    cursor: grabbing;
   }
 
   .study-v2__supportCardBody {
@@ -1340,6 +1561,7 @@ const studyCss = `
 
   .study-v2__supportFullscreen {
     width: min(900px, 100%);
+    min-height: min(620px, 100%);
     max-height: min(760px, 100%);
     border: 1px solid var(--support-border, var(--study-line-soft));
     border-radius: var(--study-radius-24);
@@ -1352,19 +1574,19 @@ const studyCss = `
 
   .study-v2__supportFloating,
   .study-v2__supportPreview {
-    position: fixed;
-    right: calc(72px + var(--study-space-20));
     width: min(380px, calc(100vw - 112px));
     z-index: 120;
   }
 
   .study-v2__supportFloating {
+    position: fixed;
     top: calc(var(--study-space-64, 64px) + var(--study-space-24));
   }
 
   .study-v2__supportPreview {
-    top: calc(var(--study-space-64, 64px) + var(--study-space-24));
-    pointer-events: none;
+    position: absolute;
+    right: calc(100% + var(--study-space-16));
+    pointer-events: auto;
     opacity: 0.98;
   }
 
@@ -1572,20 +1794,6 @@ const studyCss = `
     .study-v2__shellProjectText {
       max-width: 220px;
     }
-
-    .study-v2__shellFocusButton {
-      width: calc(var(--study-space-32) + var(--study-space-4));
-      padding: 0;
-    }
-
-    .study-v2__shellFocusButtonText {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip: rect(0 0 0 0);
-      white-space: nowrap;
-    }
   }
 
   @media (max-width: 1280px) {
@@ -1598,12 +1806,12 @@ const studyCss = `
 const toneMap = {
   blue: {
     surface: '#ffffff',
-    bg: 'rgba(239, 246, 255, 0.82)',
-    border: 'rgba(191, 219, 254, 0.85)',
+    bg: 'rgba(243, 248, 255, 0.94)',
+    border: 'rgba(191, 219, 254, 0.78)',
     icon: '#2563eb',
     badgeBg: '#dbeafe',
     badgeText: '#1d4ed8',
-    glow: 'rgba(37, 99, 235, 0.11)',
+    glow: 'rgba(37, 99, 235, 0.08)',
   },
   slate: {
     surface: '#ffffff',
@@ -1616,21 +1824,21 @@ const toneMap = {
   },
   purple: {
     surface: '#ffffff',
-    bg: 'rgba(239, 246, 255, 0.84)',
-    border: 'rgba(191, 219, 254, 0.86)',
-    icon: '#2563eb',
-    badgeBg: '#dbeafe',
-    badgeText: '#1d4ed8',
-    glow: 'rgba(37, 99, 235, 0.10)',
+    bg: 'rgba(250, 245, 255, 0.94)',
+    border: 'rgba(233, 213, 255, 0.82)',
+    icon: '#9333ea',
+    badgeBg: '#f3e8ff',
+    badgeText: '#7e22ce',
+    glow: 'rgba(147, 51, 234, 0.08)',
   },
   orange: {
     surface: '#ffffff',
-    bg: 'rgba(255, 247, 237, 0.92)',
-    border: 'rgba(254, 215, 170, 0.85)',
-    icon: '#ea580c',
+    bg: 'rgba(255, 249, 240, 0.96)',
+    border: 'rgba(254, 215, 170, 0.82)',
+    icon: '#f97316',
     badgeBg: '#ffedd5',
     badgeText: '#ea580c',
-    glow: 'rgba(234, 88, 12, 0.12)',
+    glow: 'rgba(249, 115, 22, 0.08)',
   },
   success: {
     surface: '#ffffff',
@@ -1650,6 +1858,31 @@ const toneMap = {
     badgeText: '#ea580c',
     glow: 'rgba(234, 88, 12, 0.12)',
   },
+}
+
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value))
+}
+
+function createFloatingCardState(cardId) {
+  if (typeof window === 'undefined') {
+    return {
+      id: cardId,
+      left: 24,
+      top: 96,
+    }
+  }
+
+  const cardWidth = Math.min(380, Math.max(280, window.innerWidth - 112))
+  const inset = 16
+  const defaultLeft = window.innerWidth - cardWidth - 88
+  const defaultTop = Math.round(window.innerHeight * 0.18)
+
+  return {
+    id: cardId,
+    left: clamp(defaultLeft, inset, Math.max(inset, window.innerWidth - cardWidth - inset)),
+    top: clamp(defaultTop, inset, Math.max(inset, window.innerHeight - 420)),
+  }
 }
 
 function toneStyle(tone = 'blue') {
@@ -1685,10 +1918,9 @@ export function StudyShellTitleBar({
           <BookOpen size={19} strokeWidth={1.9} />
         </span>
         <div className="study-v2__shellIdentity">
-          <div className="study-v2__shellTitleLine">
+          <div className="study-v2__shellTitleLine" aria-label={`${segmentLabel}, ${title}, ${chapterLabel}`}>
             <span className="study-v2__shellTitleText">{segmentLabel}</span>
-          </div>
-          <div className="study-v2__shellMetaLine" aria-label={`${title}, ${chapterLabel}`}>
+            <span className="study-v2__shellTitleDivider" aria-hidden="true" />
             <span className="study-v2__shellProjectText">{title}</span>
           </div>
         </div>
@@ -1704,20 +1936,25 @@ export function StudyShellProgress({
   progressTotal = 1,
 }) {
   const progressCurrent = Math.min(progressTotal, progressStep + 1)
-  const progressPercent = progressTotal > 0 ? `${Math.round((progressCurrent / progressTotal) * 100)}%` : '0%'
+  const visibleBarCount = Math.min(progressTotal, 5)
+  const activeBarIndex =
+    visibleBarCount > 1 && progressTotal > 1
+      ? Math.round((progressStep / Math.max(progressTotal - 1, 1)) * (visibleBarCount - 1))
+      : 0
 
   return (
     <span
       className="study-v2 study-v2__shellProgress study-v2__shellCenterProgress"
-      style={{ '--study-shell-progress': progressPercent }}
       aria-label={`${routeLabel}: ${progressText}`}
     >
       <span className="study-v2__shellProgressLabel">
         <span className="study-v2__shellProgressLabelText">Segment </span>
         {progressCurrent} of {progressTotal}
       </span>
-      <span className="study-v2__shellProgressTrack" aria-hidden="true">
-        <span className="study-v2__shellProgressFill" />
+      <span className="study-v2__shellProgressBars" aria-hidden="true">
+        {Array.from({ length: visibleBarCount }, (_, index) => (
+          <span key={index} className={`study-v2__shellProgressBar${index === activeBarIndex ? ' is-active' : ''}`} />
+        ))}
       </span>
     </span>
   )
@@ -2010,11 +2247,11 @@ export function StudySourceCard({
     <section className="study-v2__sourceGroup">
       {showSegmentNavigation ? (
         <div className="study-v2__navRow">
-          <button type="button" className="study-v2__quietButton" onClick={onPrevious} disabled={!canPrevious}>
+          <button type="button" className="study-v2__quietButton" onClick={onPrevious} disabled={!canPrevious} title="Previous segment">
             <ChevronLeft size={15} />
             Previous
           </button>
-          <button type="button" className="study-v2__quietButton" onClick={onNext} disabled={!canNext}>
+          <button type="button" className="study-v2__quietButton" onClick={onNext} disabled={!canNext} title="Next segment">
             Next
             <ChevronRight size={15} />
           </button>
@@ -2022,13 +2259,13 @@ export function StudySourceCard({
       ) : null}
       <StudyPanel debugItem="study_source_card" anchor="source">
         <CardHeader badge="AR" title="Source Text">
-          <button type="button" className="study-v2__miniPill" onClick={onDecreaseFont} disabled={fontScale <= 0.72}>
+          <button type="button" className="study-v2__miniPill" onClick={onDecreaseFont} disabled={fontScale <= 0.72} title="Decrease source text size">
             A-
           </button>
-          <button type="button" className="study-v2__miniPill" onClick={onIncreaseFont} disabled={fontScale >= 1.44}>
+          <button type="button" className="study-v2__miniPill" onClick={onIncreaseFont} disabled={fontScale >= 1.44} title="Increase source text size">
             A+
           </button>
-          <button type="button" className="study-v2__miniPill">
+          <button type="button" className="study-v2__miniPill" title="Copy source text">
             <Copy size={14} />
             Copy
           </button>
@@ -2038,7 +2275,7 @@ export function StudySourceCard({
             className="study-v2__arabicSource"
             dir="rtl"
             style={{
-              fontSize: `calc(var(--study-arabic-size) * ${fontScale})`,
+              fontSize: `calc((var(--study-arabic-size) - 2px) * ${fontScale})`,
             }}
           >
             {sourceText}
@@ -2082,30 +2319,71 @@ export function StudyRetryBanner() {
   )
 }
 
-export function StudyTranslationEditor({ failed, onSubmit, onDiscuss, focusMode = false, docked = false }) {
+export function StudyTranslationEditor({ failed, onSubmit, onDiscuss, discussionOpen = false, focusMode = false, docked = false, fillHeight = false }) {
+  const [draft, setDraft] = useState('')
+  const [isExpanded, setIsExpanded] = useState(false)
+  const textareaRef = useRef(null)
+
+  useEffect(() => {
+    const textarea = textareaRef.current
+    if (!textarea || fillHeight || isExpanded) {
+      return
+    }
+
+    textarea.style.height = 'auto'
+    const maxHeight = Number.parseFloat(window.getComputedStyle(textarea).maxHeight)
+    const nextHeight = Number.isFinite(maxHeight) ? Math.min(textarea.scrollHeight, maxHeight) : textarea.scrollHeight
+    textarea.style.height = `${nextHeight}px`
+    textarea.style.overflowY = Number.isFinite(maxHeight) && textarea.scrollHeight > maxHeight ? 'auto' : 'hidden'
+  }, [draft, fillHeight, isExpanded])
+
   return (
     <div
-      className={['study-v2', 'study-v2__editor', docked ? 'is-docked' : ''].filter(Boolean).join(' ')}
+      className={[
+        'study-v2',
+        'study-v2__editor',
+        docked ? 'is-docked' : '',
+        fillHeight ? 'is-fillHeight' : '',
+        isExpanded ? 'is-expanded' : '',
+      ].filter(Boolean).join(' ')}
       data-debug-item="study_translation_editor_region"
     >
       <div className={['study-v2__editorLane', focusMode ? 'is-focused' : ''].filter(Boolean).join(' ')}>
         {failed ? <StudyRetryBanner /> : null}
         <StudyPanel debugItem="study_translation_editor" tone={failed ? 'review' : 'blue'}>
           <CardHeader badge="EN" title="Translation" tone={failed ? 'review' : 'blue'}>
-            <IconActionButton size="utility-sm" label="Bold" icon={<Bold strokeWidth={1.8} />} />
-            <IconActionButton size="utility-sm" label="Italic" icon={<Italic strokeWidth={1.8} />} />
-            <IconActionButton size="utility-sm" label="Align left" active icon={<AlignLeft strokeWidth={1.8} />} />
-            <IconActionButton size="utility-sm" label="Align center" icon={<AlignCenter strokeWidth={1.8} />} />
+            <IconActionButton size="utility-sm" label="Bold" title="Bold" icon={<Bold strokeWidth={1.8} />} />
+            <IconActionButton size="utility-sm" label="Italic" title="Italic" icon={<Italic strokeWidth={1.8} />} />
+            <IconActionButton size="utility-sm" label="Align left" title="Align left" active icon={<AlignLeft strokeWidth={1.8} />} />
+            <IconActionButton size="utility-sm" label="Align center" title="Align center" icon={<AlignCenter strokeWidth={1.8} />} />
+            <IconActionButton
+              size="utility-sm"
+              label={isExpanded ? 'Collapse translation editor' : 'Expand translation editor'}
+              title={isExpanded ? 'Collapse translation editor' : 'Expand translation editor'}
+              onClick={() => setIsExpanded((current) => !current)}
+              icon={isExpanded ? <Minimize2 strokeWidth={1.8} /> : <Maximize2 strokeWidth={1.8} />}
+            />
           </CardHeader>
           <div className="study-v2__editorBody">
-            <textarea className="study-v2__textarea" placeholder="Write your translation here..." />
+            <textarea
+              ref={textareaRef}
+              className="study-v2__textarea"
+              placeholder="Write your translation here..."
+              value={draft}
+              onChange={(event) => setDraft(event.target.value)}
+            />
             <div className="study-v2__editorFooter">
               <span className="study-v2__hint">⌘ Enter to submit</span>
-              <button type="button" className="study-v2__secondaryAction" onClick={onDiscuss}>
+              <button
+                type="button"
+                className="study-v2__secondaryAction"
+                onClick={onDiscuss}
+                title={discussionOpen ? 'Hide study companion' : 'Discuss this segment'}
+              >
                 <MessageSquare size={15} strokeWidth={1.9} />
-                Discuss this segment
+                {discussionOpen ? 'Hide discussion' : 'Discuss this segment'}
               </button>
-              <PrimaryCTA minWidth={132} height={44} icon={<Send size={15} strokeWidth={1.9} />} onClick={onSubmit}>
+              <PrimaryCTA minWidth={132} height={44} icon={<Send size={15} strokeWidth={1.9} />} onClick={onSubmit} title={failed ? 'Submit again' : 'Submit translation'}>
                 {failed ? 'Submit again' : 'Submit'}
               </PrimaryCTA>
             </div>
@@ -2120,7 +2398,7 @@ export function StudyDiscussionCompanion({ onClose }) {
   return (
     <StudyPanel className="study-v2__discussion" tone="review" debugItem="study_discussion_companion">
       <CardHeader badge={<MessageSquare size={15} />} title="Study Companion" tone="review">
-        <button type="button" className="study-v2__miniPill" onClick={onClose}>Close</button>
+        <button type="button" className="study-v2__miniPill" onClick={onClose} title="Close study companion">Close</button>
       </CardHeader>
       <div className="study-v2__cardBody study-v2__discussionBody">
         <div className="study-v2__contextBox">
@@ -2133,8 +2411,8 @@ export function StudyDiscussionCompanion({ onClose }) {
         </p>
         <textarea className="study-v2__discussionInput" placeholder="Ask a segment-specific follow-up question..." />
         <div className="study-v2__discussionFooter">
-          <button type="button" className="study-v2__miniPill">Summarise and save</button>
-          <PrimaryCTA minWidth={112} height={44} icon={<Send size={15} strokeWidth={1.9} />}>Send</PrimaryCTA>
+          <button type="button" className="study-v2__miniPill" title="Summarise and save discussion">Summarise and save</button>
+          <PrimaryCTA minWidth={112} height={44} icon={<Send size={15} strokeWidth={1.9} />} title="Send companion message">Send</PrimaryCTA>
         </div>
       </div>
     </StudyPanel>
@@ -2161,7 +2439,7 @@ export function StudySubmittedStack({ bestTranslation, userTranslation, onDiscus
     <div className="study-v2__resultGrid" data-debug-item="study_submitted_stack">
       <StudyPanel tone="success" className="study-v2__resultPanel" anchor="best">
         <CardHeader badge="✓" title="Best in Class Translation" tone="success">
-          <button type="button" className="study-v2__miniPill">
+          <button type="button" className="study-v2__miniPill" title="Copy best translation">
             <Copy size={14} />
             Copy
           </button>
@@ -2172,7 +2450,7 @@ export function StudySubmittedStack({ bestTranslation, userTranslation, onDiscus
       </StudyPanel>
       <StudyPanel tone="slate" className="study-v2__resultPanel" anchor="translation">
         <CardHeader badge="EN" title="Your Translation" tone="slate">
-          <button type="button" className="study-v2__miniPill">
+          <button type="button" className="study-v2__miniPill" title="Copy your translation">
             <Copy size={14} />
             Copy
           </button>
@@ -2183,11 +2461,11 @@ export function StudySubmittedStack({ bestTranslation, userTranslation, onDiscus
       </StudyPanel>
       <StudyPanel tone="review" className="study-v2__resultPanel study-v2__notesPanel" anchor="notes">
         <CardHeader badge={<ScrollText size={15} />} title="Discussion Summary & Notes" tone="review">
-          <button type="button" className="study-v2__miniPill is-muted" disabled>
+          <button type="button" className="study-v2__miniPill is-muted" disabled title="Notes are already attached to this segment">
             <Pin size={14} />
             Pin
           </button>
-          <button type="button" className="study-v2__miniPill" onClick={() => setIsAddingNote(true)}>
+          <button type="button" className="study-v2__miniPill" onClick={() => setIsAddingNote(true)} title="Add a manual note">
             <Plus size={14} />
             Add manual note
           </button>
@@ -2201,7 +2479,7 @@ export function StudySubmittedStack({ bestTranslation, userTranslation, onDiscus
                 Use “Discuss this segment” to start a conversation. When you summarise and save, it will appear here along with any manual notes you add.
               </p>
               <div className="study-v2__discussionNotesEmptyActions">
-                <button type="button" className="study-v2__miniPill" onClick={onDiscuss}>
+                <button type="button" className="study-v2__miniPill" onClick={onDiscuss} title="Discuss this segment">
                   <MessageSquare size={14} />
                   Discuss this segment
                 </button>
@@ -2232,6 +2510,7 @@ export function StudySubmittedStack({ bestTranslation, userTranslation, onDiscus
                 <button
                   type="button"
                   className="study-v2__miniPill"
+                  title="Cancel manual note"
                   onClick={() => {
                     setManualNoteDraft('')
                     setIsAddingNote(false)
@@ -2239,7 +2518,7 @@ export function StudySubmittedStack({ bestTranslation, userTranslation, onDiscus
                 >
                   Cancel
                 </button>
-                <button type="button" className="study-v2__miniPill" onClick={saveManualNote} disabled={!manualNoteDraft.trim()}>
+                <button type="button" className="study-v2__miniPill" onClick={saveManualNote} disabled={!manualNoteDraft.trim()} title="Save manual note">
                   Save note
                 </button>
               </div>
@@ -2324,8 +2603,11 @@ export function StudySubmissionNavigator({ onJumpTo, notesAvailable = false }) {
 export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
   const [expandedCardId, setExpandedCardId] = useState(null)
   const [fullscreenCardId, setFullscreenCardId] = useState(null)
-  const [floatingCardId, setFloatingCardId] = useState(null)
+  const [floatingCardState, setFloatingCardState] = useState(null)
   const [previewCardId, setPreviewCardId] = useState(null)
+  const [previewTop, setPreviewTop] = useState(null)
+  const previewCloseTimerRef = useRef(null)
+  const floatingDragCleanupRef = useRef(null)
   const isSubmitted = state === 'submitted'
   const isFailed = state === 'failed'
   const cards = isSubmitted
@@ -2348,8 +2630,130 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
 
   const expandedCard = cards.find((card) => card.id === expandedCardId) ?? null
   const fullscreenCard = cards.find((card) => card.id === fullscreenCardId) ?? null
-  const floatingCard = cards.find((card) => card.id === floatingCardId) ?? null
+  const floatingCard = cards.find((card) => card.id === floatingCardState?.id) ?? null
   const previewCard = cards.find((card) => card.id === previewCardId) ?? null
+
+  useEffect(() => {
+    return () => {
+      if (previewCloseTimerRef.current) {
+        window.clearTimeout(previewCloseTimerRef.current)
+      }
+      floatingDragCleanupRef.current?.()
+    }
+  }, [])
+
+  const cancelPreviewClose = () => {
+    if (previewCloseTimerRef.current) {
+      window.clearTimeout(previewCloseTimerRef.current)
+      previewCloseTimerRef.current = null
+    }
+  }
+  const openPreview = (cardId, anchorTop = null) => {
+    cancelPreviewClose()
+    if (anchorTop != null) {
+      setPreviewTop(anchorTop)
+    }
+    setPreviewCardId(cardId)
+  }
+  const closePreview = () => {
+    cancelPreviewClose()
+    previewCloseTimerRef.current = window.setTimeout(() => {
+      setPreviewCardId(null)
+      setPreviewTop(null)
+      previewCloseTimerRef.current = null
+    }, 90)
+  }
+
+  const openExpandedCard = (cardId) => {
+    setExpandedCardId(cardId)
+    setFullscreenCardId(null)
+    setFloatingCardState(null)
+  }
+
+  const openFullscreenCard = (cardId) => {
+    setFullscreenCardId(cardId)
+    setExpandedCardId(null)
+    setFloatingCardState(null)
+    setPreviewCardId(null)
+  }
+
+  const openFloatingCard = (cardId) => {
+    setFloatingCardState((current) => (current?.id === cardId ? current : createFloatingCardState(cardId)))
+    setExpandedCardId(null)
+    setFullscreenCardId(null)
+    setPreviewCardId(null)
+  }
+
+  const closeFloatingCard = () => {
+    floatingDragCleanupRef.current?.()
+    setFloatingCardState(null)
+  }
+
+  const startFloatingDrag = (event) => {
+    if (event.button !== 0 || !floatingCardState) {
+      return
+    }
+
+    if (event.target.closest('button')) {
+      return
+    }
+
+    const floatingElement = event.currentTarget.closest('.study-v2__supportFloating')
+    if (!floatingElement) {
+      return
+    }
+
+    const rect = floatingElement.getBoundingClientRect()
+    const startPointerX = event.clientX
+    const startPointerY = event.clientY
+    const startLeft = floatingCardState.left ?? rect.left
+    const startTop = floatingCardState.top ?? rect.top
+    const cardWidth = rect.width
+    const cardHeight = rect.height
+    const viewportInset = 16
+
+    const handlePointerMove = (moveEvent) => {
+      setFloatingCardState((current) => {
+        if (!current) {
+          return current
+        }
+
+        return {
+          ...current,
+          left: clamp(
+            startLeft + (moveEvent.clientX - startPointerX),
+            viewportInset,
+            Math.max(viewportInset, window.innerWidth - cardWidth - viewportInset),
+          ),
+          top: clamp(
+            startTop + (moveEvent.clientY - startPointerY),
+            viewportInset,
+            Math.max(viewportInset, window.innerHeight - cardHeight - viewportInset),
+          ),
+        }
+      })
+    }
+
+    const cleanupDrag = () => {
+      window.removeEventListener('pointermove', handlePointerMove)
+      window.removeEventListener('pointerup', cleanupDrag)
+      floatingDragCleanupRef.current = null
+    }
+
+    floatingDragCleanupRef.current?.()
+    floatingDragCleanupRef.current = cleanupDrag
+
+    window.addEventListener('pointermove', handlePointerMove)
+    window.addEventListener('pointerup', cleanupDrag)
+  }
+
+  const expandFromCollapsedPreview = (cardId) => {
+    openExpandedCard(cardId)
+    setPreviewCardId(null)
+    onToggleCollapsed?.()
+  }
+  const openFullscreenFromCollapsedPreview = (cardId) => openFullscreenCard(cardId)
+  const floatFromCollapsedPreview = (cardId) => openFloatingCard(cardId)
 
   if (collapsed) {
     return (
@@ -2365,23 +2769,42 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
               className="study-v2__collapsedSupportButton"
               style={toneStyle(card.tone)}
               aria-label={card.title}
-              onMouseEnter={() => setPreviewCardId(card.id)}
-              onMouseLeave={() => setPreviewCardId(null)}
-              onFocus={() => setPreviewCardId(card.id)}
-              onBlur={() => setPreviewCardId(null)}
-              onClick={() => setFloatingCardId(card.id)}
+              title={`Open ${card.title}`}
+              onMouseEnter={(event) => openPreview(card.id, Math.max(12, event.currentTarget.offsetTop - 8))}
+              onMouseLeave={closePreview}
+              onFocus={(event) => openPreview(card.id, Math.max(12, event.currentTarget.offsetTop - 8))}
+              onBlur={closePreview}
+              onClick={() => openFloatingCard(card.id)}
             >
               <span className="study-v2__supportIcon">{card.icon}</span>
             </button>
           ))}
         </div>
-        {previewCard ? <StudyDetachedSupportCard card={previewCard} className="study-v2__supportPreview" preview /> : null}
+        {previewCard ? (
+          <StudyDetachedSupportCard
+            card={previewCard}
+            className="study-v2__supportPreview"
+            preview
+            style={previewTop != null ? { top: `${previewTop}px` } : undefined}
+            onPreviewEnter={() => openPreview(previewCard.id, previewTop)}
+            onPreviewLeave={closePreview}
+            onExpand={() => expandFromCollapsedPreview(previewCard.id)}
+            onFullscreen={() => openFullscreenFromCollapsedPreview(previewCard.id)}
+            onFloat={() => floatFromCollapsedPreview(previewCard.id)}
+          />
+        ) : null}
         {floatingCard ? (
           <StudyDetachedSupportCard
             card={floatingCard}
             className="study-v2__supportFloating"
-            onClose={() => setFloatingCardId(null)}
-            onFullscreen={() => setFullscreenCardId(floatingCard.id)}
+            style={{
+              left: `${floatingCardState.left}px`,
+              top: `${floatingCardState.top}px`,
+            }}
+            draggable
+            onDragStart={startFloatingDrag}
+            onClose={closeFloatingCard}
+            onFullscreen={() => openFullscreenCard(floatingCard.id)}
           />
         ) : null}
         {fullscreenCard ? <StudyFullscreenSupportCard card={fullscreenCard} onClose={() => setFullscreenCardId(null)} /> : null}
@@ -2400,9 +2823,9 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
           <StudySupportCard
             key={card.id}
             {...card}
-            onExpand={() => setExpandedCardId(card.id)}
-            onFullscreen={() => setFullscreenCardId(card.id)}
-            onFloat={() => setFloatingCardId(card.id)}
+            onExpand={() => openExpandedCard(card.id)}
+            onFullscreen={() => openFullscreenCard(card.id)}
+            onFloat={() => openFloatingCard(card.id)}
           />
         ))}
       </div>
@@ -2434,8 +2857,14 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
         <StudyDetachedSupportCard
           card={floatingCard}
           className="study-v2__supportFloating"
-          onClose={() => setFloatingCardId(null)}
-          onFullscreen={() => setFullscreenCardId(floatingCard.id)}
+          style={{
+            left: `${floatingCardState.left}px`,
+            top: `${floatingCardState.top}px`,
+          }}
+          draggable
+          onDragStart={startFloatingDrag}
+          onClose={closeFloatingCard}
+          onFullscreen={() => openFullscreenCard(floatingCard.id)}
         />
       ) : null}
       {fullscreenCard ? <StudyFullscreenSupportCard card={fullscreenCard} onClose={() => setFullscreenCardId(null)} /> : null}
@@ -2443,40 +2872,98 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
   )
 }
 
-function StudySupportCard({ tone, icon, title, body, onExpand, onFloat }) {
+function StudySupportCard({ tone, icon, title, body, onExpand, onFullscreen, onFloat }) {
   return (
     <section className="study-v2__supportCard" style={toneStyle(tone)}>
       <div className="study-v2__supportCardHeader">
         <span className="study-v2__supportIcon">{icon}</span>
         <h3 className="study-v2__supportTitle">{title}</h3>
-        <IconActionButton
-          className="study-v2__supportExpand"
-          size="utility-sm"
-          label={`Expand ${title}`}
-          title={`Expand ${title}`}
-          onClick={onExpand}
-          icon={<Maximize2 strokeWidth={1.8} />}
-        />
-        <IconActionButton
-          size="utility-sm"
-          label={`Float ${title}`}
-          title={`Float ${title}`}
-          onClick={onFloat}
-          icon={<Pin strokeWidth={1.8} />}
-        />
+        <div className="study-v2__supportCardActions">
+          <IconActionButton
+            size="utility-sm"
+            label={`Expand ${title} in support panel`}
+            title={`Expand ${title} in support panel`}
+            onClick={onExpand}
+            icon={<ChevronsLeft strokeWidth={1.8} />}
+          />
+          <IconActionButton
+            size="utility-sm"
+            label={`Open ${title} fullscreen`}
+            title={`Open ${title} fullscreen`}
+            onClick={onFullscreen}
+            icon={<Maximize2 strokeWidth={1.8} />}
+          />
+          <IconActionButton
+            size="utility-sm"
+            label={`Float ${title}`}
+            title={`Float ${title}`}
+            onClick={onFloat}
+            icon={<Pin strokeWidth={1.8} />}
+          />
+        </div>
       </div>
       <div className="study-v2__supportCardBody">{body}</div>
     </section>
   )
 }
 
-function StudyDetachedSupportCard({ card, className, onClose, onFullscreen, preview = false }) {
+function StudyDetachedSupportCard({
+  card,
+  className,
+  style,
+  onClose,
+  onFullscreen,
+  onExpand,
+  onFloat,
+  onDragStart,
+  onPreviewEnter,
+  onPreviewLeave,
+  draggable = false,
+  preview = false,
+}) {
   return (
-    <section className={`study-v2 ${className}`} data-debug-item={preview ? 'study_support_preview' : 'study_support_floating'}>
+    <section
+      className={`study-v2 ${className}`}
+      data-debug-item={preview ? 'study_support_preview' : 'study_support_floating'}
+      style={style}
+      onMouseEnter={preview ? onPreviewEnter : undefined}
+      onMouseLeave={preview ? onPreviewLeave : undefined}
+    >
       <section className="study-v2__supportCard" style={toneStyle(card.tone)}>
-        <div className="study-v2__supportCardHeader">
+        <div
+          className={`study-v2__supportCardHeader${draggable ? ' is-draggable' : ''}`}
+          onPointerDown={draggable ? onDragStart : undefined}
+        >
           <span className="study-v2__supportIcon">{card.icon}</span>
           <h3 className="study-v2__supportTitle">{card.title}</h3>
+          {preview && onExpand ? (
+            <IconActionButton
+              className="study-v2__supportExpand"
+              size="utility-sm"
+              label={`Expand ${card.title} in panel`}
+              title={`Expand ${card.title} in panel`}
+              onClick={onExpand}
+              icon={<ChevronsLeft strokeWidth={1.8} />}
+            />
+          ) : null}
+          {preview && onFullscreen ? (
+            <IconActionButton
+              size="utility-sm"
+              label={`Open ${card.title} fullscreen`}
+              title={`Open ${card.title} fullscreen`}
+              onClick={onFullscreen}
+              icon={<Maximize2 strokeWidth={1.8} />}
+            />
+          ) : null}
+          {preview && onFloat ? (
+            <IconActionButton
+              size="utility-sm"
+              label={`Float ${card.title}`}
+              title={`Float ${card.title}`}
+              onClick={onFloat}
+              icon={<Pin strokeWidth={1.8} />}
+            />
+          ) : null}
           {!preview && onFullscreen ? (
             <IconActionButton
               className="study-v2__supportExpand"
@@ -2504,7 +2991,7 @@ function StudyDetachedSupportCard({ card, className, onClose, onFullscreen, prev
 }
 
 function StudyFullscreenSupportCard({ card, onClose }) {
-  return (
+  const fullscreenCard = (
     <div className="study-v2 study-v2__supportFullscreenBackdrop" data-debug-item="study_support_fullscreen">
       <section className="study-v2__supportFullscreen" style={toneStyle(card.tone)}>
         <div className="study-v2__supportOverlayHeader">
@@ -2523,6 +3010,12 @@ function StudyFullscreenSupportCard({ card, onClose }) {
       </section>
     </div>
   )
+
+  if (typeof document === 'undefined') {
+    return fullscreenCard
+  }
+
+  return createPortal(fullscreenCard, document.body)
 }
 
 function GuidanceBody() {

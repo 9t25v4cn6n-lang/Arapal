@@ -39,6 +39,7 @@ export default function PrimaryCTA({
   minWidth = 340,
   height = 56,
   shape = 'pill',
+  title,
   style = {},
   contentStyle = {},
   debugItem,
@@ -51,6 +52,7 @@ export default function PrimaryCTA({
     <button
       type="button"
       data-debug-item={debugItem}
+      title={title}
       onClick={onClick}
       disabled={disabled}
       onMouseEnter={() => setIsHovered(true)}

@@ -27,8 +27,10 @@ export default function IconActionButton({
   ...buttonProps
 }) {
   const [isHovered, setIsHovered] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
   const resolvedSize = resolveSize(size)
   const isHighlighted = active || isHovered
+  const showTooltip = title && (isHovered || isFocused)
   const iconSize =
     resolvedSize === controlSizing.utilitySm.hitAreaPx
       ? controlSizing.utilitySm.iconPx
@@ -44,7 +46,10 @@ export default function IconActionButton({
       onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
       style={{
+        position: 'relative',
         width: `${resolvedSize}px`,
         height: `${resolvedSize}px`,
         border: `1px solid ${isHighlighted ? colors.accentMist : 'transparent'}`,
@@ -66,6 +71,32 @@ export default function IconActionButton({
       {...buttonProps}
     >
       {isValidElement(icon) ? cloneElement(icon, { size: icon.props.size ?? iconSize }) : icon}
+      {showTooltip ? (
+        <span
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            bottom: `calc(100% + 8px)`,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 40,
+            maxWidth: '180px',
+            padding: '6px 8px',
+            border: `1px solid ${colors.lineSoft}`,
+            borderRadius: radius[12],
+            background: 'rgba(255,255,255,0.96)',
+            boxShadow: '0 12px 28px rgba(15,23,42,0.12)',
+            color: colors.textBody,
+            fontSize: '11px',
+            lineHeight: 1.15,
+            fontWeight: 700,
+            whiteSpace: 'nowrap',
+            pointerEvents: 'none',
+          }}
+        >
+          {title}
+        </span>
+      ) : null}
     </button>
   )
 }
