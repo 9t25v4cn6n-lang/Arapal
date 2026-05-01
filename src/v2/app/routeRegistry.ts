@@ -16,6 +16,8 @@ import ProjectHomeScreen from '../screens/ProjectHome/ProjectHomeScreen'
 import projectHomeLayoutContract from '../screens/ProjectHome/ProjectHomeScreen.contract'
 import ProjectsScreen from '../screens/Projects/ProjectsScreen'
 import projectsLayoutContract from '../screens/Projects/ProjectsScreen.contract'
+import ProjectResearchScreen from '../screens/ProjectResearch/ProjectResearchScreen'
+import projectResearchLayoutContract from '../screens/ProjectResearch/ProjectResearchScreen.contract'
 import SegmentationPasteScreen from '../screens/SegmentationPaste/SegmentationPasteScreen'
 import segmentationPasteLayoutContract from '../screens/SegmentationPaste/SegmentationPasteScreen.contract'
 import SegmentationPasteNextScreen from '../screens/SegmentationPasteNext/SegmentationPasteNextScreen'
@@ -245,6 +247,28 @@ export const routeRegistry = {
         iconKey: 'projects',
         order: 20,
         routeId: 'projects',
+      },
+    },
+  },
+  projectResearch: {
+    id: 'projectResearch',
+    label: 'Project Research',
+    component: ProjectResearchScreen,
+    layoutContract: projectResearchLayoutContract,
+    shell: {
+      showRail: true,
+      header: {
+        modeLabel: 'Research Workspace',
+        description: 'Search and inspect project knowledge',
+      },
+      rail: {
+        visible: false,
+        groupId: 'projects',
+        label: 'Project Research',
+        shortLabel: 'RX',
+        iconKey: 'projects',
+        order: 21,
+        routeId: 'projectResearch',
       },
     },
   },

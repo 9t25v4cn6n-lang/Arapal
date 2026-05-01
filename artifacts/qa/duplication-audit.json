@@ -1,6 +1,6 @@
 {
   "lane": "duplication",
-  "generatedAt": "2026-04-25T21:06:41.514Z",
+  "generatedAt": "2026-05-01T10:14:16.027Z",
   "findings": [
     {
       "id": "duplication:76e4935edcc9",
@@ -46,11 +46,11 @@
       ],
       "fingerprint": "76e4935edcc95a280033b1d8ff423a68706868a9",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-25T21:06:41.514Z",
+      "lastSeenAt": "2026-05-01T10:14:16.027Z",
       "status": "current"
     },
     {
-      "id": "duplication:9ad35be78eb9",
+      "id": "duplication:97bfb8f61d62",
       "lane": "duplication",
       "ruleId": "repeated-contract-fragment",
       "title": "Repeated contract fragment",
@@ -59,22 +59,23 @@
       "severity": "info",
       "confidence": "high",
       "classification": "doctrine-decision-needed",
-      "file": "/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.contract.ts",
-      "line": 19,
+      "file": "/src/v2/screens/ProjectResearch/ProjectResearchScreen.contract.ts",
+      "line": 10,
       "column": 5,
       "screenId": null,
       "fileKind": "screen-contract",
       "scope": "live-product",
       "ownerLayer": "contract-layer",
-      "message": "3 files repeat the same 3-occurrence pattern.",
+      "message": "4 files repeat the same 4-occurrence pattern.",
       "rationale": "When the same container fragment is copied across multiple contracts, it usually wants a shared contract helper or a more explicit generic container role.",
       "evidence": {
         "excerpt": "{ name: 'Layer2_Body_Backdrop', layer: 'Layer2', parent: 'Layer1_Body_ScreenBodyField', display: 'flex', layoutMode: 'flex', flexDirection: 'column', alignItems: 'stretch', justifyContent: 'stretch', padding: '0', gap: '0', overflow: 'hidden', textAlign: 'left', style: { gridColumn: '1', gridRow: '1', minWidth: 0, minHeight: 0, position: 'relative', pointerEvents: 'none', }, }",
         "details": [
           "quality=candidate-extraction",
-          "files=3",
-          "occurrences=3",
+          "files=4",
+          "occurrences=4",
           "distinctSignatures=1",
+          "file=/src/v2/screens/ProjectResearch/ProjectResearchScreen.contract.ts",
           "file=/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.contract.ts",
           "file=/src/v2/screens/SegmentationReview/SegmentationReviewScreen.contract.ts",
           "file=/src/v2/screens/StudyWorkspace/StudyWorkspaceScreen.contract.ts",
@@ -92,9 +93,9 @@
         "candidate-extraction",
         "product"
       ],
-      "fingerprint": "9ad35be78eb902e3972430861e7a539325c3b5cd",
+      "fingerprint": "97bfb8f61d621e391d8916092aba09cc685b9216",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-25T21:06:41.514Z",
+      "lastSeenAt": "2026-05-01T10:14:16.027Z",
       "status": "current"
     },
     {
@@ -142,11 +143,11 @@
       ],
       "fingerprint": "f62de5cd317b019dd0be471b0b3d239861cf9030",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-25T21:06:41.514Z",
+      "lastSeenAt": "2026-05-01T10:14:16.027Z",
       "status": "current"
     },
     {
-      "id": "duplication:04a460990edb",
+      "id": "duplication:727bc4e10511",
       "lane": "duplication",
       "ruleId": "shared-primitive-variant-drift",
       "title": "Shared primitive variant drift",
@@ -156,7 +157,7 @@
       "confidence": "low",
       "classification": "low-confidence-review",
       "file": "/src/v2/foundation/primitives/IconActionButton.jsx",
-      "line": 47,
+      "line": 51,
       "column": 14,
       "screenId": null,
       "fileKind": "shared-primitive",
@@ -165,7 +166,7 @@
       "message": "2 shared foundation files use the same style family with 2 bespoke literal bundles.",
       "rationale": "Shared foundation files should not solve the same presentational problem with slightly different bespoke bundles unless that variation is intentionally named.",
       "evidence": {
-        "excerpt": "{ width: `${resolvedSize}px`, height: `${resolvedSize}px`, border: `1px solid ${isHighlighted ? colors.accentMist : 'transparent'}`, borderRadius: radius[12], background: isHighlighted ? colors.accentWash : 'transparent', color: isHighlighted ? colors.accentStrong : colors.textFaint, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: [ `background-color ${motion.micro}`, `border-color ${motion.micro}`, `color ${motion.micro}`, `box-shadow ${motion.micro}`, ].join(', '), ...style, }",
+        "excerpt": "{ position: 'relative', width: `${resolvedSize}px`, height: `${resolvedSize}px`, border: `1px solid ${isHighlighted ? colors.accentMist : 'transparent'}`, borderRadius: radius[12], background: isHighlighted ? colors.accentWash : 'transparent', color: isHighlighted ? colors.accentStrong : colors.textFaint, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: [ `background-color ${motion.micro}`, `border-color ${motion.micro}`, `color ${motion.micro}`, `box-shadow ${motion.micro}`, ].join(', '), ...style, }",
         "details": [
           "quality=harmless-repetition",
           "files=2",
@@ -188,9 +189,9 @@
         "harmless-repetition",
         "product"
       ],
-      "fingerprint": "04a460990edb8e8c42c5737e9b3c41e30fcdf218",
+      "fingerprint": "727bc4e1051197dac1743a981b83e48524a1862e",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-25T21:06:41.514Z",
+      "lastSeenAt": "2026-05-01T10:14:16.027Z",
       "status": "current"
     },
     {
@@ -238,7 +239,7 @@
       ],
       "fingerprint": "8f720bea5a55bd4b1e5afb3318e457b1ff972882",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-25T21:06:41.514Z",
+      "lastSeenAt": "2026-05-01T10:14:16.027Z",
       "status": "current"
     },
     {
@@ -286,7 +287,7 @@
       ],
       "fingerprint": "139e03e40dbcc5766a2fb14d49ea25061a64685f",
       "firstSeenAt": null,
-      "lastSeenAt": "2026-04-25T21:06:41.514Z",
+      "lastSeenAt": "2026-05-01T10:14:16.027Z",
       "status": "current"
     }
   ],
@@ -1412,6 +1413,36 @@
       "usedByLiveProduct": true
     },
     {
+      "file": "/src/v2/screens/ProjectResearch/ProjectResearchScreen.contract.ts",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/ProjectResearch/ProjectResearchScreen.contract.ts",
+      "fileKind": "screen-contract",
+      "scope": "live-product",
+      "ownerLayer": "contract-layer",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/ProjectResearch/ProjectResearchScreen.jsx",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/ProjectResearch/ProjectResearchScreen.jsx",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/Projects/AdvancedOptionsPanel.jsx",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Projects/AdvancedOptionsPanel.jsx",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
       "file": "/src/v2/screens/Projects/ProjectsScreen.contract.ts",
       "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Projects/ProjectsScreen.contract.ts",
       "fileKind": "screen-contract",
@@ -1424,6 +1455,36 @@
     {
       "file": "/src/v2/screens/Projects/ProjectsScreen.jsx",
       "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Projects/ProjectsScreen.jsx",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/Projects/studyDashboardData.js",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Projects/studyDashboardData.js",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/Projects/useServerQuery.js",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Projects/useServerQuery.js",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/Projects/useVirtualRows.js",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Projects/useVirtualRows.js",
       "fileKind": "live-screen",
       "scope": "live-product",
       "ownerLayer": "screen",
@@ -1689,7 +1750,7 @@
         "count": 1
       },
       {
-        "file": "/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.contract.ts",
+        "file": "/src/v2/screens/ProjectResearch/ProjectResearchScreen.contract.ts",
         "count": 1
       }
     ]
@@ -1713,15 +1774,16 @@
         "ruleId": "repeated-contract-fragment",
         "scope": "live-product",
         "quality": "candidate-extraction",
-        "fileCount": 3,
-        "occurrenceCount": 3,
+        "fileCount": 4,
+        "occurrenceCount": 4,
         "distinctSignatureCount": 1,
         "files": [
+          "/src/v2/screens/ProjectResearch/ProjectResearchScreen.contract.ts",
           "/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.contract.ts",
           "/src/v2/screens/SegmentationReview/SegmentationReviewScreen.contract.ts",
           "/src/v2/screens/StudyWorkspace/StudyWorkspaceScreen.contract.ts"
         ],
-        "representativeFile": "/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.contract.ts"
+        "representativeFile": "/src/v2/screens/ProjectResearch/ProjectResearchScreen.contract.ts"
       },
       {
         "ruleId": "shared-primitive-variant-drift",
@@ -1815,12 +1877,12 @@
         "count": 1
       },
       {
-        "file": "/src/v2/screens/SegmentationPasteNext/SegmentationPasteNextScreen.contract.ts",
+        "file": "/src/v2/screens/ProjectResearch/ProjectResearchScreen.contract.ts",
         "count": 1
       }
     ],
     "parse": {
-      "parsedFileCount": 131,
+      "parsedFileCount": 137,
       "fallbackFileCount": 0,
       "failedFileCount": 0
     }

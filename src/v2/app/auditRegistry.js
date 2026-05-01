@@ -1,6 +1,7 @@
 export const coreProductRouteIds = [
   'projectHome',
   'projects',
+  'projectResearch',
   'segmentationPasteNext',
   'segmentationTransition',
   'segmentationLoading',
@@ -13,6 +14,7 @@ export const coreProductRouteIds = [
 export const coreProductScreenDirs = [
   'ProjectHome',
   'Projects',
+  'ProjectResearch',
   'SegmentationPasteNext',
   'SegmentationTransition',
   'SegmentationLoading',

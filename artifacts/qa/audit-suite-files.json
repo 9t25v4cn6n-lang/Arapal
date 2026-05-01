@@ -1121,6 +1121,36 @@
       "usedByLiveProduct": true
     },
     {
+      "file": "/src/v2/screens/ProjectResearch/ProjectResearchScreen.contract.ts",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/ProjectResearch/ProjectResearchScreen.contract.ts",
+      "fileKind": "screen-contract",
+      "scope": "live-product",
+      "ownerLayer": "contract-layer",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/ProjectResearch/ProjectResearchScreen.jsx",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/ProjectResearch/ProjectResearchScreen.jsx",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/Projects/AdvancedOptionsPanel.jsx",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Projects/AdvancedOptionsPanel.jsx",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
       "file": "/src/v2/screens/Projects/ProjectsScreen.contract.ts",
       "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Projects/ProjectsScreen.contract.ts",
       "fileKind": "screen-contract",
@@ -1133,6 +1163,36 @@
     {
       "file": "/src/v2/screens/Projects/ProjectsScreen.jsx",
       "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Projects/ProjectsScreen.jsx",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/Projects/studyDashboardData.js",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Projects/studyDashboardData.js",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/Projects/useServerQuery.js",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Projects/useServerQuery.js",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/Projects/useVirtualRows.js",
+      "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Projects/useVirtualRows.js",
       "fileKind": "live-screen",
       "scope": "live-product",
       "ownerLayer": "screen",

@@ -813,7 +813,7 @@ function LessonRail({ lessons, selectedLessonId, searchQuery, onSearchChange, on
   )
 }
 
-const ResumeStage = memo(function ResumeStage({ lesson, onResume }) {
+const ResumeStage = memo(function ResumeStage({ lesson, onResume, onBrowse }) {
   const primaryIcon = lesson.status === 'ready'
     ? <BookOpen size={17} strokeWidth={2} />
     : <ListChecks size={17} strokeWidth={2} />
@@ -842,7 +842,7 @@ const ResumeStage = memo(function ResumeStage({ lesson, onResume }) {
           >
             {lesson.status === 'ready' ? 'Resume study' : 'Review setup'}
           </PrimaryCTA>
-          <button type="button" className="study-dashboard__secondaryButton">
+          <button type="button" className="study-dashboard__secondaryButton" onClick={onBrowse}>
             <FolderOpen size={15} strokeWidth={2} />
             Browse all work
           </button>
@@ -915,6 +915,10 @@ function StudyDashboardWorkspace({ lesson, shell }) {
     shell.navigate(lesson.primaryRoute)
   }, [lesson.primaryRoute, shell])
 
+  const handleBrowse = useCallback(() => {
+    shell.navigate('projectResearch')
+  }, [shell])
+
   return (
     <main className="study-dashboard study-dashboard__stage" data-debug-item="study_dashboard_workspace">
       <section className="study-dashboard__intro">
@@ -926,7 +930,7 @@ function StudyDashboardWorkspace({ lesson, shell }) {
         </p>
       </section>
 
-      <ResumeStage lesson={lesson} onResume={handleResume} />
+      <ResumeStage lesson={lesson} onResume={handleResume} onBrowse={handleBrowse} />
       <AdvancedDisclosureContainer lesson={lesson} />
     </main>
   )

@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-04-25T21:06:42.048Z",
+  "generatedAt": "2026-05-01T10:14:16.572Z",
   "schemaVersion": 2,
   "laneBreakdown": [
     {
       "lane": "static-doctrine",
-      "findingCount": 560,
-      "auditedFileCount": 80,
+      "findingCount": 766,
+      "auditedFileCount": 86,
       "excludedFileCount": 4,
       "status": "ready",
       "message": null
@@ -20,8 +20,8 @@
     },
     {
       "lane": "dead-code",
-      "findingCount": 47,
-      "auditedFileCount": 131,
+      "findingCount": 49,
+      "auditedFileCount": 137,
       "excludedFileCount": 4,
       "status": "ready",
       "message": null
@@ -29,7 +29,7 @@
     {
       "lane": "architecture",
       "findingCount": 0,
-      "auditedFileCount": 131,
+      "auditedFileCount": 137,
       "excludedFileCount": 4,
       "status": "ready",
       "message": null
@@ -37,7 +37,7 @@
     {
       "lane": "duplication",
       "findingCount": 6,
-      "auditedFileCount": 131,
+      "auditedFileCount": 137,
       "excludedFileCount": 4,
       "status": "ready",
       "message": null
@@ -49,34 +49,34 @@
     "publicPathsSanitized": true
   },
   "totals": {
-    "findings": 613,
-    "productDebtFindings": 182,
+    "findings": 821,
+    "productDebtFindings": 390,
     "toolingDebtFindings": 431,
     "suppressedFindings": 0,
-    "auditedFiles": 131,
+    "auditedFiles": 137,
     "excludedFiles": 4
   },
   "bySeverity": {
-    "info": 326,
-    "warn": 287
+    "info": 430,
+    "warn": 391
   },
   "byConfidence": {
-    "medium": 557,
-    "high": 52,
+    "medium": 758,
+    "high": 59,
     "low": 4
   },
   "byClassification": {
-    "real-code-fix": 605,
-    "doctrine-decision-needed": 4,
+    "real-code-fix": 811,
+    "doctrine-decision-needed": 6,
     "low-confidence-review": 4
   },
   "byFileKind": {
     "debug": 37,
     "lab": 351,
     "shared-layout": 9,
-    "shared-primitive": 165,
+    "shared-primitive": 243,
+    "live-screen": 137,
     "dashboard": 15,
-    "live-screen": 7,
     "audit-suite": 27,
     "framework-adapter": 1,
     "screen-contract": 1
@@ -84,22 +84,24 @@
   "byOwnerLayer": {
     "tooling-support": 403,
     "shared-layout": 10,
-    "shared-primitive": 165,
-    "screen": 7,
+    "shared-primitive": 243,
+    "screen": 137,
     "audit-framework": 27,
     "contract-layer": 1
   },
   "byScope": {
     "debug": 37,
     "lab": 351,
-    "shared-product-foundation": 174,
+    "shared-product-foundation": 252,
+    "live-product": 138,
     "dashboard": 15,
-    "live-product": 8,
     "tooling-support": 28
   },
   "byScreen": {
+    "ProjectResearch": 63,
+    "Projects": 65,
     "SegmentationPasteNext": 4,
-    "StudyWorkspace": 3,
+    "StudyWorkspace": 5,
     "ControlsLab": 1,
     "EditorPanelsLab": 1,
     "FoundationLab": 1,
@@ -110,8 +112,8 @@
   },
   "productVsTooling": {
     "product": {
-      "findings": 182,
-      "auditedFiles": 53
+      "findings": 390,
+      "auditedFiles": 59
     },
     "tooling": {
       "findings": 431,
@@ -129,24 +131,24 @@
     "invalidIds": []
   },
   "scores": {
-    "productQuality": 81.2,
+    "productQuality": 74.6,
     "auditTrust": 98,
     "groups": [
       {
         "id": "product-quality",
         "label": "Product quality",
         "maxScore": 100,
-        "score": 81.2,
+        "score": 74.6,
         "components": [
           {
             "id": "doctrine-hygiene",
             "label": "Doctrine hygiene",
-            "score": 25,
+            "score": 0,
             "maxScore": 100,
-            "deduction": 75,
+            "deduction": 100,
             "budget": 325,
-            "weightedDebt": 244.55,
-            "findingCount": 173,
+            "weightedDebt": 535.7,
+            "findingCount": 379,
             "suppressedFindingCount": 0,
             "laneIds": [
               "static-doctrine"
@@ -192,12 +194,12 @@
           {
             "id": "dead-code-hygiene",
             "label": "Dead-code hygiene",
-            "score": 85,
+            "score": 77,
             "maxScore": 100,
-            "deduction": 15,
+            "deduction": 23,
             "budget": 80,
-            "weightedDebt": 12,
-            "findingCount": 4,
+            "weightedDebt": 18,
+            "findingCount": 6,
             "suppressedFindingCount": 0,
             "laneIds": [
               "dead-code"
@@ -238,8 +240,8 @@
             "maxScore": 100,
             "deduction": 2,
             "budget": 90,
-            "weightedDebt": 1.77,
-            "findingCount": 613,
+            "weightedDebt": 1.98,
+            "findingCount": 821,
             "suppressedFindingCount": 0,
             "laneIds": [
               "static-doctrine",
@@ -1380,6 +1382,36 @@
         "usedByLiveProduct": true
       },
       {
+        "file": "/src/v2/screens/ProjectResearch/ProjectResearchScreen.contract.ts",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/ProjectResearch/ProjectResearchScreen.contract.ts",
+        "fileKind": "screen-contract",
+        "scope": "live-product",
+        "ownerLayer": "contract-layer",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/ProjectResearch/ProjectResearchScreen.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/ProjectResearch/ProjectResearchScreen.jsx",
+        "fileKind": "live-screen",
+        "scope": "live-product",
+        "ownerLayer": "screen",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/Projects/AdvancedOptionsPanel.jsx",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Projects/AdvancedOptionsPanel.jsx",
+        "fileKind": "live-screen",
+        "scope": "live-product",
+        "ownerLayer": "screen",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
         "file": "/src/v2/screens/Projects/ProjectsScreen.contract.ts",
         "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Projects/ProjectsScreen.contract.ts",
         "fileKind": "screen-contract",
@@ -1392,6 +1424,36 @@
       {
         "file": "/src/v2/screens/Projects/ProjectsScreen.jsx",
         "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Projects/ProjectsScreen.jsx",
+        "fileKind": "live-screen",
+        "scope": "live-product",
+        "ownerLayer": "screen",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/Projects/studyDashboardData.js",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Projects/studyDashboardData.js",
+        "fileKind": "live-screen",
+        "scope": "live-product",
+        "ownerLayer": "screen",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/Projects/useServerQuery.js",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Projects/useServerQuery.js",
+        "fileKind": "live-screen",
+        "scope": "live-product",
+        "ownerLayer": "screen",
+        "included": true,
+        "includeReason": "Included by live product screen policy.",
+        "usedByLiveProduct": true
+      },
+      {
+        "file": "/src/v2/screens/Projects/useVirtualRows.js",
+        "absolutePath": "/Users/arshadbabar/code/design-sandbox/src/v2/screens/Projects/useVirtualRows.js",
         "fileKind": "live-screen",
         "scope": "live-product",
         "ownerLayer": "screen",
@@ -1616,12 +1678,12 @@
   "diff": {
     "status": "ready",
     "baselineFound": true,
-    "comparedAt": "2026-04-25T21:06:42.048Z",
-    "previousGeneratedAt": "2026-04-24T14:28:21.058Z",
-    "currentGeneratedAt": "2026-04-25T21:06:42.048Z",
-    "new": 22,
-    "resolved": 19,
-    "persisted": 591,
+    "comparedAt": "2026-05-01T10:14:16.572Z",
+    "previousGeneratedAt": "2026-04-25T21:06:42.048Z",
+    "currentGeneratedAt": "2026-05-01T10:14:16.572Z",
+    "new": 363,
+    "resolved": 155,
+    "persisted": 458,
     "changed": 0,
     "changedByField": {
       "severity": 0,
@@ -1634,9 +1696,9 @@
         "kind": "lane",
         "key": "dead-code",
         "label": "dead-code",
-        "current": 47,
+        "current": 49,
         "previous": 47,
-        "delta": 0
+        "delta": 2
       },
       {
         "kind": "lane",
@@ -1650,51 +1712,59 @@
         "kind": "lane",
         "key": "static-doctrine",
         "label": "static-doctrine",
-        "current": 560,
-        "previous": 557,
-        "delta": 3
+        "current": 766,
+        "previous": 560,
+        "delta": 206
       }
     ],
     "ruleDeltas": [
       {
         "kind": "rule",
+        "key": "container-overrides-usage",
+        "label": "container-overrides-usage",
+        "current": 2,
+        "previous": 0,
+        "delta": 2
+      },
+      {
+        "kind": "rule",
         "key": "hardcoded-color",
         "label": "hardcoded-color",
-        "current": 254,
-        "previous": 253,
-        "delta": 1
+        "current": 341,
+        "previous": 254,
+        "delta": 87
       },
       {
         "kind": "rule",
         "key": "hardcoded-motion",
         "label": "hardcoded-motion",
-        "current": 6,
+        "current": 20,
         "previous": 6,
-        "delta": 0
+        "delta": 14
       },
       {
         "kind": "rule",
         "key": "hardcoded-radius",
         "label": "hardcoded-radius",
-        "current": 17,
+        "current": 18,
         "previous": 17,
-        "delta": 0
+        "delta": 1
       },
       {
         "kind": "rule",
         "key": "hardcoded-spacing",
         "label": "hardcoded-spacing",
-        "current": 63,
-        "previous": 61,
-        "delta": 2
+        "current": 83,
+        "previous": 63,
+        "delta": 20
       },
       {
         "kind": "rule",
         "key": "hardcoded-typography",
         "label": "hardcoded-typography",
-        "current": 215,
+        "current": 292,
         "previous": 215,
-        "delta": 0
+        "delta": 77
       },
       {
         "kind": "rule",
@@ -1732,17 +1802,17 @@
         "kind": "rule",
         "key": "shell-override-touchpoint",
         "label": "shell-override-touchpoint",
-        "current": 3,
+        "current": 8,
         "previous": 3,
-        "delta": 0
+        "delta": 5
       },
       {
         "kind": "rule",
         "key": "unused-export",
         "label": "unused-export",
-        "current": 44,
+        "current": 46,
         "previous": 44,
-        "delta": 0
+        "delta": 2
       },
       {
         "kind": "rule",
@@ -1758,33 +1828,73 @@
         "kind": "lane",
         "key": "static-doctrine",
         "label": "static-doctrine",
-        "current": 560,
-        "previous": 557,
-        "delta": 3
-      },
-      {
-        "kind": "rule",
-        "key": "hardcoded-spacing",
-        "label": "hardcoded-spacing",
-        "current": 63,
-        "previous": 61,
-        "delta": 2
+        "current": 766,
+        "previous": 560,
+        "delta": 206
       },
       {
         "kind": "rule",
         "key": "hardcoded-color",
         "label": "hardcoded-color",
-        "current": 254,
-        "previous": 253,
-        "delta": 1
+        "current": 341,
+        "previous": 254,
+        "delta": 87
+      },
+      {
+        "kind": "rule",
+        "key": "hardcoded-typography",
+        "label": "hardcoded-typography",
+        "current": 292,
+        "previous": 215,
+        "delta": 77
+      },
+      {
+        "kind": "rule",
+        "key": "hardcoded-spacing",
+        "label": "hardcoded-spacing",
+        "current": 83,
+        "previous": 63,
+        "delta": 20
+      },
+      {
+        "kind": "rule",
+        "key": "hardcoded-motion",
+        "label": "hardcoded-motion",
+        "current": 20,
+        "previous": 6,
+        "delta": 14
+      },
+      {
+        "kind": "rule",
+        "key": "shell-override-touchpoint",
+        "label": "shell-override-touchpoint",
+        "current": 8,
+        "previous": 3,
+        "delta": 5
+      },
+      {
+        "kind": "rule",
+        "key": "container-overrides-usage",
+        "label": "container-overrides-usage",
+        "current": 2,
+        "previous": 0,
+        "delta": 2
+      },
+      {
+        "kind": "lane",
+        "key": "dead-code",
+        "label": "dead-code",
+        "current": 49,
+        "previous": 47,
+        "delta": 2
       }
     ],
     "topImprovements": [],
     "message": null
   },
   "baseline": {
-    "currentGeneratedAt": "2026-04-25T21:06:42.048Z",
-    "previousGeneratedAt": "2026-04-24T14:28:21.058Z",
+    "currentGeneratedAt": "2026-05-01T10:14:16.572Z",
+    "previousGeneratedAt": "2026-04-25T21:06:42.048Z",
     "status": "loaded",
     "message": null
   }

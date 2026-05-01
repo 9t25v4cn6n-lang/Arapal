@@ -1,6 +1,6 @@
 {
   "lane": "architecture",
-  "generatedAt": "2026-04-25T21:06:41.315Z",
+  "generatedAt": "2026-05-01T10:14:15.786Z",
   "findings": [],
   "auditedFiles": [
     {
@@ -1012,6 +1012,33 @@
       "usedByLiveProduct": true
     },
     {
+      "file": "/src/v2/screens/ProjectResearch/ProjectResearchScreen.contract.ts",
+      "fileKind": "screen-contract",
+      "scope": "live-product",
+      "ownerLayer": "contract-layer",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/ProjectResearch/ProjectResearchScreen.jsx",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/Projects/AdvancedOptionsPanel.jsx",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
       "file": "/src/v2/screens/Projects/ProjectsScreen.contract.ts",
       "fileKind": "screen-contract",
       "scope": "live-product",
@@ -1022,6 +1049,33 @@
     },
     {
       "file": "/src/v2/screens/Projects/ProjectsScreen.jsx",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/Projects/studyDashboardData.js",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/Projects/useServerQuery.js",
+      "fileKind": "live-screen",
+      "scope": "live-product",
+      "ownerLayer": "screen",
+      "included": true,
+      "includeReason": "Included by live product screen policy.",
+      "usedByLiveProduct": true
+    },
+    {
+      "file": "/src/v2/screens/Projects/useVirtualRows.js",
       "fileKind": "live-screen",
       "scope": "live-product",
       "ownerLayer": "screen",
@@ -1233,12 +1287,12 @@
   },
   "raw": {
     "graph": {
-      "nodeCount": 135,
-      "edgeCount": 370,
-      "externalImportCount": 84,
+      "nodeCount": 141,
+      "edgeCount": 384,
+      "externalImportCount": 92,
       "unresolvedImportCount": 0,
       "unresolvedImports": [],
-      "parsedFileCount": 135,
+      "parsedFileCount": 141,
       "fallbackFileCount": 0,
       "failedFileCount": 0,
       "resolutionMode": "relative-import-only"
