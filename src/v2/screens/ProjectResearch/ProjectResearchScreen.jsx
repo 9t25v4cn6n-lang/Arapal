@@ -2,644 +2,208 @@ import { useMemo, useState } from 'react'
 import {
   ArrowRight,
   BookOpen,
-  BrainCircuit,
   CheckCircle2,
   CircleAlert,
-  ExternalLink,
   FileText,
   Layers3,
-  ListFilter,
-  MessageSquareText,
   PenTool,
   RotateCcw,
-  Search,
-  Sparkles,
 } from 'lucide-react'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
-import PrimaryCTA from '../../foundation/primitives/PrimaryCTA'
 import { colors, motion, radius, spacing, typography } from '../../foundation/tokens'
 import layoutContract from './ProjectResearchScreen.contract'
-
-const researchSegments = [
-  {
-    id: '1.3',
-    chapter: 'Chapter 1: Purity',
-    topic: 'Jumu’ah conditions',
-    heading: 'Comprehensive city condition',
-    arabic:
-      'لا تصح الجمعة إلا في مصر جامع أو في مصلى المصر ولا تجوز في القرى لقوله ﷺ لا جمعة ولا تشريق ولا فطر ولا أضحى إلا في مصر جامع.',
-    userTranslation:
-      "Jumu'ah prayer is only valid in a comprehensive city or in the prayer area of the city. It is not permissible in villages.",
-    bestTranslation:
-      'The Friday prayer is only valid in a comprehensive city or in the city prayer-ground, not in villages. A comprehensive city is one with authority to establish judgments and public order.',
-    evaluation:
-      'Strong handling of the legal condition. Preserve the distinction between the main city and its attached outskirts, and keep attributed views clearly separated.',
-    status: 'Needs revision',
-    statusTone: 'review',
-    tags: ['fiqh', 'validity', 'city-condition'],
-    notes: ['Keep al-Karkhī and al-Thaljī views distinct.', 'Avoid making the ruling sound like a general recommendation.'],
-    vocabulary: [
-      { arabic: 'مصر جامع', transliteration: 'misr jāmiʿ', gloss: 'comprehensive city; a large urban centre with civic authority' },
-      { arabic: 'أفنية', transliteration: 'afniyah', gloss: 'outskirts or attached surrounding areas' },
-    ],
-    relatedIds: ['1.2', '2.3'],
-  },
-  {
-    id: '1.2',
-    chapter: 'Chapter 1: Purity',
-    topic: 'Water types',
-    heading: 'Purifying water categories',
-    arabic:
-      'والماء الذي يجوز به الوضوء كل ماء نزل من السماء أو نبع من الأرض ما دام باقيا على أصل خلقته.',
-    userTranslation:
-      'Water that may be used for ablution is every water that descends from the sky or comes from the earth while remaining in its original nature.',
-    bestTranslation:
-      'Water valid for ablution is any water that falls from the sky or springs from the earth, so long as it remains upon its original created state.',
-    evaluation:
-      'Accurate overall. The phrase “original created state” should remain consistent across later water passages.',
-    status: 'Completed',
-    statusTone: 'ready',
-    tags: ['purity', 'water', 'definition'],
-    notes: ['Good candidate for a recurring terminology note.'],
-    vocabulary: [
-      { arabic: 'أصل خلقته', transliteration: 'aṣl khalqatih', gloss: 'its original created state' },
-    ],
-    relatedIds: ['1.1', '1.4'],
-  },
-  {
-    id: '1.4',
-    chapter: 'Chapter 1: Purity',
-    topic: 'Tayammum',
-    heading: 'Earth substitute when water is unavailable',
-    arabic:
-      'والتيمم جائز عند عدم الماء أو العجز عن استعماله بالصعيد الطاهر على الوجه المأمور به.',
-    userTranslation:
-      'Tayammum is permissible when water is absent or one cannot use it, with clean earth according to the instructed way.',
-    bestTranslation:
-      'Dry ablution is permitted when water is unavailable, or when one is unable to use it, using pure earth in the prescribed manner.',
-    evaluation:
-      'Readable and faithful. “Dry ablution” is user-friendly, but preserve the technical term in support notes where helpful.',
-    status: 'Completed',
-    statusTone: 'ready',
-    tags: ['purity', 'substitution', 'tayammum'],
-    notes: ['Consider surfacing this as a revision contrast with ablution passages.'],
-    vocabulary: [
-      { arabic: 'الصعيد الطاهر', transliteration: 'al-ṣaʿīd al-ṭāhir', gloss: 'pure earth or clean surface material' },
-    ],
-    relatedIds: ['1.2'],
-  },
-  {
-    id: '2.1',
-    chapter: 'Chapter 2: Prayer',
-    topic: 'Prayer timing',
-    heading: 'Beginning of the noon prayer window',
-    arabic:
-      'وأول وقت الظهر إذا زالت الشمس وآخره عند أبي حنيفة إذا صار ظل كل شيء مثليه سوى فيء الزوال.',
-    userTranslation:
-      'The first time of Zuhr is when the sun declines, and its end according to Abu Hanifa is when the shadow of everything is twice its length excluding the noon shadow.',
-    bestTranslation:
-      'The noon prayer begins when the sun passes its zenith. According to Abū Ḥanīfah, it ends when each object’s shadow reaches twice its length, excluding the zenith shadow.',
-    evaluation:
-      'Needs review around “zenith shadow”; the source distinguishes original shadow from the measured later shadow.',
-    status: 'Weak area',
-    statusTone: 'weak',
-    tags: ['prayer', 'time', 'shadow'],
-    notes: ['Repeated issue: technical measurements need a brief plain-English clarification.'],
-    vocabulary: [
-      { arabic: 'فيء الزوال', transliteration: 'fayʾ al-zawāl', gloss: 'the shadow present at zenith' },
-    ],
-    relatedIds: ['2.2'],
-  },
-  {
-    id: '2.3',
-    chapter: 'Chapter 2: Prayer',
-    topic: 'Congregational conditions',
-    heading: 'Public order and city authority',
-    arabic:
-      'والحكم غير مقصور على المصلى بل تجوز في جميع أفنية المصر لأنها بمنزلته في حوائج أهله.',
-    userTranslation:
-      'The ruling is not limited to the prayer area; rather, it is permissible throughout all the outskirts of the city because they are like it for the needs of its people.',
-    bestTranslation:
-      'The ruling is not confined to the prayer-ground; it applies throughout the city’s attached outskirts, because those areas share the city’s status in meeting the needs of its people.',
-    evaluation:
-      'This is a strong revision anchor for the Jumu’ah passage. It clarifies why attached outskirts can share the legal status of the city.',
-    status: 'Completed',
-    statusTone: 'ready',
-    tags: ['fiqh', 'city-condition', 'related-ruling'],
-    notes: ['Useful citation for explaining 1.3.'],
-    vocabulary: [
-      { arabic: 'حوائج أهله', transliteration: 'ḥawāʾij ahlih', gloss: 'the needs of its people' },
-    ],
-    relatedIds: ['1.3'],
-  },
-]
+import {
+  KnowledgeLedger,
+  LensSpine,
+  ResearchSearchCommand,
+  SourceReaderPanel,
+} from './ProjectResearchPrimitives'
+import {
+  getFilteredSegments,
+  getFilterCount,
+  getResearchStats,
+  getRevisionQueue,
+  projectSummary,
+  quickRefinements,
+  researchSegments,
+} from './projectResearchData'
 
 const researchFilters = [
-  { id: 'all', label: 'All knowledge', icon: Layers3 },
-  { id: 'segments', label: 'Segments', icon: FileText },
-  { id: 'vocabulary', label: 'Vocabulary', icon: BookOpen },
-  { id: 'mistakes', label: 'Mistakes', icon: CircleAlert },
-  { id: 'notes', label: 'Notes', icon: PenTool },
-  { id: 'weak', label: 'Weak areas', icon: RotateCcw },
-  { id: 'completed', label: 'Completed', icon: CheckCircle2 },
+  { id: 'all', label: 'All knowledge', shortLabel: 'All', icon: Layers3 },
+  { id: 'segments', label: 'Segments', shortLabel: 'Segments', icon: FileText },
+  { id: 'vocabulary', label: 'Vocabulary', shortLabel: 'Vocabulary', icon: BookOpen },
+  { id: 'mistakes', label: 'Mistakes', shortLabel: 'Mistakes', icon: CircleAlert },
+  { id: 'notes', label: 'Notes', shortLabel: 'Notes', icon: PenTool },
+  { id: 'weak', label: 'Weak areas', shortLabel: 'Weak', icon: RotateCcw },
+  { id: 'completed', label: 'Completed', shortLabel: 'Completed', icon: CheckCircle2 },
 ]
 
 const companionCitations = ['1.3', '2.3']
 
-function getFilterCount(filterId) {
-  if (filterId === 'all' || filterId === 'segments') {
-    return researchSegments.length
-  }
+function ProjectResearchHeader({ stats, onOpenStudy }) {
+  const metrics = [
+    { value: stats.totalSegments, label: 'segments' },
+    { value: stats.vocabularyNotes, label: 'vocab notes' },
+    { value: stats.needsAttention, label: 'review points' },
+  ]
 
-  if (filterId === 'vocabulary') {
-    return researchSegments.reduce((total, segment) => total + segment.vocabulary.length, 0)
-  }
-
-  if (filterId === 'mistakes' || filterId === 'weak') {
-    return researchSegments.filter((segment) => segment.statusTone === 'weak' || segment.statusTone === 'review').length
-  }
-
-  if (filterId === 'notes') {
-    return researchSegments.reduce((total, segment) => total + segment.notes.length, 0)
-  }
-
-  if (filterId === 'completed') {
-    return researchSegments.filter((segment) => segment.statusTone === 'ready').length
-  }
-
-  return 0
-}
-
-function normalizeSearchValue(value) {
-  return value.trim().toLocaleLowerCase()
-}
-
-function getFilteredSegments(query, filterId) {
-  const normalizedQuery = normalizeSearchValue(query)
-
-  return researchSegments.filter((segment) => {
-    const matchesFilter =
-      filterId === 'all' ||
-      filterId === 'segments' ||
-      (filterId === 'vocabulary' && segment.vocabulary.length > 0) ||
-      (filterId === 'mistakes' && segment.statusTone !== 'ready') ||
-      (filterId === 'weak' && segment.statusTone !== 'ready') ||
-      (filterId === 'notes' && segment.notes.length > 0) ||
-      (filterId === 'completed' && segment.statusTone === 'ready')
-
-    if (!matchesFilter) {
-      return false
-    }
-
-    if (!normalizedQuery) {
-      return true
-    }
-
-    const searchable = [
-      segment.id,
-      segment.chapter,
-      segment.topic,
-      segment.heading,
-      segment.arabic,
-      segment.userTranslation,
-      segment.bestTranslation,
-      segment.evaluation,
-      segment.status,
-      ...segment.tags,
-      ...segment.notes,
-      ...segment.vocabulary.flatMap((term) => [term.arabic, term.transliteration, term.gloss]),
-    ].join(' ')
-
-    return normalizeSearchValue(searchable).includes(normalizedQuery)
-  })
-}
-
-function getStatusClass(tone) {
-  if (tone === 'ready') {
-    return ' is-ready'
-  }
-
-  if (tone === 'weak') {
-    return ' is-weak'
-  }
-
-  return ' is-review'
-}
-
-function ProjectResearchHeader({ selectedSegment, onOpenStudy }) {
   return (
-    <header className="project-research__hero" data-debug-item="project_research_header">
-      <div className="project-research__heroCopy">
-        <p className="project-research__eyebrow">Research workspace</p>
-        <h1 className="project-research__title">Al-Hidayah knowledge explorer</h1>
+    <header className="project-research__masthead" data-debug-item="project_research_header">
+      <div className="project-research__titleGroup">
+        <p className="project-research__eyebrow">{projectSummary.subtitle}</p>
+        <h1 className="project-research__title">{projectSummary.title} knowledge explorer</h1>
         <p className="project-research__lead">
-          Search saved source, translations, notes, feedback, and recurring terms without leaving the project context.
+          <span>{projectSummary.projectMeta}</span> · Search saved source, translations, feedback, notes, and recurring terms.
         </p>
       </div>
 
-      <div className="project-research__heroMeta" aria-label="Project research summary">
-        <div className="project-research__metaCard">
-          <strong>47</strong>
-          <span>segments</span>
+      <div className="project-research__headerAside" aria-label="Project research summary">
+        <div className="project-research__metricStrip">
+          {metrics.map((metric) => (
+            <div key={metric.label} className="project-research__metricPill">
+              <strong>{metric.value}</strong>
+              <span>{metric.label}</span>
+            </div>
+          ))}
         </div>
-        <div className="project-research__metaCard">
-          <strong>12</strong>
-          <span>vocabulary notes</span>
-        </div>
-        <div className="project-research__metaCard">
-          <strong>3</strong>
-          <span>weak areas</span>
-        </div>
-      </div>
-
-      <div className="project-research__heroAction">
-        <PrimaryCTA
-          minWidth={184}
-          height={48}
-          icon={<BookOpen size={16} strokeWidth={2} />}
-          endIcon={<ArrowRight size={16} strokeWidth={2.2} />}
-          onClick={onOpenStudy}
-          debugItem="project_research_open_study"
-        >
+        <button type="button" className="project-research__studyLink" onClick={onOpenStudy}>
+          <BookOpen size={15} strokeWidth={2} />
           Study mode
-        </PrimaryCTA>
-        <p className="project-research__actionHint">Opens selected segment {selectedSegment?.id ?? ''}</p>
+          <ArrowRight size={15} strokeWidth={2.2} />
+        </button>
       </div>
     </header>
   )
 }
 
-function FilterRail({ activeFilter, onFilterChange }) {
+function ResearchDesk({
+  query,
+  activeFilter,
+  activeQuick,
+  rows,
+  selectedSegmentId,
+  selectedSegment,
+  rightMode,
+  onQueryChange,
+  onQuickSelect,
+  onSelectSegment,
+  onModeChange,
+  onOpenStudy,
+  onClearSelection,
+}) {
+  const activeFilterLabel = researchFilters.find((filter) => filter.id === activeFilter)?.label ?? 'All knowledge'
+
   return (
-    <aside className="project-research project-research__filterRail" data-debug-item="project_research_filter_rail">
-      <section className="project-research__panel project-research__railPanel">
-        <div className="project-research__panelHeader">
-          <div>
-            <p className="project-research__eyebrow">Project knowledge</p>
-            <h2 className="project-research__panelTitle">Browse by intent.</h2>
-          </div>
-          <ListFilter size={18} strokeWidth={2} color={colors.accentStrong} />
-        </div>
+    <main className="project-research project-research__desk" data-debug-item="project_research_desk">
+      <ResearchSearchCommand
+        query={query}
+        resultCount={rows.length}
+        activeFilterLabel={activeFilterLabel}
+        quickRefinements={quickRefinements}
+        activeQuick={activeQuick}
+        onQueryChange={onQueryChange}
+        onQuickSelect={onQuickSelect}
+      />
 
-        <div className="project-research__filterList" role="list" aria-label="Research filters">
-          {researchFilters.map((filter) => {
-            const Icon = filter.icon
-            const isActive = filter.id === activeFilter
+      <div className="project-research__deskBody">
+        <KnowledgeLedger
+          rows={rows}
+          selectedSegmentId={selectedSegmentId}
+          onSelectSegment={onSelectSegment}
+        />
 
-            return (
-              <button
-                key={filter.id}
-                type="button"
-                className={`project-research__filterButton${isActive ? ' is-active' : ''}`}
-                onClick={() => onFilterChange(filter.id)}
-              >
-                <span className="project-research__filterIcon">
-                  <Icon size={15} strokeWidth={2} />
-                </span>
-                <span>{filter.label}</span>
-                <strong>{getFilterCount(filter.id)}</strong>
-              </button>
-            )
-          })}
-        </div>
-      </section>
-
-      <section className="project-research__panel project-research__revisionPanel">
-        <p className="project-research__eyebrow">Revision entry</p>
-        <h2 className="project-research__panelTitle">Return to what needs attention.</h2>
-        <div className="project-research__revisionStack">
-          <button type="button" className="project-research__revisionButton">
-            <span>
-              <strong>Weak segments</strong>
-              <small>3 saved review points</small>
-            </span>
-            <ArrowRight size={15} strokeWidth={2.2} />
-          </button>
-          <button type="button" className="project-research__revisionButton">
-            <span>
-              <strong>Recurring terms</strong>
-              <small>City / validity / outskirts</small>
-            </span>
-            <ArrowRight size={15} strokeWidth={2.2} />
-          </button>
-          <button type="button" className="project-research__revisionButton">
-            <span>
-              <strong>Translation comparison</strong>
-              <small>User vs best-in-class</small>
-            </span>
-            <ArrowRight size={15} strokeWidth={2.2} />
-          </button>
-        </div>
-      </section>
-    </aside>
-  )
-}
-
-function SearchSurface({ query, activeFilter, rows, selectedSegmentId, onQueryChange, onFilterChange, onSelectSegment }) {
-  return (
-    <main className="project-research project-research__resultsPanel" data-debug-item="project_research_results">
-      <section className="project-research__searchPanel">
-        <div className="project-research__searchCopy">
-          <p className="project-research__eyebrow">Project search</p>
-          <h2>Find a passage, issue, term, or translation.</h2>
-        </div>
-        <label className="project-research__searchBox">
-          <Search size={18} strokeWidth={2} color={colors.textFaint} />
-          <input
-            aria-label="Search project knowledge"
-            value={query}
-            onChange={(event) => onQueryChange(event.target.value)}
-            placeholder="Search Arabic, English, topics, notes, mistakes, roots..."
-          />
-        </label>
-      </section>
-
-      <div className="project-research__chipRow" aria-label="Fast filters">
-        {researchFilters.slice(0, 6).map((filter) => (
-          <button
-            key={filter.id}
-            type="button"
-            className={`project-research__chip${activeFilter === filter.id ? ' is-active' : ''}`}
-            onClick={() => onFilterChange(filter.id)}
-          >
-            {filter.label}
-          </button>
-        ))}
+        <SourceReaderPanel
+          mode={rightMode}
+          selectedSegment={selectedSegment}
+          citations={companionCitations}
+          onModeChange={onModeChange}
+          onSelectSegment={onSelectSegment}
+          onOpenStudy={onOpenStudy}
+          onClearSelection={onClearSelection}
+        />
       </div>
-
-      <section className="project-research__tablePanel" aria-label="Saved project knowledge">
-        <header className="project-research__tableHeader">
-          <span>Segment</span>
-          <span>Arabic extract</span>
-          <span>Topic</span>
-          <span>Translation preview</span>
-          <span>Status</span>
-          <span>Tags</span>
-        </header>
-
-        <div className="project-research__rowList">
-          {rows.length ? rows.map((segment) => {
-            const isSelected = segment.id === selectedSegmentId
-
-            return (
-              <button
-                key={segment.id}
-                type="button"
-                className={`project-research__resultRow${isSelected ? ' is-selected' : ''}`}
-                onClick={() => onSelectSegment(segment.id)}
-              >
-                <span className="project-research__segmentId">{segment.id}</span>
-                <span className="project-research__arabicExtract" dir="rtl" lang="ar">{segment.arabic}</span>
-                <span className="project-research__topicCell">
-                  <strong>{segment.heading}</strong>
-                  <small>{segment.chapter}</small>
-                </span>
-                <span className="project-research__translationPreview">{segment.bestTranslation}</span>
-                <span className={`project-research__statusPill${getStatusClass(segment.statusTone)}`}>
-                  {segment.status}
-                </span>
-                <span className="project-research__tagCell">
-                  {segment.tags.slice(0, 2).map((tag) => (
-                    <em key={tag}>{tag}</em>
-                  ))}
-                </span>
-              </button>
-            )
-          }) : (
-            <div className="project-research__emptyState">
-              <FileText size={26} strokeWidth={1.8} />
-              <strong>No matching project knowledge yet</strong>
-              <span>Try a broader phrase, Arabic term, topic, or status filter.</span>
-            </div>
-          )}
-        </div>
-      </section>
     </main>
-  )
-}
-
-function DetailBlock({ label, children, tone = 'default', dir }) {
-  return (
-    <section className={`project-research__detailBlock is-${tone}`}>
-      <p className="project-research__blockLabel">{label}</p>
-      <div className="project-research__blockContent" dir={dir}>
-        {children}
-      </div>
-    </section>
-  )
-}
-
-function SegmentInspector({ segment, onSelectSegment, onOpenStudy }) {
-  if (!segment) {
-    return (
-      <aside className="project-research project-research__inspectorPanel" data-debug-item="project_research_empty_inspector">
-        <div className="project-research__emptyInspector">
-          <Sparkles size={28} strokeWidth={1.8} />
-          <h2>Select a segment to inspect.</h2>
-          <p>Arabic source, translations, feedback, notes, and related records will appear here.</p>
-        </div>
-      </aside>
-    )
-  }
-
-  return (
-    <aside className="project-research project-research__inspectorPanel" data-debug-item="project_research_inspector">
-      <section className="project-research__panel project-research__dossier">
-        <header className="project-research__dossierHeader">
-          <div>
-            <p className="project-research__eyebrow">Selected segment</p>
-            <h2 className="project-research__dossierTitle">{segment.id} · {segment.heading}</h2>
-            <p className="project-research__dossierMeta">{segment.chapter} · {segment.topic}</p>
-          </div>
-          <span className={`project-research__statusPill${getStatusClass(segment.statusTone)}`}>{segment.status}</span>
-        </header>
-
-        <div className="project-research__dossierBody">
-          <DetailBlock label="Arabic source" tone="source" dir="rtl">
-            <p lang="ar" className="project-research__arabicFull">{segment.arabic}</p>
-          </DetailBlock>
-
-          <DetailBlock label="Your translation">
-            <p>{segment.userTranslation}</p>
-          </DetailBlock>
-
-          <DetailBlock label="Best translation" tone="best">
-            <p>{segment.bestTranslation}</p>
-          </DetailBlock>
-
-          <DetailBlock label="AI evaluation" tone="evaluation">
-            <p>{segment.evaluation}</p>
-          </DetailBlock>
-
-          <section className="project-research__miniGrid">
-            <div>
-              <p className="project-research__blockLabel">Notes</p>
-              <ul className="project-research__noteList">
-                {segment.notes.map((note) => (
-                  <li key={note}>{note}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="project-research__blockLabel">Vocabulary</p>
-              <div className="project-research__vocabList">
-                {segment.vocabulary.map((term) => (
-                  <article key={term.arabic}>
-                    <strong dir="rtl" lang="ar">{term.arabic}</strong>
-                    <span>{term.transliteration}</span>
-                    <p>{term.gloss}</p>
-                  </article>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <p className="project-research__blockLabel">Related segments</p>
-            <div className="project-research__relatedRow">
-              {segment.relatedIds.map((id) => (
-                <button key={id} type="button" onClick={() => onSelectSegment(id)}>
-                  {id}
-                  <ExternalLink size={13} strokeWidth={2} />
-                </button>
-              ))}
-            </div>
-          </section>
-        </div>
-
-        <footer className="project-research__dossierActions">
-          <button type="button" className="project-research__secondaryAction">
-            <PenTool size={15} strokeWidth={2} />
-            Create correction patch
-          </button>
-          <button type="button" className="project-research__secondaryAction" onClick={onOpenStudy}>
-            <BookOpen size={15} strokeWidth={2} />
-            Open in study
-          </button>
-        </footer>
-      </section>
-    </aside>
-  )
-}
-
-function CompanionPanel({ selectedSegment, onSelectSegment }) {
-  const [question, setQuestion] = useState('')
-  const [hasAnswer, setHasAnswer] = useState(true)
-
-  const submitQuestion = () => {
-    if (question.trim()) {
-      setHasAnswer(true)
-      setQuestion('')
-    }
-  }
-
-  return (
-    <section className="project-research__panel project-research__companion" data-debug-item="project_research_companion">
-      <header className="project-research__companionHeader">
-        <span className="project-research__companionIcon" aria-hidden="true">
-          <BrainCircuit size={18} strokeWidth={2} />
-        </span>
-        <div>
-          <p className="project-research__eyebrow">Project companion</p>
-          <h2>Ask across the whole project.</h2>
-        </div>
-      </header>
-
-      <div className="project-research__companionBody">
-        {hasAnswer ? (
-          <article className="project-research__answerCard">
-            <p>
-              The city-condition issue appears in both the Jumu’ah condition passage and the later outskirts ruling.
-              Treat <span dir="rtl" lang="ar">مصر جامع</span> as a legal status, not just a physical size.
-            </p>
-            <div className="project-research__citationRow" aria-label="Cited segments">
-              {companionCitations.map((id) => (
-                <button key={id} type="button" onClick={() => onSelectSegment(id)}>
-                  Segment {id}
-                </button>
-              ))}
-            </div>
-          </article>
-        ) : (
-          <div className="project-research__answerPlaceholder">
-            <MessageSquareText size={24} strokeWidth={1.8} />
-            <strong>Start with a project-level question.</strong>
-            <span>Ask about a word, issue, mistake pattern, or translation choice.</span>
-          </div>
-        )}
-
-        <div className="project-research__promptRow">
-          <button type="button" onClick={() => setQuestion('Where did I struggle with city-condition terminology?')}>
-            Weak terminology
-          </button>
-          <button type="button" onClick={() => setQuestion(`Explain segment ${selectedSegment?.id ?? '1.3'} in context.`)}>
-            Explain selected
-          </button>
-        </div>
-
-        <label className="project-research__askBox">
-          <textarea
-            value={question}
-            onChange={(event) => setQuestion(event.target.value)}
-            placeholder="Ask about this project’s saved knowledge..."
-            rows={3}
-          />
-        </label>
-        <button type="button" className="project-research__askButton" onClick={submitQuestion}>
-          <Sparkles size={16} strokeWidth={2} />
-          Ask companion
-        </button>
-      </div>
-    </section>
   )
 }
 
 export default function ProjectResearchScreen({ route, shell }) {
   const [query, setQuery] = useState('')
   const [activeFilter, setActiveFilter] = useState('all')
+  const [activeQuick, setActiveQuick] = useState(null)
   const [selectedSegmentId, setSelectedSegmentId] = useState(researchSegments[0].id)
+  const [rightMode, setRightMode] = useState('source')
 
-  const rows = useMemo(() => getFilteredSegments(query, activeFilter), [query, activeFilter])
-  const selectedSegment = researchSegments.find((segment) => segment.id === selectedSegmentId) ?? rows[0] ?? null
+  const stats = useMemo(() => getResearchStats(researchSegments), [])
+  const revisionEntries = useMemo(() => getRevisionQueue(researchSegments), [])
+  const rows = useMemo(
+    () => getFilteredSegments({ query, filterId: activeFilter, quickId: activeQuick }, researchSegments),
+    [activeFilter, activeQuick, query],
+  )
+  const selectedSegment = useMemo(
+    () => researchSegments.find((segment) => segment.id === selectedSegmentId) ?? null,
+    [selectedSegmentId],
+  )
 
   const selectSegment = (segmentId) => {
     setSelectedSegmentId(segmentId)
+    setRightMode('source')
   }
 
   const openStudyMode = () => {
     shell.navigate('studyWorkspace')
   }
 
+  const updateFilter = (filterId) => {
+    setActiveFilter(filterId)
+    setActiveQuick(null)
+  }
+
+  const handleRevisionSelect = ({ filter, query: nextQuery }) => {
+    setActiveFilter(filter)
+    setActiveQuick(null)
+    setQuery(nextQuery)
+  }
+
   const screenSlots = {
     Layer3_ProjectResearch_Header: (
-      <ProjectResearchHeader selectedSegment={selectedSegment} onOpenStudy={openStudyMode} />
+      <ProjectResearchHeader stats={stats} onOpenStudy={openStudyMode} />
     ),
     Layer4_ProjectResearch_FilterRail: (
-      <FilterRail activeFilter={activeFilter} onFilterChange={setActiveFilter} />
-    ),
-    Layer4_ProjectResearch_ResultSurface: (
-      <SearchSurface
-        query={query}
+      <LensSpine
+        filters={researchFilters}
         activeFilter={activeFilter}
-        rows={rows}
-        selectedSegmentId={selectedSegment?.id}
-        onQueryChange={setQuery}
-        onFilterChange={setActiveFilter}
-        onSelectSegment={selectSegment}
+        getFilterCount={(filterId) => getFilterCount(filterId, researchSegments)}
+        revisionEntries={revisionEntries}
+        onFilterChange={updateFilter}
+        onRevisionSelect={handleRevisionSelect}
       />
     ),
-    Layer4_ProjectResearch_DetailInspector: (
-      <div className="project-research__rightStack">
-        <SegmentInspector segment={selectedSegment} onSelectSegment={selectSegment} onOpenStudy={openStudyMode} />
-        <CompanionPanel selectedSegment={selectedSegment} onSelectSegment={selectSegment} />
-      </div>
+    Layer4_ProjectResearch_ResultSurface: (
+      <ResearchDesk
+        query={query}
+        activeFilter={activeFilter}
+        activeQuick={activeQuick}
+        rows={rows}
+        selectedSegmentId={selectedSegmentId}
+        selectedSegment={selectedSegment}
+        rightMode={rightMode}
+        onQueryChange={setQuery}
+        onQuickSelect={setActiveQuick}
+        onSelectSegment={selectSegment}
+        onModeChange={setRightMode}
+        onOpenStudy={openStudyMode}
+        onClearSelection={() => setSelectedSegmentId(null)}
+      />
     ),
   }
 
   const containerOverrides = {
     Layer2_ProjectResearch_Root: {
       style: {
-        padding: `clamp(${spacing[16]}, 1.8vw, ${spacing[24]})`,
+        width: '100%',
+        maxWidth: '1800px',
+        justifySelf: 'center',
+        padding: `clamp(${spacing[12]}, 1.35vw, ${spacing[20]})`,
       },
     },
   }
@@ -671,26 +235,39 @@ const researchStyles = `
     font-family: ${typography.studyBody.fontFamily};
   }
 
-  .project-research__hero {
+  .project-research button,
+  .project-research input,
+  .project-research textarea {
+    font: inherit;
+  }
+
+  .project-research button:focus-visible,
+  .project-research input:focus-visible,
+  .project-research textarea:focus-visible {
+    outline: 2px solid ${colors.accentBase};
+    outline-offset: 2px;
+  }
+
+  .project-research__masthead {
     width: 100%;
     min-width: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1.2fr) auto auto;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, auto);
     align-items: center;
-    gap: ${spacing[20]};
-    padding: ${spacing[18]} ${spacing[20]};
+    gap: ${spacing[16]};
+    padding: ${spacing[12]} ${spacing[20]};
     border: 1px solid ${colors.lineSoft};
-    border-radius: ${radius[32]};
+    border-radius: ${radius[24]};
     background:
-      radial-gradient(circle at 72% 12%, rgba(37, 99, 235, 0.1), transparent 32%),
-      linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 255, 0.82));
-    box-shadow: 0 18px 46px rgba(15, 23, 42, 0.07);
+      radial-gradient(circle at 72% 0%, rgba(147, 197, 253, 0.18), transparent 34%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 255, 0.86));
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
   }
 
-  .project-research__heroCopy {
+  .project-research__titleGroup {
     min-width: 0;
     display: grid;
-    gap: ${spacing[8]};
+    gap: ${spacing[4]};
   }
 
   .project-research__eyebrow,
@@ -708,61 +285,100 @@ const researchStyles = `
   .project-research__title {
     margin: 0;
     font-family: ${typography.displayTitle.fontFamily};
-    font-size: clamp(30px, 3vw, 44px);
-    line-height: 0.98;
-    letter-spacing: -0.035em;
+    font-size: 34px;
+    line-height: 1;
+    letter-spacing: 0;
     color: ${colors.textStrong};
   }
 
   .project-research__lead,
   .project-research__actionHint,
-  .project-research__dossierMeta {
+  .project-research__dossierMeta,
+  .project-research__sourceMeta {
     margin: 0;
     color: ${colors.textSoft};
     font-family: ${typography.studySupportText.fontFamily};
   }
 
   .project-research__lead {
-    max-width: 720px;
-    font-size: 13.5px;
-    line-height: 1.55;
+    max-width: 760px;
+    font-size: 13px;
+    line-height: 1.52;
   }
 
-  .project-research__heroMeta {
+  .project-research__lead span {
+    color: ${colors.textBody};
+    font-weight: 760;
+  }
+
+  .project-research__headerAside {
+    min-width: 0;
     display: grid;
-    grid-template-columns: repeat(3, minmax(92px, 1fr));
+    justify-items: end;
     gap: ${spacing[8]};
   }
 
-  .project-research__metaCard {
-    min-height: 62px;
+  .project-research__metricStrip {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(88px, 1fr));
+    gap: ${spacing[8]};
+  }
+
+  .project-research__metricPill {
+    min-height: 52px;
     display: grid;
     align-content: center;
     justify-items: center;
     gap: ${spacing[4]};
-    padding: ${spacing[10]} ${spacing[12]};
+    padding: ${spacing[8]} ${spacing[12]};
     border: 1px solid ${colors.lineSoft};
     border-radius: ${radius[24]};
-    background: rgba(255, 255, 255, 0.72);
+    background: rgba(255, 255, 255, 0.74);
   }
 
-  .project-research__metaCard strong {
+  .project-research__metricPill strong {
     font-family: ${typography.studySectionTitle.fontFamily};
     font-size: 18px;
     line-height: 1;
     color: ${colors.textStrong};
   }
 
-  .project-research__metaCard span,
+  .project-research__metricPill span,
   .project-research__actionHint {
     font-size: 11px;
     line-height: 1.35;
   }
 
-  .project-research__heroAction {
-    display: grid;
-    justify-items: end;
+  .project-research__studyLink {
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     gap: ${spacing[8]};
+    padding: 0 ${spacing[16]};
+    border: 1px solid ${colors.lineStrong};
+    border-radius: ${radius.pill};
+    background: rgba(255, 255, 255, 0.88);
+    color: ${colors.accentStrong};
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.09);
+    font-family: ${typography.ctaLabel.fontFamily};
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      border-color ${motion.micro},
+      box-shadow ${motion.micro},
+      background ${motion.micro};
+  }
+
+  .project-research__studyLink:hover {
+    border-color: ${colors.accentSoft};
+    box-shadow: 0 16px 34px rgba(37, 99, 235, 0.14);
+    background: ${colors.accentWash};
   }
 
   .project-research__panel,
@@ -770,45 +386,41 @@ const researchStyles = `
   .project-research__tablePanel {
     border: 1px solid ${colors.lineSoft};
     border-radius: ${radius[24]};
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.065);
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.045);
   }
 
   .project-research__filterRail,
   .project-research__resultsPanel,
-  .project-research__inspectorPanel,
-  .project-research__rightStack {
+  .project-research__rightWorkspace {
     height: 100%;
     min-height: 0;
   }
 
-  .project-research__filterRail,
-  .project-research__rightStack {
-    display: flex;
-    flex-direction: column;
-    gap: ${spacing[16]};
+  .project-research__filterRail {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: ${spacing[12]};
     overflow: hidden;
   }
 
   .project-research__railPanel,
   .project-research__revisionPanel,
-  .project-research__dossier,
-  .project-research__companion {
+  .project-research__rightPanel {
     min-height: 0;
     overflow: hidden;
   }
 
   .project-research__railPanel {
-    flex: 1 1 55%;
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
   }
 
   .project-research__revisionPanel {
-    flex: 0 0 auto;
     display: grid;
-    gap: ${spacing[14]};
-    padding: ${spacing[18]};
+    gap: ${spacing[8]};
+    padding: ${spacing[12]};
+    background: rgba(255, 255, 255, 0.82);
   }
 
   .project-research__panelHeader {
@@ -816,13 +428,13 @@ const researchStyles = `
     align-items: flex-start;
     justify-content: space-between;
     gap: ${spacing[12]};
-    padding: ${spacing[18]};
+    padding: ${spacing[16]};
     border-bottom: 1px solid ${colors.lineSoft};
   }
 
   .project-research__panelTitle,
   .project-research__searchCopy h2,
-  .project-research__companionHeader h2,
+  .project-research__rightHeader h2,
   .project-research__emptyInspector h2 {
     margin: 0;
     font-family: ${typography.studySectionTitle.fontFamily};
@@ -837,7 +449,7 @@ const researchStyles = `
     overflow: auto;
     display: grid;
     align-content: start;
-    gap: ${spacing[8]};
+    gap: ${spacing[4]};
     padding: ${spacing[12]};
   }
 
@@ -845,27 +457,27 @@ const researchStyles = `
   .project-research__revisionButton {
     width: 100%;
     border: 1px solid transparent;
-    background: rgba(248, 251, 255, 0.66);
+    background: rgba(248, 251, 255, 0.68);
     color: ${colors.textBody};
     cursor: pointer;
     transition:
       border-color ${motion.micro},
       background ${motion.micro},
       color ${motion.micro},
-      transform ${motion.micro};
+      box-shadow ${motion.micro};
   }
 
   .project-research__filterButton {
-    min-height: 44px;
+    min-height: 42px;
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    gap: ${spacing[10]};
-    padding: ${spacing[10]} ${spacing[12]};
+    gap: ${spacing[8]};
+    padding: ${spacing[8]} ${spacing[12]};
     border-radius: ${radius[16]};
     text-align: left;
     font-family: ${typography.studyControlLabel.fontFamily};
-    font-size: 12.5px;
+    font-size: 12px;
     line-height: 1;
     font-weight: 800;
   }
@@ -876,7 +488,7 @@ const researchStyles = `
     border-color: ${colors.lineStrong};
     background: ${colors.accentWash};
     color: ${colors.accentStrong};
-    transform: translateY(-1px);
+    box-shadow: inset 3px 0 0 ${colors.accentBase};
   }
 
   .project-research__filterIcon {
@@ -886,10 +498,18 @@ const researchStyles = `
     align-items: center;
     justify-content: center;
     border-radius: ${radius.pill};
-    background: rgba(219, 234, 254, 0.7);
+    background: rgba(219, 234, 254, 0.72);
+  }
+
+  .project-research__filterLabel {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .project-research__filterButton strong {
+    justify-self: end;
     font-size: 11px;
     color: ${colors.textFaint};
   }
@@ -900,62 +520,76 @@ const researchStyles = `
   }
 
   .project-research__revisionButton {
-    min-height: 58px;
+    min-height: 44px;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: ${spacing[10]};
-    padding: ${spacing[12]};
+    gap: ${spacing[8]};
+    padding: ${spacing[8]} ${spacing[12]};
     border-radius: ${radius[16]};
     text-align: left;
   }
 
   .project-research__revisionButton span {
+    min-width: 0;
     display: grid;
     gap: ${spacing[4]};
   }
 
   .project-research__revisionButton strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-family: ${typography.studyControlLabel.fontFamily};
-    font-size: 12.5px;
+    font-size: 12px;
     line-height: 1.2;
   }
 
   .project-research__revisionButton small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     color: ${colors.textSoft};
-    font-size: 11.5px;
+    font-size: 10px;
     line-height: 1.35;
   }
 
   .project-research__resultsPanel {
     display: grid;
-    grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
     gap: ${spacing[12]};
     overflow: hidden;
   }
 
   .project-research__searchPanel {
     display: grid;
-    grid-template-columns: minmax(220px, 0.68fr) minmax(0, 1fr);
+    gap: ${spacing[8]};
+    padding: ${spacing[12]};
+  }
+
+  .project-research__searchTopline {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(160px, 0.32fr) minmax(0, 1fr);
     align-items: center;
-    gap: ${spacing[20]};
-    padding: ${spacing[18]};
+    gap: ${spacing[12]};
   }
 
   .project-research__searchCopy {
+    min-width: 0;
     display: grid;
     gap: ${spacing[4]};
   }
 
   .project-research__searchBox {
-    min-height: 50px;
+    min-height: 42px;
     display: flex;
     align-items: center;
     gap: ${spacing[12]};
     padding: 0 ${spacing[16]};
     border: 1px solid ${colors.lineSoft};
     border-radius: ${radius.pill};
-    background: rgba(248, 251, 255, 0.92);
+    background: rgba(248, 251, 255, 0.94);
   }
 
   .project-research__searchBox input {
@@ -966,7 +600,7 @@ const researchStyles = `
     background: transparent;
     color: ${colors.textBody};
     font-family: ${typography.studyBody.fontFamily};
-    font-size: 13.5px;
+    font-size: 14px;
   }
 
   .project-research__searchBox input::placeholder {
@@ -978,24 +612,43 @@ const researchStyles = `
     display: flex;
     gap: ${spacing[8]};
     overflow-x: auto;
-    padding: 0 ${spacing[2]};
+    padding: 0;
+  }
+
+  .project-research__searchMeta {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: ${spacing[12]};
+  }
+
+  .project-research__resultCount {
+    color: ${colors.textFaint};
+    font-family: ${typography.monoMeta.fontFamily};
+    font-size: 10px;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
   }
 
   .project-research__chip,
   .project-research__secondaryAction,
   .project-research__relatedRow button,
   .project-research__promptRow button,
-  .project-research__askButton {
+  .project-research__askButton,
+  .project-research__citationRow button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: ${spacing[8]};
     border: 1px solid ${colors.lineSoft};
     border-radius: ${radius.pill};
-    background: rgba(255, 255, 255, 0.88);
+    background: rgba(255, 255, 255, 0.9);
     color: ${colors.textSoft};
     font-family: ${typography.studyControlLabel.fontFamily};
-    font-size: 11.5px;
+    font-size: 11px;
     line-height: 1;
     font-weight: 850;
     cursor: pointer;
@@ -1007,8 +660,8 @@ const researchStyles = `
   }
 
   .project-research__chip {
-    min-height: 34px;
-    padding: 0 ${spacing[14]};
+    min-height: 30px;
+    padding: 0 ${spacing[12]};
     white-space: nowrap;
   }
 
@@ -1016,7 +669,8 @@ const researchStyles = `
   .project-research__chip.is-active,
   .project-research__secondaryAction:hover,
   .project-research__relatedRow button:hover,
-  .project-research__promptRow button:hover {
+  .project-research__promptRow button:hover,
+  .project-research__citationRow button:hover {
     border-color: ${colors.lineStrong};
     color: ${colors.accentStrong};
     background: ${colors.accentWash};
@@ -1025,29 +679,8 @@ const researchStyles = `
   .project-research__tablePanel {
     min-height: 0;
     display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
     overflow: hidden;
-  }
-
-  .project-research__tableHeader,
-  .project-research__resultRow {
-    display: grid;
-    grid-template-columns: 64px minmax(180px, 1.05fr) minmax(150px, 0.72fr) minmax(190px, 1fr) minmax(110px, 0.52fr) minmax(116px, 0.58fr);
-    gap: ${spacing[12]};
-    align-items: center;
-  }
-
-  .project-research__tableHeader {
-    padding: ${spacing[14]} ${spacing[16]};
-    border-bottom: 1px solid ${colors.lineSoft};
-    background: rgba(248, 251, 255, 0.88);
-    color: ${colors.textFaint};
-    font-family: ${typography.eyebrowLabel.fontFamily};
-    font-size: 8.5px;
-    line-height: 1;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    font-weight: 900;
   }
 
   .project-research__rowList {
@@ -1055,40 +688,45 @@ const researchStyles = `
     overflow: auto;
     display: grid;
     align-content: start;
-    padding: ${spacing[10]};
+    padding: ${spacing[12]};
     gap: ${spacing[8]};
   }
 
   .project-research__resultRow {
     width: 100%;
-    min-height: 88px;
+    min-height: 112px;
+    display: grid;
+    grid-template-columns: 48px minmax(260px, 1fr) minmax(240px, 0.86fr) minmax(104px, auto);
+    align-items: center;
+    gap: ${spacing[12]};
     padding: ${spacing[12]};
     border: 1px solid transparent;
     border-radius: ${radius[16]};
-    background: rgba(255, 255, 255, 0.64);
+    background: rgba(255, 255, 255, 0.7);
     color: ${colors.textBody};
     text-align: left;
     cursor: pointer;
     transition:
       background ${motion.micro},
       border-color ${motion.micro},
-      box-shadow ${motion.micro},
-      transform ${motion.micro};
+      box-shadow ${motion.micro};
   }
 
   .project-research__resultRow:hover,
   .project-research__resultRow.is-selected {
-    background: rgba(239, 246, 255, 0.72);
+    background: rgba(239, 246, 255, 0.62);
     border-color: ${colors.lineStrong};
-    box-shadow: 0 14px 32px rgba(37, 99, 235, 0.1);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.06);
   }
 
   .project-research__resultRow.is-selected {
-    transform: translateY(-1px);
+    box-shadow:
+      inset 3px 0 0 ${colors.accentBase},
+      0 8px 20px rgba(37, 99, 235, 0.08);
   }
 
   .project-research__segmentId {
-    width: 42px;
+    width: 40px;
     min-height: 34px;
     display: inline-flex;
     align-items: center;
@@ -1101,20 +739,29 @@ const researchStyles = `
     font-weight: 900;
   }
 
-  .project-research__arabicExtract {
-    max-height: 52px;
-    overflow: hidden;
-    color: ${colors.textStrong};
-    font-family: ${typography.studyArabicInline.fontFamily};
-    font-size: 15.5px;
-    line-height: 1.6;
-    text-align: right;
+  .project-research__resultRow.is-selected .project-research__segmentId {
+    background: ${colors.accentBase};
+    color: ${colors.surfacePrimary};
   }
 
+  .project-research__resultPrimary,
+  .project-research__resultSecondary,
   .project-research__topicCell {
     min-width: 0;
     display: grid;
-    gap: ${spacing[4]};
+    gap: ${spacing[8]};
+  }
+
+  .project-research__arabicExtract {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    color: ${colors.textStrong};
+    font-family: ${typography.studyArabicInline.fontFamily};
+    font-size: 15.5px;
+    line-height: 1.58;
+    text-align: right;
   }
 
   .project-research__topicCell strong {
@@ -1131,7 +778,7 @@ const researchStyles = `
   .project-research__translationPreview {
     color: ${colors.textSoft};
     font-family: ${typography.studySupportText.fontFamily};
-    font-size: 11.5px;
+    font-size: 12px;
     line-height: 1.45;
   }
 
@@ -1142,19 +789,30 @@ const researchStyles = `
     -webkit-box-orient: vertical;
   }
 
+  .project-research__translationPreview--inline {
+    display: none;
+  }
+
+  .project-research__resultStatus {
+    display: grid;
+    justify-items: end;
+    gap: ${spacing[8]};
+    color: ${colors.textFaint};
+  }
+
   .project-research__statusPill {
     width: fit-content;
-    min-height: 30px;
+    min-height: 28px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 0 ${spacing[12]};
     border: 1px solid ${colors.lineSoft};
     border-radius: ${radius.pill};
-    background: rgba(255, 255, 255, 0.84);
+    background: rgba(255, 255, 255, 0.72);
     color: ${colors.textSoft};
     font-family: ${typography.eyebrowLabel.fontFamily};
-    font-size: 8.5px;
+    font-size: 8px;
     line-height: 1;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -1163,15 +821,15 @@ const researchStyles = `
   }
 
   .project-research__statusPill.is-ready {
-    border-color: rgba(22, 163, 74, 0.24);
-    background: rgba(240, 253, 244, 0.9);
+    border-color: rgba(22, 163, 74, 0.18);
+    background: rgba(240, 253, 244, 0.68);
     color: ${colors.success};
   }
 
   .project-research__statusPill.is-review,
   .project-research__statusPill.is-weak {
-    border-color: rgba(217, 119, 6, 0.26);
-    background: rgba(255, 251, 235, 0.92);
+    border-color: rgba(217, 119, 6, 0.2);
+    background: rgba(255, 251, 235, 0.72);
     color: ${colors.review};
   }
 
@@ -1187,12 +845,12 @@ const researchStyles = `
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    padding: 5px 8px;
+    padding: ${spacing[4]} ${spacing[8]};
     border-radius: ${radius.pill};
-    background: rgba(219, 234, 254, 0.54);
+    background: rgba(219, 234, 254, 0.42);
     color: ${colors.textSoft};
     font-style: normal;
-    font-size: 10.5px;
+    font-size: 10px;
     line-height: 1;
   }
 
@@ -1203,7 +861,7 @@ const researchStyles = `
     display: grid;
     place-items: center;
     align-content: center;
-    gap: ${spacing[10]};
+    gap: ${spacing[8]};
     padding: ${spacing[24]};
     text-align: center;
     color: ${colors.textSoft};
@@ -1215,28 +873,98 @@ const researchStyles = `
     color: ${colors.textStrong};
   }
 
-  .project-research__inspectorPanel {
+  .project-research__emptyState span,
+  .project-research__emptyInspector p,
+  .project-research__answerPlaceholder span {
+    margin: 0;
+    max-width: 280px;
+    color: ${colors.textSoft};
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .project-research__rightWorkspace,
+  .project-research__rightPanel,
+  .project-research__rightBody,
+  .project-research__dossierView,
+  .project-research__sourceView,
+  .project-research__companionView {
+    min-height: 0;
+  }
+
+  .project-research__rightWorkspace {
     overflow: hidden;
   }
 
-  .project-research__dossier {
-    flex: 1 1 58%;
+  .project-research__rightPanel {
     display: grid;
-    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr);
   }
 
-  .project-research__dossierHeader,
-  .project-research__companionHeader {
+  .project-research__rightPanel.is-dossier,
+  .project-research__rightPanel.is-source {
+    box-shadow:
+      inset 3px 0 0 ${colors.accentBase},
+      0 14px 30px rgba(15, 23, 42, 0.045);
+  }
+
+  .project-research__rightHeader {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr);
     align-items: start;
-    gap: ${spacing[14]};
-    padding: ${spacing[18]};
+    gap: ${spacing[12]};
+    padding: ${spacing[16]};
     border-bottom: 1px solid ${colors.lineSoft};
-    background: rgba(248, 251, 255, 0.82);
+    background: rgba(248, 251, 255, 0.84);
   }
 
-  .project-research__dossierTitle {
+  .project-research__rightTitleGroup {
+    min-width: 0;
+    display: grid;
+    gap: ${spacing[4]};
+  }
+
+  .project-research__rightHeaderActions {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: ${spacing[8]};
+  }
+
+  .project-research__modeSwitch {
+    display: inline-flex;
+    align-items: center;
+    padding: ${spacing[4]};
+    border: 1px solid ${colors.lineSoft};
+    border-radius: ${radius.pill};
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  .project-research__modeSwitch button {
+    min-height: 26px;
+    border: 0;
+    border-radius: ${radius.pill};
+    background: transparent;
+    color: ${colors.textSoft};
+    padding: 0 ${spacing[8]};
+    font-family: ${typography.studyControlLabel.fontFamily};
+    font-size: 10px;
+    line-height: 1;
+    font-weight: 850;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+  }
+
+  .project-research__modeSwitch button.is-active {
+    background: ${colors.accentWash};
+    color: ${colors.accentStrong};
+    box-shadow: inset 0 0 0 1px ${colors.lineStrong};
+  }
+
+  .project-research__dossierTitle,
+  .project-research__sourceTitle {
     margin: ${spacing[4]} 0 0;
     font-family: ${typography.studySectionTitle.fontFamily};
     font-size: 16px;
@@ -1244,22 +972,41 @@ const researchStyles = `
     color: ${colors.textStrong};
   }
 
-  .project-research__dossierBody {
+  .project-research__rightBody {
+    overflow: hidden;
+    display: grid;
+    min-height: 0;
+  }
+
+  .project-research__dossierView,
+  .project-research__sourceView {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    overflow: hidden;
+  }
+
+  .project-research__dossierBody,
+  .project-research__sourceBody {
     min-height: 0;
     overflow: auto;
     display: grid;
     align-content: start;
     gap: ${spacing[12]};
-    padding: ${spacing[14]};
+    padding: ${spacing[12]};
   }
 
   .project-research__detailBlock {
     display: grid;
     gap: ${spacing[8]};
-    padding: ${spacing[14]};
+    padding: ${spacing[12]};
     border: 1px solid ${colors.lineSoft};
     border-radius: ${radius[16]};
-    background: rgba(255, 255, 255, 0.82);
+    background: rgba(255, 255, 255, 0.84);
+  }
+
+  .project-research__detailBlock.is-source {
+    overflow: visible;
+    background: linear-gradient(180deg, rgba(248, 251, 255, 0.96), rgba(255, 255, 255, 0.9));
   }
 
   .project-research__detailBlock.is-best {
@@ -1280,24 +1027,29 @@ const researchStyles = `
     line-height: 1.6;
   }
 
-  .project-research__arabicFull {
-    color: ${colors.textStrong} !important;
-    font-family: ${typography.studyArabicInline.fontFamily} !important;
-    font-size: 17px !important;
-    line-height: 1.8 !important;
+  .project-research__blockContent .project-research__arabicFull {
+    color: ${colors.textStrong};
+    font-family: ${typography.studyArabicSource.fontFamily};
+    font-size: 20px;
+    line-height: 1.8;
     text-align: right;
   }
 
-  .project-research__miniGrid {
+  .project-research__comparisonGrid,
+  .project-research__knowledgeGrid {
     display: grid;
     gap: ${spacing[12]};
   }
 
+  .project-research__comparisonGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .project-research__noteList {
     margin: ${spacing[8]} 0 0;
-    padding-inline-start: ${spacing[18]};
+    padding-inline-start: ${spacing[20]};
     color: ${colors.textBody};
-    font-size: 12.5px;
+    font-size: 12px;
     line-height: 1.55;
   }
 
@@ -1332,7 +1084,7 @@ const researchStyles = `
   .project-research__vocabList p {
     margin: 0;
     color: ${colors.textBody};
-    font-size: 12.5px;
+    font-size: 12px;
     line-height: 1.45;
   }
 
@@ -1344,38 +1096,35 @@ const researchStyles = `
   }
 
   .project-research__relatedRow button {
-    min-height: 32px;
+    min-height: 30px;
     padding: 0 ${spacing[12]};
   }
 
-  .project-research__dossierActions {
+  .project-research__dossierActions,
+  .project-research__sourceActions {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     gap: ${spacing[8]};
-    padding: ${spacing[14]};
+    padding: ${spacing[12]};
     border-top: 1px solid ${colors.lineSoft};
-    background: rgba(248, 251, 255, 0.82);
+    background: rgba(248, 251, 255, 0.84);
   }
 
   .project-research__secondaryAction {
-    min-height: 40px;
+    min-height: 38px;
     padding: 0 ${spacing[12]};
+    white-space: nowrap;
   }
 
-  .project-research__companion {
-    flex: 1 1 42%;
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
-  }
-
-  .project-research__companionHeader {
-    grid-template-columns: auto minmax(0, 1fr);
-    align-items: center;
+  .project-research__secondaryAction.is-primary {
+    border-color: ${colors.lineStrong};
+    color: ${colors.accentStrong};
+    background: ${colors.accentWash};
   }
 
   .project-research__companionIcon {
-    width: 38px;
-    height: 38px;
+    width: 32px;
+    height: 32px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1384,32 +1133,49 @@ const researchStyles = `
     color: ${colors.accentStrong};
   }
 
+  .project-research__companionView {
+    display: grid;
+    overflow: hidden;
+  }
+
   .project-research__companionBody {
     min-height: 0;
-    overflow: auto;
+    overflow: hidden;
     display: grid;
-    align-content: start;
+    grid-template-rows: minmax(120px, 1fr) auto auto;
+    align-content: stretch;
     gap: ${spacing[12]};
-    padding: ${spacing[14]};
+    padding: ${spacing[12]};
   }
 
   .project-research__answerCard {
+    min-height: 0;
+    overflow: auto;
     display: grid;
-    gap: ${spacing[12]};
-    padding: ${spacing[14]};
+    gap: ${spacing[8]};
+    padding: ${spacing[8]};
     border: 1px solid ${colors.lineSoft};
     border-radius: ${radius[16]};
-    background: linear-gradient(180deg, rgba(239, 246, 255, 0.86), rgba(255, 255, 255, 0.86));
+    background: linear-gradient(180deg, rgba(239, 246, 255, 0.88), rgba(255, 255, 255, 0.9));
   }
 
   .project-research__answerCard p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
     margin: 0;
     color: ${colors.textBody};
-    font-size: 12.75px;
-    line-height: 1.58;
+    font-size: 11.5px;
+    line-height: 1.45;
   }
 
-  .project-research__citationRow,
+  .project-research__citationRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: ${spacing[8]};
+  }
+
   .project-research__promptRow {
     display: flex;
     flex-wrap: wrap;
@@ -1419,25 +1185,34 @@ const researchStyles = `
   .project-research__citationRow button,
   .project-research__promptRow button {
     min-height: 30px;
-    padding: 0 ${spacing[10]};
+    padding: 0 ${spacing[12]};
+  }
+
+  .project-research__askRow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 76px;
+    align-items: stretch;
+    gap: ${spacing[8]};
   }
 
   .project-research__askBox {
     display: block;
+    min-width: 0;
   }
 
   .project-research__askBox textarea {
     width: 100%;
-    min-height: 86px;
+    min-height: 48px;
+    max-height: 96px;
     resize: vertical;
     border: 1px solid ${colors.lineSoft};
     border-radius: ${radius[16]};
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.92);
     color: ${colors.textBody};
     padding: ${spacing[12]};
     font-family: ${typography.studyBody.fontFamily};
     font-size: 13px;
-    line-height: 1.45;
+    line-height: 1.4;
     outline: none;
   }
 
@@ -1447,29 +1222,1092 @@ const researchStyles = `
   }
 
   .project-research__askButton {
-    min-height: 42px;
+    min-width: 0;
+    min-height: 48px;
+    padding: 0 ${spacing[12]};
+    border-radius: ${radius[16]};
     color: ${colors.accentStrong};
     border-color: ${colors.lineStrong};
     background: ${colors.accentWash};
   }
 
-  @media (max-width: 1280px) {
-    .project-research__hero {
-      grid-template-columns: minmax(0, 1fr) auto;
+  @media (max-width: 1500px) {
+    .project-research__title {
+      font-size: 32px;
     }
 
-    .project-research__heroMeta {
+    .project-research__resultRow {
+      grid-template-columns: 48px minmax(224px, 1fr) minmax(168px, 0.72fr) minmax(96px, auto);
+    }
+  }
+
+  @media (max-width: 1380px) {
+    .project-research__masthead {
+      padding: ${spacing[12]} ${spacing[16]};
+      gap: ${spacing[12]};
+    }
+
+    .project-research__title {
+      font-size: 30px;
+    }
+
+    .project-research__lead {
+      font-size: 13px;
+    }
+
+    .project-research__metricStrip {
       display: none;
     }
 
-    .project-research__tableHeader,
-    .project-research__resultRow {
-      grid-template-columns: 56px minmax(150px, 1fr) minmax(130px, 0.7fr) minmax(150px, 0.85fr) minmax(104px, 0.5fr);
+    .project-research__searchPanel {
+      gap: ${spacing[12]};
+      padding: ${spacing[12]};
     }
 
-    .project-research__tableHeader span:last-child,
+    .project-research__searchTopline,
+    .project-research__searchMeta {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .project-research__searchBox {
+      min-height: 44px;
+    }
+
+    .project-research__chip {
+      min-height: 30px;
+    }
+
+    .project-research__rightHeader {
+      padding: ${spacing[12]};
+    }
+
+    .project-research__dossierTitle,
+    .project-research__sourceTitle {
+      font-size: 15px;
+    }
+
+    .project-research__dossierMeta,
+    .project-research__sourceMeta {
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .project-research__blockContent .project-research__arabicFull {
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    .project-research__answerCard p {
+      -webkit-line-clamp: 3;
+    }
+
+    .project-research__companionBody {
+      padding: ${spacing[8]};
+      gap: ${spacing[8]};
+    }
+
+    .project-research__resultRow {
+      grid-template-columns: 48px minmax(0, 1fr) auto;
+      min-height: 112px;
+    }
+
+    .project-research__resultSecondary {
+      display: none;
+    }
+
+    .project-research__resultPrimary,
+    .project-research__topicCell {
+      gap: ${spacing[4]};
+    }
+
+    .project-research__arabicExtract {
+      -webkit-line-clamp: 1;
+      font-size: 14.5px;
+      line-height: 1.45;
+    }
+
+    .project-research__topicCell small {
+      display: none;
+    }
+
+    .project-research__translationPreview--inline {
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+    }
+  }
+
+  /* Bold research-desk redesign overrides. These keep layout ownership on the shell,
+     desk, ledger, and dossier containers rather than individual content cells. */
+
+  .project-research__masthead {
+    min-height: 58px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: ${spacing[12]} ${spacing[16]};
+    border-radius: ${radius[20]};
+    border-color: rgba(148, 163, 184, 0.28);
+    background:
+      linear-gradient(90deg, rgba(15, 23, 42, 0.96) 0, rgba(30, 41, 59, 0.94) 34%, rgba(255, 255, 255, 0.92) 34.1%, rgba(248, 251, 255, 0.88) 100%);
+    box-shadow: 0 18px 38px rgba(15, 23, 42, 0.1);
+    overflow: hidden;
+  }
+
+  .project-research__titleGroup {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: baseline;
+    column-gap: ${spacing[12]};
+    row-gap: ${spacing[4]};
+  }
+
+  .project-research__titleGroup .project-research__eyebrow {
+    display: none;
+  }
+
+  .project-research__title {
+    color: ${colors.surfacePrimary};
+    font-size: 25px;
+    line-height: 1;
+  }
+
+  .project-research__lead {
+    display: none;
+  }
+
+  .project-research__lead span {
+    color: ${colors.textStrong};
+  }
+
+  .project-research__headerAside {
+    grid-template-columns: auto auto;
+    align-items: center;
+    justify-items: end;
+    gap: ${spacing[12]};
+  }
+
+  .project-research__metricStrip {
+    display: flex;
+    align-items: center;
+    gap: ${spacing[4]};
+  }
+
+  .project-research__metricPill {
+    min-height: 32px;
+    min-width: 0;
+    grid-template-columns: auto auto;
+    align-items: baseline;
+    justify-items: start;
+    gap: ${spacing[4]};
+    padding: ${spacing[4]} ${spacing[8]};
+    border-radius: ${radius[12]};
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: none;
+  }
+
+  .project-research__metricPill strong {
+    font-size: 14px;
+  }
+
+  .project-research__metricPill span,
+  .project-research__actionHint {
+    font-size: 10px;
+  }
+
+  .project-research__actionHint {
+    display: none;
+  }
+
+  .project-research__studyLink {
+    min-height: 34px;
+    background: rgba(255, 255, 255, 0.78);
+    border-color: rgba(37, 99, 235, 0.24);
+    color: ${colors.accentStrong};
+    box-shadow: none;
+  }
+
+  .project-research__filterRail {
+    gap: ${spacing[12]};
+  }
+
+  .project-research__filterRail .project-research__panel {
+    border-color: rgba(255, 255, 255, 0.1);
+    background:
+      radial-gradient(circle at 16% 4%, rgba(147, 197, 253, 0.2), transparent 26%),
+      linear-gradient(180deg, #101827 0%, #172033 100%);
+    color: rgba(241, 245, 249, 0.94);
+    box-shadow: 0 18px 44px rgba(15, 23, 42, 0.18);
+  }
+
+  .project-research__filterRail .project-research__eyebrow,
+  .project-research__filterRail .project-research__panelTitle {
+    color: rgba(241, 245, 249, 0.96);
+  }
+
+  .project-research__panelHeader {
+    padding: ${spacing[16]};
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .project-research__filterList {
+    gap: ${spacing[8]};
+    padding: ${spacing[12]};
+  }
+
+  .project-research__filterButton,
+  .project-research__revisionButton {
+    color: rgba(226, 232, 240, 0.84);
+    background: transparent;
+  }
+
+  .project-research__filterButton {
+    min-height: 44px;
+    border-radius: ${radius[12]};
+  }
+
+  .project-research__filterIcon {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(219, 234, 254, 0.92);
+  }
+
+  .project-research__filterButton strong,
+  .project-research__revisionButton small {
+    color: rgba(203, 213, 225, 0.66);
+  }
+
+  .project-research__filterButton:hover,
+  .project-research__filterButton.is-active,
+  .project-research__revisionButton:hover {
+    border-color: rgba(147, 197, 253, 0.36);
+    background: rgba(239, 246, 255, 0.1);
+    color: ${colors.surfacePrimary};
+    box-shadow: inset 3px 0 0 ${colors.accentSoft};
+  }
+
+  .project-research__filterButton.is-active .project-research__filterIcon {
+    background: ${colors.surfacePrimary};
+    color: ${colors.accentStrong};
+  }
+
+  .project-research__revisionPanel {
+    gap: ${spacing[12]};
+  }
+
+  .project-research__desk {
+    height: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    overflow: hidden;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    border-radius: 28px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.94));
+    box-shadow: 0 28px 72px rgba(15, 23, 42, 0.13);
+  }
+
+  .project-research__deskToolbar {
+    display: grid;
+    gap: ${spacing[12]};
+    padding: ${spacing[16]} ${spacing[20]};
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    background:
+      linear-gradient(90deg, rgba(255, 255, 255, 0.98), rgba(239, 246, 255, 0.66));
+  }
+
+  .project-research__searchTopline {
+    grid-template-columns: minmax(180px, 0.26fr) minmax(0, 1fr);
+  }
+
+  .project-research__searchCopy h2 {
+    font-size: 17px;
+  }
+
+  .project-research__searchBox {
+    min-height: 44px;
+    border-color: rgba(15, 23, 42, 0.12);
+    border-radius: ${radius[16]};
+    background: ${colors.surfacePrimary};
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+  }
+
+  .project-research__chip {
+    min-height: 28px;
+    border-color: rgba(15, 23, 42, 0.1);
+    background: transparent;
+  }
+
+  .project-research__chip.is-active {
+    background: #111827;
+    border-color: #111827;
+    color: ${colors.surfacePrimary};
+  }
+
+  .project-research__deskBody {
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(424px, 472px);
+    overflow: hidden;
+  }
+
+  .project-research__ledgerPane {
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.72);
+  }
+
+  .project-research__ledgerHeader {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: ${spacing[12]};
+    padding: ${spacing[12]} ${spacing[20]};
+    border-bottom: 1px solid rgba(15, 23, 42, 0.07);
+    color: ${colors.textSoft};
+    font-family: ${typography.studyControlLabel.fontFamily};
+    font-size: 11px;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .project-research__ledgerHeader span {
+    color: ${colors.textStrong};
+  }
+
+  .project-research__ledgerHeader small {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: ${colors.textFaint};
+    font-size: 10px;
+  }
+
+  .project-research__rowList {
+    padding: ${spacing[8]} ${spacing[12]} ${spacing[12]};
+    gap: ${spacing[4]};
+  }
+
+  .project-research__resultRow {
+    min-height: 104px;
+    grid-template-columns: 48px minmax(260px, 1fr) minmax(220px, 0.76fr) minmax(96px, auto);
+    gap: ${spacing[12]};
+    padding: ${spacing[12]};
+    border: 1px solid transparent;
+    border-radius: ${radius[12]};
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .project-research__resultRow + .project-research__resultRow {
+    border-top-color: rgba(15, 23, 42, 0.06);
+  }
+
+  .project-research__resultRow:hover {
+    background: rgba(248, 250, 252, 0.9);
+    border-color: rgba(37, 99, 235, 0.14);
+    box-shadow: none;
+  }
+
+  .project-research__resultRow.is-selected {
+    background:
+      linear-gradient(90deg, #111827 0, #111827 8px, rgba(239, 246, 255, 0.94) 8px, rgba(255, 255, 255, 0.94) 100%);
+    border-color: rgba(37, 99, 235, 0.46);
+    box-shadow:
+      inset -1px 0 0 ${colors.accentBase},
+      0 16px 34px rgba(37, 99, 235, 0.12);
+  }
+
+  .project-research__segmentId {
+    width: 42px;
+    min-height: 42px;
+    border-radius: ${radius[12]};
+    background: rgba(15, 23, 42, 0.08);
+    color: ${colors.textStrong};
+  }
+
+  .project-research__resultRow.is-selected .project-research__segmentId {
+    background: ${colors.accentBase};
+    color: ${colors.surfacePrimary};
+  }
+
+  .project-research__arabicExtract {
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  .project-research__topicCell strong {
+    font-size: 13.5px;
+  }
+
+  .project-research__translationPreview {
+    color: ${colors.textBody};
+  }
+
+  .project-research__tagCell em {
+    background: rgba(15, 23, 42, 0.06);
+  }
+
+  .project-research__rightWorkspace {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    border-left: 1px solid rgba(15, 23, 42, 0.12);
+    background: #f8fbff;
+  }
+
+  .project-research__rightPanel {
+    height: 100%;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .project-research__rightPanel.is-dossier,
+  .project-research__rightPanel.is-source {
+    box-shadow: inset 4px 0 0 ${colors.accentBase};
+  }
+
+  .project-research__rightHeader {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: ${spacing[16]};
+    padding: ${spacing[16]} ${spacing[20]};
+    border-bottom: 0;
+    background:
+      radial-gradient(circle at 92% 8%, rgba(147, 197, 253, 0.22), transparent 30%),
+      linear-gradient(180deg, #101827, #172033);
+  }
+
+  .project-research__rightHeader .project-research__eyebrow,
+  .project-research__rightHeader .project-research__dossierTitle,
+  .project-research__rightHeader .project-research__sourceTitle {
+    color: ${colors.surfacePrimary};
+  }
+
+  .project-research__rightHeader .project-research__sourceTitle {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .project-research__rightHeader .project-research__dossierMeta,
+  .project-research__rightHeader .project-research__sourceMeta {
+    color: rgba(226, 232, 240, 0.74);
+  }
+
+  .project-research__rightHeaderActions {
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    max-width: 190px;
+  }
+
+  .project-research__modeSwitch {
+    border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .project-research__modeSwitch button {
+    color: rgba(226, 232, 240, 0.72);
+  }
+
+  .project-research__modeSwitch button.is-active {
+    background: ${colors.surfacePrimary};
+    color: ${colors.accentStrong};
+    box-shadow: none;
+  }
+
+  .project-research__rightBody {
+    background: #f8fbff;
+  }
+
+  .project-research__dossierBody,
+  .project-research__sourceBody {
+    gap: ${spacing[16]};
+    padding: ${spacing[16]} ${spacing[20]};
+  }
+
+  .project-research__detailBlock {
+    gap: ${spacing[8]};
+    padding: ${spacing[16]};
+    border-color: rgba(15, 23, 42, 0.1);
+    border-radius: ${radius[16]};
+    background: ${colors.surfacePrimary};
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.045);
+  }
+
+  .project-research__detailBlock.is-source {
+    background:
+      linear-gradient(180deg, ${colors.surfacePrimary}, rgba(248, 250, 252, 0.96));
+  }
+
+  .project-research__blockContent .project-research__arabicFull {
+    font-size: 21px;
+    line-height: 1.9;
+  }
+
+  .project-research__dossierActions,
+  .project-research__sourceActions {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    padding: ${spacing[12]} ${spacing[20]};
+    background: ${colors.surfacePrimary};
+  }
+
+  .project-research__secondaryAction.is-primary {
+    border-color: ${colors.accentBase};
+    background: ${colors.accentBase};
+    color: ${colors.surfacePrimary};
+  }
+
+  .project-research__companionBody {
+    grid-template-rows: minmax(180px, 1fr) auto auto;
+    padding: ${spacing[20]};
+  }
+
+  .project-research__answerCard {
+    padding: ${spacing[16]};
+    background: ${colors.surfacePrimary};
+  }
+
+  .project-research__answerCard p {
+    -webkit-line-clamp: unset;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 1500px) {
+    .project-research__deskBody {
+      grid-template-columns: minmax(0, 1fr) minmax(396px, 432px);
+    }
+
+    .project-research__resultRow {
+      grid-template-columns: 48px minmax(224px, 1fr) minmax(156px, 0.68fr) minmax(96px, auto);
+    }
+  }
+
+  @media (max-width: 1380px) {
+    .project-research__masthead {
+      grid-template-columns: minmax(0, 1fr) auto;
+      min-height: 60px;
+    }
+
+    .project-research__titleGroup {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .project-research__titleGroup .project-research__eyebrow,
+    .project-research__lead {
+      display: none;
+    }
+
+    .project-research__title {
+      font-size: 24px;
+    }
+
+    .project-research__deskToolbar {
+      padding: ${spacing[12]} ${spacing[16]};
+    }
+
+    .project-research__filterRail {
+      gap: ${spacing[8]};
+    }
+
+    .project-research__filterRail .project-research__panelHeader {
+      padding: ${spacing[12]};
+    }
+
+    .project-research__filterList {
+      gap: ${spacing[4]};
+      padding: ${spacing[8]};
+    }
+
+    .project-research__filterButton {
+      min-height: 36px;
+      gap: ${spacing[8]};
+      padding: ${spacing[4]} ${spacing[8]};
+      font-size: 11px;
+    }
+
+    .project-research__filterIcon {
+      width: 24px;
+      height: 24px;
+    }
+
+    .project-research__revisionPanel {
+      gap: ${spacing[8]};
+      padding: ${spacing[8]};
+    }
+
+    .project-research__revisionButton {
+      min-height: 36px;
+      padding: ${spacing[4]} ${spacing[8]};
+    }
+
+    .project-research__revisionButton small {
+      display: none;
+    }
+
+    .project-research__deskBody {
+      grid-template-columns: minmax(0, 1fr) minmax(360px, 388px);
+    }
+
+    .project-research__rowList {
+      padding: ${spacing[8]};
+    }
+
+    .project-research__resultRow {
+      min-height: 104px;
+      grid-template-columns: 48px minmax(0, 1fr) auto;
+    }
+
+    .project-research__rightHeader,
+    .project-research__dossierBody,
+    .project-research__sourceBody,
+    .project-research__companionBody {
+      padding: ${spacing[12]};
+    }
+
+    .project-research__blockContent .project-research__arabicFull {
+      font-size: 18.5px;
+    }
+  }
+
+  /* Focused master-detail cleanup: the ledger owns scanning, the inspector supports the selected segment. */
+
+  .project-research__deskToolbar {
+    gap: ${spacing[8]};
+    padding: ${spacing[12]} ${spacing[20]};
+    background:
+      linear-gradient(90deg, rgba(255, 255, 255, 0.98), rgba(248, 251, 255, 0.9));
+  }
+
+  .project-research__searchTopline {
+    grid-template-columns: minmax(160px, 0.22fr) minmax(0, 1fr);
+  }
+
+  .project-research__searchMeta {
+    align-items: center;
+  }
+
+  .project-research__chip {
+    min-height: 32px;
+    border-color: rgba(148, 163, 184, 0.3);
+    background: rgba(255, 255, 255, 0.82);
+    color: ${colors.textBody};
+  }
+
+  .project-research__chip:hover {
+    border-color: rgba(37, 99, 235, 0.28);
+    background: rgba(239, 246, 255, 0.76);
+    color: ${colors.accentStrong};
+  }
+
+  .project-research__chip.is-active {
+    border-color: rgba(37, 99, 235, 0.28);
+    background: ${colors.accentWash};
+    color: ${colors.accentStrong};
+    box-shadow: inset 0 0 0 1px rgba(147, 197, 253, 0.38);
+  }
+
+  .project-research__ledgerHeader {
+    padding: ${spacing[12]} ${spacing[20]};
+    letter-spacing: 0.06em;
+  }
+
+  .project-research__rowList {
+    padding: ${spacing[8]} ${spacing[12]} ${spacing[32]};
+    gap: ${spacing[4]};
+  }
+
+  .project-research__resultRow {
+    min-height: 104px;
+    grid-template-columns:
+      44px
+      minmax(168px, 1.05fr)
+      minmax(128px, 0.72fr)
+      minmax(132px, 0.7fr)
+      minmax(84px, auto);
+    grid-template-areas: "id arabic translation meta status";
+    gap: ${spacing[12]};
+    align-items: center;
+    padding: ${spacing[16]};
+    border-radius: ${radius[12]};
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .project-research__resultRow + .project-research__resultRow {
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
+  }
+
+  .project-research__resultRow:hover {
+    background: rgba(248, 250, 252, 0.94);
+    border-color: rgba(148, 163, 184, 0.22);
+    box-shadow: none;
+  }
+
+  .project-research__resultRow.is-selected {
+    background: linear-gradient(90deg, rgba(37, 99, 235, 0.08), rgba(239, 246, 255, 0.74));
+    border-color: rgba(37, 99, 235, 0.32);
+    box-shadow:
+      inset 4px 0 0 ${colors.accentBase},
+      0 12px 28px rgba(37, 99, 235, 0.08);
+  }
+
+  .project-research__segmentId {
+    grid-area: id;
+    width: 40px;
+    min-height: 40px;
+    border-radius: ${radius[12]};
+    background: rgba(15, 23, 42, 0.07);
+    color: ${colors.textStrong};
+  }
+
+  .project-research__resultRow.is-selected .project-research__segmentId {
+    background: ${colors.accentBase};
+    color: ${colors.surfacePrimary};
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+  }
+
+  .project-research__resultArabic,
+  .project-research__resultTranslation,
+  .project-research__resultMeta,
+  .project-research__topicCell {
+    min-width: 0;
+    display: grid;
+    gap: ${spacing[4]};
+  }
+
+  .project-research__resultArabic {
+    grid-area: arabic;
+  }
+
+  .project-research__resultTranslation {
+    grid-area: translation;
+  }
+
+  .project-research__resultMeta {
+    grid-area: meta;
+  }
+
+  .project-research__resultMeta {
+    gap: ${spacing[8]};
+  }
+
+  .project-research__arabicExtract {
+    -webkit-line-clamp: 2;
+    font-size: 15.5px;
+    line-height: 1.62;
+  }
+
+  .project-research__translationPreview {
+    -webkit-line-clamp: 2;
+    color: ${colors.textBody};
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .project-research__topicCell strong {
+    font-size: 13px;
+    line-height: 1.25;
+  }
+
+  .project-research__topicCell small {
+    color: ${colors.textSoft};
+  }
+
+  .project-research__tagCell {
+    gap: ${spacing[4]};
+  }
+
+  .project-research__tagCell em {
+    background: rgba(15, 23, 42, 0.055);
+    color: ${colors.textSoft};
+  }
+
+  .project-research__resultStatus {
+    grid-area: status;
+    align-self: center;
+    justify-items: end;
+  }
+
+  .project-research__statusPill {
+    min-height: 24px;
+    padding: 0 ${spacing[8]};
+    border-color: rgba(148, 163, 184, 0.32);
+    background: rgba(255, 255, 255, 0.78);
+    color: ${colors.textSoft};
+    font-size: 10px;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    font-weight: 850;
+  }
+
+  .project-research__statusPill.is-ready {
+    border-color: rgba(22, 163, 74, 0.16);
+    background: rgba(240, 253, 244, 0.46);
+    color: ${colors.success};
+  }
+
+  .project-research__statusPill.is-review,
+  .project-research__statusPill.is-weak {
+    border-color: rgba(217, 119, 6, 0.22);
+    background: rgba(255, 251, 235, 0.58);
+    color: ${colors.review};
+  }
+
+  .project-research__rightWorkspace {
+    background: rgba(248, 251, 255, 0.92);
+  }
+
+  .project-research__rightPanel.is-source {
+    box-shadow: inset 3px 0 0 rgba(37, 99, 235, 0.36);
+  }
+
+  .project-research__rightHeader {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: ${spacing[12]};
+    padding: ${spacing[16]} ${spacing[20]};
+    border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 255, 0.9));
+  }
+
+  .project-research__rightTitleGroup {
+    gap: ${spacing[8]};
+  }
+
+  .project-research__inspectorLabelRow {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: ${spacing[8]};
+  }
+
+  .project-research__inspectorLabelRow .project-research__statusPill {
+    flex: 0 0 auto;
+  }
+
+  .project-research__rightHeader .project-research__eyebrow,
+  .project-research__rightHeader .project-research__sourceTitle {
+    color: ${colors.textStrong};
+  }
+
+  .project-research__rightHeader .project-research__eyebrow {
+    color: ${colors.accentStrong};
+    text-transform: none;
+    letter-spacing: 0.02em;
+    font-size: 12px;
+    font-weight: 900;
+  }
+
+  .project-research__rightHeader .project-research__sourceTitle {
+    margin-top: 0;
+    font-size: 18px;
+    line-height: 1.3;
+  }
+
+  .project-research__rightHeader .project-research__sourceMeta {
+    color: ${colors.textSoft};
+  }
+
+  .project-research__rightHeaderActions {
+    max-width: none;
+    justify-content: flex-end;
+    align-self: start;
+  }
+
+  .project-research__modeSwitch {
+    border-color: rgba(148, 163, 184, 0.28);
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  .project-research__modeSwitch button {
+    color: ${colors.textSoft};
+    letter-spacing: 0.04em;
+  }
+
+  .project-research__modeSwitch button.is-active {
+    background: ${colors.accentWash};
+    color: ${colors.accentStrong};
+    box-shadow: inset 0 0 0 1px rgba(147, 197, 253, 0.42);
+  }
+
+  .project-research__rightBody {
+    background: rgba(248, 251, 255, 0.92);
+  }
+
+  .project-research__sourceBody {
+    min-height: 0;
+    display: grid;
+    align-content: start;
+    gap: ${spacing[16]};
+    padding: ${spacing[16]} ${spacing[20]} ${spacing[32]};
+    overflow: auto;
+  }
+
+  .project-research__detailBlock {
+    min-width: 0;
+    overflow: visible;
+    display: grid;
+    align-content: start;
+    gap: ${spacing[8]};
+    border-color: rgba(148, 163, 184, 0.22);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.035);
+  }
+
+  .project-research__detailBlock.is-source {
+    padding: ${spacing[20]};
+    background:
+      linear-gradient(180deg, ${colors.surfacePrimary}, rgba(248, 251, 255, 0.96));
+    border-color: rgba(37, 99, 235, 0.18);
+    box-shadow:
+      inset 0 0 0 1px rgba(147, 197, 253, 0.14),
+      0 10px 24px rgba(37, 99, 235, 0.055);
+  }
+
+  .project-research__detailBlock.is-notes,
+  .project-research__detailBlock.is-vocabulary,
+  .project-research__detailBlock.is-related {
+    background: rgba(255, 255, 255, 0.82);
+  }
+
+  .project-research__blockContent {
+    min-width: 0;
+    display: grid;
+    gap: ${spacing[8]};
+    overflow-wrap: anywhere;
+  }
+
+  .project-research__blockContent .project-research__arabicFull {
+    direction: rtl;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    font-size: 22px;
+    line-height: 1.95;
+    text-align: right;
+  }
+
+  .project-research__noteList,
+  .project-research__vocabList,
+  .project-research__relatedRow {
+    margin-top: 0;
+  }
+
+  .project-research__sourceActions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    gap: ${spacing[12]};
+    padding: ${spacing[12]} ${spacing[20]};
+    background: rgba(255, 255, 255, 0.96);
+  }
+
+  .project-research__secondaryAction {
+    min-width: 0;
+    min-height: 40px;
+    padding: 0 ${spacing[16]};
+  }
+
+  .project-research__secondaryAction.is-muted {
+    color: ${colors.textSoft};
+    background: transparent;
+    border-color: rgba(148, 163, 184, 0.24);
+  }
+
+  .project-research__secondaryAction.is-primary {
+    order: -1;
+    grid-column: 1 / -1;
+    justify-self: stretch;
+    border-color: ${colors.accentBase};
+    background: ${colors.accentBase};
+    color: ${colors.surfacePrimary};
+    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.16);
+  }
+
+  @media (max-width: 1500px) {
+    .project-research__resultRow {
+      grid-template-columns:
+        44px
+        minmax(152px, 1fr)
+        minmax(112px, 0.62fr)
+        minmax(124px, 0.62fr)
+        minmax(78px, auto);
+    }
+  }
+
+  @media (max-width: 1380px) {
+    .project-research__searchTopline,
+    .project-research__searchMeta {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .project-research__rowList {
+      padding: ${spacing[8]} ${spacing[8]} ${spacing[32]};
+    }
+
+    .project-research__resultRow {
+      min-height: 104px;
+      grid-template-columns: 44px minmax(0, 1fr) minmax(78px, auto);
+      grid-template-areas:
+        "id arabic status"
+        "id meta status";
+    }
+
+    .project-research__resultTranslation {
+      display: none;
+    }
+
+    .project-research__resultMeta {
+      gap: ${spacing[4]};
+    }
+
+    .project-research__resultStatus {
+      align-self: start;
+      padding-top: ${spacing[4]};
+    }
+
     .project-research__tagCell {
       display: none;
+    }
+
+    .project-research__translationPreview--inline {
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+    }
+
+    .project-research__rightHeader {
+      grid-template-columns: minmax(0, 1fr) auto;
+      padding: ${spacing[12]};
+    }
+
+    .project-research__rightHeaderActions {
+      gap: ${spacing[8]};
+    }
+
+    .project-research__sourceBody {
+      padding: ${spacing[12]} ${spacing[12]} ${spacing[32]};
+    }
+
+    .project-research__blockContent .project-research__arabicFull {
+      font-size: 19px;
+      line-height: 1.8;
+    }
+
+    .project-research__sourceActions {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      padding: ${spacing[12]};
+    }
+
+    .project-research__secondaryAction,
+    .project-research__secondaryAction.is-primary {
+      justify-self: stretch;
     }
   }
 `
