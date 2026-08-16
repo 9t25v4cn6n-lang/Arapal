@@ -25,6 +25,18 @@ labelled wherever it appears.
 Totals: 34 data + 17 parity + 26 behaviour/journey + 13 QA calibration, green.
 Checker: 668 accepted, no unexplained regressions.
 
+### Later in the same session
+
+- **Phase 2A salvage.** Took only the additive colour tokens (`textMuted`,
+  `borderSoft`, `borderStrong`) from the abandoned package. Deliberately left
+  the typography snapping (12.5->12, 22->22.5), verified as the cause of +14
+  Study regressions. Purely additive: no rendered change.
+- **Exam autosave made honest.** The badge was a setTimeout flipping a label and
+  writing nothing. Now persists and restores. Fixing it exposed a second defect:
+  exam ids were `Math.random()` per load, so a persisted attempt pointed at an
+  exam that no longer existed. Ids are now stable. Two pinned gap tests now
+  assert the fixed behaviour.
+
 ### Concrete remaining blockers
 
 1. **Phase 2A · design system + shell — not delivered.** The agent hit the
@@ -44,6 +56,20 @@ Checker: 668 accepted, no unexplained regressions.
 5. **Segmentation review/success** do not yet read the published segments;
    only paste -> store -> Study is wired.
 6. **Phases 5-8** (R3 uplift, Fit pass, visual QA, integration) not started.
+7. **The visual-regression suite is not yet reliable enough to be a release
+   gate.** Two real causes were found and fixed — storage bleeding between
+   states, and capture racing the webfont load — but 3-4 of 52 states still
+   flap between runs, and not the same ones each time. The residue is
+   concentrated in *driven* states whose layout settles asynchronously
+   (`study-draft-typed`, `seg-review-active-edit`): the translation editor
+   resizes itself from scrollHeight in an effect, so its height depends on
+   when the screenshot fires. Next action: make that editor's height
+   deterministic (fixed rows, or resize on a layout effect) rather than
+   widening the pixel tolerance — a suite that is trusted while flapping is the
+   `auditTrust: 98` failure mode wearing new clothes.
+
+   The **behaviour** suite is stable and is what currently carries the evidence:
+   28 journey/characterisation tests plus 34 data invariants, green on repeat.
 
 ### Recorded, not acted on
 
