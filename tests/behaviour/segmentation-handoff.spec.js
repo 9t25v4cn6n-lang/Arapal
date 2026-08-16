@@ -104,3 +104,51 @@ test.describe('segmentation → study handoff', () => {
     expect(projects, 'nothing was created').toBe(0)
   })
 })
+
+test.describe('review and success reflect the published segmentation', () => {
+  const publish = async (page) => {
+    await openPaste(page)
+    await page.locator('textarea').first().fill(SOURCE)
+    await page.waitForTimeout(300)
+    await page.getByRole('button', { name: /segment text/i }).first().click()
+    await page.waitForTimeout(1500)
+  }
+
+  test('Review edits the user’s own proposal, not a fixture', async ({ page }) => {
+    await publish(page)
+    await page.goto('/?chrome=0#v2/segmentationReview', { waitUntil: 'domcontentloaded' })
+    await page.waitForTimeout(2600)
+    expect(await body(page), 'the review list shows the pasted source').toContain(MARKER)
+  })
+
+  test('Success reports the real segment count', async ({ page }) => {
+    await publish(page)
+    const expected = await page.evaluate(() =>
+      Object.keys(JSON.parse(localStorage.getItem('arapal.v1.state')).segments).length)
+
+    await page.goto('/?chrome=0#v2/segmentationSuccess', { waitUntil: 'domcontentloaded' })
+    await page.waitForTimeout(2600)
+    expect(await body(page)).toMatch(new RegExp(`\\b${expected}\\b`))
+  })
+
+  test('Start Studying carries context into Study', async ({ page }) => {
+    await publish(page)
+    await page.goto('/?chrome=0#v2/segmentationSuccess', { waitUntil: 'domcontentloaded' })
+    await page.waitForTimeout(2600)
+    await page.getByRole('button', { name: /start studying/i }).first().click()
+    await page.waitForTimeout(1800)
+
+    expect(page.url()).toContain('studyWorkspace')
+    const ctx = await page.evaluate(() => {
+      const raw = sessionStorage.getItem('arapal.v1.context')
+      return raw ? JSON.parse(raw) : null
+    })
+    expect(ctx, 'a context payload was written').toBeTruthy()
+    expect(ctx.kind).toBe('published')
+    expect(ctx.segmentId, 'it names the segment to open').toBeTruthy()
+
+    const text = await body(page)
+    expect(text, 'Study announces where it came from').toMatch(/from segmentation/i)
+    expect(text).toContain(MARKER)
+  })
+})

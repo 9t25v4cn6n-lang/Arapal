@@ -4,8 +4,13 @@ import {
 } from '../../foundation/primitives/SegmentationFlowPrimitives'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import layoutContract from './SegmentationSuccessScreen.contract'
+import { select, getSnapshot } from '../../data'
 
 export default function SegmentationSuccessScreen({ route, shell }) {
+  const snapshot = getSnapshot()
+  const project = select.getCurrentProject(snapshot)
+  const publishedSegments = project ? select.listSegments(project.id, snapshot) : null
+
   const slots = {
     ...getSegmentationFlowHeaderSlots({
       shell,
@@ -13,7 +18,7 @@ export default function SegmentationSuccessScreen({ route, shell }) {
       brandSubtitle: 'Ready',
       backRoute: 'segmentationReview',
     }),
-    Layer3_SegmentationFlow_Page: <SegmentationSuccessView shell={shell} />,
+    Layer3_SegmentationFlow_Page: <SegmentationSuccessView shell={shell} publishedSegments={publishedSegments} />,
   }
 
   return (

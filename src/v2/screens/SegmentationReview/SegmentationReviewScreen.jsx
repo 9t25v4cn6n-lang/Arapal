@@ -13,6 +13,7 @@ import {
 } from '../../foundation/primitives/SegmentationFlowPrimitives'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import layoutContract from './SegmentationReviewScreen.contract'
+import { select, getSnapshot } from '../../data'
 
 const reviewSectionSize = 3
 
@@ -145,7 +146,13 @@ function cloneSegments(segments) {
 
 export default function SegmentationReviewScreen({ route, shell }) {
   const nextSegmentIdRef = useRef(11)
-  const [segments, setSegments] = useState(createSegmentationReviewSegments)
+  // Seed from what was actually published, so Review edits the user's own
+  // proposal rather than a fixture that happens to look similar.
+  const [segments, setSegments] = useState(() => {
+    const snapshot = getSnapshot()
+    const project = select.getCurrentProject(snapshot)
+    return createSegmentationReviewSegments(project ? select.listSegments(project.id, snapshot) : null)
+  })
   const [groupTitles, setGroupTitles] = useState(createSegmentationReviewGroupTitles)
   const [staleGroupIds, setStaleGroupIds] = useState([])
   const [history, setHistory] = useState({ past: [], future: [] })

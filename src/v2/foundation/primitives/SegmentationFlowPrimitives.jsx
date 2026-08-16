@@ -18,6 +18,7 @@ import {
   Undo2,
 } from 'lucide-react'
 import BackPill from './BackPill'
+import { navigation } from '../../data'
 import DockableToolbar, {
   DockableToolbarActionGroup,
   DockableToolbarDivider,
@@ -125,7 +126,20 @@ const reviewSegments = [
   },
 ]
 
-export function createSegmentationReviewSegments() {
+/**
+ * Seed the review list. Prefers the segments the user actually just published;
+ * falls back to the built-in proposal so the route stays inspectable on its own.
+ */
+export function createSegmentationReviewSegments(published) {
+  if (published?.length) {
+    return published.map((segment, index) => ({
+      id: segment.id,
+      label: segment.title || `Segment ${index + 1}`,
+      text: segment.text,
+      groupLabel: segment.chapterLabel || 'Proposed segments',
+      reviewState: 'ready',
+    }))
+  }
   return reviewSegments.map((segment) => ({ ...segment }))
 }
 
@@ -2086,8 +2100,9 @@ export function SegmentationReviewActionRegion({
   )
 }
 
-export function SegmentationSuccessView({ shell }) {
-  const segmentCount = reviewSegments.length
+export function SegmentationSuccessView({ shell, publishedSegments }) {
+  // Report what was actually produced, not the fixture's length.
+  const segmentCount = publishedSegments?.length ?? reviewSegments.length
 
   return (
     <FlowPage centered>
@@ -2162,7 +2177,21 @@ export function SegmentationSuccessView({ shell }) {
           <PrimaryCTA
             icon={<Play size={16} strokeWidth={1.9} />}
             minWidth={260}
-            onClick={() => shell.navigate('studyWorkspace')}
+            onClick={() => {
+              // Tell Study why it was opened and which segment to start on,
+              // instead of a bare route change that drops the context.
+              const first = publishedSegments?.[0]
+              if (first) {
+                navigation.openPublishedSegmentation({
+                  projectId: first.projectId,
+                  segmentId: first.id,
+                  segmentRef: first.ref,
+                  count: publishedSegments.length,
+                })
+                return
+              }
+              shell.navigate('studyWorkspace')
+            }}
             debugItem="start_studying_cta"
           >
             Start Studying
