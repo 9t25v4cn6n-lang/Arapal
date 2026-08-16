@@ -1,5 +1,62 @@
 # Arapal — Current Stage and Next Milestones
 
+## 2026-08-16 · Release convergence — IN PROGRESS, **NOT RELEASE READY**
+
+Branch `v1-foundation`, executed against `ARAPAL_RELEASE_CONVERGENCE_PLAN.md`.
+Stopped by a genuine external blocker: the account session limit was reached
+(the parallel Phase 2A agent terminated with "You've hit your session limit").
+
+### Done, with evidence
+
+| Phase | State | Evidence |
+|---|---|---|
+| 1 · Regression safety | complete | 52 golden snapshots (26 states x 2 widths); detection proven by flipping a token and seeing a real diff; 12 legacy characterisation tests; 3 known gaps pinned as `test.fixme` |
+| 2B · Data/state/persistence | complete | `src/v2/data/*`, 34 unit invariants |
+| 3B · Segmentation logic extraction | complete | `src/v2/lib/segmentation.js`, 17 parity tests, ARABIC FIX, one latent defect pinned |
+| 3B · Segmentation -> Study handoff | complete | 5 journey tests; the pasted source reaches Study and survives reload |
+| 3C · Study wired to the data layer | complete | 9 core-loop journey tests |
+
+**The mission's success measure is now true.** A user writes a translation,
+closes the tab, returns, and the work is where they left it — keyed per
+(project, segment), so it no longer leaks between segments. Cmd+Enter submits,
+empty submissions are refused rather than graded, and stub evaluation output is
+labelled wherever it appears.
+
+Totals: 34 data + 17 parity + 26 behaviour/journey + 13 QA calibration, green.
+Checker: 668 accepted, no unexplained regressions.
+
+### Concrete remaining blockers
+
+1. **Phase 2A · design system + shell — not delivered.** The agent hit the
+   session limit mid-package. Its work is preserved on the git stash entry
+   *phase2a-incomplete-codemods*. **Do not apply as-is:** it traded -85
+   violations globally for **+14 new regressions on Study**, verified by
+   stashing the concurrent work and re-running. Salvage the token naming
+   (`textMuted`, `borderSoft`, `borderStrong`) and the dead `src/styles/`
+   deletion; the typography snapping (12.5->12, 22->22.5) caused the overlaps.
+2. **Home vertical** — `v2/projectHome` still does not exist. R3 `259:2533`
+   and `259:2559` are the source.
+3. **Exams on V2** — no V2 route. Legacy Exams remains the only working flow,
+   and its attempt state is still lost on reload while the UI shows "AUTOSAVE".
+4. **Study behaviour port** — discussion modes, support flyouts and pass/fail
+   presentation still live only in `src/components/figma/`, so that directory
+   cannot be archived yet.
+5. **Segmentation review/success** do not yet read the published segments;
+   only paste -> store -> Study is wired.
+6. **Phases 5-8** (R3 uplift, Fit pass, visual QA, integration) not started.
+
+### Recorded, not acted on
+
+- `tests/audit/dead-code-lane.test.mjs` has 2 failures caused simply by adding
+  files to the repo. Root cause: `runDeadCodeLane.ts:160` calls
+  `fs.access(process.cwd() + path)`, so a fixture-driven unit test depends on
+  the real working tree. Pre-existing tooling fragility, not a product
+  regression — it passes at `7b0d917` and fails once new files exist.
+- The segmentation paste screen ships with ~168 characters of sample source
+  prefilled, so a real user's first action is deleting it. A Fit-pass decision.
+
+---
+
 ## 2026-08-16 · Product quality & release readiness audit — complete
 
 `ARAPAL_PRODUCT_QUALITY_AUDIT.md` (evidence in `audit-evidence/`). Audited the running application only; Figma explicitly excluded. No application source modified.
