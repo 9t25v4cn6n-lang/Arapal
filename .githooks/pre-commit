@@ -7,6 +7,9 @@
 #
 # Skip deliberately with: git commit --no-verify
 
+# Cheap, browser-free check first: a backtick in a block comment breaks the build.
+node scripts/qa/lint-template-css.mjs || exit 1
+
 if ! curl -s -o /dev/null http://localhost:5173/ 2>/dev/null; then
   echo "[visual-standard] dev server not running — gate skipped."
   exit 0

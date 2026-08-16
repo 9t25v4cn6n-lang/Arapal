@@ -18,7 +18,8 @@ const GROUPS = [
   {
     id: 'home', title: 'Home / landing', note: 'Legacy home kept; the empty V2 scaffold and the developer landing page are archived.',
     screens: [
-      { id: 'legacy-home', hash: 'home', impl: 'legacy', file: 'src/screens/ProjectHomeScreen.jsx', lines: 906, verdict: 'keep-for-now', why: 'Your pick. The only working home. Rebuild on V2 later; no V2 replacement exists yet.' },
+      { id: 'v2-home', hash: 'v2/projectHome', impl: 'v2', file: 'src/v2/screens/ProjectHome/', lines: 0, verdict: 'keep', why: 'Built from R3. Empty first-run state and a returning state with one clear next action. Now the default route.' },
+      { id: 'legacy-home', hash: 'home', impl: 'legacy', file: 'src/screens/ProjectHomeScreen.jsx', lines: 906, verdict: 'archive', why: 'Superseded by the V2 home. Retained only as a behaviour reference.' },
     ],
   },
   {

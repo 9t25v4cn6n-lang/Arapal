@@ -140,7 +140,7 @@ export function addSource({ projectId, rawText, label }) {
  * Replace a project's segments with the output of segmentation.
  *
  * This is the handoff that was previously discarded: the old flow ended with
- * `window.location.hash = 'study'` and no payload, so Study reopened a fixture
+ * 'window.location.hash = 'study'' and no payload, so Study reopened a fixture
  * and the user's approved work vanished.
  */
 export function publishSegments({ projectId, sourceId, chunks }) {

@@ -57,8 +57,8 @@ export function createSource({ projectId, rawText, label = 'Pasted source' }) {
 }
 
 /**
- * A segment of a source. `ref` is the human label (e.g. "1.3"); `id` is the
- * stable machine identity. Screens must key on `id`, never on `ref`, because
+ * A segment of a source. 'ref' is the human label (e.g. "1.3"); 'id' is the
+ * stable machine identity. Screens must key on 'id', never on 'ref', because
  * refs are renumbered whenever segmentation is re-run.
  */
 export function createSegment({ projectId, sourceId, index, text, ref, chapterLabel = '', title = '' }) {
@@ -98,7 +98,7 @@ export function createStudyRecord({ projectId, segmentId }) {
 }
 
 /**
- * The outcome of an evaluation. `isSample` is load-bearing, not decorative:
+ * The outcome of an evaluation. 'isSample' is load-bearing, not decorative:
  * until a real evaluator exists, every result carries it and the UI must
  * surface it. Presenting generated feedback as a real assessment of work the
  * product never read is the defect this flag prevents.

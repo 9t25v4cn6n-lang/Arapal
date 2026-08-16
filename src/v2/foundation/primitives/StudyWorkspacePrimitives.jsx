@@ -103,6 +103,12 @@ const studyCss = `
     height: auto;
     min-width: 0;
     min-height: 0;
+    /* A card is a fixed header plus a body that gives way. Without this the
+       panel kept its natural height, and when a parent compressed it the
+       overflow:hidden below cut the content off instead of letting the body
+       scroll. */
+    display: flex;
+    flex-direction: column;
     border: 1px solid var(--study-line-soft);
     border-radius: var(--study-radius-24);
     background: color-mix(in srgb, var(--study-surface) 96%, transparent);
@@ -683,6 +689,17 @@ const studyCss = `
     grid-area: source;
     min-width: 0;
     min-height: 0;
+    /* Clipping the wrapper only moved the problem: the card was cut instead of
+       overflowing. The wrapper is a column so the card fits the row exactly and
+       its own body does the scrolling. */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .study-v2__composerSource > * {
+    min-height: 0;
+    flex: 1 1 auto;
     transition: transform var(--study-motion-panel), opacity var(--study-motion-panel);
   }
 
@@ -786,6 +803,8 @@ const studyCss = `
   }
 
   .study-v2__cardHeader {
+    /* The header keeps its size; the body is what yields. */
+    flex: 0 0 auto;
     min-height: calc(var(--study-space-32) + var(--study-space-24));
     padding: 0 var(--study-space-24);
     display: flex;
@@ -872,8 +891,13 @@ const studyCss = `
   }
 
   .study-v2__sourceBody {
+    flex: 1 1 auto;
     min-height: 0;
-    max-height: 294px;
+    /* A fixed 294px cap ignored how much room the row actually had, so at
+       shorter frames the Arabic passage escaped the card and printed over the
+       lexicography row beneath it. Capping against the viewport as well lets
+       the card give way and scroll, which is what its scroll edge is for. */
+    max-height: min(294px, 34vh);
     overflow: auto;
     overscroll-behavior: contain;
   }
@@ -1158,8 +1182,12 @@ const studyCss = `
        button occupied the same pixels instead of reflowing. Wrapping lets the
        row give way; the actions stay together and the hint drops when there is
        genuinely not enough room for all three. */
+    /* nowrap with a shrinkable hint. Flex items in a nowrap row cannot overlap
+       as long as something is allowed to give, and the hint is that something —
+       so the actions stay on one line at every width instead of stacking, and
+       the original grid's collision is still impossible. */
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
     justify-content: flex-end;
     gap: var(--study-space-12);
@@ -1181,8 +1209,11 @@ const studyCss = `
     color: var(--study-text-soft);
     font-size: var(--study-control-size);
     font-weight: 600;
-    /* Takes the leftover room and yields it first when the row must wrap. */
-    flex: 1 1 auto;
+    /* flex-basis 0, not auto: the hint must claim no intrinsic width, so the
+       actions stay on one row wherever they fit and the hint is what gives way.
+       With '1 1 auto' it held its full width and pushed Submit onto a second
+       row even at 1440, where there was ample room. */
+    flex: 1 1 0;
     min-width: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -2403,7 +2434,7 @@ export function StudyRetryBanner() {
 /**
  * Controlled translation editor.
  *
- * `value`/`onChange` are required for the draft to belong to anything. This
+ * 'value'/'onChange' are required for the draft to belong to anything. This
  * component previously owned the draft in local state, which meant nothing read
  * what the user typed, the text was never persisted, and switching segments
  * left the previous segment's translation on screen — the caller could not fix

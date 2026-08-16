@@ -55,7 +55,7 @@ export function chunkUnits(units, size) {
 }
 
 /**
- * Units per segment. The original branched on `style` but both branches
+ * Units per segment. The original branched on 'style' but both branches
  * returned the same values; collapsed here without behavioural change.
  */
 export function getChunkSize(style, granularity) {
@@ -141,7 +141,7 @@ export function generateMarkers(text, method = 'ai', style = 'sentence', granula
   })
 }
 
-/** Shape markers for `store.publishSegments`. */
+/** Shape markers for 'store.publishSegments'. */
 export function markersToChunks(markers, { chapterLabel = '' } = {}) {
   return markers.map((marker, index) => ({
     text: marker.text,

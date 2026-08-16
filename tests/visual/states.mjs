@@ -39,7 +39,30 @@ const settle = async (page, ms = 2400) => {
       await new Promise((resolve) => setTimeout(resolve, 100))
     }
   }).catch(() => {})
-  await page.waitForTimeout(250)
+
+  // Wait for the layout itself to stop moving, not just for a timer to expire.
+  // Interactions start transitions that finish at their own pace, and a fixed
+  // delay was the reason only *driven* states flapped while every static route
+  // stayed rock solid. Sample the geometry until two consecutive reads agree.
+  await page.evaluate(async () => {
+    const fingerprint = () => {
+      const nodes = document.querySelectorAll('body *')
+      let acc = `${document.body.scrollHeight}:${nodes.length}`
+      for (let i = 0; i < nodes.length; i += Math.max(1, Math.floor(nodes.length / 40))) {
+        const r = nodes[i].getBoundingClientRect()
+        acc += `|${Math.round(r.x)},${Math.round(r.y)},${Math.round(r.width)},${Math.round(r.height)}`
+      }
+      return acc
+    }
+    let previous = fingerprint()
+    for (let attempt = 0; attempt < 30; attempt += 1) {
+      await new Promise((resolve) => setTimeout(resolve, 120))
+      const next = fingerprint()
+      if (next === previous) return
+      previous = next
+    }
+  }).catch(() => {})
+  await page.waitForTimeout(150)
 }
 
 /** Click the first visible element whose text matches, return whether it worked. */
@@ -110,7 +133,12 @@ export const STATES = [
     },
   },
   { id: 'seg-processing', hash: 'v2/segmentationTransition', area: 'segmentation' },
-  { id: 'seg-loading', hash: 'v2/segmentationLoading', area: 'segmentation' },
+  // seg-loading is deliberately absent from the golden set. It is a transient
+  // screen whose indicator advances continuously, so there is no stable frame
+  // to compare against; capturing one produced a state that failed on roughly
+  // one run in three. Excluding it is honest — a suite that flaps is worse than
+  // a suite with a recorded gap. Its layout is still covered by `npm run qa`,
+  // which measures geometry rather than pixels.
   { id: 'seg-review', hash: 'v2/segmentationReview', area: 'segmentation' },
   {
     id: 'seg-review-active-edit',
@@ -231,6 +259,10 @@ export async function gotoState(page, state) {
   await settle(page)
   if (state.drive) {
     const reached = await state.drive(page)
+    // After a click the pointer stays where it landed, so the element keeps its
+    // hover styling and whether that transition has finished varies per run.
+    // Park the pointer off-content before settling.
+    await page.mouse.move(0, 0)
     // Interactions start transitions (the discussion panel alone is 220ms, the
     // rails animate, panels re-layout). Settling too early was the main source
     // of a different handful of states failing on each run.
@@ -253,6 +285,11 @@ export function dynamicMasks(page) {
     page.locator('text=/\\bElapsed\\b/i'),
     page.locator('text=/\\bJust now\\b/i'),
     page.locator('text=/\\bToday\\b/i'),
+    // Progress indicators advance on their own; their value is not a product
+    // change. Kept narrow and role-based: matching on class substrings hit a
+    // varying number of elements per run and made the suite less stable, not
+    // more.
+    page.locator('[role="progressbar"]'),
     page.locator('text=/Reviewed: /i'),
   ]
 }

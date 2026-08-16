@@ -13,7 +13,7 @@ import {
  * Replaces a route that was an empty "V2 SCAFFOLD" placeholder while still
  * being a live destination in the navigation rail.
  *
- * Two states, both from R3 (`259:2533` returning, `259:2559` empty):
+ * Two states, both from R3 ('259:2533' returning, '259:2559' empty):
  *  - a first run has no project at all, and says so honestly rather than
  *    showing a populated-looking fixture. The audit recorded the absence of a
  *    real empty state as a missing capability across four screens.

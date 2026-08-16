@@ -59,7 +59,7 @@ function observe(source, translation) {
 
 /**
  * @returns {{outcome:'pass'|'review', score:null, notes:Array, isSample:true, mode:string}}
- *   `score` is deliberately null. A number here would imply a measurement this
+ *   'score' is deliberately null. A number here would imply a measurement this
  *   stub cannot make.
  */
 export function evaluateTranslation({ source = '', translation = '', attempt = 0 } = {}) {

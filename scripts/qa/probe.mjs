@@ -219,7 +219,11 @@ export function evaluate(config) {
     }
     if (inScroller) continue
     const escape = Math.max(r.right - innerWidth, -r.left)
-    if (escape > THRESHOLDS.maxViewportEscapePx) {
+    // A decorative backdrop is allowed to bleed past the frame — that is the
+    // effect. It only becomes a defect when it forces the document to scroll,
+    // which is the thing a user actually experiences.
+    const forcesScroll = document.documentElement.scrollWidth > innerWidth + 1
+    if (escape > THRESHOLDS.maxViewportEscapePx && (!isDecorative(el) || forcesScroll)) {
       add('viewport-escape', {
         selector: describe(el), label: label(el),
         escapePx: round(escape), left: round(r.left), right: round(r.right),

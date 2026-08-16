@@ -38,13 +38,21 @@ Two legacy screens are marked BLOCKED: they are agreed for archive but still hol
   <span class="badge" style="color:#BE123C;background:#FFE4E6">ARCHIVE</span>
   <span class="badge" style="color:#475569;background:#E2E8F0">DEV ONLY</span>
 </div>
-<h2>Home / landing</h2><p class="gnote">Legacy home kept; the empty V2 scaffold and the developer landing page are archived.</p><div class="grid"><article class="card keep-for-now">
+<h2>Home / landing</h2><p class="gnote">Legacy home kept; the empty V2 scaffold and the developer landing page are archived.</p><div class="grid"><article class="card keep">
+    <a href="http://localhost:5173/?chrome=0#v2/projectHome" target="_blank"><img src="/screens/v2-home.png" alt="v2-home"></a>
+    <div class="meta">
+      <div class="row"><span class="badge" style="color:#15803D;background:#DCFCE7">KEEP</span><span class="impl impl-v2">v2</span></div>
+      <a class="route" href="http://localhost:5173/?chrome=0#v2/projectHome" target="_blank">#v2/projectHome ↗</a>
+      <p class="file">src/v2/screens/ProjectHome/</p>
+      <p class="why">Built from R3. Empty first-run state and a returning state with one clear next action. Now the default route.</p>
+    </div>
+  </article><article class="card archive">
     <a href="http://localhost:5173/?chrome=0#home" target="_blank"><img src="/screens/legacy-home.png" alt="legacy-home"></a>
     <div class="meta">
-      <div class="row"><span class="badge" style="color:#B45309;background:#FEF3C7">KEEP FOR NOW</span><span class="impl impl-legacy">legacy</span></div>
+      <div class="row"><span class="badge" style="color:#BE123C;background:#FFE4E6">ARCHIVE LATER</span><span class="impl impl-legacy">legacy</span></div>
       <a class="route" href="http://localhost:5173/?chrome=0#home" target="_blank">#home ↗</a>
       <p class="file">src/screens/ProjectHomeScreen.jsx · 906 lines</p>
-      <p class="why">Your pick. The only working home. Rebuild on V2 later; no V2 replacement exists yet.</p>
+      <p class="why">Superseded by the V2 home. Retained only as a behaviour reference.</p>
     </div>
   </article></div><h2>Project library</h2><p class="gnote">Legacy archived; #projects now redirects here.</p><div class="grid"><article class="card keep">
     <a href="http://localhost:5173/?chrome=0#v2/projects" target="_blank"><img src="/screens/v2-projects.png" alt="v2-projects"></a>
