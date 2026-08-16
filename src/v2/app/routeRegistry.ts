@@ -1,14 +1,9 @@
-import ControlsLabScreen from '../screens/ControlsLab/ControlsLabScreen'
+import { lazy } from 'react'
 import controlsLabLayoutContract from '../screens/ControlsLab/ControlsLabScreen.contract'
-import EditorPanelsLabScreen from '../screens/EditorPanelsLab/EditorPanelsLabScreen'
 import editorPanelsLabLayoutContract from '../screens/EditorPanelsLab/EditorPanelsLabScreen.contract'
-import FoundationLabScreen from '../screens/FoundationLab/FoundationLabScreen'
 import foundationLabLayoutContract from '../screens/FoundationLab/FoundationLabScreen.contract'
-import MotionInteractionLabScreen from '../screens/MotionInteractionLab/MotionInteractionLabScreen'
 import motionInteractionLabLayoutContract from '../screens/MotionInteractionLab/MotionInteractionLabScreen.contract'
-import PatternLabScreen from '../screens/PatternLab/PatternLabScreen'
 import patternLabLayoutContract from '../screens/PatternLab/PatternLabScreen.contract'
-import QualityDashboardScreen from '../screens/QualityDashboard/QualityDashboardScreen'
 import qualityDashboardLayoutContract from '../screens/QualityDashboard/QualityDashboardScreen.contract'
 import ProjectHomeScreen from '../screens/ProjectHome/ProjectHomeScreen'
 import projectHomeLayoutContract from '../screens/ProjectHome/ProjectHomeScreen.contract'
@@ -28,8 +23,21 @@ import SegmentationSuccessScreen from '../screens/SegmentationSuccess/Segmentati
 import segmentationSuccessLayoutContract from '../screens/SegmentationSuccess/SegmentationSuccessScreen.contract'
 import StudyWorkspaceScreen from '../screens/StudyWorkspace/StudyWorkspaceScreen'
 import studyWorkspaceLayoutContract from '../screens/StudyWorkspace/StudyWorkspaceScreen.contract'
-import TypographyTokensLabScreen from '../screens/TypographyTokensLab/TypographyTokensLabScreen'
 import typographyTokensLabLayoutContract from '../screens/TypographyTokensLab/TypographyTokensLabScreen.contract'
+
+const ControlsLabScreen = lazy(() => import('../screens/ControlsLab/ControlsLabScreen'))
+
+const EditorPanelsLabScreen = lazy(() => import('../screens/EditorPanelsLab/EditorPanelsLabScreen'))
+
+const FoundationLabScreen = lazy(() => import('../screens/FoundationLab/FoundationLabScreen'))
+
+const MotionInteractionLabScreen = lazy(() => import('../screens/MotionInteractionLab/MotionInteractionLabScreen'))
+
+const PatternLabScreen = lazy(() => import('../screens/PatternLab/PatternLabScreen'))
+
+const TypographyTokensLabScreen = lazy(() => import('../screens/TypographyTokensLab/TypographyTokensLabScreen'))
+
+const QualityDashboardScreen = lazy(() => import('../screens/QualityDashboard/QualityDashboardScreen'))
 
 export const routeRegistry = {
   foundationLab: {

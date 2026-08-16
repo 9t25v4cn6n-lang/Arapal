@@ -137,6 +137,22 @@ const payload = {
 await fs.mkdir(path.dirname(REPORT), { recursive: true })
 await fs.writeFile(REPORT, JSON.stringify(payload, null, 1))
 
+// Also publish where the Quality Dashboard can read it. That dashboard still
+// serves audit lanes last generated in April and reported productQuality 74.6 /
+// auditTrust 98 while the checker behind it covered a single screen. Giving it a
+// live, dated feed is what stops a stale number being mistaken for the truth.
+const PUBLISHED = path.join(REPO, 'public', 'v2-audit', 'visual-standard.json')
+await fs.mkdir(path.dirname(PUBLISHED), { recursive: true })
+await fs.writeFile(PUBLISHED, JSON.stringify({
+  generatedAt: payload.generatedAt,
+  routes: payload.routes.length,
+  frames: payload.frames.length,
+  blocking: payload.totals.blocking,
+  byRule: payload.totals.byRule,
+  byRoute: payload.totals.byRoute,
+  blankRoutes: payload.blankRoutes,
+}, null, 1))
+
 // ── ratchet ──────────────────────────────────────────────────────────────────
 const blockingRuleIds = new Set(Object.entries(RULES).filter(([, r]) => r.blocking).map(([k]) => k))
 const counts = countByRouteRule(results, blockingRuleIds)

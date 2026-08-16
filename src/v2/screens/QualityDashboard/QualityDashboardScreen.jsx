@@ -210,6 +210,7 @@ async function fetchJson(url, { label, required = true } = {}) {
 }
 
 function useAuditData() {
+  const [visualStandard, setVisualStandard] = useState(null)
   const [runtimeLane, setRuntimeLane] = useState(null)
   const [deadCodeLane, setDeadCodeLane] = useState(null)
   const [duplicationLane, setDuplicationLane] = useState(null)
@@ -223,7 +224,8 @@ function useAuditData() {
 
     async function load() {
       try {
-        const [suiteSummaryJson, suiteFindingsJson, runtimeLaneJson, deadCodeLaneJson, duplicationLaneJson, architectureLaneJson] = await Promise.all([
+        const [visualStandardJson, suiteSummaryJson, suiteFindingsJson, runtimeLaneJson, deadCodeLaneJson, duplicationLaneJson, architectureLaneJson] = await Promise.all([
+          fetchJson('/v2-audit/visual-standard.json', { label: 'Visual standard (live)', required: false }),
           fetchJson('/v2-audit/audit-suite-summary.json', { label: 'Audit suite summary' }),
           fetchJson('/v2-audit/audit-suite-findings.json', { label: 'Audit suite findings' }),
           fetchJson('/v2-audit/runtime-qa-lane.json', { label: 'Runtime QA lane', required: false }),
@@ -236,6 +238,7 @@ function useAuditData() {
         )
 
         if (!isDisposed) {
+          setVisualStandard(visualStandardJson ?? null)
           setRuntimeLane({
             ...(runtimeLaneJson ?? { screens: [] }),
             screens: filteredRuntimeScreens,
@@ -366,11 +369,11 @@ function useAuditData() {
       }
     }, [])
 
-  return { runtimeLane, deadCodeLane, duplicationLane, architectureLane, suiteSummary, suiteFindings, error }
+  return { visualStandard, runtimeLane, deadCodeLane, duplicationLane, architectureLane, suiteSummary, suiteFindings, error }
 }
 
 export default function QualityDashboardScreen({ route, shell }) {
-  const { runtimeLane, deadCodeLane, duplicationLane, architectureLane, suiteSummary, suiteFindings, error } = useAuditData()
+  const { visualStandard, runtimeLane, deadCodeLane, duplicationLane, architectureLane, suiteSummary, suiteFindings, error } = useAuditData()
   const isLoading = !error && (!runtimeLane || !deadCodeLane || !duplicationLane || !architectureLane || !suiteSummary || !suiteFindings)
 
   const runtimeScreens = runtimeLane?.screens ?? []
@@ -444,7 +447,16 @@ export default function QualityDashboardScreen({ route, shell }) {
         <StatCard
           label="Tooling debt findings"
           value={displayMetric(toolingDebtFindingCount, !isLoading)}
-          note={isLoading ? 'Loading audit data.' : 'Dashboard, debug, lab, and audit framework findings kept separate from product debt.'}
+          note={isLoading
+            ? 'Loading audit data.'
+            : 'Dashboard, debug, lab and audit-framework findings, kept separate from product debt. Lane data below is historical — the live gate is the visual standard above.'}
+        />
+        <StatCard
+          label="Visual standard (live)"
+          value={visualStandard ? String(visualStandard.blocking) : '—'}
+          note={visualStandard
+            ? `${visualStandard.routes} routes x ${visualStandard.frames} frames, ${new Date(visualStandard.generatedAt).toLocaleDateString()}. Run: npm run qa`
+            : 'Run npm run qa to publish a current result.'}
         />
         <StatCard
           label="Product-quality score"

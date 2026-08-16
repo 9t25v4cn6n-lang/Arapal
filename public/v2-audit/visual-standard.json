@@ -1,0 +1,31 @@
+{
+ "generatedAt": "2026-08-16T23:32:55.656Z",
+ "routes": 13,
+ "frames": 1,
+ "blocking": 110,
+ "byRule": {
+  "type-floor": 31,
+  "scroll-hidden-majority": 3,
+  "contrast": 31,
+  "hit-target": 17,
+  "unnamed-control": 6,
+  "overlap": 4,
+  "viewport-escape": 18
+ },
+ "byRoute": {
+  "legacy-home": 3,
+  "legacy-study": 15,
+  "legacy-segmentation": 14,
+  "legacy-exams": 4,
+  "v2-projectHome": 0,
+  "v2-projects": 23,
+  "v2-projectResearch": 16,
+  "v2-segmentationPasteNext": 8,
+  "v2-segmentationTransition": 3,
+  "v2-segmentationLoading": 5,
+  "v2-segmentationReview": 16,
+  "v2-segmentationSuccess": 3,
+  "v2-studyWorkspace": 0
+ },
+ "blankRoutes": []
+}

@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { defaultRouteId, getPrimaryRailRoutes, routeRegistry } from './app/routeRegistry'
 import { shellSizing } from './foundation/layout/shellSizing'
 import useNavigationRailState from './foundation/primitives/useNavigationRailState'
@@ -35,5 +36,5 @@ export default function AppV2({ routeId = defaultRouteId }) {
     ...navigationRailState,
   }
 
-  return <ActiveScreen route={activeRoute} shell={shell} />
+  return <Suspense fallback={null}><ActiveScreen route={activeRoute} shell={shell} /></Suspense>
 }

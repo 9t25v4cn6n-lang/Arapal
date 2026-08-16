@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import LayoutDebugOverlay from './components/debug/LayoutDebugOverlay'
 import { getLayoutDebugAttrs } from './components/debug/layoutDebug'
 import ExamsScreen from './screens/ExamsScreen'
