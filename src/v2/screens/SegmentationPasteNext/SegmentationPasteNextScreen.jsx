@@ -13,6 +13,8 @@ import {
 } from '../../foundation/primitives/segmentationFlowState'
 import SourceIntakeBrand from '../../foundation/primitives/SourceIntakeBrand'
 import SplitCTA from '../../foundation/primitives/SplitCTA'
+import { actions, select, getSnapshot } from '../../data'
+import { generateMarkers, markersToChunks } from '../../lib/segmentation'
 import StepBar from '../../foundation/primitives/StepBar'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import { colors, radius, spacing, typography } from '../../foundation/tokens'
@@ -47,6 +49,12 @@ const segmentationPasteNextContainerOverrides = {
       paddingRight: spacing[16],
     },
   },
+}
+
+/** First few words of the source, so a project is recognisable in the library. */
+function deriveProjectTitle(rawText) {
+  const words = String(rawText).trim().split(/\s+/).filter(Boolean).slice(0, 6)
+  return words.length ? words.join(' ') : 'Untitled source'
 }
 
 export default function SegmentationPasteNextScreen({ route, shell }) {
@@ -215,6 +223,28 @@ export default function SegmentationPasteNextScreen({ route, shell }) {
               quickMode,
               showSegmentationTransition,
             })
+
+            // Persist the source and its derived segments before navigating.
+            // The previous flow changed the hash and carried nothing, so an
+            // approved segmentation was discarded and Study reopened a fixture.
+            const markers = generateMarkers(rawText, selectedMethod.id, style, granularity)
+            if (markers.length) {
+              const existing = select.getCurrentProject(getSnapshot())
+              const project = existing ?? actions.addProject({
+                title: deriveProjectTitle(rawText),
+                subtitle: 'Pasted source',
+              })
+              const source = actions.addSource({
+                projectId: project.id,
+                rawText,
+                label: 'Pasted source',
+              })
+              actions.publishSegments({
+                projectId: project.id,
+                sourceId: source.id,
+                chunks: markersToChunks(markers, { chapterLabel: 'Chapter 1' }),
+              })
+            }
 
             shell.navigate(selectedMethod.id === 'manual' ? 'segmentationReview' : 'segmentationLoading')
           }}

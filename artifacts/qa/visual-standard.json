@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-08-16T19:06:01.497Z",
+ "generatedAt": "2026-08-16T19:13:12.100Z",
  "base": "http://localhost:5173",
  "routes": [
-  "v2-studyWorkspace"
+  "v2-segmentationPasteNext"
  ],
  "frames": [
   "1440x900",
@@ -11,21 +11,23 @@
   "1280x800"
  ],
  "totals": {
-  "blocking": 30,
+  "blocking": 51,
   "advisory": 4,
   "byRule": {
    "container-undersized": 7,
    "content-clipped": 8,
    "viewport-escape": 4,
-   "overlap": 11
+   "type-floor": 4,
+   "contrast": 24,
+   "unnamed-control": 4
   },
   "byRoute": {
-   "v2-studyWorkspace": 30
+   "v2-segmentationPasteNext": 51
   }
  },
  "findings": [
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1440x900",
    "ruleId": "container-undersized",
@@ -37,7 +39,7 @@
    "contentPx": 36
   },
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1440x900",
    "ruleId": "container-undersized",
@@ -49,7 +51,7 @@
    "contentPx": 1407
   },
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1440x900",
    "ruleId": "content-clipped",
@@ -61,19 +63,19 @@
    "contentPx": 991
   },
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1440x900",
    "ruleId": "content-clipped",
    "selector": "button",
-   "label": "Submit",
+   "label": "AI Segment Text",
    "axis": "y",
-   "hiddenPx": 8,
-   "boxPx": 44,
-   "contentPx": 52
+   "hiddenPx": 10,
+   "boxPx": 56,
+   "contentPx": 66
   },
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1440x900",
    "ruleId": "viewport-escape",
@@ -85,18 +87,109 @@
    "decorative": true
   },
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1440x900",
+   "ruleId": "type-floor",
+   "selector": "div",
+   "label": "1",
+   "sizePx": 10,
+   "minPx": 11
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1440x900",
+   "ruleId": "contrast",
+   "selector": "div",
+   "label": "2",
+   "color": "rgb(132, 150, 174)",
+   "sizePx": 10,
+   "ratio": 2.7,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1440x900",
+   "ruleId": "contrast",
+   "selector": "span",
+   "label": "Arapal intake",
+   "color": "rgba(0, 0, 0, 0.34)",
+   "sizePx": 11,
+   "ratio": 2.4,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1440x900",
+   "ruleId": "contrast",
+   "selector": "div",
+   "label": "Preserved source",
+   "color": "rgba(37, 99, 235, 0.72)",
+   "sizePx": 11,
+   "ratio": 3,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1440x900",
+   "ruleId": "contrast",
+   "selector": "span",
+   "label": "⌘",
+   "color": "rgba(0, 0, 0, 0.25)",
+   "sizePx": 11,
+   "ratio": 1.8,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1440x900",
+   "ruleId": "contrast",
+   "selector": "span",
+   "label": "to paste",
+   "color": "rgba(0, 0, 0, 0.2)",
+   "sizePx": 11,
+   "ratio": 1.6,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1440x900",
+   "ruleId": "contrast",
+   "selector": "div",
+   "label": "28 words",
+   "color": "rgba(0, 0, 0, 0.2)",
+   "sizePx": 11,
+   "ratio": 1.6,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1440x900",
    "ruleId": "type-drift",
    "offRampSizes": [
-    12.5,
-    19
+    10,
+    43.2
    ],
    "rampSize": 15
   },
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1440x900",
+   "ruleId": "unnamed-control",
+   "selector": "textarea",
+   "tag": "TEXTAREA",
+   "boxPx": "620.6x324.3"
+  },
+  {
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1366x768",
    "ruleId": "container-undersized",
@@ -108,7 +201,7 @@
    "contentPx": 36
   },
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1366x768",
    "ruleId": "container-undersized",
@@ -120,7 +213,7 @@
    "contentPx": 1335
   },
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1366x768",
    "ruleId": "content-clipped",
@@ -132,85 +225,19 @@
    "contentPx": 837
   },
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1366x768",
    "ruleId": "content-clipped",
    "selector": "button",
-   "label": "Submit",
+   "label": "AI Segment Text",
    "axis": "y",
-   "hiddenPx": 8,
-   "boxPx": 44,
-   "contentPx": 52
+   "hiddenPx": 10,
+   "boxPx": 56,
+   "contentPx": 66
   },
   {
-   "route": "v2-studyWorkspace",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "overlap",
-   "selector": "p.study-v2__arabicSource",
-   "label": "لا تصح الجمعة إلا في مصر جامع أو في مصلى الم",
-   "otherSelector": "span.study-v2__badge",
-   "otherLabel": "EN",
-   "overlapPx": "33.5x12.9"
-  },
-  {
-   "route": "v2-studyWorkspace",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "overlap",
-   "selector": "p.study-v2__arabicSource",
-   "label": "لا تصح الجمعة إلا في مصر جامع أو في مصلى الم",
-   "otherSelector": "span.study-v2__sectionLabel",
-   "otherLabel": "Translation",
-   "overlapPx": "106.4x5.1"
-  },
-  {
-   "route": "v2-studyWorkspace",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "overlap",
-   "selector": "p.study-v2__arabicSource",
-   "label": "لا تصح الجمعة إلا في مصر جامع أو في مصلى الم",
-   "otherSelector": "button",
-   "otherLabel": "Bold",
-   "overlapPx": "28x12.9"
-  },
-  {
-   "route": "v2-studyWorkspace",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "overlap",
-   "selector": "span.study-v2__arabicInline",
-   "label": "مصر جامع",
-   "otherSelector": "textarea.study-v2__textarea",
-   "otherLabel": "Translation",
-   "overlapPx": "47.4x23.2"
-  },
-  {
-   "route": "v2-studyWorkspace",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "overlap",
-   "selector": "span.study-v2__mono",
-   "label": "misr jāmiʿ",
-   "otherSelector": "textarea.study-v2__textarea",
-   "otherLabel": "Translation",
-   "overlapPx": "82.5x26.1"
-  },
-  {
-   "route": "v2-studyWorkspace",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "overlap",
-   "selector": "span.study-v2__hint",
-   "label": "⌘ Enter to submit",
-   "otherSelector": "button.study-v2__secondaryAction",
-   "otherLabel": "Discuss this segment",
-   "overlapPx": "7.1x44"
-  },
-  {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1366x768",
    "ruleId": "viewport-escape",
@@ -222,18 +249,109 @@
    "decorative": true
   },
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1366x768",
+   "ruleId": "type-floor",
+   "selector": "div",
+   "label": "1",
+   "sizePx": 10,
+   "minPx": 11
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1366x768",
+   "ruleId": "contrast",
+   "selector": "div",
+   "label": "2",
+   "color": "rgb(132, 150, 174)",
+   "sizePx": 10,
+   "ratio": 2.7,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1366x768",
+   "ruleId": "contrast",
+   "selector": "span",
+   "label": "Arapal intake",
+   "color": "rgba(0, 0, 0, 0.34)",
+   "sizePx": 11,
+   "ratio": 2.4,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1366x768",
+   "ruleId": "contrast",
+   "selector": "div",
+   "label": "Preserved source",
+   "color": "rgba(37, 99, 235, 0.72)",
+   "sizePx": 11,
+   "ratio": 3,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1366x768",
+   "ruleId": "contrast",
+   "selector": "span",
+   "label": "⌘",
+   "color": "rgba(0, 0, 0, 0.25)",
+   "sizePx": 11,
+   "ratio": 1.8,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1366x768",
+   "ruleId": "contrast",
+   "selector": "span",
+   "label": "to paste",
+   "color": "rgba(0, 0, 0, 0.2)",
+   "sizePx": 11,
+   "ratio": 1.6,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1366x768",
+   "ruleId": "contrast",
+   "selector": "div",
+   "label": "28 words",
+   "color": "rgba(0, 0, 0, 0.2)",
+   "sizePx": 11,
+   "ratio": 1.6,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1366x768",
    "ruleId": "type-drift",
    "offRampSizes": [
-    12.5,
-    19
+    10,
+    40.98
    ],
    "rampSize": 15
   },
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1366x768",
+   "ruleId": "unnamed-control",
+   "selector": "textarea",
+   "tag": "TEXTAREA",
+   "boxPx": "586.2x227.4"
+  },
+  {
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1920x1080",
    "ruleId": "container-undersized",
@@ -245,7 +363,7 @@
    "contentPx": 1869
   },
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1920x1080",
    "ruleId": "content-clipped",
@@ -257,19 +375,19 @@
    "contentPx": 1200
   },
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1920x1080",
    "ruleId": "content-clipped",
    "selector": "button",
-   "label": "Submit",
+   "label": "AI Segment Text",
    "axis": "y",
-   "hiddenPx": 8,
-   "boxPx": 44,
-   "contentPx": 52
+   "hiddenPx": 10,
+   "boxPx": 56,
+   "contentPx": 66
   },
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1920x1080",
    "ruleId": "viewport-escape",
@@ -281,18 +399,108 @@
    "decorative": true
   },
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1920x1080",
+   "ruleId": "type-floor",
+   "selector": "div",
+   "label": "1",
+   "sizePx": 10,
+   "minPx": 11
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1920x1080",
+   "ruleId": "contrast",
+   "selector": "div",
+   "label": "2",
+   "color": "rgb(132, 150, 174)",
+   "sizePx": 10,
+   "ratio": 2.7,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1920x1080",
+   "ruleId": "contrast",
+   "selector": "span",
+   "label": "Arapal intake",
+   "color": "rgba(0, 0, 0, 0.34)",
+   "sizePx": 11,
+   "ratio": 2.4,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1920x1080",
+   "ruleId": "contrast",
+   "selector": "div",
+   "label": "Preserved source",
+   "color": "rgba(37, 99, 235, 0.72)",
+   "sizePx": 11,
+   "ratio": 3,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1920x1080",
+   "ruleId": "contrast",
+   "selector": "span",
+   "label": "⌘",
+   "color": "rgba(0, 0, 0, 0.25)",
+   "sizePx": 11,
+   "ratio": 1.8,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1920x1080",
+   "ruleId": "contrast",
+   "selector": "span",
+   "label": "to paste",
+   "color": "rgba(0, 0, 0, 0.2)",
+   "sizePx": 11,
+   "ratio": 1.6,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1920x1080",
+   "ruleId": "contrast",
+   "selector": "div",
+   "label": "28 words",
+   "color": "rgba(0, 0, 0, 0.2)",
+   "sizePx": 11,
+   "ratio": 1.6,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1920x1080",
    "ruleId": "type-drift",
    "offRampSizes": [
-    12.5,
-    19
+    10
    ],
    "rampSize": 15
   },
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1920x1080",
+   "ruleId": "unnamed-control",
+   "selector": "textarea",
+   "tag": "TEXTAREA",
+   "boxPx": "843.4x427.1"
+  },
+  {
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1280x800",
    "ruleId": "container-undersized",
@@ -304,7 +512,7 @@
    "contentPx": 36
   },
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1280x800",
    "ruleId": "container-undersized",
@@ -316,7 +524,7 @@
    "contentPx": 1252
   },
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1280x800",
    "ruleId": "content-clipped",
@@ -328,74 +536,19 @@
    "contentPx": 874
   },
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1280x800",
    "ruleId": "content-clipped",
    "selector": "button",
-   "label": "Submit",
+   "label": "AI Segment Text",
    "axis": "y",
-   "hiddenPx": 8,
-   "boxPx": 44,
-   "contentPx": 52
+   "hiddenPx": 10,
+   "boxPx": 56,
+   "contentPx": 66
   },
   {
-   "route": "v2-studyWorkspace",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "overlap",
-   "selector": "div.study-v2__lexHeader",
-   "label": "Quick Lexicography",
-   "otherSelector": "span.study-v2__badge",
-   "otherLabel": "EN",
-   "overlapPx": "33.5x9.1"
-  },
-  {
-   "route": "v2-studyWorkspace",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "overlap",
-   "selector": "div.study-v2__lexHeader",
-   "label": "Quick Lexicography",
-   "otherSelector": "button",
-   "otherLabel": "Bold",
-   "overlapPx": "28x9.1"
-  },
-  {
-   "route": "v2-studyWorkspace",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "overlap",
-   "selector": "span.study-v2__arabicInline",
-   "label": "مصر جامع",
-   "otherSelector": "textarea.study-v2__textarea",
-   "otherLabel": "Translation",
-   "overlapPx": "47.4x15"
-  },
-  {
-   "route": "v2-studyWorkspace",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "overlap",
-   "selector": "span.study-v2__mono",
-   "label": "misr jāmiʿ",
-   "otherSelector": "textarea.study-v2__textarea",
-   "otherLabel": "Translation",
-   "overlapPx": "82.5x16.4"
-  },
-  {
-   "route": "v2-studyWorkspace",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "overlap",
-   "selector": "span.study-v2__hint",
-   "label": "⌘ Enter to submit",
-   "otherSelector": "button.study-v2__secondaryAction",
-   "otherLabel": "Discuss this segment",
-   "overlapPx": "30.3x44"
-  },
-  {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1280x800",
    "ruleId": "viewport-escape",
@@ -407,15 +560,106 @@
    "decorative": true
   },
   {
-   "route": "v2-studyWorkspace",
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1280x800",
+   "ruleId": "type-floor",
+   "selector": "div",
+   "label": "1",
+   "sizePx": 10,
+   "minPx": 11
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1280x800",
+   "ruleId": "contrast",
+   "selector": "div",
+   "label": "2",
+   "color": "rgb(132, 150, 174)",
+   "sizePx": 10,
+   "ratio": 2.7,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1280x800",
+   "ruleId": "contrast",
+   "selector": "span",
+   "label": "Arapal intake",
+   "color": "rgba(0, 0, 0, 0.34)",
+   "sizePx": 11,
+   "ratio": 2.4,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1280x800",
+   "ruleId": "contrast",
+   "selector": "div",
+   "label": "Preserved source",
+   "color": "rgba(37, 99, 235, 0.72)",
+   "sizePx": 11,
+   "ratio": 3,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1280x800",
+   "ruleId": "contrast",
+   "selector": "span",
+   "label": "⌘",
+   "color": "rgba(0, 0, 0, 0.25)",
+   "sizePx": 11,
+   "ratio": 1.8,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1280x800",
+   "ruleId": "contrast",
+   "selector": "span",
+   "label": "to paste",
+   "color": "rgba(0, 0, 0, 0.2)",
+   "sizePx": 11,
+   "ratio": 1.6,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1280x800",
+   "ruleId": "contrast",
+   "selector": "div",
+   "label": "28 words",
+   "color": "rgba(0, 0, 0, 0.2)",
+   "sizePx": 11,
+   "ratio": 1.6,
+   "required": 4.5
+  },
+  {
+   "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1280x800",
    "ruleId": "type-drift",
    "offRampSizes": [
-    12.5,
-    19
+    10,
+    38.4
    ],
    "rampSize": 15
+  },
+  {
+   "route": "v2-segmentationPasteNext",
+   "app": "v2",
+   "frame": "1280x800",
+   "ruleId": "unnamed-control",
+   "selector": "textarea",
+   "tag": "TEXTAREA",
+   "boxPx": "546.3x255.2"
   }
  ],
  "pageErrors": []
