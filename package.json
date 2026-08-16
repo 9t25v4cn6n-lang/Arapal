@@ -23,7 +23,8 @@
     "qa:calibrate": "node --test tests/qa/calibration.test.mjs",
     "vr": "playwright test tests/visual/visual-regression.spec.js",
     "vr:accept": "playwright test tests/visual/visual-regression.spec.js --update-snapshots",
-    "test:behaviour": "playwright test tests/behaviour"
+    "test:behaviour": "playwright test tests/behaviour",
+    "test:data": "node --test tests/data/*.test.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.577.0",
