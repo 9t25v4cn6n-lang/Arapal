@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import {
   AlertTriangle,
@@ -2416,7 +2416,11 @@ export function StudyTranslationEditor({
   const [isExpanded, setIsExpanded] = useState(false)
   const textareaRef = useRef(null)
 
-  useEffect(() => {
+  // useLayoutEffect, not useEffect: the height is measured from scrollHeight and
+  // written back, so running it after paint made the editor visibly resize on
+  // first render and made its captured height depend on when a screenshot
+  // fired. Measuring before paint removes both the flicker and the flake.
+  useLayoutEffect(() => {
     const textarea = textareaRef.current
     if (!textarea || fillHeight || isExpanded) {
       return

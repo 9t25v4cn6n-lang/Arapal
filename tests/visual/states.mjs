@@ -17,15 +17,28 @@ export const WIDTHS = [
 /**
  * Wait for the page to be genuinely still before capturing.
  *
- * Typefaces are requested from Google Fonts at runtime, so a screenshot taken
- * before they resolve renders in a fallback face and reads as a large diff.
- * That produced a suite where a different handful of states failed on each run
- * — flakiness that would have got the suite ignored. Waiting on document.fonts
- * removes the cause rather than hiding it behind a wider pixel tolerance.
+ * Typefaces are requested from Google Fonts at runtime. `document.fonts.ready`
+ * alone is not enough: it resolves for the faces in use at that moment, and an
+ * interaction can introduce a new weight (an active card, a selected row) whose
+ * request starts afterwards. Capturing then renders that text in a fallback
+ * face and reads as a whole-page diff.
+ *
+ * So we poll until the font set has been idle for two consecutive checks rather
+ * than trusting a single promise — and we fix the cause instead of widening the
+ * pixel tolerance until the noise disappears.
  */
 const settle = async (page, ms = 2400) => {
   await page.waitForTimeout(ms)
-  await page.evaluate(() => document.fonts?.ready).catch(() => {})
+  await page.evaluate(async () => {
+    const idle = async () => {
+      await document.fonts?.ready
+      return document.fonts?.status === 'loaded'
+    }
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      if (await idle() && await idle()) return
+      await new Promise((resolve) => setTimeout(resolve, 100))
+    }
+  }).catch(() => {})
   await page.waitForTimeout(250)
 }
 
