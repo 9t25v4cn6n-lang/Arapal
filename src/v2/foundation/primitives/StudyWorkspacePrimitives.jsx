@@ -648,7 +648,12 @@ const studyCss = `
     display: grid;
     min-height: 100%;
     grid-template-columns: minmax(0, 1fr) 0px;
-    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    /* The source and lexicography rows were auto-sized, so a long Arabic
+       passage — which wraps to more lines as the centre column narrows — grew
+       past the frame and pushed into its neighbours instead of the card
+       scrolling. Both rows now have a floor of zero so they yield; the source
+       card scrolls internally, which is what its scroll affordance is for. */
+    grid-template-rows: minmax(0, auto) minmax(0, auto) minmax(0, 1fr) auto;
     grid-template-areas:
       "source companion"
       "lex companion"
@@ -677,6 +682,7 @@ const studyCss = `
   .study-v2__composerSource {
     grid-area: source;
     min-width: 0;
+    min-height: 0;
     transition: transform var(--study-motion-panel), opacity var(--study-motion-panel);
   }
 
@@ -1148,9 +1154,14 @@ const studyCss = `
   }
 
   .study-v2__editorFooter {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
-    align-items: end;
+    /* Was a rigid 3-column grid, so at narrow widths the hint and the Discuss
+       button occupied the same pixels instead of reflowing. Wrapping lets the
+       row give way; the actions stay together and the hint drops when there is
+       genuinely not enough room for all three. */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
     gap: var(--study-space-12);
   }
 
@@ -1167,12 +1178,15 @@ const studyCss = `
   }
 
   .study-v2__hint {
-    color: var(--study-text-faint);
+    color: var(--study-text-soft);
     font-size: var(--study-control-size);
     font-weight: 600;
-    align-self: end;
-    justify-self: start;
-    padding-bottom: 2px;
+    /* Takes the leftover room and yields it first when the row must wrap. */
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .study-v2__secondaryAction {

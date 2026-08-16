@@ -10,6 +10,8 @@ import PatternLabScreen from '../screens/PatternLab/PatternLabScreen'
 import patternLabLayoutContract from '../screens/PatternLab/PatternLabScreen.contract'
 import QualityDashboardScreen from '../screens/QualityDashboard/QualityDashboardScreen'
 import qualityDashboardLayoutContract from '../screens/QualityDashboard/QualityDashboardScreen.contract'
+import ProjectHomeScreen from '../screens/ProjectHome/ProjectHomeScreen'
+import projectHomeLayoutContract from '../screens/ProjectHome/ProjectHomeScreen.contract'
 import ProjectsScreen from '../screens/Projects/ProjectsScreen'
 import projectsLayoutContract from '../screens/Projects/ProjectsScreen.contract'
 import ProjectResearchScreen from '../screens/ProjectResearch/ProjectResearchScreen'
@@ -177,6 +179,29 @@ export const routeRegistry = {
       },
     },
   },
+  projectHome: {
+    id: 'projectHome',
+    label: 'Project Home',
+    component: ProjectHomeScreen,
+    layoutContract: projectHomeLayoutContract,
+    shell: {
+      showRail: true,
+      header: {
+        modeLabel: 'Project Home',
+        description: 'Your work and one clear next action',
+      },
+      rail: {
+        visible: true,
+        groupId: 'projectHome',
+        label: 'Project Home',
+        shortLabel: 'PH',
+        iconKey: 'projectHome',
+        order: 10,
+        routeId: 'projectHome',
+      },
+    },
+  },
+
   projects: {
     id: 'projects',
     label: 'Projects',
@@ -355,7 +380,7 @@ export const routeRegistry = {
   },
 }
 
-export const defaultRouteId = 'projects'
+export const defaultRouteId = 'projectHome'
 
 export function getPrimaryRailRoutes() {
   return Object.values(routeRegistry)

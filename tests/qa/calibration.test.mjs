@@ -56,51 +56,26 @@ test('COVERAGE: every declared rule is actually reachable', () => {
 })
 
 // ── ACUITY ───────────────────────────────────────────────────────────────────
-// Each case below was found by hand during the 2026-08-16 audit, then fixed.
-// The assertion is that the checker can SEE the class of defect, not that the
-// specific instance is still present. Where an instance has been fixed the test
-// asserts the rule still fires somewhere, which is what proves acuity.
+// Acuity is proved synthetically in tests/qa/acuity.spec.js, which injects a
+// known defect of each class and requires the probe to find it.
+//
+// That separation matters. Asserting "this rule fires somewhere in the product"
+// was circular — it only proved the checker reproduces defects its own author
+// had already found — and it broke the moment a rule was genuinely fixed
+// everywhere, which is the outcome we are working toward. A silent rule then
+// looked identical to a blind one, which is exactly how the previous audit
+// system reported auditTrust: 98 while seeing nothing at all.
+//
+// With acuity proved independently, zero findings here means clean, not blind.
 
-const has = (fn) => report.findings.some(fn)
-
-test('ACUITY: detects elements overlapping each other', () => {
-  assert.ok(
-    has((f) => f.ruleId === 'overlap'),
-    'The overlap rule fired nowhere. It was the rule the V2 contract required ' +
-    '("no overlap, no gaps, end-to-end partitions only") and the one the old ' +
-    'checker never enforced. If genuinely clean, delete this test deliberately.',
-  )
-})
-
-test('ACUITY: detects a container smaller than the content it holds', () => {
-  assert.ok(
-    has((f) => f.ruleId === 'container-undersized'),
-    'container-undersized fired nowhere. This is the class that clipped every ' +
-    'V2 nav-rail icon by 10px on every route.',
-  )
-})
-
-test('ACUITY: detects text below the contrast minimum', () => {
-  assert.ok(has((f) => f.ruleId === 'contrast'))
-})
-
-test('ACUITY: detects text below the type floor', () => {
-  assert.ok(has((f) => f.ruleId === 'type-floor'))
-})
-
-test('ACUITY: detects interactive targets below the minimum', () => {
-  assert.ok(has((f) => f.ruleId === 'hit-target'))
-})
-
-test('ACUITY: detects a scroll region hiding the majority of its content', () => {
-  assert.ok(
-    has((f) => f.ruleId === 'scroll-hidden-majority'),
-    'This is how 373 of 613px of the Study source text hid behind no affordance.',
-  )
-})
-
-test('ACUITY: detects controls with no accessible name', () => {
-  assert.ok(has((f) => f.ruleId === 'unnamed-control'))
+test('the report records which rules are currently silent', () => {
+  const fired = new Set(report.findings.map((f) => f.ruleId))
+  const silent = Object.keys(RULES).filter((r) => !fired.has(r))
+  // Not an assertion about the product — a visible record, so a rule going
+  // quiet is noticed and checked against the synthetic acuity suite rather
+  // than assumed to be a win.
+  console.log(`[calibration] rules with no current findings: ${silent.join(', ') || 'none'}`)
+  assert.ok(Array.isArray(silent))
 })
 
 // ── ANTI-REGRESSION ──────────────────────────────────────────────────────────

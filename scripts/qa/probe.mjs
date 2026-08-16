@@ -136,13 +136,31 @@ export function evaluate(config) {
       (cs.webkitLineClamp && cs.webkitLineClamp !== 'none')
     if (declaresTruncation) continue
 
-    if (dx > THRESHOLDS.maxHiddenPx && !scrollableX) {
+    // Decorative overflow is not clipped content.
+    //
+    // scrollHeight/scrollWidth include absolutely-positioned descendants, so a
+    // glow or sheen layer deliberately larger than its control reads as the
+    // control eating its own content. A primary CTA with a 76px glow inside a
+    // 56px button is correct as rendered. Only overflow caused by an in-flow
+    // child is a real finding.
+    const overflowsInFlow = (axis) => {
+      const box = el.getBoundingClientRect()
+      for (const child of el.children) {
+        if (getComputedStyle(child).position === 'absolute') continue
+        const r = child.getBoundingClientRect()
+        if (axis === 'y' && r.bottom > box.bottom + 1) return true
+        if (axis === 'x' && r.right > box.right + 1) return true
+      }
+      return false
+    }
+
+    if (dx > THRESHOLDS.maxHiddenPx && !scrollableX && overflowsInFlow('x')) {
       add('container-undersized', {
         selector: describe(el), label: label(el), axis: 'x', hiddenPx: dx,
         boxPx: el.clientWidth, contentPx: el.scrollWidth,
       })
     }
-    if (dy > THRESHOLDS.maxHiddenPx && !scrollableY) {
+    if (dy > THRESHOLDS.maxHiddenPx && !scrollableY && overflowsInFlow('y')) {
       add('content-clipped', {
         selector: describe(el), label: label(el), axis: 'y', hiddenPx: dy,
         boxPx: el.clientHeight, contentPx: el.scrollHeight,

@@ -78,6 +78,10 @@ const probeSource = evaluate.toString()
 
 const results = []
 const consoleErrors = []
+const blankRoutes = []
+
+/** Below this, the page did not render and its result is meaningless. */
+const MIN_RENDERED_ELEMENTS = 20
 
 const browser = await chromium.launch({ executablePath: await resolveExecutable() })
 const page = await (await browser.newContext()).newPage()
@@ -93,6 +97,13 @@ for (const frame of frames) {
       ([src, cfg]) => new Function('config', `return (${src})(config)`)(cfg),
       [probeSource, config],
     )
+    // A page that failed to render has nothing to find, and "nothing to find"
+    // must never be reported as "clean". A syntax error in a shared primitive
+    // took the whole app down and this runner cheerfully reported 0 violations
+    // across 13 routes — the same blindness the old dashboard had.
+    if ((out.stats?.elements ?? 0) < MIN_RENDERED_ELEMENTS) {
+      blankRoutes.push(`${route.id}@${frame.id} (${out.stats?.elements ?? 0} elements)`)
+    }
     for (const f of out.findings) results.push({ route: route.id, app: route.app, frame: frame.id, ...f })
   }
 }
@@ -120,6 +131,7 @@ const payload = {
   },
   findings: results,
   pageErrors: [...new Set(consoleErrors)],
+  blankRoutes,
 }
 
 await fs.mkdir(path.dirname(REPORT), { recursive: true })
@@ -144,7 +156,9 @@ if (baseline.generatedAt) {
     await ratchetDown(baseline, counts, checkedPairs, verdict.improvements)
   }
 }
-const gated = baseline.generatedAt ? verdict.regressions.length > 0 : blocking.length > 0
+const gated =
+  blankRoutes.length > 0 ||
+  (baseline.generatedAt ? verdict.regressions.length > 0 : blocking.length > 0)
 
 if (args.json) {
   console.log(JSON.stringify(payload.totals, null, 1))
@@ -178,6 +192,10 @@ if (args.json) {
     for (const a of advisory.slice(0, 3)) {
       if (a.offRampSizes) console.log(`  type-drift ${a.route}@${a.frame}: ${a.offRampSizes.length} off-ramp sizes → ${a.offRampSizes.join(', ')}`)
     }
+  }
+  if (blankRoutes.length) {
+    console.log(`\nDID NOT RENDER (${blankRoutes.length}) — these results are meaningless, not clean:`)
+    blankRoutes.forEach((r) => console.log(`  ${r}`))
   }
   console.log('\n' + '─'.repeat(78))
   console.log(`violations: ${blocking.length}   advisory: ${advisory.length}   report: artifacts/qa/visual-standard.json`)

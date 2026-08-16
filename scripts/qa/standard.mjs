@@ -29,6 +29,7 @@ export const ROUTES = [
   { id: 'legacy-segmentation', hash: 'segmentation', app: 'legacy' },
   { id: 'legacy-exams', hash: 'exams', app: 'legacy' },
   // V2 — the V1 product surface.
+  { id: 'v2-projectHome', hash: 'v2/projectHome', app: 'v2' },
   { id: 'v2-projects', hash: 'v2/projects', app: 'v2' },
   { id: 'v2-projectResearch', hash: 'v2/projectResearch', app: 'v2' },
   { id: 'v2-segmentationPasteNext', hash: 'v2/segmentationPasteNext', app: 'v2' },
