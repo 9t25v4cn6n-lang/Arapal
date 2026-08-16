@@ -1080,6 +1080,73 @@ const studyCss = `
     overflow: auto;
   }
 
+  /* Provenance and honesty strip. Sits in its own contract lane above the
+     workspace so it can never overlay content. */
+  .study-v2__contextStrip {
+    display: flex;
+    flex-direction: column;
+    gap: ${spacing[8]}px;
+    padding: 0 0 ${spacing[12]}px;
+  }
+
+  .study-v2__contextBanner {
+    display: flex;
+    align-items: center;
+    gap: ${spacing[12]}px;
+    min-height: 44px;
+    padding: 0 ${spacing[16]}px;
+    border: 1px solid ${colors.accentSoft};
+    border-radius: ${radius[12]}px;
+    background: ${colors.accentWash};
+  }
+
+  .study-v2__contextLabel {
+    flex: 0 0 auto;
+    font-size: ${typography.eyebrowLabel.fontSize};
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: ${colors.accentStrong};
+  }
+
+  .study-v2__contextDetail {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: ${typography.bodyText.fontSize};
+    color: ${colors.textBody};
+  }
+
+  .study-v2__contextDismiss {
+    flex: 0 0 auto;
+    min-height: 32px;
+    padding: 0 ${spacing[12]}px;
+    border: 1px solid ${colors.lineSoft};
+    border-radius: 999px;
+    background: ${colors.surfacePrimary};
+    color: ${colors.textBody};
+    font-size: ${typography.bodyText.fontSize};
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .study-v2__contextDismiss:hover { border-color: ${colors.accentSoft}; color: ${colors.accentStrong}; }
+  .study-v2__contextDismiss:focus-visible { outline: 2px solid ${colors.accentBase}; outline-offset: 2px; }
+
+  /* The evaluation stub must announce itself wherever its output is shown. */
+  .study-v2__sampleNotice {
+    margin: 0;
+    padding: ${spacing[8]}px ${spacing[12]}px;
+    border-left: 3px solid ${colors.review};
+    background: ${colors.surfaceSoft};
+    border-radius: ${radius[8]}px;
+    font-size: ${typography.bodyText.fontSize};
+    line-height: 1.5;
+    color: ${colors.textSoft};
+  }
+
   .study-v2__editorFooter {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto auto;
@@ -2319,8 +2386,33 @@ export function StudyRetryBanner() {
   )
 }
 
-export function StudyTranslationEditor({ failed, onSubmit, onDiscuss, discussionOpen = false, focusMode = false, docked = false, fillHeight = false }) {
-  const [draft, setDraft] = useState('')
+/**
+ * Controlled translation editor.
+ *
+ * `value`/`onChange` are required for the draft to belong to anything. This
+ * component previously owned the draft in local state, which meant nothing read
+ * what the user typed, the text was never persisted, and switching segments
+ * left the previous segment's translation on screen — the caller could not fix
+ * any of that from outside. An uncontrolled fallback is kept only so the
+ * component still renders standalone in the labs.
+ */
+export function StudyTranslationEditor({
+  value,
+  onChange,
+  onSubmit,
+  failed,
+  onDiscuss,
+  discussionOpen = false,
+  focusMode = false,
+  docked = false,
+  fillHeight = false,
+  disabled = false,
+  hint = null,
+}) {
+  const isControlled = typeof value === 'string'
+  const [uncontrolledDraft, setUncontrolledDraft] = useState('')
+  const draft = isControlled ? value : uncontrolledDraft
+  const setDraft = (next) => (isControlled ? onChange?.(next) : setUncontrolledDraft(next))
   const [isExpanded, setIsExpanded] = useState(false)
   const textareaRef = useRef(null)
 
@@ -2369,11 +2461,21 @@ export function StudyTranslationEditor({ failed, onSubmit, onDiscuss, discussion
               ref={textareaRef}
               className="study-v2__textarea"
               placeholder="Write your translation here..."
+              aria-label="Translation"
+              disabled={disabled}
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
+              // The footer has advertised this shortcut all along without
+              // implementing it. Honour the affordance rather than remove it.
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+                  event.preventDefault()
+                  onSubmit?.()
+                }
+              }}
             />
             <div className="study-v2__editorFooter">
-              <span className="study-v2__hint">⌘ Enter to submit</span>
+              <span className="study-v2__hint">{hint ?? '⌘ Enter to submit'}</span>
               <button
                 type="button"
                 className="study-v2__secondaryAction"

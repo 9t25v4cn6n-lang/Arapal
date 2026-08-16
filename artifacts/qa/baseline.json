@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-16T10:56:42.861Z",
+ "generatedAt": "2026-08-16T19:06:01.512Z",
  "accepted": {
   "legacy-home::1440x900::container-undersized": 1,
   "legacy-home::1440x900::content-clipped": 2,
@@ -63,7 +63,7 @@
   "v2-studyWorkspace::1440x900::container-undersized": 2,
   "v2-studyWorkspace::1440x900::content-clipped": 2,
   "v2-studyWorkspace::1440x900::viewport-escape": 1,
-  "v2-studyWorkspace::1440x900::unnamed-control": 1,
+  "v2-studyWorkspace::1440x900::unnamed-control": 0,
   "legacy-home::1366x768::container-undersized": 1,
   "legacy-home::1366x768::content-clipped": 2,
   "legacy-home::1366x768::type-floor": 3,
@@ -129,7 +129,7 @@
   "v2-studyWorkspace::1366x768::content-clipped": 2,
   "v2-studyWorkspace::1366x768::overlap": 6,
   "v2-studyWorkspace::1366x768::viewport-escape": 1,
-  "v2-studyWorkspace::1366x768::unnamed-control": 1,
+  "v2-studyWorkspace::1366x768::unnamed-control": 0,
   "legacy-home::1920x1080::container-undersized": 1,
   "legacy-home::1920x1080::content-clipped": 2,
   "legacy-home::1920x1080::type-floor": 3,
@@ -190,7 +190,7 @@
   "v2-studyWorkspace::1920x1080::container-undersized": 1,
   "v2-studyWorkspace::1920x1080::content-clipped": 2,
   "v2-studyWorkspace::1920x1080::viewport-escape": 1,
-  "v2-studyWorkspace::1920x1080::unnamed-control": 1,
+  "v2-studyWorkspace::1920x1080::unnamed-control": 0,
   "legacy-home::1280x800::container-undersized": 1,
   "legacy-home::1280x800::content-clipped": 2,
   "legacy-home::1280x800::overlap": 7,
@@ -258,8 +258,8 @@
   "v2-studyWorkspace::1280x800::content-clipped": 2,
   "v2-studyWorkspace::1280x800::overlap": 5,
   "v2-studyWorkspace::1280x800::viewport-escape": 1,
-  "v2-studyWorkspace::1280x800::unnamed-control": 1
+  "v2-studyWorkspace::1280x800::unnamed-control": 0
  },
- "total": 672,
+ "total": 668,
  "note": "Accepted visual-standard debt. May only decrease. Regenerate with: npm run qa:accept"
 }

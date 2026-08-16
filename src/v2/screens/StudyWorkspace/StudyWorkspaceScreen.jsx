@@ -17,6 +17,9 @@ import {
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import { motion } from '../../foundation/tokens'
 import layoutContract from './StudyWorkspaceScreen.contract'
+import {
+  actions, select, useArapal, navigation, SAMPLE_EVALUATION_NOTICE,
+} from '../../data'
 
 const segmentNodes = [
   { id: '1', label: 'Chapter 1: Purity', type: 'folder', depth: 0, isOpenByDefault: true },
@@ -131,8 +134,22 @@ function getHeaderColumns() {
 const DISCUSSION_TRANSITION_MS = 220
 
 export default function StudyWorkspaceScreen({ route, shell }) {
+  // The screen works in two modes. With a real project it reads segments,
+  // drafts and results from the store, so work persists and belongs to
+  // something. With no project it falls back to the built-in reference content
+  // so the route stays inspectable on its own — which is how the golden
+  // baseline and the labs use it.
+  const project = useArapal(select.getCurrentProject)
+  const storeSegments = useArapal((s) => (project ? select.listSegments(project.id, s) : []))
+  const isLive = Boolean(project && storeSegments.length)
+
+  const [context] = useState(() => navigation.readContext())
+  const [contextDismissed, setContextDismissed] = useState(false)
+
   const [segmentRecords, setSegmentRecords] = useState(createInitialSegmentRecords)
-  const [currentSegmentId, setCurrentSegmentId] = useState('1.3')
+  const [currentSegmentId, setCurrentSegmentId] = useState(
+    () => context?.segmentId ?? context?.segmentRef ?? '1.3',
+  )
   const [segmentRailCollapsed, setSegmentRailCollapsed] = useState(false)
   const [supportRailCollapsed, setSupportRailCollapsed] = useState(false)
   const [focusMode, setFocusMode] = useState(readInitialFocusMode)
@@ -142,13 +159,67 @@ export default function StudyWorkspaceScreen({ route, shell }) {
   const [manualNotesBySegment, setManualNotesBySegment] = useState({})
   const showSandboxControls = readSandboxControlsEnabled()
 
-  const currentSegmentIndex = fileSegments.findIndex((segment) => segment.id === currentSegmentId)
-  const currentSegment = fileSegments[currentSegmentIndex] ?? fileSegments[0]
-  const currentRecord = segmentRecords[currentSegment.id] ?? defaultSegmentRecords[currentSegment.id]
+  // One list, whichever mode we are in, so everything below is written once.
+  const activeSegments = isLive
+    ? storeSegments.map((segment) => ({
+        id: segment.id,
+        label: `${segment.ref} ${segment.title}`.trim(),
+        ref: segment.ref,
+        text: segment.text,
+        chapterLabel: segment.chapterLabel || 'Segments',
+        type: 'file',
+        depth: 1,
+      }))
+    : fileSegments
+
+  // Group the active segments into the chapter/file tree the navigator wants.
+  const activeNodes = isLive
+    ? (() => {
+        const nodes = []
+        let lastChapter = null
+        activeSegments.forEach((segment) => {
+          if (segment.chapterLabel !== lastChapter) {
+            lastChapter = segment.chapterLabel
+            nodes.push({ id: `ch_${nodes.length}`, label: segment.chapterLabel, type: 'folder', depth: 0, isOpenByDefault: true })
+          }
+          nodes.push({ ...segment, type: 'file', depth: 1 })
+        })
+        return nodes
+      })()
+    : segmentNodes
+
+  const currentSegmentIndex = Math.max(
+    0, activeSegments.findIndex((segment) => segment.id === currentSegmentId))
+  const currentSegment = activeSegments[currentSegmentIndex] ?? activeSegments[0]
+
+  const storeRecord = useArapal((s) =>
+    isLive && currentSegment ? select.getStudyRecord(project.id, currentSegment.id, s) : null)
+  const storeDraft = useArapal((s) =>
+    isLive && currentSegment ? select.getDraft(project.id, currentSegment.id, s) : null)
+  const lastResult = useArapal((s) =>
+    storeRecord?.lastResultId ? select.getResult(storeRecord.lastResultId, s) : null)
+
+  const currentRecord = isLive
+    ? (storeRecord ?? { submissionState: 'draft', attempts: 0 })
+    : (segmentRecords[currentSegment.id] ?? defaultSegmentRecords[currentSegment.id])
   const currentState = currentRecord.submissionState
+
+  // The draft belongs to (project, segment). Switching segments therefore
+  // shows that segment's own work rather than the previous one's.
+  const [localDraft, setLocalDraft] = useState('')
+  const draftValue = isLive ? (storeDraft?.text ?? '') : localDraft
+  const [submitError, setSubmitError] = useState(null)
+
+  const activeSourceText = isLive ? (currentSegment?.text ?? '') : arabicSource
+
+  const handleDraftChange = (text) => {
+    setSubmitError(null)
+    if (isLive) actions.saveDraft({ projectId: project.id, segmentId: currentSegment.id, text })
+    else setLocalDraft(text)
+  }
   const currentManualNotes = manualNotesBySegment[currentSegment.id] ?? []
   const canGoPrevious = currentSegmentIndex > 0
-  const canGoNext = currentSegmentIndex < fileSegments.length - 1
+  const canGoNext = currentSegmentIndex < activeSegments.length - 1
   const discussionVisible = discussionOpen || discussionClosing
   const discussionMode = discussionVisible && currentState !== 'submitted'
 
@@ -176,11 +247,11 @@ export default function StudyWorkspaceScreen({ route, shell }) {
   const segmentMeta = useMemo(
     () => ({
       chapterLabel: currentSegment.chapterLabel,
-      progressText: `Segment ${currentSegmentIndex + 1} of ${fileSegments.length}`,
+      progressText: `Segment ${currentSegmentIndex + 1} of ${activeSegments.length}`,
       progressStep: currentSegmentIndex,
-      progressTotal: fileSegments.length,
+      progressTotal: activeSegments.length,
     }),
-    [currentSegment, currentSegmentIndex],
+    [currentSegment, currentSegmentIndex, activeSegments.length],
   )
 
   const setCurrentSegmentSubmissionState = (submissionState, attempts) => {
@@ -197,6 +268,20 @@ export default function StudyWorkspaceScreen({ route, shell }) {
   }
 
   const handleSubmit = () => {
+    if (isLive) {
+      const outcome = actions.submitSegment({ projectId: project.id, segmentId: currentSegment.id })
+      if (!outcome.ok) {
+        // Refused rather than graded. The previous build accepted an empty box
+        // and returned a grade and a review date for work it never read.
+        setSubmitError(outcome.message)
+        return
+      }
+      setSubmitError(null)
+      setDiscussionOpen(false)
+      setDiscussionClosing(false)
+      return
+    }
+
     setDiscussionOpen(false)
     setDiscussionClosing(false)
     setSegmentRecords((current) => {
@@ -245,14 +330,14 @@ export default function StudyWorkspaceScreen({ route, shell }) {
   const goToPreviousSegment = () => {
     if (canGoPrevious) {
       closeDiscussionImmediately()
-      setCurrentSegmentId(fileSegments[currentSegmentIndex - 1].id)
+      setCurrentSegmentId(activeSegments[currentSegmentIndex - 1].id)
     }
   }
 
   const goToNextSegment = () => {
     if (canGoNext) {
       closeDiscussionImmediately()
-      setCurrentSegmentId(fileSegments[currentSegmentIndex + 1].id)
+      setCurrentSegmentId(activeSegments[currentSegmentIndex + 1].id)
     }
   }
 
@@ -372,7 +457,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     ),
     Layer3_Study_SegmentNavigator: (
       <StudySegmentNavigator
-        nodes={segmentNodes}
+        nodes={activeNodes}
         currentSegmentId={currentSegment.id}
         segmentRecords={segmentRecords}
         collapsed={segmentRailCollapsed}
@@ -395,7 +480,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
         {currentState === 'submitted' ? (
           <div className="study-v2__studyStack">
             <StudySourceCard
-              sourceText={arabicSource}
+              sourceText={activeSourceText}
               onPrevious={goToPreviousSegment}
               onNext={goToNextSegment}
               canPrevious={canGoPrevious}
@@ -429,7 +514,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
           >
             <div className="study-v2__composerSource">
               <StudySourceCard
-                sourceText={arabicSource}
+                sourceText={activeSourceText}
                 onPrevious={goToPreviousSegment}
                 onNext={goToNextSegment}
                 canPrevious={canGoPrevious}
@@ -445,6 +530,9 @@ export default function StudyWorkspaceScreen({ route, shell }) {
             </div>
             <div className="study-v2__composerEditor">
               <StudyTranslationEditor
+                value={draftValue}
+                onChange={handleDraftChange}
+                hint={submitError ?? undefined}
                 failed={currentState === 'failed'}
                 onSubmit={handleSubmit}
                 onDiscuss={toggleDiscussion}
@@ -461,6 +549,30 @@ export default function StudyWorkspaceScreen({ route, shell }) {
         )}
       </div>
     ),
+    Layer4_Study_ContextRegion: (isLive && context && !contextDismissed) || (isLive && lastResult?.isSample) ? (
+      <div className="study-v2__contextStrip">
+        {isLive && context && !contextDismissed ? (
+          <div className="study-v2__contextBanner" role="status">
+            <span className="study-v2__contextLabel">
+              {navigation.describeContext(context)?.label}
+            </span>
+            <span className="study-v2__contextDetail">
+              {navigation.describeContext(context)?.detail}
+            </span>
+            <button
+              type="button"
+              className="study-v2__contextDismiss"
+              onClick={() => { setContextDismissed(true); navigation.clearContext() }}
+            >
+              Dismiss
+            </button>
+          </div>
+        ) : null}
+        {isLive && lastResult?.isSample ? (
+          <p className="study-v2__sampleNotice" role="note">{SAMPLE_EVALUATION_NOTICE}</p>
+        ) : null}
+      </div>
+    ) : null,
     Layer4_Study_ActionRegion: currentState === 'submitted' ? (
       <StudyBottomBar
         progressText={segmentMeta.progressText}
