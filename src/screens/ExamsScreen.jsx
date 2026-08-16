@@ -1251,9 +1251,13 @@ function buildQuestions(questionIds) {
     }));
 }
 
-function createExamRecord({ title, scopeLabel, questionIds, createdAt = 'Just now', status = 'ready', lastScore = null }) {
+function createExamRecord({ id, title, scopeLabel, questionIds, createdAt = 'Just now', status = 'ready', lastScore = null }) {
   return {
-    id: `exam-${Math.random().toString(36).slice(2, 8)}`,
+    // An id must survive a reload. These were regenerated on every load, so a
+    // persisted attempt pointed at an exam that no longer existed and could
+    // never be resumed. Seeded exams get a stable id from their title; only
+    // genuinely new exams get a random one.
+    id: id ?? `exam-${slugifyExamTitle(title)}`,
     title,
     createdAt,
     scopeLabel,
@@ -1261,6 +1265,15 @@ function createExamRecord({ title, scopeLabel, questionIds, createdAt = 'Just no
     lastScore,
     questions: buildQuestions(questionIds),
   };
+}
+
+/** Stable, readable id derived from the title. */
+function slugifyExamTitle(title) {
+  return String(title ?? 'exam')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 40) || 'exam';
 }
 
 function hydrateInitialExams() {
@@ -1280,6 +1293,37 @@ function filterScopeItems(scopeMode, prefixValue, rangeStart, rangeEnd) {
   const start = Math.min(rangeStart, rangeEnd);
   const end = Math.max(rangeStart, rangeEnd);
   return studyScopePool.filter((item) => item.tracker >= start && item.tracker <= end);
+}
+
+// The attempt was previously "autosaved" by a setTimeout that flipped a label
+// from Saving to Saved and wrote nothing, so a reload lost the whole attempt
+// while the UI claimed it was safe. This persists it for real; the indicator
+// now reports the outcome of an actual write.
+const ATTEMPT_STORAGE_KEY = 'design-sandbox.exam-attempt.v1';
+
+function readPersistedAttempt() {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.localStorage.getItem(ATTEMPT_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** @returns {boolean} whether the write actually landed. */
+function writePersistedAttempt(attempt) {
+  if (typeof window === 'undefined') return false;
+  try {
+    if (!attempt) {
+      window.localStorage.removeItem(ATTEMPT_STORAGE_KEY);
+      return true;
+    }
+    window.localStorage.setItem(ATTEMPT_STORAGE_KEY, JSON.stringify(attempt));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function evaluateAttempt(exam, answers) {
@@ -1352,16 +1396,17 @@ function SummaryCard({ label, value, meta }) {
 }
 
 function ExamsScreen() {
-  const [view, setView] = useState('list');
+  const [view, setView] = useState(() => (readPersistedAttempt()?.examId ? 'take' : 'list'));
   const [exams, setExams] = useState(() => hydrateInitialExams());
   const [scopeMode, setScopeMode] = useState('prefix');
   const [prefixValue, setPrefixValue] = useState('2');
   const [rangeStart, setRangeStart] = useState(2);
   const [rangeEnd, setRangeEnd] = useState(6);
   const [draftTitle, setDraftTitle] = useState('Focused checkpoint');
-  const [activeExamId, setActiveExamId] = useState(null);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState({});
+  const restoredAttempt = useMemo(() => readPersistedAttempt(), []);
+  const [activeExamId, setActiveExamId] = useState(restoredAttempt?.examId ?? null);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(restoredAttempt?.currentQuestionIndex ?? 0);
+  const [answers, setAnswers] = useState(restoredAttempt?.answers ?? {});
   const [autosaveState, setAutosaveState] = useState('Saved');
   const [reviewGrouping, setReviewGrouping] = useState('concept');
   const [activeResult, setActiveResult] = useState(null);
@@ -1398,7 +1443,14 @@ function ExamsScreen() {
 
     setAutosaveState('Saving');
     autosaveTimerRef.current = window.setTimeout(() => {
-      setAutosaveState('Saved');
+      const saved = writePersistedAttempt({
+        examId: activeExamId,
+        answers,
+        currentQuestionIndex,
+        updatedAt: new Date().toISOString(),
+      });
+      // Say "Not saved" when the write failed rather than claiming success.
+      setAutosaveState(saved ? 'Saved' : 'Not saved');
     }, 600);
 
     return () => {
@@ -1406,7 +1458,7 @@ function ExamsScreen() {
         window.clearTimeout(autosaveTimerRef.current);
       }
     };
-  }, [answers, view]);
+  }, [answers, view, activeExamId, currentQuestionIndex]);
 
   const elapsedMinutes = Math.max(1, Math.floor((Date.now() - startTimeRef.current) / 60000));
 
@@ -1464,6 +1516,7 @@ function ExamsScreen() {
         : `Trackers ${Math.min(rangeStart, rangeEnd)}–${Math.max(rangeStart, rangeEnd)}`;
 
     const created = createExamRecord({
+      id: `exam-${slugifyExamTitle(draftTitle.trim() || 'New exam')}-${Date.now().toString(36)}`,
       title: draftTitle.trim() || 'New exam',
       scopeLabel,
       questionIds: scopePreview.map((item) => item.id),
@@ -1511,6 +1564,9 @@ function ExamsScreen() {
     }
 
     const result = evaluateAttempt(activeExam, answers);
+    // The attempt is finished; it must not resurrect on the next visit.
+    writePersistedAttempt(null);
+
     setActiveResult({
       ...result,
       examId: activeExam.id,

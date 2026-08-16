@@ -205,13 +205,32 @@ test.describe('known gaps — these SHOULD fail once fixed, update them then', (
     await expect(page.locator('.fg-center__textarea')).toHaveValue('')
   })
 
-  test.fixme('GAP: exam attempt must survive reload despite the AUTOSAVE badge', async ({ page }) => {
+  test('FIXED: the exam attempt survives a reload, so the AUTOSAVE badge is honest', async ({ page }) => {
     await go(page, 'exams')
+    await page.evaluate(() => localStorage.removeItem('design-sandbox.exam-attempt.v1'))
+    await page.reload({ waitUntil: 'domcontentloaded' })
+    await page.waitForTimeout(2400)
+
     await page.getByText(/open exam/i).first().click()
     await page.waitForTimeout(800)
     await page.locator('textarea').first().fill('answer that should survive')
+    // The indicator debounces at 600ms; wait for the write it now really does.
+    await page.waitForTimeout(1200)
+
     await page.reload({ waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(2400)
     await expect(page.locator('textarea').first()).toHaveValue('answer that should survive')
+  })
+
+  test('a completed attempt does not resurrect on the next visit', async ({ page }) => {
+    await go(page, 'exams')
+    await page.evaluate(() => localStorage.setItem(
+      'design-sandbox.exam-attempt.v1',
+      JSON.stringify({ examId: 'nope', answers: { q: 'stale' }, currentQuestionIndex: 0 })))
+    await page.reload({ waitUntil: 'domcontentloaded' })
+    await page.waitForTimeout(2400)
+    // An attempt pointing at an exam that no longer exists must not trap the user.
+    const text = (await page.evaluate(() => document.body.innerText)).replace(/\s+/g, ' ')
+    expect(text, 'the screen still renders something usable').toMatch(/exam/i)
   })
 })

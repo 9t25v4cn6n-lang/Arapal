@@ -14,7 +14,20 @@ export const WIDTHS = [
   { id: 'w1280', width: 1280, height: 800 },
 ]
 
-const settle = async (page, ms = 2400) => page.waitForTimeout(ms)
+/**
+ * Wait for the page to be genuinely still before capturing.
+ *
+ * Typefaces are requested from Google Fonts at runtime, so a screenshot taken
+ * before they resolve renders in a fallback face and reads as a large diff.
+ * That produced a suite where a different handful of states failed on each run
+ * — flakiness that would have got the suite ignored. Waiting on document.fonts
+ * removes the cause rather than hiding it behind a wider pixel tolerance.
+ */
+const settle = async (page, ms = 2400) => {
+  await page.waitForTimeout(ms)
+  await page.evaluate(() => document.fonts?.ready).catch(() => {})
+  await page.waitForTimeout(250)
+}
 
 /** Click the first visible element whose text matches, return whether it worked. */
 async function clickText(page, pattern, timeout = 4000) {
@@ -181,11 +194,23 @@ export const SAMPLE_SOURCE =
  */
 export async function gotoState(page, state) {
   await page.goto(`/?chrome=0#${state.hash}`, { waitUntil: 'domcontentloaded' })
+  // Start every state from empty storage.
+  //
+  // The suite used to be isolated by accident: nothing persisted, so no state
+  // could contaminate the next. Now that drafts, attempts and projects are
+  // real, a leftover exam attempt shifted the whole Exams builder by ~30px and
+  // read as a visual regression. Isolation has to be explicit.
+  await page.evaluate(() => {
+    try { localStorage.clear(); sessionStorage.clear() } catch { /* ignore */ }
+  })
   await page.reload({ waitUntil: 'domcontentloaded' })
   await settle(page)
   if (state.drive) {
     const reached = await state.drive(page)
-    await settle(page, 1200)
+    // Interactions start transitions (the discussion panel alone is 220ms, the
+    // rails animate, panels re-layout). Settling too early was the main source
+    // of a different handful of states failing on each run.
+    await settle(page, 2000)
     return reached
   }
   return true
@@ -200,6 +225,10 @@ export function dynamicMasks(page) {
     page.locator('[data-dynamic]'),
     page.locator('text=/^\\d{2}:\\d{2}$/'),
     page.locator('text=/\\b\\d+ minutes?\\b/i'),
+    page.locator('text=/\\b\\d+\\s*(s|sec|secs|seconds)\\b/i'),
+    page.locator('text=/\\bElapsed\\b/i'),
+    page.locator('text=/\\bJust now\\b/i'),
+    page.locator('text=/\\bToday\\b/i'),
     page.locator('text=/Reviewed: /i'),
   ]
 }
