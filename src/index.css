@@ -1,3 +1,9 @@
+/* Typeface loading — single source. Every family the product declares must be
+   requested here. Per-screen @import inside runtime <style> blocks left Inter
+   and Amiri declared-but-never-loaded on every route (visual-standard:
+   font-not-loaded, 104 violations). */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap');
+
 :root {
   --text: #6b6375;
   --text-h: #08060d;

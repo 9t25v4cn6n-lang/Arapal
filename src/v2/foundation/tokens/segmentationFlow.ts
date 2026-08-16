@@ -54,7 +54,7 @@ export const segmentationFlowTypography = {
   actionTitleFontSize: `clamp(${typography.cardTitle.fontSize}, 3vw, ${typography.displayTitle.fontSize})`,
   panelHeaderTitleFontSize: '13px',
   panelHeaderTitleWeight: 650,
-  operationalMetaFontSize: '10px',
+  operationalMetaFontSize: '11px', // raised to the 11px type floor
   toolbarSelectionFontSize: '14px',
   compactActionWeight: typography.ctaLabel.fontWeight,
   sourcePreviewFontSize: '17px',

@@ -71,7 +71,7 @@ const centerPanelStyles = `
   }
 
   .fg-center__headerMain {
-    flex: 0 1 auto;
+    flex: 1 1 auto;
     min-width: 0;
   }
 
@@ -84,8 +84,13 @@ const centerPanelStyles = `
     line-height: 36px;
     font-weight: 700;
     color: #0f172b;
-    font-family: Georgia, "Times New Roman", serif;
+    font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+    /* nowrap without an overflow strategy meant a long title had nowhere to go
+       but on top of its neighbours. Truncation keeps the row a partition. */
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
   }
 
   .fg-center__subRow {
@@ -133,16 +138,17 @@ const centerPanelStyles = `
   }
 
   .fg-center__headerActions {
-    position: absolute;
-    top: 12px;
-    right: 28px;
+    /* Was position:absolute with a hard-coded left offset, which removed it from
+       the flex row so the title had nothing to shrink against and ran underneath
+       the status pill (visual-standard: overlap, 124.8x21 at 1440).
+       In flow, space-between reserves the lane and the title truncates instead. */
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 8px;
-    max-width: calc(100% - 420px);
-    margin-left: 0;
+    min-width: 0;
   }
 
   .fg-center__status {

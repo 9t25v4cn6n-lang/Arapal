@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local snapshots and captures — kept on disk, never in history (150MB+)
+Arapal-source.zip
+Arapal-dist.zip
+screenshot-reference.zip
+~$*

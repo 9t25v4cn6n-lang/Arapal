@@ -19,7 +19,6 @@ import {
 const EXAM_CONTEXT_STORAGE_KEY = 'design-sandbox.exam-context.v1';
 
 const examsStyles = `
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
 
   .exams-screen,
   .exams-screen * {

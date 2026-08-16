@@ -5,8 +5,6 @@ import ExamsScreen from './screens/ExamsScreen'
 import FigmaScreen from './screens/FigmaScreen'
 import MakeSegmentationFlowScreen from './screens/MakeSegmentationFlowScreen'
 import ProjectHomeScreen from './screens/ProjectHomeScreen'
-import ProjectsScreen from './screens/ProjectsScreen'
-import SegmentsScreen from './screens/SegmentsScreen'
 
 const previewStyles = `
   .app-preview {
@@ -274,8 +272,11 @@ export default function App() {
       return 'home'
     }
 
+    // Legacy Projects is archived; its route redirects to the V2 screen so the
+    // existing in-app navigation keeps working during the migration.
     if (hash === 'projects') {
-      return 'projects'
+      window.location.hash = 'v2/projects'
+      return 'home'
     }
 
     if (hash === 'segmentation' || hash === 'make') {
@@ -284,10 +285,6 @@ export default function App() {
 
     if (hash === 'exams') {
       return 'exams'
-    }
-
-    if (hash === 'legacy-segments') {
-      return 'legacy'
     }
 
     return 'study'
@@ -316,15 +313,13 @@ export default function App() {
     if (nextScreen === 'home') {
       window.location.hash = 'home'
     } else if (nextScreen === 'projects') {
-      window.location.hash = 'projects'
+      window.location.hash = 'v2/projects'
     } else if (nextScreen === 'segmentation') {
       window.location.hash = 'segmentation'
     } else if (nextScreen === 'make') {
       window.location.hash = 'make'
     } else if (nextScreen === 'exams') {
       window.location.hash = 'exams'
-    } else if (nextScreen === 'legacy') {
-      window.location.hash = 'legacy-segments'
     } else {
       window.location.hash = 'study'
     }
@@ -334,10 +329,8 @@ export default function App() {
 
   let activeScreen = null
   if (!previewMode && screen === 'home') activeScreen = <ProjectHomeScreen />
-  if (!previewMode && screen === 'projects') activeScreen = <ProjectsScreen />
   if (!previewMode && screen === 'exams') activeScreen = <ExamsScreen />
   if (!previewMode && screen === 'segmentation') activeScreen = <MakeSegmentationFlowScreen />
-  if (!previewMode && screen === 'legacy') activeScreen = <SegmentsScreen />
   if (!previewMode && screen === 'study') activeScreen = <FigmaScreen />
 
   return (

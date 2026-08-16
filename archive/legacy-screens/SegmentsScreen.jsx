@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 
 const segmentScreenStyles = `
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@600;700&display=swap');
 
   .segments-screen,
   .segments-screen * {

@@ -1,4 +1,5 @@
 import { colors, spacing } from '../tokens'
+import { controlSizing } from '../tokens/controlSizing'
 import { getDefaultBodySplitColumns, getLayer1BodyColumns, shellSizing } from './shellSizing'
 
 export const rootContainerName = 'Layer1_Stage_ScreenShell'
@@ -116,7 +117,9 @@ export function getUniversalShellContainers() {
       flexDirection: 'column',
       alignItems: 'stretch',
       justifyContent: 'flex-start',
-      padding: `${spacing[20]}px ${spacing[12]}px`,
+      // Horizontal padding is derived from the control it holds, not chosen
+      // alongside it, so the content lane always fits a rail control exactly.
+      padding: `${spacing[20]}px max(0px, calc((100% - ${controlSizing.navRailControlPx}px) / 2))`,
       gap: spacing[16],
       overflow: 'hidden',
       textAlign: 'left',

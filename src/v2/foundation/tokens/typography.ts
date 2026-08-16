@@ -34,14 +34,14 @@ export const typography = {
   },
   eyebrowLabel: {
     fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif',
-    fontSize: '9.5px',
+    fontSize: '11px',
     lineHeight: 1.1,
     letterSpacing: '0.12em',
     textTransform: 'uppercase',
   },
   monoMeta: {
     fontFamily: '"JetBrains Mono", ui-monospace, monospace',
-    fontSize: '10px',
+    fontSize: '11px',
     lineHeight: 1.3,
   },
   arabicSourceText: {

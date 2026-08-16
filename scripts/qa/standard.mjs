@@ -1,0 +1,111 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// THE ARAPAL VISUAL STANDARD — single source of truth.
+//
+// This file replaces prose governance. If a rule is not expressed here it is
+// not enforced, and if it is expressed here it fails the build. Do not restate
+// these rules in CLAUDE.md, in a contract document, or in a prompt.
+//
+// Provenance of every threshold below is recorded so the standard can be
+// argued with on evidence rather than taste:
+//   [WCAG]      WCAG 2.2 AA.
+//   [DECISION]  Already ratified by the project in DECISIONS.md (2026-08-07)
+//               for the Figma set and never applied to code.
+//   [CONTRACT]  V2 Design Contract v1 (2026-03-24).
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Frames the product must hold. [CONTRACT] build frame + required validation frames. */
+export const VIEWPORTS = [
+  { id: '1440x900', width: 1440, height: 900, tier: 'build' },
+  { id: '1366x768', width: 1366, height: 768, tier: 'validate' },
+  { id: '1920x1080', width: 1920, height: 1080, tier: 'validate' },
+  { id: '1280x800', width: 1280, height: 800, tier: 'validate' },
+]
+
+/** Product routes. Dev labs are excluded from the product standard by design. */
+export const ROUTES = [
+  // Legacy — retained until their V2 replacements reach parity.
+  { id: 'legacy-home', hash: 'home', app: 'legacy' },
+  { id: 'legacy-study', hash: 'study', app: 'legacy' },
+  { id: 'legacy-segmentation', hash: 'segmentation', app: 'legacy' },
+  { id: 'legacy-exams', hash: 'exams', app: 'legacy' },
+  // V2 — the V1 product surface.
+  { id: 'v2-projects', hash: 'v2/projects', app: 'v2' },
+  { id: 'v2-projectResearch', hash: 'v2/projectResearch', app: 'v2' },
+  { id: 'v2-segmentationPasteNext', hash: 'v2/segmentationPasteNext', app: 'v2' },
+  { id: 'v2-segmentationTransition', hash: 'v2/segmentationTransition', app: 'v2' },
+  { id: 'v2-segmentationLoading', hash: 'v2/segmentationLoading', app: 'v2' },
+  { id: 'v2-segmentationReview', hash: 'v2/segmentationReview', app: 'v2' },
+  { id: 'v2-segmentationSuccess', hash: 'v2/segmentationSuccess', app: 'v2' },
+  { id: 'v2-studyWorkspace', hash: 'v2/studyWorkspace', app: 'v2' },
+]
+
+export const THRESHOLDS = {
+  /** Smallest permissible rendered text. [DECISION] "raises the type floor to 11px". */
+  minFontSizePx: 11,
+
+  /** Contrast minimums. [WCAG] 1.4.3. Large = >=24px, or >=18.66px at weight >=700. */
+  contrastNormal: 4.5,
+  contrastLarge: 3.0,
+
+  /** Interactive target minimum. [WCAG] 2.5.8 Target Size (Minimum). */
+  minTargetPx: 24,
+  /** Comfortable target. [DECISION] "Build must give Md (36) and Sm (28) a 44px hit area." */
+  preferredTargetPx: 44,
+
+  /** Two rendered elements may not overlap by more than this. [CONTRACT] "no overlap". */
+  maxOverlapPx: 2,
+
+  /** A clipping container may not hide more than this much of its own content. */
+  maxHiddenPx: 2,
+
+  /** A scroll region must not hide more of its content than it shows without an affordance. */
+  maxUnsignalledScrollRatio: 0.5,
+
+  /** Nothing may sit outside the frame. [CONTRACT] "end-to-end partitions only". */
+  maxViewportEscapePx: 2,
+}
+
+/**
+ * Approved type ramp, in px. Any rendered size outside this set is drift.
+ * Derived from src/v2/foundation/tokens/typography.ts with the sub-floor steps
+ * raised per [DECISION]. Kept explicit rather than imported so that correcting
+ * the tokens is a deliberate act checked against this list.
+ */
+export const TYPE_RAMP = [11, 11.5, 12, 13, 14, 15, 16, 18, 20, 22.5, 23, 26, 32, 40, 50]
+
+/**
+ * Colours that may carry text, with their measured contrast on the app's two
+ * surfaces. [DECISION] retuned textFaint and added the -strong semantic weights;
+ * those retunes are recorded here and are what the tokens must become.
+ */
+export const TEXT_COLOR_POLICY = {
+  // Permitted for text.
+  allowed: ['#0F172A', '#334155', '#64748B', '#8496AE', '#15803D', '#B45309', '#FFFFFF'],
+  // Present in the tokens today and NOT permitted for text (fills/icons only).
+  decorativeOnly: ['#94A3B8', '#16A34A', '#D97706'],
+}
+
+/** Font families the product declares and must therefore actually load. */
+export const REQUIRED_FONT_FAMILIES = ['Playfair Display', 'Inter', 'Amiri']
+
+/**
+ * Elements exempt from geometric rules. Decorative backdrops are marked
+ * aria-hidden and are allowed to sit behind content; they are still checked
+ * for viewport escape so they cannot force a scrollbar.
+ */
+export const DECORATIVE_SELECTOR = '[aria-hidden="true"]'
+
+/** Rule registry. `blocking: true` means a violation fails the build. */
+export const RULES = {
+  overlap: { blocking: true, title: 'Rendered elements overlap' },
+  'content-clipped': { blocking: true, title: 'Container clips its own content' },
+  'container-undersized': { blocking: true, title: 'Container is smaller than the content it holds' },
+  'scroll-hidden-majority': { blocking: true, title: 'Scroll region hides most of its content with no affordance' },
+  'viewport-escape': { blocking: true, title: 'Element sits outside the frame' },
+  'type-floor': { blocking: true, title: 'Text below the minimum size' },
+  contrast: { blocking: true, title: 'Text below the contrast minimum' },
+  'hit-target': { blocking: true, title: 'Interactive target below the minimum' },
+  'unnamed-control': { blocking: true, title: 'Interactive control has no accessible name' },
+  'font-not-loaded': { blocking: true, title: 'Declared font family never loads' },
+  'type-drift': { blocking: false, title: 'Rendered size outside the approved ramp' },
+}

@@ -1,0 +1,276 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2870
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\froman\fcharset0 Times-Roman;\f1\froman\fcharset0 Times-Bold;\f2\fmodern\fcharset0 Courier;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Below is the cleaned final version, with the product model tightened, the journeys made more user-real, and the screen view updated to reflect the full system.\
+\pard\pardeftab720\sa298\partightenfactor0
+
+\f1\b\fs36 \cf0 Product structure\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b0\fs24 \cf0 The app should be understood as five clear product areas rather than one long chain of actions: 
+\f1\b Project Home
+\f0\b0 , 
+\f1\b Source and Segmentation
+\f0\b0 , 
+\f1\b Study Workspace
+\f0\b0 , 
+\f1\b Patching
+\f0\b0 , and 
+\f1\b Exams
+\f0\b0 .\
+Project Home is the stable return point for the whole app. Study Workspace is the stable shell for everything that happens inside one segment. Source and Segmentation is preparation and publishing, not part of the normal study loop. Patching is a controlled correction mode, separate from study. Exams is a focused assessment mode that still links back into normal remediation.\
+\pard\pardeftab720\sa298\partightenfactor0
+
+\f1\b\fs36 \cf0 Core product rules\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b0\fs24 \cf0 A 
+\f1\b segment
+\f0\b0  is the stable study unit: compiled source, tracker, anchors, and tree position. A 
+\f1\b current record
+\f0\b0  is the current authoritative saved outcome for that segment. One segment may have at most one current record at a time, but they are not the same object.\
+A discussion session must always end with exactly one saved summary. Multiple summaries for the same segment are acceptable and desirable; multiple summaries for one session are not.\
+Discussion summaries should always attach to 
+\f2\fs26 segment_id
+\f0\fs24 . When discussion happens after pass, they should also attach to 
+\f2\fs26 current_record_id
+\f0\fs24 . When discussion happens around a failed attempt, they should attach to 
+\f2\fs26 attempt_id
+\f0\fs24  instead.\
+Pass should auto-save. There should be no separate mandatory save click after success.\
+Skip for now is a navigation action, not authoritative study truth.\
+Exams should be designed around progressive autosave. Engineering can implement this as debounced continuous save or lightweight checkpoints, but the product assumption should be that work is preserved as the user goes.\
+\pard\pardeftab720\sa298\partightenfactor0
+
+\f1\b\fs36 \cf0 Final master user journey\
+\pard\pardeftab720\partightenfactor0
+
+\f2\b0\fs26 \cf0 flowchart TD\
+    A["Open project"] --> B["Project Home"]\
+\
+    B --> C\{"Choose mode"\}\
+\
+    C -->|Continue study| D["Open next recommended segment"]\
+    C -->|Browse study tree| E["Open branch or segment"]\
+    C -->|Add or revise source| F["Open Source and Segmentation"]\
+    C -->|Corrections| G["Open Patching"]\
+    C -->|Exams| H["Open Exams"]\
+\
+    F --> F1["Save immutable source batch"]\
+    F1 --> F2["Review and approve segmentation"]\
+    F2 --> F3["Publish study-ready segments"]\
+    F3 --> B\
+\
+    E --> I["Open Study Workspace"]\
+    D --> I\
+\
+    I --> J["Review source, context, and guidance"]\
+    J --> K["Write and submit translation"]\
+    K --> L\{"Outcome"\}\
+\
+    L -->|Needs revision| M["Repair mode in same workspace"]\
+    M --> N\{"Open discussion?"\}\
+    N -->|Yes| O["Discussion session"]\
+    O --> P["Close discussion and auto-save one summary"]\
+    P --> M\
+    N -->|No| K\
+\
+    L -->|Pass| Q["Auto-save current record"]\
+    Q --> R["Reveal pass-only outputs and update progress"]\
+    R --> S\{"Next action"\}\
+    S -->|Continue| D\
+    S -->|Discuss| T["Post-pass discussion session"]\
+    T --> U["Close discussion and auto-save one summary"]\
+    U --> B\
+    S -->|Return to home| B\
+\
+    G --> G1["Controlled patch workflow"]\
+    G1 --> B\
+\
+    H --> H1["Create or open exam"]\
+    H1 --> H2["Take exam with autosave"]\
+    H2 --> H3["Review misses and return to study"]\
+    H3 --> B\
+\pard\pardeftab720\sa298\partightenfactor0
+
+\f1\b\fs36 \cf0 Final user journeys\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\fs28 \cf0 J1. Project bootstrap\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b0\fs24 \cf0 The user creates a project, optionally assigns a study profile, and lands on Project Home. If the project has no source yet, Home should make that obvious and present one dominant action: add the first source batch. The key UX goal is to eliminate ambiguity about how to begin.\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f1\b\fs28 \cf0 J2. Source intake\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b0\fs24 \cf0 The user opens Source and Segmentation, pastes raw text, labels the batch, and saves it as an immutable source version. The success state should offer either segment now or return to Home. The important product principle is preservation before processing.\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f1\b\fs28 \cf0 J3. Segmentation proposal and approval\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b0\fs24 \cf0 The user opens a selected source batch in Segmentation Workspace, chooses AI proposal or manual setup, reviews markers on top of the preserved source, approves the structure, and triggers deterministic compile. When compile succeeds, those segments become live study material. The important UX principle is that proposal is assistive, but approval is always user-controlled.\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f1\b\fs28 \cf0 J4. Segment selection and navigation\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b0\fs24 \cf0 From Project Home, the user can either continue where they left off or browse the tracker tree. If browsing, they select a branch such as 
+\f2\fs26 2
+\f0\fs24 , 
+\f2\fs26 2.1
+\f0\fs24 , or 
+\f2\fs26 2.1.1
+\f0\fs24 , see a filtered segment list, and open a segment. Next and previous stay inside that branch until the filter is changed. This keeps orientation stable and reduces navigation fatigue.\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f1\b\fs28 \cf0 J5. Main study attempt\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b0\fs24 \cf0 The user opens Study Workspace, sees the Arabic source immediately, writes the translation in the main editor, consults help and context without leaving the workspace, and submits. Evaluation happens in the same shell. The central UX rule is that translation remains the dominant task.\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f1\b\fs28 \cf0 J6. Fail and retry\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b0\fs24 \cf0 On failure, the workspace shifts into Repair Mode rather than sending the user elsewhere. Issues appear grouped, prioritised, and hinted. The user can edit and retry, open discussion, or skip for now. Later retries stay anchored to the same issue set unless the authoritative context changes. Failure should feel bounded and actionable, not chaotic.\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f1\b\fs28 \cf0 J7. Discussion sidecar\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b0\fs24 \cf0 The user can open discussion from fail or pass state. Discussion opens as a side panel by default, with fullscreen available for longer sessions. It remains tied to the current work context. When the session closes, exactly one summary is generated and saved. The user then returns to the same segment state they left. Discussion is therefore contextual, durable, and non-destructive.\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f1\b\fs28 \cf0 J8. Pass and completion\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b0\fs24 \cf0 When the evaluator returns pass, the current record is auto-saved, segment status becomes passed, pass-only outputs are revealed, and visible progress updates on both the tree and Project Home. The primary next action should be continue to the next recommended segment; a secondary action is post-pass discussion. Passing should feel like a clean milestone.\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f1\b\fs28 \cf0 J9. Next, previous, and skip\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b0\fs24 \cf0 Previous moves within the current branch. Next moves within the current branch. Skip for now moves the user onward without mutating authoritative state. If needed later, skipped items can be tracked through a separate bookmark or defer model rather than overloading segment truth.\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f1\b\fs28 \cf0 J10. Generate exam\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b0\fs24 \cf0 The user opens Exams, chooses scope by prefix or tracker range, previews what will be included, generates the exam, and saves it. Preview matters because it makes scope intelligible before commitment.\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f1\b\fs28 \cf0 J11. Take exam\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b0\fs24 \cf0 The user opens a saved exam in a focused exam workspace, answers inside the app, and benefits from progressive autosave. On submit, the attempt is graded and saved. This reduces the risk of loss and makes exams viable for real use.\
+\pard\pardeftab720\sa280\partightenfactor0
+
+\f1\b\fs28 \cf0 J12. Review exam mistakes\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b0\fs24 \cf0 The user opens exam results, reviews misses grouped by segment or concept, and jumps directly back into affected segments. Remediation happens through the normal Study Workspace, so exam mode strengthens the main study loop rather than fragmenting it.\
+\pard\pardeftab720\sa298\partightenfactor0
+
+\f1\b\fs36 \cf0 Final failure and side-action workflows\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b0\fs24 \cf0 If there is no source yet, Project Home should show a strong empty state with a direct call to add a source batch.\
+If segmentation proposal quality is poor, the user can revise markers manually, rerun the proposal, or proceed fully manually. Approval remains human-controlled.\
+If a segment needs structural change, the user enters controlled patch workflow, adjusts markers, reviews downstream impact, recompiles, and returns to Home or Study. This belongs to Patching, not the normal study loop.\
+If an authoritative output issue is noticed, the user chooses report authoritative issue. If the issue is explanatory only, discussion is the right route. If it affects authoritative output, the app moves into controlled patch flow. Direct freeform editing of authoritative records should not exist in v1.\
+If a discussion reply fails, the user message remains saved, the assistant slot shows a retryable failure state, and retry fills only the missing assistant reply.\
+If a pass save succeeds but status is still reconciling, the user should see a neutral message such as \'93Saved, updating status,\'94 and pass-only surfaces should remain hidden until reconciliation completes.\
+\pard\pardeftab720\sa298\partightenfactor0
+
+\f1\b\fs36 \cf0 Final tree and navigation model\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\b0\fs24 \cf0 The tracker tree should be a first-class v1 surface. Each node should show child segment count, passed count, open count, and current active marker. The tree should support branch filtering, progress visibility, and predictable next/previous movement within the chosen branch.\
+\pard\pardeftab720\sa298\partightenfactor0
+
+\f1\b\fs36 \cf0 Final screen model\
+\pard\pardeftab720\partightenfactor0
+
+\f2\b0\fs26 \cf0 flowchart TD\
+    A["App"] --> B["Project Home"]\
+    A --> C["Source and Segmentation Workspace"]\
+    A --> D["Study Workspace"]\
+    A --> E["Patching Workspace"]\
+    A --> F["Exams"]\
+    A --> G["Exports and Settings"]\
+\
+    B --> B1["Continue card"]\
+    B --> B2["Active sources and batches"]\
+    B --> B3["Branch progress snapshot"]\
+    B --> B4["Needs attention"]\
+    B --> B5["Exam and correction shortcuts"]\
+\
+    C --> C1["Source intake"]\
+    C --> C2["Source versions"]\
+    C --> C3["Segmentation editor"]\
+    C --> C4["Approve and publish"]\
+    C --> C5["Handoff to Home or Study"]\
+\
+    D --> D1["Tree and segment navigation"]\
+    D --> D2["Translation view"]\
+    D --> D3["Help and context panel"]\
+    D --> D4["Result and repair panel"]\
+    D --> D5["Discussion drawer and fullscreen"]\
+\
+    E --> E1["Source correction overlay"]\
+    E --> E2["Segment patch editor"]\
+    E --> E3["Impact preview"]\
+    E --> E4["Controlled recompile review"]\
+\
+    F --> F1["Exam builder"]\
+    F --> F2["Exam attempt workspace"]\
+    F --> F3["Exam results and remediation"]\
+\
+    G --> G1["Export current records"]\
+    G --> G2["Export discussion summaries"]\
+    G --> G3["Operational status and recovery"]\
+\pard\pardeftab720\sa298\partightenfactor0
+
+\f1\b\fs36 \cf0 Final Study Workspace view\
+\pard\pardeftab720\partightenfactor0
+
+\f2\b0\fs26 \cf0 flowchart TD\
+    A["Study Workspace"] --> B["Left navigation pane"]\
+    A --> C["Main translation pane"]\
+    A --> D["Help and context panel"]\
+    A --> E["Result and repair panel"]\
+    A --> F["Discussion drawer"]\
+    A --> G["Discussion fullscreen option"]\
+\
+    B --> B1["Tree by prefix"]\
+    B --> B2["Segment list in current branch"]\
+    B --> B3["Next previous skip controls"]\
+\
+    C --> C1["Arabic source"]\
+    C --> C2["Translation editor"]\
+    C --> C3["Submit action"]\
+\
+    D --> D1["Prompt materials"]\
+    D --> D2["Rules and references"]\
+    D --> D3["Latest saved discussion summary"]\
+\
+    E --> E1["Pass state"]\
+    E --> E2["Repair mode with locked issues"]\
+\
+    F --> F1["Session tied to segment and current context"]\
+    F --> F2["Close session"]\
+    F --> F3["Auto-save exactly one summary"]\
+\pard\pardeftab720\sa240\partightenfactor0
+
+\f0\fs24 \cf0 This is the version I would now treat as the canonical product-layer reference for turning the journeys into engineering workflows.\
+}

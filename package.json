@@ -17,7 +17,11 @@
     "test:audit:architecture": "node --experimental-strip-types --test tests/audit/architecture-lane.test.mjs",
     "test:audit:dead-code": "node --experimental-strip-types --test tests/audit/dead-code-lane.test.mjs",
     "test:audit:duplication": "node --experimental-strip-types --test tests/audit/duplication-lane.test.mjs",
-    "test:audit:suite": "node --experimental-strip-types --test tests/audit/audit-suite-phase7.test.mjs"
+    "test:audit:suite": "node --experimental-strip-types --test tests/audit/audit-suite-phase7.test.mjs",
+    "qa": "node scripts/qa/run.mjs",
+    "qa:quick": "node scripts/qa/run.mjs --quick",
+    "qa:accept": "node scripts/qa/run.mjs --accept",
+    "qa:calibrate": "node --test tests/qa/calibration.test.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.577.0",
