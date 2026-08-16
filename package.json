@@ -8,7 +8,6 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "snapshots": "playwright test tests/ui-snapshots.spec.js",
     "qa:screen": "node scripts/run-v2-screen-qa.mjs",
     "audit:static": "node --experimental-strip-types scripts/run-v2-static-audit.mjs",
     "audit:suite": "npm run audit:static && node --experimental-strip-types scripts/run-v2-audit-suite.mjs",
@@ -21,7 +20,10 @@
     "qa": "node scripts/qa/run.mjs",
     "qa:quick": "node scripts/qa/run.mjs --quick",
     "qa:accept": "node scripts/qa/run.mjs --accept",
-    "qa:calibrate": "node --test tests/qa/calibration.test.mjs"
+    "qa:calibrate": "node --test tests/qa/calibration.test.mjs",
+    "vr": "playwright test tests/visual/visual-regression.spec.js",
+    "vr:accept": "playwright test tests/visual/visual-regression.spec.js --update-snapshots",
+    "test:behaviour": "playwright test tests/behaviour"
   },
   "dependencies": {
     "lucide-react": "^0.577.0",
