@@ -68,6 +68,17 @@ async function fillFirst(page, selector, value) {
 export const STATES = [
   // ── Home / Projects ──────────────────────────────────────────────────────
   { id: 'home-returning', hash: 'home', area: 'home' },
+  // The V2 home in both its states. Storage is cleared per state, so the
+  // default capture is genuinely the first-run empty state.
+  { id: 'v2-home-empty', hash: 'v2/projectHome', area: 'home' },
+  {
+    id: 'v2-home-returning',
+    hash: 'v2/projectHome',
+    area: 'home',
+    async drive(page) {
+      return clickText(page, /explore with a sample/i)
+    },
+  },
   { id: 'projects-library', hash: 'v2/projects', area: 'projects' },
   {
     id: 'projects-advanced-open',
