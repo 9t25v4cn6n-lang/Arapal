@@ -264,9 +264,15 @@ re-segmented the next source differently. Both ends fixed, with a regression tes
 in `segmentation-handoff.spec.js`.
 
 **Consequence.**
-- The remaining parity question is **navigation destinations**, not Study
-  behaviour: the V2 rail still lacks `Review Queue`, `Completed` and `Profile`,
-  which legacy has. Exams was the fourth and is now wired.
+- There is **no remaining parity debt**. The three destinations legacy has that V2
+  lacks — `Review Queue`, `Completed`, `Profile` — were driven at 1440×900 and all
+  three are **dead controls**: clicking each changes neither the hash nor the
+  rendered content. They are labels with no destination behind them, so porting
+  them would mean reproducing dead buttons. Exams was the only real missing
+  destination and it is now wired.
+- This is why parity must be measured by driving rather than by comparing control
+  inventories. On a name-by-name reading V2 looked three destinations short; on the
+  running app it is short of nothing.
 - `src/components/figma/` and `MakeSegmentationFlowScreen.jsx` are closer to
   deletable than the plan assumes. Before deleting, the two `test.fixme` legacy
   gaps in `legacy-capabilities.spec.js` should be confirmed as legacy-only defects
