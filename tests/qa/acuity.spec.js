@@ -155,6 +155,39 @@ test.describe('probe acuity — each rule proved on a known defect', () => {
     expect(ruleIds(findings)).not.toContain('scroll-without-affordance')
   })
 
+  test('sees a control that shows nothing when focused', async ({ page }) => {
+    const findings = await probeWith(page, `
+      <style>button:focus, button:focus-visible { outline: none }</style>
+      <button style="min-height:44px;padding:0 24px;font-size:14px;color:#FFFFFF;background:#1D4ED8;border:0">
+        Continue
+      </button>`)
+    expect(ruleIds(findings)).toContain('focus-invisible')
+  })
+
+  test('accepts a control with a real focus ring', async ({ page }) => {
+    const findings = await probeWith(page, `
+      <style>button:focus-visible { outline: 2px solid #1D4ED8; outline-offset: 2px }</style>
+      <button style="min-height:44px;padding:0 24px;font-size:14px;color:#FFFFFF;background:#1D4ED8;border:0">
+        Continue
+      </button>`)
+    expect(ruleIds(findings)).not.toContain('focus-invisible')
+  })
+
+  test('accepts a focus indicator that is not an outline', async ({ page }) => {
+    const findings = await probeWith(page, `
+      <style>
+        button { outline: none }
+        button:focus-visible { box-shadow: 0 0 0 3px rgba(29,78,216,.4) }
+      </style>
+      <button style="min-height:44px;padding:0 24px;font-size:14px;color:#FFFFFF;background:#1D4ED8;border:0">
+        Continue
+      </button>`)
+    expect(
+      ruleIds(findings),
+      'a ring drawn with box-shadow is a focus indicator; the rule is about visibility, not about the outline property',
+    ).not.toContain('focus-invisible')
+  })
+
   test('treats a deliberate ellipsis as designed, not clipped', async ({ page }) => {
     const findings = await probeWith(page, `
       <div style="width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;color:#0F172A">

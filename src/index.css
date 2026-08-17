@@ -36,6 +36,13 @@
   --accent-bg: rgba(170, 59, 255, 0.1);
   --accent-border: rgba(170, 59, 255, 0.5);
   --social-bg: rgba(244, 243, 236, 0.5);
+
+  /* Keyboard focus ring. One value for both apps, so the indicator is the same
+     wherever focus lands. accentStrong rather than accentBase: the ring has to
+     read against the accent-washed surfaces the controls themselves sit on. */
+  --focus-ring: #1d4ed8;
+  --focus-ring-wash: rgba(37, 99, 235, 0.24);
+
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
@@ -169,4 +176,25 @@ textarea {
 button,
 [role='button'] {
   min-height: 24px;
+}
+
+/* WCAG 2.4.7 Focus Visible.
+   The product had a focus style on 12 controls and nothing on the other 76 the
+   checker could reach: keyboard users had no idea where they were, and a dozen
+   components had reset `outline` to none without putting anything back.
+
+   Declared once, at the document level, for the same reason as the two rules
+   above — the offenders share no class, so there is nowhere else to put it. The
+   `!important` is deliberate and narrow: it applies only in the focus-visible
+   state, and its whole job is to beat the component-level `outline: none` rules
+   that caused this. A component may still design a *richer* indicator; it just
+   may no longer remove the indicator altogether.
+
+   Drawn with box-shadow as well as outline so the ring follows the control's own
+   border-radius on the pill-shaped controls, where a square outline reads as a
+   rendering fault. */
+:is(a[href], button, input, select, textarea, [tabindex], [role='button'], [contenteditable]):focus-visible {
+  outline: 2px solid var(--focus-ring) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px var(--focus-ring-wash) !important;
 }

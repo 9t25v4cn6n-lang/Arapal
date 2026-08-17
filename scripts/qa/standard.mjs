@@ -143,5 +143,9 @@ export const RULES = {
   // were missing rules — see CLAUDE.md.
   'label-truncated': { blocking: true, title: 'A chrome label or control label is cut off by layout pressure' },
   'scroll-without-affordance': { blocking: true, title: 'Scroll region hides its scrollbar and gives no other signal' },
+  // [WCAG] 2.4.7 Focus Visible. Tested by focusing the control, not by reading
+  // CSS: a :focus-visible rule can exist and be overridden three stylesheets
+  // away, and "declared" is not "rendered".
+  'focus-invisible': { blocking: true, title: 'Control shows nothing when focused by keyboard' },
   'type-drift': { blocking: false, title: 'Rendered size outside the approved ramp' },
 }

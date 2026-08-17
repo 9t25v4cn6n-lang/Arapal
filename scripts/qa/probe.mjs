@@ -362,6 +362,46 @@ export function evaluate(config) {
     }
   }
 
+  // ── RULE: focus-invisible ──────────────────────────────────────────────────
+  // Runs last, because it is the only rule that changes the page: it focuses
+  // each control and checks that something visible actually happens. Inferring
+  // this from CSS is guesswork — a :focus-visible rule can exist and be
+  // overridden, and `outline: none` can be set three stylesheets away. Focusing
+  // the control and diffing what renders is the only honest test.
+  //
+  // Keyboard operation is not optional: 12 of the product's controls declared a
+  // focus style and the rest inherited whatever the user agent gave them, or
+  // nothing at all where an outline had been reset.
+  const focusFingerprint = (el) => {
+    const cs = getComputedStyle(el)
+    return [
+      cs.outlineStyle, cs.outlineWidth, cs.outlineColor, cs.outlineOffset,
+      cs.boxShadow, cs.borderColor, cs.borderWidth, cs.backgroundColor, cs.color,
+    ].join('|')
+  }
+  const previouslyFocused = document.activeElement
+  const seenFocus = new Set()
+  for (const el of controls) {
+    if (el.disabled) continue
+    const key = describe(el) + '|' + label(el)
+    if (seenFocus.has(key)) continue
+    seenFocus.add(key)
+
+    const before = focusFingerprint(el)
+    try { el.focus({ preventScroll: true }) } catch { continue }
+    // Only judge a control the browser actually moved focus to.
+    if (document.activeElement !== el) continue
+    const after = focusFingerprint(el)
+    const outlined = parseFloat(getComputedStyle(el).outlineWidth) > 0
+    if (before === after && !outlined) {
+      add('focus-invisible', { selector: describe(el), label: label(el), tag: el.tagName })
+    }
+  }
+  try {
+    if (previouslyFocused && previouslyFocused.focus) previouslyFocused.focus({ preventScroll: true })
+    else document.activeElement?.blur?.()
+  } catch { /* restoring focus is best effort */ }
+
   return {
     findings,
     stats: {
