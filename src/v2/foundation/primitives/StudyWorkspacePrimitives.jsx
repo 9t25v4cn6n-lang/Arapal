@@ -770,11 +770,37 @@ const studyCss = `
        past the frame and pushed into its neighbours instead of the card
        scrolling. Both rows now have a floor of zero so they yield; the source
        card scrolls internally, which is what its scroll affordance is for. */
-    grid-template-rows: minmax(0, auto) minmax(0, auto) minmax(0, 1fr) auto;
+    /* The slack belongs to the source, not to a void.
+
+       There used to be a fourth row here whose area was "." — an empty 1fr
+       spacer that swallowed every spare pixel and pushed the editor to the
+       bottom of the lane. On the 1440x900 frame that put roughly 150px of blank
+       background between the passage being read and the box it is typed into:
+       dead space to look at, and a wasted eye journey on the one screen where
+       source and translation should sit close together.
+
+       The source row takes the slack instead and scrolls internally, which is
+       what its scroll affordance already existed for, so a long Arabic passage
+       gets MORE room rather than the void getting bigger. The editor sits
+       directly under the lexicography and grows with what is typed into it. */
+    /* Every row is sized by its content and the stack sits at the top.
+
+       Three arrangements were tried here and the first two both manufactured a
+       void. An empty 1fr spacer row put ~150px of blank background between the
+       passage and the box it is typed into. Giving that 1fr to the source row
+       instead moved the same emptiness INSIDE the source card — 111px of white
+       under a short passage, because the card stretched and the Arabic did not.
+
+       Slack should not be handed to a component that has nothing to do with it.
+       Content-sized rows leave the remainder at the bottom of the lane, which is
+       ordinary trailing space rather than a hole in the middle of the reading
+       path. A long passage still gets room: the panel grows to what it needs and
+       scrolls beyond that. */
+    grid-template-rows: auto auto auto;
+    align-content: start;
     grid-template-areas:
       "source companion"
       "lex companion"
-      ". companion"
       "editor companion";
     align-items: stretch;
     column-gap: 0;
@@ -883,6 +909,19 @@ const studyCss = `
     display: flex;
     flex-direction: column;
     gap: var(--study-space-4);
+    min-height: 0;
+  }
+
+  /* The passage panel takes the height the group is given.
+     It defaulted to flex: 0 1 auto — able to shrink, never to grow — so the card
+     held 111px of unused white at the bottom WHILE its scroller clipped the
+     Arabic inside it. Spare room and cut text in the same card, for the same
+     reason: nothing claimed the slack. min-height: 0 is what lets a flex child
+     with its own scroll region actually shrink to the space rather than
+     insisting on its content height. */
+  .study-v2__sourceGroup > .study-v2__panel {
+    flex: 1 1 auto;
+    min-height: 0;
   }
 
   .study-v2__navRow {
@@ -1247,8 +1286,12 @@ const studyCss = `
 
   .study-v2__textarea {
     width: 100%;
-    min-height: 106px;
-    max-height: min(18vh, 152px);
+    /* Starts at roughly two lines and grows with what is typed. It used to open
+       at 106px — four lines of empty box on a screen where most translations
+       begin as one sentence, which read as an unfilled form rather than an
+       invitation. The growth is what makes a small starting size honest. */
+    min-height: 64px;
+    max-height: min(26vh, 220px);
     border: 0;
     outline: none;
     resize: none;
@@ -2690,14 +2733,34 @@ export function StudyTranslationEditor({
   useLayoutEffect(() => {
     const textarea = textareaRef.current
     if (!textarea || fillHeight || isExpanded) {
-      return
+      return undefined
     }
 
-    textarea.style.height = 'auto'
-    const maxHeight = Number.parseFloat(window.getComputedStyle(textarea).maxHeight)
-    const nextHeight = Number.isFinite(maxHeight) ? Math.min(textarea.scrollHeight, maxHeight) : textarea.scrollHeight
-    textarea.style.height = `${nextHeight}px`
-    textarea.style.overflowY = Number.isFinite(maxHeight) && textarea.scrollHeight > maxHeight ? 'auto' : 'hidden'
+    const fit = () => {
+      textarea.style.height = 'auto'
+      const maxHeight = Number.parseFloat(window.getComputedStyle(textarea).maxHeight)
+      const capped = Number.isFinite(maxHeight)
+      const nextHeight = capped ? Math.min(textarea.scrollHeight, maxHeight) : textarea.scrollHeight
+      textarea.style.height = `${nextHeight}px`
+      // Once the box stops growing the text must still be reachable. Leaving
+      // this hidden meant the last lines of a long translation existed, were
+      // saved, and could not be read back.
+      textarea.style.overflowY = capped && textarea.scrollHeight > maxHeight ? 'auto' : 'hidden'
+    }
+
+    fit()
+
+    // Re-fit when the metrics change rather than only when the text does.
+    //
+    // Measuring once on mount under-sized the box: the first pass ran before the
+    // webfont applied, the text then reflowed taller, and nothing re-ran because
+    // `draft` had not changed. The result was 19px of the user's own translation
+    // hidden inside a control with overflow:hidden, on the screen whose whole
+    // purpose is writing translations.
+    document.fonts?.ready?.then(fit).catch(() => {})
+    const observer = new ResizeObserver(fit)
+    observer.observe(textarea)
+    return () => observer.disconnect()
   }, [draft, fillHeight, isExpanded])
 
   return (

@@ -104,6 +104,13 @@ export const THRESHOLDS = {
    * rounding overflow is not content the user needs to reach.
    */
   minSignallableOverflowPx: 8,
+
+  /**
+   * Unused space in a container that is simultaneously clipping its own content.
+   * Below this it is ordinary rounding and trailing padding; above it the
+   * container is refusing height it already has.
+   */
+  maxSlackBesideClippedPx: 24,
 }
 
 /**
@@ -181,6 +188,12 @@ export const RULES = {
   // were missing rules — see CLAUDE.md.
   'label-truncated': { blocking: true, title: 'A chrome label or control label is cut off by layout pressure' },
   'scroll-without-affordance': { blocking: true, title: 'Scroll region hides its scrollbar and gives no other signal' },
+  // Added after the Study source card was found holding 111px of unused white at
+  // the bottom WHILE its own scroller clipped the Arabic passage inside it. Spare
+  // room and cut text in the same component, for the same reason: the panel was
+  // flex: 0 1 auto, so nothing claimed the slack. Found by eye, which per
+  // CLAUDE.md means it was a missing rule.
+  'slack-beside-clipped-content': { blocking: true, title: 'Container leaves unused space while its own content is clipped' },
   // [WCAG] 2.4.7 Focus Visible. Tested by focusing the control, not by reading
   // CSS: a :focus-visible rule can exist and be overridden three stylesheets
   // away, and "declared" is not "rendered".

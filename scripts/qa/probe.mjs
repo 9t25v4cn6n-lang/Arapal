@@ -189,6 +189,37 @@ export function evaluate(config) {
     const signals = cs.maskImage !== 'none' || cs.webkitMaskImage !== 'none'
     const announcesMore = !hidesScrollbar || signals
 
+    // ── RULE: slack-beside-clipped-content ──────────────────────────────────
+    // A container that clips its own content while the box it sits in has height
+    // going spare. The two facts together are the defect: either alone is fine.
+    // A short passage in a tall card is just airy; a long passage that scrolls is
+    // correct. Unused room AND cut content at the same time means nothing claimed
+    // the slack — the Study source panel was flex: 0 1 auto, so it could shrink
+    // and never grow, and sat with 111px empty beneath a clipped passage.
+    if (dy > THRESHOLDS.minSignallableOverflowPx) {
+      const parent = el.parentElement
+      if (parent) {
+        const pcs = getComputedStyle(parent)
+        if (pcs.display === 'flex' || pcs.display === 'grid') {
+          // Sum the in-flow children to find what the parent actually uses.
+          let used = 0
+          for (const child of parent.children) {
+            if (getComputedStyle(child).position === 'absolute') continue
+            used += child.getBoundingClientRect().height
+          }
+          const gapY = Number.parseFloat(pcs.rowGap) || 0
+          const gaps = Math.max(0, parent.children.length - 1) * gapY
+          const slack = parent.clientHeight - (used + gaps)
+          if (slack > THRESHOLDS.maxSlackBesideClippedPx) {
+            add('slack-beside-clipped-content', {
+              selector: describe(el), label: label(el),
+              hiddenPx: dy, slackPx: round(slack), otherSelector: describe(parent),
+            })
+          }
+        }
+      }
+    }
+
     // ── RULE: scroll-without-affordance ─────────────────────────────────────
     // A region that scrolls but hides its scrollbar looks identical to one that
     // clips: the content is simply cut at a hard edge. Either the scrollbar is

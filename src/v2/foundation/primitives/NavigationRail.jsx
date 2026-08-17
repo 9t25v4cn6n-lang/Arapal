@@ -205,7 +205,9 @@ export function NavigationRailItems({ shell }) {
             key={route.id}
             type="button"
             aria-label={rail?.label ?? route.label}
-            onClick={() => shell.navigate(rail?.routeId ?? route.id)}
+            onClick={() => (rail?.externalHash
+              ? shell.navigateExternal(rail.externalHash)
+              : shell.navigate(rail?.routeId ?? route.id))}
             onMouseEnter={() => setHoveredRouteId(route.id)}
             onMouseLeave={() => setHoveredRouteId(null)}
             style={getNavButtonStyle(shell.isNavExpanded, isActive, isHovered)}

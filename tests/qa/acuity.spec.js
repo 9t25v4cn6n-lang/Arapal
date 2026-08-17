@@ -90,6 +90,34 @@ test.describe('probe acuity — each rule proved on a known defect', () => {
     ).toContain('overlap')
   })
 
+  test('sees a container clipping content while its parent has room spare', async ({ page }) => {
+    const findings = await probeWith(page, `
+      <div style="display:flex;flex-direction:column;height:300px">
+        <div style="height:40px;font-size:14px;color:#0F172A">header</div>
+        <div style="flex:0 1 auto;height:80px;overflow-y:auto;scrollbar-width:none">
+          <div style="height:400px;font-size:14px;color:#0F172A">a long passage</div>
+        </div>
+      </div>`)
+    expect(
+      ruleIds(findings),
+      'unused room AND cut content at once means nothing claimed the slack',
+    ).toContain('slack-beside-clipped-content')
+  })
+
+  test('accepts a scroll region whose parent has no room to give', async ({ page }) => {
+    const findings = await probeWith(page, `
+      <div style="display:flex;flex-direction:column;height:120px">
+        <div style="height:40px;font-size:14px;color:#0F172A">header</div>
+        <div style="flex:1 1 auto;min-height:0;overflow-y:auto">
+          <div style="height:400px;font-size:14px;color:#0F172A">a long passage</div>
+        </div>
+      </div>`)
+    expect(
+      ruleIds(findings),
+      'a region that already fills its parent and scrolls is correct, not a defect',
+    ).not.toContain('slack-beside-clipped-content')
+  })
+
   test('sees text below the type floor', async ({ page }) => {
     const findings = await probeWith(page, `<p style="font-size:9px;color:#0F172A">tiny</p>`)
     expect(ruleIds(findings)).toContain('type-floor')

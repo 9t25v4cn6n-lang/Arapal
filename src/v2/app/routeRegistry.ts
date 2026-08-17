@@ -386,6 +386,36 @@ export const routeRegistry = {
       },
     },
   },
+
+  /**
+   * Exams — a rail destination with no V2 screen behind it, on purpose.
+   *
+   * Exams is production (§2.1 preserves the working legacy capability until a V2
+   * replacement reaches parity) but exists only on the legacy hash. Nothing in
+   * the V2 surface linked to it: no rail entry, no button, no link anywhere, so
+   * the shipping assessment capability was reachable only by typing #exams. A
+   * whole product area behind a URL nobody is told about is a dead end.
+   *
+   * `externalHash` sends the rail out to the legacy route. The entry carries no
+   * component because there is no V2 Exams to render, and AppV2 treats a
+   * component-less entry as unroutable so `#v2/exams` cannot resolve to it.
+   * When V2 Exams exists this becomes an ordinary entry and externalHash goes.
+   */
+  exams: {
+    id: 'exams',
+    label: 'Exams',
+    shell: {
+      rail: {
+        visible: true,
+        groupId: 'exams',
+        label: 'Exams',
+        shortLabel: 'EX',
+        iconKey: 'exams',
+        order: 50,
+        externalHash: 'exams',
+      },
+    },
+  },
 }
 
 export const defaultRouteId = 'projectHome'
