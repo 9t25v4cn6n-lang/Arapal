@@ -1,14 +1,14 @@
 {
- "generatedAt": "2026-08-17T08:08:26.008Z",
+ "generatedAt": "2026-08-17T08:45:12.086Z",
  "routes": 13,
  "frames": 4,
- "blocking": 302,
+ "blocking": 194,
  "byRule": {
-  "type-floor": 72,
+  "type-floor": 52,
   "scroll-hidden-majority": 9,
-  "contrast": 114,
-  "hit-target": 60,
-  "unnamed-control": 24,
+  "contrast": 66,
+  "hit-target": 24,
+  "unnamed-control": 20,
   "overlap": 23
  },
  "byRoute": {
@@ -19,11 +19,11 @@
   "v2-projectHome": 0,
   "v2-projects": 0,
   "v2-projectResearch": 18,
-  "v2-segmentationPasteNext": 32,
-  "v2-segmentationTransition": 12,
-  "v2-segmentationLoading": 20,
-  "v2-segmentationReview": 63,
-  "v2-segmentationSuccess": 12,
+  "v2-segmentationPasteNext": 0,
+  "v2-segmentationTransition": 0,
+  "v2-segmentationLoading": 4,
+  "v2-segmentationReview": 27,
+  "v2-segmentationSuccess": 0,
   "v2-studyWorkspace": 0
  },
  "blankRoutes": []

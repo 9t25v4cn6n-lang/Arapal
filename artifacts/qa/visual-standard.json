@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-17T08:08:26.008Z",
+ "generatedAt": "2026-08-17T08:45:12.086Z",
  "base": "http://localhost:5173",
  "routes": [
   "legacy-home",
@@ -23,14 +23,14 @@
   "1280x800"
  ],
  "totals": {
-  "blocking": 302,
-  "advisory": 48,
+  "blocking": 194,
+  "advisory": 45,
   "byRule": {
-   "type-floor": 72,
+   "type-floor": 52,
    "scroll-hidden-majority": 9,
-   "contrast": 114,
-   "hit-target": 60,
-   "unnamed-control": 24,
+   "contrast": 66,
+   "hit-target": 24,
+   "unnamed-control": 20,
    "overlap": 23
   },
   "byRoute": {
@@ -41,11 +41,11 @@
    "v2-projectHome": 0,
    "v2-projects": 0,
    "v2-projectResearch": 18,
-   "v2-segmentationPasteNext": 32,
-   "v2-segmentationTransition": 12,
-   "v2-segmentationLoading": 20,
-   "v2-segmentationReview": 63,
-   "v2-segmentationSuccess": 12,
+   "v2-segmentationPasteNext": 0,
+   "v2-segmentationTransition": 0,
+   "v2-segmentationLoading": 4,
+   "v2-segmentationReview": 27,
+   "v2-segmentationSuccess": 0,
    "v2-studyWorkspace": 0
   }
  },
@@ -549,180 +549,21 @@
    "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1440x900",
-   "ruleId": "type-floor",
-   "selector": "div",
-   "label": "1",
-   "sizePx": 10,
-   "minPx": 11
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "2",
-   "color": "rgb(132, 150, 174)",
-   "sizePx": 10,
-   "ratio": 2.7,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "Arapal intake",
-   "color": "rgba(0, 0, 0, 0.34)",
-   "sizePx": 11,
-   "ratio": 2.4,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "Preserved source",
-   "color": "rgba(37, 99, 235, 0.72)",
-   "sizePx": 11,
-   "ratio": 3,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "⌘",
-   "color": "rgba(0, 0, 0, 0.25)",
-   "sizePx": 11,
-   "ratio": 1.8,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "to paste",
-   "color": "rgba(0, 0, 0, 0.2)",
-   "sizePx": 11,
-   "ratio": 1.6,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "28 words",
-   "color": "rgba(0, 0, 0, 0.2)",
-   "sizePx": 11,
-   "ratio": 1.6,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1440x900",
    "ruleId": "type-drift",
    "offRampSizes": [
-    10,
     43.2
    ],
    "rampSize": 15
   },
   {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "unnamed-control",
-   "selector": "textarea",
-   "tag": "TEXTAREA",
-   "boxPx": "568.5x286.3"
-  },
-  {
-   "route": "v2-segmentationTransition",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "type-floor",
-   "selector": "div",
-   "label": "1",
-   "sizePx": 10,
-   "minPx": 11
-  },
-  {
-   "route": "v2-segmentationTransition",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "1",
-   "color": "rgb(255, 255, 255)",
-   "sizePx": 10,
-   "ratio": 1.3,
-   "required": 4.5
-  },
-  {
    "route": "v2-segmentationTransition",
    "app": "v2",
    "frame": "1440x900",
    "ruleId": "type-drift",
    "offRampSizes": [
-    10,
     66
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationTransition",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Review and edit segments",
-   "boxPx": "211.1x14",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "type-floor",
-   "selector": "div",
-   "label": "1",
-   "sizePx": 10,
-   "minPx": 11
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "1",
-   "color": "rgb(255, 255, 255)",
-   "sizePx": 10,
-   "ratio": 1.3,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "3",
-   "color": "rgb(132, 150, 174)",
-   "sizePx": 10,
-   "ratio": 2.7,
-   "required": 4.5
   },
   {
    "route": "v2-segmentationLoading",
@@ -742,20 +583,9 @@
    "frame": "1440x900",
    "ruleId": "type-drift",
    "offRampSizes": [
-    10,
     47.52
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Always skip this animation",
-   "boxPx": "199.3x13.2",
-   "minPx": 24
   },
   {
    "route": "v2-segmentationReview",
@@ -794,34 +624,12 @@
    "route": "v2-segmentationReview",
    "app": "v2",
    "frame": "1440x900",
-   "ruleId": "type-floor",
-   "selector": "div",
-   "label": "1",
-   "sizePx": 10,
-   "minPx": 11
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1440x900",
    "ruleId": "contrast",
    "selector": "div",
-   "label": "1",
+   "label": "2.2",
    "color": "rgb(255, 255, 255)",
-   "sizePx": 10,
-   "ratio": 1.3,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "· 24 words",
-   "color": "rgb(132, 150, 174)",
-   "sizePx": 13,
-   "ratio": 2.9,
+   "sizePx": 11,
+   "ratio": 3.2,
    "required": 4.5
   },
   {
@@ -840,54 +648,11 @@
    "route": "v2-segmentationReview",
    "app": "v2",
    "frame": "1440x900",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "Needs review",
-   "color": "rgb(217, 119, 6)",
-   "sizePx": 11,
-   "ratio": 3.2,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1440x900",
    "ruleId": "type-drift",
    "offRampSizes": [
-    10,
     47.52
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Edit",
-   "boxPx": "29.5x13.2",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Show source",
-   "boxPx": "95.5x13.2",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Collapse Opening movement",
-   "boxPx": "22x24",
-   "minPx": 24
   },
   {
    "route": "v2-segmentationReview",
@@ -909,77 +674,14 @@
    "minPx": 24
   },
   {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Collapse Route and supply check",
-   "boxPx": "22x24",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Collapse Camp rhythm",
-   "boxPx": "22x24",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Collapse Closing detail",
-   "boxPx": "22x24",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationSuccess",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "type-floor",
-   "selector": "div",
-   "label": "1",
-   "sizePx": 10,
-   "minPx": 11
-  },
-  {
-   "route": "v2-segmentationSuccess",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "1",
-   "color": "rgb(255, 255, 255)",
-   "sizePx": 10,
-   "ratio": 1.3,
-   "required": 4.5
-  },
-  {
    "route": "v2-segmentationSuccess",
    "app": "v2",
    "frame": "1440x900",
    "ruleId": "type-drift",
    "offRampSizes": [
-    10,
     66
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationSuccess",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Review and edit segments",
-   "boxPx": "211.1x14",
-   "minPx": 24
   },
   {
    "route": "v2-studyWorkspace",
@@ -1478,180 +1180,21 @@
    "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1366x768",
-   "ruleId": "type-floor",
-   "selector": "div",
-   "label": "1",
-   "sizePx": 10,
-   "minPx": 11
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "2",
-   "color": "rgb(132, 150, 174)",
-   "sizePx": 10,
-   "ratio": 2.7,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "Arapal intake",
-   "color": "rgba(0, 0, 0, 0.34)",
-   "sizePx": 11,
-   "ratio": 2.4,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "Preserved source",
-   "color": "rgba(37, 99, 235, 0.72)",
-   "sizePx": 11,
-   "ratio": 3,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "⌘",
-   "color": "rgba(0, 0, 0, 0.25)",
-   "sizePx": 11,
-   "ratio": 1.8,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "to paste",
-   "color": "rgba(0, 0, 0, 0.2)",
-   "sizePx": 11,
-   "ratio": 1.6,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "28 words",
-   "color": "rgba(0, 0, 0, 0.2)",
-   "sizePx": 11,
-   "ratio": 1.6,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1366x768",
    "ruleId": "type-drift",
    "offRampSizes": [
-    10,
     40.98
    ],
    "rampSize": 15
   },
   {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "unnamed-control",
-   "selector": "textarea",
-   "tag": "TEXTAREA",
-   "boxPx": "532.8x168.3"
-  },
-  {
-   "route": "v2-segmentationTransition",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "type-floor",
-   "selector": "div",
-   "label": "1",
-   "sizePx": 10,
-   "minPx": 11
-  },
-  {
-   "route": "v2-segmentationTransition",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "1",
-   "color": "rgb(255, 255, 255)",
-   "sizePx": 10,
-   "ratio": 1.3,
-   "required": 4.5
-  },
-  {
    "route": "v2-segmentationTransition",
    "app": "v2",
    "frame": "1366x768",
    "ruleId": "type-drift",
    "offRampSizes": [
-    10,
     66
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationTransition",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Review and edit segments",
-   "boxPx": "211.1x14",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "type-floor",
-   "selector": "div",
-   "label": "1",
-   "sizePx": 10,
-   "minPx": 11
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "1",
-   "color": "rgb(255, 255, 255)",
-   "sizePx": 10,
-   "ratio": 1.3,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "3",
-   "color": "rgb(132, 150, 174)",
-   "sizePx": 10,
-   "ratio": 2.7,
-   "required": 4.5
   },
   {
    "route": "v2-segmentationLoading",
@@ -1671,20 +1214,9 @@
    "frame": "1366x768",
    "ruleId": "type-drift",
    "offRampSizes": [
-    10,
     45.078
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Always skip this animation",
-   "boxPx": "199.3x13.2",
-   "minPx": 24
   },
   {
    "route": "v2-segmentationReview",
@@ -1693,9 +1225,9 @@
    "ruleId": "scroll-hidden-majority",
    "selector": "div",
    "label": "ReviewReview & refineCheck AraPal’s proposed",
-   "hiddenPx": 909,
+   "hiddenPx": 926,
    "shownPx": 718,
-   "hiddenRatio": "55.9%"
+   "hiddenRatio": "56.3%"
   },
   {
    "route": "v2-segmentationReview",
@@ -1734,34 +1266,12 @@
    "route": "v2-segmentationReview",
    "app": "v2",
    "frame": "1366x768",
-   "ruleId": "type-floor",
-   "selector": "div",
-   "label": "1",
-   "sizePx": 10,
-   "minPx": 11
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1366x768",
    "ruleId": "contrast",
    "selector": "div",
-   "label": "1",
+   "label": "2.2",
    "color": "rgb(255, 255, 255)",
-   "sizePx": 10,
-   "ratio": 1.3,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "· 24 words",
-   "color": "rgb(132, 150, 174)",
-   "sizePx": 13,
-   "ratio": 2.9,
+   "sizePx": 11,
+   "ratio": 3.2,
    "required": 4.5
   },
   {
@@ -1780,54 +1290,11 @@
    "route": "v2-segmentationReview",
    "app": "v2",
    "frame": "1366x768",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "Needs review",
-   "color": "rgb(217, 119, 6)",
-   "sizePx": 11,
-   "ratio": 3.2,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1366x768",
    "ruleId": "type-drift",
    "offRampSizes": [
-    10,
     45.078
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Edit",
-   "boxPx": "29.5x13.2",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Show source",
-   "boxPx": "95.5x13.2",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Collapse Opening movement",
-   "boxPx": "22x24",
-   "minPx": 24
   },
   {
    "route": "v2-segmentationReview",
@@ -1849,77 +1316,14 @@
    "minPx": 24
   },
   {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Collapse Route and supply check",
-   "boxPx": "22x24",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Collapse Camp rhythm",
-   "boxPx": "22x24",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Collapse Closing detail",
-   "boxPx": "22x24",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationSuccess",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "type-floor",
-   "selector": "div",
-   "label": "1",
-   "sizePx": 10,
-   "minPx": 11
-  },
-  {
-   "route": "v2-segmentationSuccess",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "1",
-   "color": "rgb(255, 255, 255)",
-   "sizePx": 10,
-   "ratio": 1.3,
-   "required": 4.5
-  },
-  {
    "route": "v2-segmentationSuccess",
    "app": "v2",
    "frame": "1366x768",
    "ruleId": "type-drift",
    "offRampSizes": [
-    10,
     66
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationSuccess",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Review and edit segments",
-   "boxPx": "211.1x14",
-   "minPx": 24
   },
   {
    "route": "v2-studyWorkspace",
@@ -2415,182 +1819,14 @@
    "rampSize": 15
   },
   {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "type-floor",
-   "selector": "div",
-   "label": "1",
-   "sizePx": 10,
-   "minPx": 11
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "2",
-   "color": "rgb(132, 150, 174)",
-   "sizePx": 10,
-   "ratio": 2.7,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "Arapal intake",
-   "color": "rgba(0, 0, 0, 0.34)",
-   "sizePx": 11,
-   "ratio": 2.4,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "Preserved source",
-   "color": "rgba(37, 99, 235, 0.72)",
-   "sizePx": 11,
-   "ratio": 3,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "⌘",
-   "color": "rgba(0, 0, 0, 0.25)",
-   "sizePx": 11,
-   "ratio": 1.8,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "to paste",
-   "color": "rgba(0, 0, 0, 0.2)",
-   "sizePx": 11,
-   "ratio": 1.6,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "28 words",
-   "color": "rgba(0, 0, 0, 0.2)",
-   "sizePx": 11,
-   "ratio": 1.6,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "type-drift",
-   "offRampSizes": [
-    10
-   ],
-   "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "unnamed-control",
-   "selector": "textarea",
-   "tag": "TEXTAREA",
-   "boxPx": "795.4x395.1"
-  },
-  {
-   "route": "v2-segmentationTransition",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "type-floor",
-   "selector": "div",
-   "label": "1",
-   "sizePx": 10,
-   "minPx": 11
-  },
-  {
-   "route": "v2-segmentationTransition",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "1",
-   "color": "rgb(255, 255, 255)",
-   "sizePx": 10,
-   "ratio": 1.3,
-   "required": 4.5
-  },
-  {
    "route": "v2-segmentationTransition",
    "app": "v2",
    "frame": "1920x1080",
    "ruleId": "type-drift",
    "offRampSizes": [
-    10,
     66
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationTransition",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Review and edit segments",
-   "boxPx": "211.1x14",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "type-floor",
-   "selector": "div",
-   "label": "1",
-   "sizePx": 10,
-   "minPx": 11
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "1",
-   "color": "rgb(255, 255, 255)",
-   "sizePx": 10,
-   "ratio": 1.3,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "3",
-   "color": "rgb(132, 150, 174)",
-   "sizePx": 10,
-   "ratio": 2.7,
-   "required": 4.5
   },
   {
    "route": "v2-segmentationLoading",
@@ -2605,57 +1841,15 @@
    "required": 4.5
   },
   {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "type-drift",
-   "offRampSizes": [
-    10
-   ],
-   "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Always skip this animation",
-   "boxPx": "199.3x13.2",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "type-floor",
-   "selector": "div",
-   "label": "1",
-   "sizePx": 10,
-   "minPx": 11
-  },
-  {
    "route": "v2-segmentationReview",
    "app": "v2",
    "frame": "1920x1080",
    "ruleId": "contrast",
    "selector": "div",
-   "label": "1",
+   "label": "2.2",
    "color": "rgb(255, 255, 255)",
-   "sizePx": 10,
-   "ratio": 1.3,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "· 24 words",
-   "color": "rgb(132, 150, 174)",
-   "sizePx": 13,
-   "ratio": 2.9,
+   "sizePx": 11,
+   "ratio": 3.2,
    "required": 4.5
   },
   {
@@ -2669,58 +1863,6 @@
    "sizePx": 11,
    "ratio": 4.5,
    "required": 4.5
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "Needs review",
-   "color": "rgb(217, 119, 6)",
-   "sizePx": 11,
-   "ratio": 3.2,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "type-drift",
-   "offRampSizes": [
-    10
-   ],
-   "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Edit",
-   "boxPx": "29.5x13.2",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Show source",
-   "boxPx": "95.5x13.2",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Collapse Opening movement",
-   "boxPx": "22x24",
-   "minPx": 24
   },
   {
    "route": "v2-segmentationReview",
@@ -2742,77 +1884,14 @@
    "minPx": 24
   },
   {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Collapse Route and supply check",
-   "boxPx": "22x24",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Collapse Camp rhythm",
-   "boxPx": "22x24",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Collapse Closing detail",
-   "boxPx": "22x24",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationSuccess",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "type-floor",
-   "selector": "div",
-   "label": "1",
-   "sizePx": 10,
-   "minPx": 11
-  },
-  {
-   "route": "v2-segmentationSuccess",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "1",
-   "color": "rgb(255, 255, 255)",
-   "sizePx": 10,
-   "ratio": 1.3,
-   "required": 4.5
-  },
-  {
    "route": "v2-segmentationSuccess",
    "app": "v2",
    "frame": "1920x1080",
    "ruleId": "type-drift",
    "offRampSizes": [
-    10,
     66
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationSuccess",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Review and edit segments",
-   "boxPx": "211.1x14",
-   "minPx": 24
   },
   {
    "route": "v2-studyWorkspace",
@@ -3421,180 +2500,21 @@
    "route": "v2-segmentationPasteNext",
    "app": "v2",
    "frame": "1280x800",
-   "ruleId": "type-floor",
-   "selector": "div",
-   "label": "1",
-   "sizePx": 10,
-   "minPx": 11
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "2",
-   "color": "rgb(132, 150, 174)",
-   "sizePx": 10,
-   "ratio": 2.7,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "Arapal intake",
-   "color": "rgba(0, 0, 0, 0.34)",
-   "sizePx": 11,
-   "ratio": 2.4,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "Preserved source",
-   "color": "rgba(37, 99, 235, 0.72)",
-   "sizePx": 11,
-   "ratio": 3,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "⌘",
-   "color": "rgba(0, 0, 0, 0.25)",
-   "sizePx": 11,
-   "ratio": 1.8,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "to paste",
-   "color": "rgba(0, 0, 0, 0.2)",
-   "sizePx": 11,
-   "ratio": 1.6,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "28 words",
-   "color": "rgba(0, 0, 0, 0.2)",
-   "sizePx": 11,
-   "ratio": 1.6,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1280x800",
    "ruleId": "type-drift",
    "offRampSizes": [
-    10,
     38.4
    ],
    "rampSize": 15
   },
   {
-   "route": "v2-segmentationPasteNext",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "unnamed-control",
-   "selector": "textarea",
-   "tag": "TEXTAREA",
-   "boxPx": "491.4x197.3"
-  },
-  {
-   "route": "v2-segmentationTransition",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "type-floor",
-   "selector": "div",
-   "label": "1",
-   "sizePx": 10,
-   "minPx": 11
-  },
-  {
-   "route": "v2-segmentationTransition",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "1",
-   "color": "rgb(255, 255, 255)",
-   "sizePx": 10,
-   "ratio": 1.3,
-   "required": 4.5
-  },
-  {
    "route": "v2-segmentationTransition",
    "app": "v2",
    "frame": "1280x800",
    "ruleId": "type-drift",
    "offRampSizes": [
-    10,
     64
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationTransition",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Review and edit segments",
-   "boxPx": "211.1x14",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "type-floor",
-   "selector": "div",
-   "label": "1",
-   "sizePx": 10,
-   "minPx": 11
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "1",
-   "color": "rgb(255, 255, 255)",
-   "sizePx": 10,
-   "ratio": 1.3,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "3",
-   "color": "rgb(132, 150, 174)",
-   "sizePx": 10,
-   "ratio": 2.7,
-   "required": 4.5
   },
   {
    "route": "v2-segmentationLoading",
@@ -3614,20 +2534,9 @@
    "frame": "1280x800",
    "ruleId": "type-drift",
    "offRampSizes": [
-    10,
     42.24
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Always skip this animation",
-   "boxPx": "199.3x13.2",
-   "minPx": 24
   },
   {
    "route": "v2-segmentationReview",
@@ -3636,9 +2545,9 @@
    "ruleId": "scroll-hidden-majority",
    "selector": "div",
    "label": "ReviewReview & refineCheck AraPal’s proposed",
-   "hiddenPx": 904,
+   "hiddenPx": 921,
    "shownPx": 750,
-   "hiddenRatio": "54.7%"
+   "hiddenRatio": "55.1%"
   },
   {
    "route": "v2-segmentationReview",
@@ -3677,34 +2586,12 @@
    "route": "v2-segmentationReview",
    "app": "v2",
    "frame": "1280x800",
-   "ruleId": "type-floor",
-   "selector": "div",
-   "label": "1",
-   "sizePx": 10,
-   "minPx": 11
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1280x800",
    "ruleId": "contrast",
    "selector": "div",
-   "label": "1",
+   "label": "2.2",
    "color": "rgb(255, 255, 255)",
-   "sizePx": 10,
-   "ratio": 1.3,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "· 24 words",
-   "color": "rgb(132, 150, 174)",
-   "sizePx": 13,
-   "ratio": 2.9,
+   "sizePx": 11,
+   "ratio": 3.2,
    "required": 4.5
   },
   {
@@ -3723,54 +2610,11 @@
    "route": "v2-segmentationReview",
    "app": "v2",
    "frame": "1280x800",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "Needs review",
-   "color": "rgb(217, 119, 6)",
-   "sizePx": 11,
-   "ratio": 3.2,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1280x800",
    "ruleId": "type-drift",
    "offRampSizes": [
-    10,
     42.24
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Edit",
-   "boxPx": "29.5x13.2",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Show source",
-   "boxPx": "95.5x13.2",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Collapse Opening movement",
-   "boxPx": "22x24",
-   "minPx": 24
   },
   {
    "route": "v2-segmentationReview",
@@ -3792,77 +2636,14 @@
    "minPx": 24
   },
   {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Collapse Route and supply check",
-   "boxPx": "22x24",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Collapse Camp rhythm",
-   "boxPx": "22x24",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Collapse Closing detail",
-   "boxPx": "22x24",
-   "minPx": 24
-  },
-  {
-   "route": "v2-segmentationSuccess",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "type-floor",
-   "selector": "div",
-   "label": "1",
-   "sizePx": 10,
-   "minPx": 11
-  },
-  {
-   "route": "v2-segmentationSuccess",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "1",
-   "color": "rgb(255, 255, 255)",
-   "sizePx": 10,
-   "ratio": 1.3,
-   "required": 4.5
-  },
-  {
    "route": "v2-segmentationSuccess",
    "app": "v2",
    "frame": "1280x800",
    "ruleId": "type-drift",
    "offRampSizes": [
-    10,
     64
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationSuccess",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "hit-target",
-   "selector": "button",
-   "label": "Review and edit segments",
-   "boxPx": "211.1x14",
-   "minPx": 24
   },
   {
    "route": "v2-studyWorkspace",

@@ -460,7 +460,13 @@ function FlowSecondaryButton({ children, icon = null, onClick, variant = 'ghost'
         borderRadius: isPill ? radius.pill : 0,
         background: isPill ? flowChrome.whitePillSurface : 'transparent',
         color: colors.textSoft,
-        minHeight: isPill ? '48px' : 'auto',
+        // The ghost variant used to declare minHeight: 'auto', which rendered a
+        // 13px-tall hit target — and because it was an inline style it also beat
+        // the document-level 24px floor in index.css, so the one place that was
+        // supposed to catch exactly this could not. 44px is the comfortable
+        // target [DECISION]; the background is transparent, so the extra height
+        // costs nothing visually and buys a target a person can actually hit.
+        minHeight: isPill ? '48px' : '44px',
         minWidth: isPill ? '136px' : 0,
         padding: isPill ? `0 ${spacing[24]}` : '0',
         display: 'inline-flex',
@@ -480,9 +486,12 @@ function FlowSecondaryButton({ children, icon = null, onClick, variant = 'ghost'
 }
 
 function StatusPill({ children, value = null, tone = 'soft', size = 'default', debugItem }) {
+  // successStrong/reviewStrong, not success/review: the token file records the
+  // plain pair as "fills and icons only — both fail 4.5:1 as text", and this
+  // pill's tone IS its text colour. "Needs review" was one of them.
   const toneColor = {
-    success: colors.success,
-    review: colors.review,
+    success: colors.successStrong,
+    review: colors.reviewStrong,
     accent: colors.accentStrong,
     soft: colors.textSoft,
   }[tone] ?? colors.textSoft
@@ -1097,6 +1106,9 @@ function GroupTitleInput({ group, stale = false, onChange }) {
           type="text"
           autoFocus
           value={draft}
+          // The field had no accessible name and measured 200x21.4 — nameless to
+          // a screen reader and under the 24px target floor.
+          aria-label={`Rename meaning group ${group.number}`}
           data-debug-item="group_title_input"
           onClick={(event) => event.stopPropagation()}
           onFocus={(event) => event.target.select()}
@@ -1120,6 +1132,7 @@ function GroupTitleInput({ group, stale = false, onChange }) {
             // it, and neither is decided independently of the container.
             flex: '1 1 auto',
             width: 'auto',
+            minHeight: spacing[24],
             border: `1px solid ${flowChrome.blueLine}`,
             borderRadius: radius[10],
             background: colors.surfacePrimary,
@@ -1230,7 +1243,7 @@ export function SegmentationReviewSourceTray({ sourceMode, onSourceModeChange, o
       title={null}
       barStart={
         <span style={flowType.panelHeaderTitle}>
-          Source text <span style={{ color: colors.textFaint }}>· 24 words</span>
+          Source text <span style={{ color: colors.textSoft }}>· 24 words</span>
         </span>
       }
       barEnd={
@@ -1336,6 +1349,12 @@ export function ReviewMarkerPanel({
                     background: flowChrome.transparent,
                     padding: spacing[4],
                     display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    // A 14px icon in 4px of padding measured 22x24 — two pixels
+                    // under the WCAG 2.5.8 floor on all four chapter rows.
+                    minWidth: spacing[24],
+                    minHeight: spacing[24],
                     color: colors.textFaint,
                     cursor: 'pointer',
                   }}
@@ -1475,7 +1494,8 @@ export function SegmentationReviewSelectedToolbar({
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: hasSelection ? colors.accentBase : colors.textFaint,
+            // textFaint is icon-only; this span renders the selected range.
+            color: hasSelection ? colors.accentBase : colors.textSoft,
             ...flowType.toolbarSelection,
           }}
         >
@@ -1852,6 +1872,7 @@ function SegmentAdvancedEditor({ segment, onTextChange, onClose }) {
         dir="rtl"
         lang="ar"
         value={segment.text}
+        aria-label={`Edit the Arabic text of segment ${segment.displayNumber ?? segment.id}`}
         onChange={(event) => onTextChange?.(segment.id, event.target.value)}
         style={{
           width: '100%',

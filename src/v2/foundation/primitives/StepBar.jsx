@@ -1,6 +1,25 @@
 import { colors, radius, spacing, typography } from '../tokens'
 
-export function StepNumberBadge({ children, background, color, style = {} }) {
+/**
+ * Contrast-safe background/foreground pairs for a step badge.
+ *
+ * The pairing lives here rather than at each call site because the call sites
+ * had got it wrong in a way nobody could see by eye: `complete` drew white text
+ * on an 18%-opacity blue, which resolves to roughly #DDE8FB over the page — a
+ * 1.2:1 ratio, invisible. `pending` drew textFaint, which the token file already
+ * marks DECORATIVE AND ICON USE ONLY.
+ *
+ * A caller now names a state and cannot mismatch the pair.
+ */
+const STEP_BADGE_TONES = {
+  current: { background: colors.accentBase, color: '#FFFFFF' },
+  complete: { background: colors.accentMist, color: colors.accentStrong },
+  pending: { background: colors.bgBottom, color: colors.textMuted },
+}
+
+export function StepNumberBadge({ children, tone = 'pending', background, color, style = {} }) {
+  const paired = STEP_BADGE_TONES[tone] ?? STEP_BADGE_TONES.pending
+
   return (
     <div
       style={{
@@ -11,12 +30,14 @@ export function StepNumberBadge({ children, background, color, style = {} }) {
         alignItems: 'center',
         justifyContent: 'center',
         fontFamily: typography.eyebrowLabel.fontFamily,
-        fontSize: '10px',
+        // 11px is the type floor [DECISION]. Was 10px, on every step of every
+        // screen in the segmentation flow.
+        fontSize: '11px',
         fontWeight: 700,
         lineHeight: typography.eyebrowLabel.lineHeight,
         letterSpacing: '0.01em',
-        background,
-        color,
+        background: background ?? paired.background,
+        color: color ?? paired.color,
         ...style,
       }}
     >
@@ -42,29 +63,17 @@ export default function StepBar({ steps = [], currentIndex = 0, debugItem }) {
 
         return (
           <div key={item.id ?? item.label ?? index} style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[8] }}>
-            <StepNumberBadge
-              background={
-                state === 'current'
-                  ? colors.accentBase
-                  : state === 'complete'
-                    ? 'rgba(37, 99, 235, 0.18)'
-                    : 'rgba(148, 163, 184, 0.14)'
-              }
-              color={state === 'pending' ? colors.textFaint : '#ffffff'}
-            >
+            <StepNumberBadge tone={state}>
               {index + 1}
             </StepNumberBadge>
             <span
               style={{
                 ...typography.eyebrowLabel,
-                color:
-                  state === 'current'
-                    ? colors.textSoft
-                    : state === 'complete'
-                      ? colors.textBody
-                      : colors.textFaint,
+                // textSoft is the lightest value permitted for text; textFaint
+                // is decorative only, and the 0.82 opacity on top of it took the
+                // pending label further below AA rather than nearer it.
+                color: state === 'complete' ? colors.textBody : colors.textSoft,
                 whiteSpace: 'nowrap',
-                opacity: state === 'pending' ? 0.82 : 1,
               }}
             >
               {item.label}
