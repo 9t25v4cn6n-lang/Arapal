@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, FileText, Plus, Sparkles } from 'lucide-react'
+import { ArrowRight, BookOpen, Plus, Sparkles } from 'lucide-react'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import PrimaryCTA from '../../foundation/primitives/PrimaryCTA'
 import { colors, radius, spacing, typography } from '../../foundation/tokens'
@@ -81,24 +81,32 @@ export default function ProjectHomeScreen({ route, shell }) {
 
 // ── states ───────────────────────────────────────────────────────────────────
 
+/**
+ * The empty state states the invitation once.
+ *
+ * It used to wrap a card around a SECOND title and lead — "Start from a source /
+ * Paste any Arabic text…" directly beneath the page's own "Add your first source.
+ * / Paste a text and Arapal will turn it into study-ready segments." The same
+ * thing said twice, ten pixels apart, on the screen whose own subtitle is "your
+ * work and one clear next action".
+ *
+ * R3 states it once on the backdrop with a single action and no card, and that is
+ * the better decision. The card and the duplicate copy are gone. The sample route
+ * stays, because it is a real capability a first-time user wants and R3 simply
+ * does not offer it — but it reads as secondary, and its caveat sits with it
+ * rather than orphaned below a card.
+ */
 function EmptyState({ onAddSource, onUseSample }) {
   return (
-    <div style={{ display: 'grid', gap: spacing[20], justifyItems: 'start', maxWidth: '640px' }}>
-      <div style={{ ...card, display: 'grid', gap: spacing[16], width: '100%' }}>
-        <span style={{ ...iconWell }}><FileText size={22} strokeWidth={1.8} /></span>
-        <div style={{ display: 'grid', gap: spacing[4] }}>
-          <strong style={{ ...cardTitle }}>Start from a source</strong>
-          <span style={{ ...meta }}>Paste any Arabic text. You choose how finely it is segmented.</span>
-        </div>
-        <div style={{ display: 'flex', gap: spacing[12], flexWrap: 'wrap' }}>
-          <PrimaryCTA icon={<Plus size={16} strokeWidth={1.9} />} onClick={onAddSource} minWidth={168}>
-            Add source
-          </PrimaryCTA>
-          <button type="button" style={{ ...ghostButton }} onClick={onUseSample}>
-            <Sparkles size={15} strokeWidth={1.9} />
-            Explore with a sample
-          </button>
-        </div>
+    <div style={{ display: 'grid', gap: spacing[16], justifyItems: 'start', maxWidth: '640px' }}>
+      <div style={{ display: 'flex', gap: spacing[12], flexWrap: 'wrap', alignItems: 'center' }}>
+        <PrimaryCTA icon={<Plus size={16} strokeWidth={1.9} />} onClick={onAddSource} minWidth={168}>
+          Add source
+        </PrimaryCTA>
+        <button type="button" style={{ ...ghostButton }} onClick={onUseSample}>
+          <Sparkles size={15} strokeWidth={1.9} />
+          Explore with a sample
+        </button>
       </div>
       <p style={{ ...meta, margin: 0 }}>
         Sample content is clearly labelled and can be deleted at any time.
@@ -302,13 +310,3 @@ const ghostButton = {
   cursor: 'pointer',
 }
 
-const iconWell = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '44px',
-  height: '44px',
-  borderRadius: `${radius[12]}`,
-  background: colors.accentWash,
-  color: colors.accentStrong,
-}
