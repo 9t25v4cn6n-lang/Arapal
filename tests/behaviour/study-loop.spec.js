@@ -167,6 +167,76 @@ test.describe('core study loop', () => {
     expect(await body(page)).not.toMatch(/from research/i)
   })
 
+  // ── Parity with legacy Study ────────────────────────────────────────────────
+  //
+  // legacy-capabilities.spec.js pins three Study behaviours that had no V2
+  // counterpart here, and its own doctrine is that parity is proved by BOTH
+  // assertions passing rather than by swapping one for the other. These are the
+  // missing halves. They are written against the V2 surface — accessible names
+  // and the store — not by translating legacy selectors.
+
+  test('parity: the support rail carries guidance, lexicography and phrasing', async ({ page }) => {
+    await openStudy(page)
+    const text = await body(page)
+    // Legacy equivalent: 'support cards swap between pre- and post-submission sets'.
+    // The pre-submission set is what parity requires; V2 additionally offers each
+    // card floated or fullscreen, which legacy cannot do.
+    expect(text).toMatch(/Guidance/i)
+    expect(text).toMatch(/Lexicography/i)
+    expect(text).toMatch(/Phrasing/i)
+
+    for (const name of [/expand guidance/i, /float guidance/i, /open guidance fullscreen/i]) {
+      await expect(
+        page.getByRole('button', { name }),
+        'V2 exposes support modes legacy has no equivalent for',
+      ).toHaveCount(1)
+    }
+  })
+
+  test('parity: the discussion companion opens and closes', async ({ page }) => {
+    await openStudy(page)
+    // Legacy equivalent: 'discussion panel opens docked and can be floated'.
+    // Matched on the accessible name, because the control is LABELLED "Discuss
+    // this segment" and RENDERS "Discuss" — the mismatch that made the visual
+    // suite record this state as unreachable for weeks.
+    await page.getByRole('button', { name: /discuss this segment/i }).click()
+    await page.waitForTimeout(600)
+    expect(await body(page)).toMatch(/study companion/i)
+
+    await page.getByRole('button', { name: /hide the discussion/i }).click()
+    await page.waitForTimeout(600)
+    expect(await body(page), 'the companion must be dismissible, not a one-way door')
+      .not.toMatch(/start the conversation/i)
+  })
+
+  test('parity: a submitted segment is marked in the rail and counted', async ({ page }) => {
+    await openStudy(page)
+    // Legacy equivalent: 'segment 1.3 fails on first submission and passes on the
+    // second' — the part that matters for parity is that an outcome is recorded
+    // and shown. This is also the regression test for the defect where the rail
+    // read a fixture, so finished work never appeared anywhere.
+    await editor(page).fill('Absolute water is purifying.')
+    await page.waitForTimeout(300)
+    await page.getByRole('button', { name: /^submit$/i }).click()
+    await page.waitForTimeout(1200)
+
+    await page.reload({ waitUntil: 'domcontentloaded' })
+    await page.waitForTimeout(2400)
+
+    const marked = await page.evaluate(() => {
+      const row = [...document.querySelectorAll('.study-v2__segmentRow')]
+        .find((r) => /First segment/.test(r.textContent))
+      return String(row?.querySelector('.study-v2__segmentState')?.className ?? '')
+    })
+    expect(marked, 'the rail must show the segment as submitted').toMatch(/is-submitted/)
+
+    const progress = await page.evaluate(() => {
+      const el = document.querySelector('[data-debug-item="study_segment_progress"]')
+      return el ? el.innerText.replace(/\s+/g, ' ') : ''
+    })
+    expect(progress, 'the counter must move, not sit at zero').toMatch(/1 \/ 2/)
+  })
+
   test('with no project the route still renders its reference content', async ({ page }) => {
     await page.goto('/?chrome=0#v2/studyWorkspace', { waitUntil: 'domcontentloaded' })
     await page.evaluate(() => { localStorage.clear(); sessionStorage.clear() })
