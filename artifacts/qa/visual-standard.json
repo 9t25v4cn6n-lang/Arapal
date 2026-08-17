@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-17T14:38:27.484Z",
+ "generatedAt": "2026-08-17T16:52:01.605Z",
  "base": "http://localhost:5173",
  "routes": [
   "legacy-home",
@@ -23,8 +23,8 @@
   "1280x800"
  ],
  "totals": {
-  "blocking": 131,
-  "productionBlocking": 5,
+  "blocking": 126,
+  "productionBlocking": 0,
   "referenceBlocking": 126,
   "advisory": 41,
   "byRule": {
@@ -32,8 +32,7 @@
    "contrast": 40,
    "hit-target": 20,
    "unnamed-control": 16,
-   "overlap": 14,
-   "control-unreachable": 5
+   "overlap": 14
   },
   "byRoute": {
    "legacy-home": 19,
@@ -46,7 +45,7 @@
    "v2-segmentationPasteNext": 0,
    "v2-segmentationTransition": 0,
    "v2-segmentationLoading": 0,
-   "v2-segmentationReview": 5,
+   "v2-segmentationReview": 0,
    "v2-segmentationSuccess": 0,
    "v2-studyWorkspace": 0
   }
@@ -966,30 +965,6 @@
     45.078
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "surface": "production",
-   "frame": "1366x768",
-   "ruleId": "control-unreachable",
-   "selector": "button",
-   "label": "Remove",
-   "escapePx": 56.8,
-   "top": 784.8,
-   "bottom": 824.8
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "surface": "production",
-   "frame": "1366x768",
-   "ruleId": "control-unreachable",
-   "selector": "button",
-   "label": "Float toolbar",
-   "escapePx": 113.8,
-   "top": 841.8,
-   "bottom": 881.8
   },
   {
    "route": "v2-segmentationReview",
@@ -2024,42 +1999,6 @@
     42.24
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "surface": "production",
-   "frame": "1280x800",
-   "ruleId": "control-unreachable",
-   "selector": "button",
-   "label": "Advanced edit",
-   "escapePx": 21,
-   "top": 781,
-   "bottom": 821
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "surface": "production",
-   "frame": "1280x800",
-   "ruleId": "control-unreachable",
-   "selector": "button",
-   "label": "Remove",
-   "escapePx": 78,
-   "top": 838,
-   "bottom": 878
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "surface": "production",
-   "frame": "1280x800",
-   "ruleId": "control-unreachable",
-   "selector": "button",
-   "label": "Float toolbar",
-   "escapePx": 135,
-   "top": 895,
-   "bottom": 935
   },
   {
    "route": "v2-segmentationReview",

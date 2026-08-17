@@ -220,7 +220,26 @@ Recorded in `FIGMA-SPEC.md` §3.2. The two that cost the most time:
 - `resize()` after setting `layoutSizing* = 'FILL'` silently reverts the node to FIXED.
 - `setBoundVariableForPaint()` returns a paint whose literal colour is black with the alias attached; component nodes resolve it, **instance children render black.** Seed the paint with the variable's resolved RGB.
 
-## 2026-08-17 · Open defect: review toolbar reachability on short frames
+## 2026-08-17 · RESOLVED: review toolbar reachability on short frames
+
+Fixed, not accepted. The 5 `control-unreachable` findings are ratcheted to 0 and
+the production surface is 0 **with vertical reachability enforced**.
+
+The palette is now `position: fixed` in the reserved gutter, bounded by
+`reviewToolbarViewportReserve`. Sticky could not work: it lives in the document
+flow, so at rest its band began after the intro and source tray — about 314px on
+a 768-tall frame for 570px of tools — and no height cap fixes a bad starting
+point. Fixed makes the band the viewport, identical scrolled or not.
+
+One recorded compromise: `right` uses the page's own inline inset rather than
+re-deriving the content box. Re-deriving would mean restating the shell's rail
+width and centring cap in a second place, and duplicated shell arithmetic is what
+put this toolbar on the content originally. Below ~1460px this lands exactly
+where the in-flow version did; above it the toolbar sits further into the margin
+than the content. Verified as no overlap at 1920×1080, so it is a cosmetic
+detachment at one validation frame, not a collision.
+
+### Superseded diagnosis (kept for the reasoning)
 
 **Tracked debt, not hidden:** 5 `control-unreachable` findings on
 `v2-segmentationReview` at 1366×768 and 1280×800, recorded in

@@ -1515,29 +1515,16 @@ export function SegmentationReviewSelectedToolbar({
       onToggleFloating={onToggleFloating}
       debugItem="selected_segment_toolbar"
       style={isFloating ? undefined : {
-        // Moves into the gutter reviewPagePadding reserves for it — the same
-        // value, from the same constant, so the two cannot drift apart. The old
-        // expression clamped a translation derived from (100vw - 1400px) / 2,
-        // which is a guess about how much page margin happens to be left over;
-        // at 1440 the answer was "not enough", so the toolbar simply sat on the
-        // content it was meant to sit beside.
-        transform: `translateX(${flowMetrics.reviewToolbarGutter})`,
-        zIndex: 32,
-        // The palette must fit the frame it travels with.
+        // Placement is the region's job now — it is fixed in the reserved gutter,
+        // so there is no translateX here. The old transform existed to shunt a
+        // sticky toolbar sideways into that gutter; keeping it would shift a
+        // fixed element a second time.
         //
-        // Its height is data-dependent — the tool list grows with what is
-        // selected — and it was unbounded, so at 1280x800 it ran 148px past the
-        // fold with delete and float permanently unpressable, and sat 84px on top
-        // of the Approve bar. Being sticky is what made that unrecoverable:
-        // scrolling moves the toolbar too, so nothing brings the lost half back.
-        //
-        // The reserve is the chrome this lane genuinely shares with: the shell
-        // header, the page's own top inset, and the docked action bar plus its
-        // clearance. Overflow scrolls, with the fade the standard requires so a
-        // cut list still says there is more.
-        // Bounded by the band the region now provides rather than by the
-        // viewport, so the two cannot disagree about where the bottom is.
-        maxHeight: '100%',
+        // Height stays this element's concern: the tool list grows with what is
+        // selected, so it fills the band the region grants and scrolls past it,
+        // with the fade the standard requires so a cut list still says there is
+        // more.
+        height: '100%',
         overflowY: 'auto',
         scrollbarWidth: 'none',
         maskImage: 'linear-gradient(to bottom, #000 calc(100% - 20px), transparent 100%)',

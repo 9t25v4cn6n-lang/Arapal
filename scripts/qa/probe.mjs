@@ -274,7 +274,22 @@ export function evaluate(config) {
       const bDocked = !!B.el.closest(DOCKED_CHROME_SELECTOR)
       const aInteractive = A.el.matches(FOCUSABLE) || !!A.el.closest('button,a')
       const bInteractive = B.el.matches(FOCUSABLE) || !!B.el.closest('button,a')
-      if ((aDocked && !bInteractive) || (bDocked && !aInteractive)) continue
+      // ...and only when the covered thing cannot get out from under it. A control
+      // inside a scroll region can be scrolled clear, so the bar passing over it
+      // is the same transient as passing over a card. The defect is PERMANENT
+      // cover — a control with nowhere to go.
+      const canEscape = (el) => {
+        let p = el.parentElement
+        while (p && p !== document.body) {
+          const cs = getComputedStyle(p)
+          if ((cs.overflowY === 'auto' || cs.overflowY === 'scroll') && p.scrollHeight > p.clientHeight + 2) return true
+          p = p.parentElement
+        }
+        return false
+      }
+      const bExcused = !bInteractive || canEscape(B.el)
+      const aExcused = !aInteractive || canEscape(A.el)
+      if ((aDocked && bExcused) || (bDocked && aExcused)) continue
       const key = describe(A.el) + '|' + describe(B.el)
       if (seenPairs.has(key)) continue
       seenPairs.add(key)

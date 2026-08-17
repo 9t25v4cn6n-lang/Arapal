@@ -1,15 +1,14 @@
 {
- "generatedAt": "2026-08-17T14:38:27.484Z",
+ "generatedAt": "2026-08-17T16:52:01.605Z",
  "routes": 13,
  "frames": 4,
- "blocking": 131,
+ "blocking": 126,
  "byRule": {
   "type-floor": 36,
   "contrast": 40,
   "hit-target": 20,
   "unnamed-control": 16,
-  "overlap": 14,
-  "control-unreachable": 5
+  "overlap": 14
  },
  "byRoute": {
   "legacy-home": 19,
@@ -22,7 +21,7 @@
   "v2-segmentationPasteNext": 0,
   "v2-segmentationTransition": 0,
   "v2-segmentationLoading": 0,
-  "v2-segmentationReview": 5,
+  "v2-segmentationReview": 0,
   "v2-segmentationSuccess": 0,
   "v2-studyWorkspace": 0
  },

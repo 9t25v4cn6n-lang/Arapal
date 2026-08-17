@@ -182,6 +182,9 @@ export const segmentationFlowMetrics = {
   // Vertical chrome the docked toolbar shares its lane with, so its max height
   // can be derived rather than guessed: the shell header, the review page's top
   // inset, and the action bar plus the clearance beneath it.
+  // Exported so the review contract can position the fixed toolbar under the
+  // header without restating the number.
+  shellHeaderHeight: SHELL_HEADER_HEIGHT,
   reviewToolbarViewportReserve: `calc(${SHELL_HEADER_HEIGHT} + ${spacing[16]} + ${REVIEW_ACTION_BAR_HEIGHT} + ${spacing[24]})`,
   // Trailing space under the review workboard so the last segment card can be
   // scrolled clear of the docked action bar.
