@@ -7,6 +7,7 @@ export {
   segmentationFlowChrome,
   segmentationFlowMetrics,
   segmentationFlowMotionStyles,
+  segmentationFlowSteps,
   segmentationFlowTypography,
 } from './segmentationFlow'
 export { spacing } from './spacing'

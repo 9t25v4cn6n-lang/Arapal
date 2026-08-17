@@ -576,7 +576,8 @@ export default function SegmentationReviewScreen({ route, shell }) {
   const slots = {
     ...getSegmentationFlowHeaderSlots({
       shell,
-      stepIndex: 2,
+      // Review is the middle step now, not the last one.
+      stepIndex: 1,
       brandSubtitle: 'Review',
       backRoute: 'segmentationSuccess',
     }),

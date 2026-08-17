@@ -17,14 +17,14 @@ import { actions, select, getSnapshot } from '../../data'
 import { generateMarkers, markersToChunks } from '../../lib/segmentation'
 import StepBar from '../../foundation/primitives/StepBar'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
-import { colors, radius, spacing, typography } from '../../foundation/tokens'
+import { colors, radius, segmentationFlowSteps, spacing, typography } from '../../foundation/tokens'
 import layoutContract from './SegmentationPasteNextScreen.contract'
 
-const workspaceSteps = [
-  { id: 'source', label: 'Source' },
-  { id: 'segment', label: 'Segment' },
-  { id: 'review', label: 'Review' },
-]
+// The flow's own step list, not a second copy of it. This screen kept its own
+// and so kept saying "Segment" after the shared one had moved to
+// Source -> Review -> Publish — the first screen of the flow disagreeing with
+// the other four about what the flow is.
+const workspaceSteps = segmentationFlowSteps
 
 const initialText = `في بداية الربيع خرجت القافلة من المدينة قبل شروق الشمس.
 وكانت السماء صافية والهواء بارداً على نحوٍ خفيف.

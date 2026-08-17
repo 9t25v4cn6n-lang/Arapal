@@ -40,6 +40,7 @@ import {
   motion,
   radius,
   segmentationFlowChrome as flowChrome,
+  segmentationFlowSteps,
   segmentationFlowMetrics as flowMetrics,
   segmentationFlowMotionStyles,
   segmentationFlowTypography as flowTypography,
@@ -47,11 +48,6 @@ import {
   typography,
 } from '../tokens'
 
-const segmentationFlowSteps = [
-  { id: 'source', label: 'Source' },
-  { id: 'segment', label: 'Segment' },
-  { id: 'review', label: 'Review' },
-]
 
 const segmentationSourceText = `في بداية الربيع خرجت القافلة من المدينة قبل شروق الشمس.
 وكانت السماء صافية والهواء بارداً على نحوٍ خفيف.

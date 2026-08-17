@@ -145,6 +145,21 @@ const REVIEW_TOOLBAR_GUTTER = `calc(${REVIEW_TOOLBAR_RAIL_WIDTH} + ${REVIEW_TOOL
 const SHELL_HEADER_HEIGHT = '50px'
 const REVIEW_ACTION_BAR_HEIGHT = `calc(52px + ${spacing[16]} + ${spacing[16]})`
 
+/**
+ * Source -> Review -> Publish. The flow's step model, and the only copy of it.
+ *
+ * It lived in SegmentationFlowPrimitives with a second, drifting copy inside the
+ * paste screen — which is how the first screen of the flow came to say "Segment"
+ * while the other four said "Review". Constants belong with the other flow
+ * constants, not exported from a module of components, which also keeps fast
+ * refresh working.
+ */
+export const segmentationFlowSteps = [
+  { id: 'source', label: 'Source' },
+  { id: 'review', label: 'Review' },
+  { id: 'publish', label: 'Publish' },
+] as const
+
 export const segmentationFlowMetrics = {
   centeredMargin: '0 auto',
   pagePadding: `clamp(${spacing[24]}, 5vh, ${spacing[64]}) clamp(${spacing[24]}, 4vw, ${spacing[48]})`,
