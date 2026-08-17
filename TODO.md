@@ -1,6 +1,27 @@
 # Arapal — Current Stage and Next Milestones
 
-## 2026-08-16 · Release convergence — IN PROGRESS, **NOT RELEASE READY**
+## 2026-08-17 · Release-candidate gate status
+
+Measured against `ARAPAL_RELEASE_CONVERGENCE_PLAN.md` §10. Status is
+**NOT RELEASE READY** — 4 of 11 dimensions evidenced.
+
+| Dimension | State | Evidence |
+|---|---|---|
+| Floor | **pass** | Checker production surface 0 blocking violations, 13 routes × 4 frames, from a run with zero blank routes, zero drifted routes, zero page errors. Reference debt 126, tracked separately and discharged by porting, not styling. |
+| Regression | **pass** | 56 golden states green. Every re-baseline this cycle inspected before acceptance. Two mislabelled goldens found and fixed: `seg-processing` held a picture of the Success screen, and `v2-home-returning` had never been on Project Home. Every state now asserts it is still on the screen it names. |
+| Engineering | **pass, with 18 justified** | 42 lint errors → 18, each remaining one recorded in the commit. Two real defects fixed (Exams attempt clock, hash mutation). `no-unused-vars` blindfold replaced with real JSX detection, which exposed 7 dead imports it had been hiding. |
+| Design uplift | **in progress** | Segmentation Review imported (docked commit bar). Research Browse and Segment selected reviewed — live ahead of R3, nothing to import. See `DECISIONS.md` 2026-08-17. Remaining: Study (13 frames), Exams (6), Home & Projects (3), rest of Segmentation (8). |
+| Function | not evidenced | 31 behaviour tests pass and cover the core study loop, but no explicit end-to-end journey pass has been recorded against §10's wording. |
+| Persistence | not evidenced | Draft/attempt persistence is tested and the Exams clock fix was verified across reload, but not recorded as a gate pass. |
+| Behaviour parity | **blocked on build** | The Study port is the real remaining work: discussion, support modes and pass/fail still live only in `src/components/figma/`. `seg-options-open` and `study-discussion` are recorded unreachable in the visual suite — both real parity gaps. |
+| Fit | not started | No independent UX critique yet. |
+| Visual quality | partial | Professional rendered-state review done for the screens touched this cycle; not swept across all canonical states. |
+| Integration | not started | Cross-product consistency review. |
+| Unknowns | listed | Mobile 390 px untouched (agreed lowest priority). Chromium cannot launch inside the command sandbox (`bootstrap_check_in … Permission denied`), so the pre-commit gate fails safe and is advisory here; `npm run qa` is run manually instead. |
+
+---
+
+## 2026-08-16 · Release convergence — earlier phases, **NOT RELEASE READY**
 
 Branch `v1-foundation`, executed against `ARAPAL_RELEASE_CONVERGENCE_PLAN.md`.
 Stopped by a genuine external blocker: the account session limit was reached

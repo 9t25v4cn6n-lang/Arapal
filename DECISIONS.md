@@ -128,3 +128,67 @@ Only consequential, durable or likely-to-be-revisited decisions belong here.
 **Why.** Eight months of evidence. The V2 Design Contract (2026-03-24) specified *"no overlap, no gaps, end-to-end partitions only"*; `validateContract()` implemented only name and parent-reference checks, so the invariant was never enforced and no one was told. The runtime overlap checker was built but hard-coded to a single screen (`run-v2-screen-qa.mjs:950`) and last ran on 2026-04-03 with `screenCount: 1, findingCount: 0`, while the dashboard reported `productQuality: 74.6, auditTrust: 98`. Across 1,087 recorded user turns the words "padding" appear 378 times, "still" 179 and "again" 94, against "measure" once and "assert" never — the standard was enforced by the user's eyes, which cannot resolve a 10 px clip or a 2.6:1 ratio.
 
 **Consequence.** A rule that is not in `standard.mjs` is not enforced. Adding a rule there is the only way to make a defect class permanent, and is the required response to finding a defect by eye. Prose describing visual quality is documentation, not governance.
+
+---
+
+## 2026-08-17 · R3 uplift pass: import decisions, and record where live already wins
+
+**Decision.** The design-uplift pass compares R3 (and R2 where relevant) against the
+**running screen**, state by state, and records "reviewed, nothing to import" as a
+valid outcome rather than manufacturing changes to show activity.
+
+Findings so far:
+
+- **Segmentation Review — imported.** R3 docks a commit bar at the bottom carrying a
+  live tally and the primary action. Live had `Approve & Continue` at y=1575 on the
+  1440×900 frame, 675 px below the fold inside an inner scroll region, with nothing on
+  screen indicating it existed. Imported as a decision: the tally reads from the live
+  summary, the copy stays this codebase's, and `Re-segment` reuses the destination
+  `Edit source` already had. `flowChrome.actionRegionWash` had existed unused since the
+  tokens were written — the system had been specified for this and never wired.
+
+- **Research Browse and Segment selected — reviewed, nothing to import.** Live is ahead
+  of R3. The ledger shows Arabic, English and metadata in parallel columns where R3
+  hides the translation until selection, which is the "useful width" `§2.2` prefers. The
+  live inspector already carries `Details`/`Ask` tabs, all three translation blocks,
+  `Create patch`, `Clear selection`, `Open in study`, plus related-segment links R3 does
+  not have.
+
+**Why.** `§2.2` governs: *preserve good live UI by default; import the decision, not the
+pixels.* R3 is a design exploration, not a target — its own Review frame has the lead
+paragraph colliding with the meta line beneath it, so it cannot be treated as
+authoritative geometry.
+
+**Consequence.**
+- `§2.2`'s stated example — that R2's Research Browse beats R3 because it "gives the
+  ledger useful width rather than reserving empty space" — **is not visible in the
+  supplied exports.** R2 and R3 Browse are effectively identical, and neither reserves an
+  empty inspector column. The principle stands and the live screen already embodies it;
+  the specific R2-vs-R3 claim should not be repeated as evidence without a frame that
+  shows it.
+- The Figma connector is no longer a blocker for this gate. Comparison needs the frames,
+  which are now committed under `screenshot-reference/Arapal-Figma-Screenshots/`. Only
+  reading underlying values (exact tokens, spacing) still needs the live connector.
+
+---
+
+## 2026-08-17 · The Floor gate measures the production surface, not every route
+
+**Decision.** `scripts/qa/standard.mjs` marks each route `surface: 'production'` or
+`surface: 'reference'`, and the runner reports the two totals separately. The
+release-candidate Floor gate is the production number.
+
+Reference routes are the legacy screens retained **only** as behaviour sources until
+their behaviour is ported: `legacy-home`, `legacy-study`, `legacy-segmentation`. Legacy
+Exams is **production**, because `§2.1` says to preserve the working capability until a
+V2 replacement reaches parity, which makes it the shipping Exams rather than a copy.
+
+**Why.** `§10` asks for the checker to run cleanly "against the current production
+surface". Without the distinction, 126 findings against code scheduled for deletion sat
+in the same number as findings against shipping screens, and neither could be read.
+
+**Consequence.** Production surface is 0 and is the gate. Reference debt is 126 and is
+tracked, not hidden — it is discharged by porting the behaviour and deleting the screens,
+not by styling them. The same distinction is mirrored in `eslint.config.js`, where those
+two legacy files are exempt from `no-unused-vars` because their unused declarations are
+the port's input.
