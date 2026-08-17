@@ -543,7 +543,12 @@ export default function StudyWorkspaceScreen({ route, shell }) {
                 discussionOpen={discussionVisible}
                 focusMode={focusMode}
                 docked
-                fillHeight={discussionMode}
+                // Not stretched in discussion mode any more. fillHeight existed to
+                // make the editor match a half-height companion card; now the
+                // companion is a full-height column and the editor sits in a
+                // content-sized row, so stretching it only recreated the ~340px
+                // empty box. It grows with what is typed, in both modes.
+                fillHeight={false}
               />
             </div>
             <div className="study-v2__composerCompanion">

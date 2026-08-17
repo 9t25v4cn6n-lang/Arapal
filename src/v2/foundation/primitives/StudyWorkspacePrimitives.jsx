@@ -811,13 +811,27 @@ const studyCss = `
       row-gap var(--study-motion-panel);
   }
 
+  /* Discussion mode reveals a column. It does not rearrange the screen.
+
+     It used to re-flow into "source source / editor companion": the source went
+     full width, and the editor and companion split the lower half. That produced
+     the two things R3 avoids — a ~340px empty translation box, because the editor
+     was stretched to match a half-height row, and a stubby companion card that
+     had to be tall enough to hold a conversation. R3 keeps one composition and
+     runs the companion full height beside both the passage and the editor, which
+     is why its source can stay compact and its writing area still looks
+     deliberate.
+
+     So the areas here are the SAME three rows as the default state, with the
+     companion spanning all of them. The forced min-height goes too: nothing needs
+     to be stretched to a floor once no row is fighting for the leftover. */
   .study-v2__composer.is-discussing {
-    grid-template-columns: minmax(0, 1.18fr) minmax(340px, 0.82fr);
-    grid-template-rows: auto minmax(360px, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 0.82fr);
+    grid-template-rows: auto auto auto;
     grid-template-areas:
-      "source source"
+      "source companion"
+      "lex companion"
       "editor companion";
-    min-height: clamp(690px, calc(100vh - 190px), 860px);
     column-gap: var(--study-space-20);
     align-items: stretch;
   }
@@ -853,12 +867,12 @@ const studyCss = `
       transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
+  /* Lexicography stays. It was hidden to buy vertical room for the old
+     two-row discussion layout; the layout no longer needs that room, and the
+     glossary is most useful precisely when you are discussing wording. R3 keeps
+     it visible in this state too. */
   .study-v2__composer.is-discussing .study-v2__composerLex {
-    display: none;
-    max-height: 0;
-    opacity: 0;
-    transform: translateY(-10px);
-    pointer-events: none;
+    display: block;
   }
 
   .study-v2__composerEditor {
