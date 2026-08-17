@@ -85,7 +85,7 @@ for (const width of WIDTHS) {
         await expect(page).toHaveScreenshot(`${state.id}-${width.id}.png`, {
           fullPage: false,
           mask: dynamicMasks(page),
-          maxDiffPixelRatio: 0.002,
+          maxDiffPixelRatio: state.pixelNoiseAllowance ?? 0.0008,
         })
       })
     }
