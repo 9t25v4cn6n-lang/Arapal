@@ -139,6 +139,38 @@ test.describe('segmentation → study handoff', () => {
   })
 })
 
+test.describe('exam → study handoff across the product boundary', () => {
+  test('a legacy exam context lands in V2 Study, on the right segment', async ({ page }) => {
+    await openPaste(page)
+    await page.locator('textarea').first().fill(SOURCE)
+    await page.waitForTimeout(300)
+    await page.getByRole('button', { name: /segment text/i }).first().click()
+    await page.waitForTimeout(4000)
+
+    // Exams is production but still runs in the legacy shell, so it writes the
+    // legacy context shape. writeContext published both keys and readContext read
+    // only its own, which made the bridge one-way: the handoff §2.3 protects
+    // arrived at V2 Study carrying nothing.
+    const targetSegment = await page.evaluate(() => {
+      const state = JSON.parse(localStorage.getItem('arapal.v1.state'))
+      const project = Object.values(state.projects)[0]
+      const segmentId = project.segmentIds[project.segmentIds.length - 1]
+      sessionStorage.setItem('design-sandbox.exam-context.v1', JSON.stringify({
+        segmentId, examTitle: 'Prayer foundations checkpoint', concept: 'Jumuah validity', reason: 'Exam miss',
+      }))
+      return segmentId
+    })
+    expect(targetSegment).toBeTruthy()
+
+    await page.goto('/?chrome=0#v2/studyWorkspace', { waitUntil: 'domcontentloaded' })
+    await page.waitForTimeout(2400)
+
+    expect(await body(page), 'provenance from the exam is shown').toMatch(/Exam miss/i)
+    const strip = page.locator('.study-v2__contextStrip, .study-v2__contextBanner').first()
+    await expect(strip, 'the context strip renders rather than the context being dropped').toBeVisible()
+  })
+})
+
 test.describe('review and success reflect the published segmentation', () => {
   const publish = async (page) => {
     await openPaste(page)

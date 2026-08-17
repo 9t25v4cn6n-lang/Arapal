@@ -108,7 +108,22 @@ export function readContext() {
   if (typeof window === 'undefined') return null
   try {
     const raw = window.sessionStorage.getItem(CONTEXT_KEY)
-    return raw ? JSON.parse(raw) : null
+    if (raw) return JSON.parse(raw)
+
+    // Fall back to the legacy key. writeContext already publishes BOTH keys so a
+    // legacy screen can receive context; reading only one made that bridge
+    // one-way. Exams is the live producer — it writes the legacy shape when
+    // sending a missed answer back to study — so without this the handoff §2.3
+    // names as a protected behaviour arrives at V2 Study with no context at all.
+    const legacy = window.sessionStorage.getItem(LEGACY_EXAM_CONTEXT)
+    if (!legacy) return null
+    const parsed = JSON.parse(legacy)
+    return {
+      segmentRef: parsed?.segmentId ?? null,
+      title: parsed?.examTitle ?? 'Review',
+      concept: parsed?.concept ?? '',
+      reason: parsed?.reason ?? '',
+    }
   } catch {
     return null
   }

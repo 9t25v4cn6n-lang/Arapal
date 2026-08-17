@@ -16,7 +16,7 @@ Measured against `ARAPAL_RELEASE_CONVERGENCE_PLAN.md` §10. Status is
 | Behaviour parity | **pass** | Re-characterised by driving the running screens: V2 Study has 39 controls to legacy's 23 and is a superset; every characterised legacy capability is present in V2 or belongs to Exams (retained production). One real gap found and fixed (style/granularity were not persisted). The three rail destinations V2 appeared to lack — Review Queue, Completed, Profile — are dead controls in legacy: clicking each changes neither hash nor content. No parity debt remains. See `DECISIONS.md` 2026-08-17. |
 | Fit | not started | No independent UX critique yet. |
 | Visual quality | partial | Professional rendered-state review done for the screens touched this cycle; not swept across all canonical states. |
-| Integration | not started | Cross-product consistency review. |
+| Integration | **pass** | Every V2 route renders the identical six-item rail in the same order. Exams was a one-way door — reachable from V2 but exiting to legacy `#home`/`#study`, screens the standard classifies as reference, with no rail and no route back. Its exits now target the V2 production surface, and `readContext` reads the legacy key as well as its own so the Exam→Study handoff (§2.3 protected) arrives with provenance intact. Verified live and covered by a new test. |
 | Unknowns | listed, plus one new | See "Toolbar reachability" below. |
 | ~~Unknowns~~ | listed | Mobile 390 px untouched (agreed lowest priority). Chromium cannot launch inside the command sandbox (`bootstrap_check_in … Permission denied`), so the pre-commit gate fails safe and is advisory here; `npm run qa` is run manually instead. |
 

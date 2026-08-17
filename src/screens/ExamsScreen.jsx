@@ -1440,7 +1440,14 @@ function SummaryCard({ label, value, meta }) {
 }
 
 /**
- * Navigate the legacy hash router.
+ * Navigate the hash router.
+ *
+ * Destinations are the V2 production surface, not legacy's. Exams is retained
+ * production per the plan's §2.1 while its own shell is still legacy, so its exits
+ * were pointing at `#home` and `#study` — screens the visual standard classifies
+ * as `surface: 'reference'`. That made Exams a one-way door: the V2 rail could
+ * reach it, and leaving it dropped you into a reference shell with no rail and no
+ * route back to the product.
  *
  * Assigning to window.location.hash inline inside the component reads to the
  * React compiler as mutating a binding from outside the component, and it is
@@ -1709,7 +1716,7 @@ function ExamsScreen() {
           reason: question.outcome === 'miss' ? 'Exam miss' : 'Worth revisiting',
         }),
       );
-      navigateToHash('study');
+      navigateToHash('v2/studyWorkspace');
     }
   };
 
@@ -1720,7 +1727,7 @@ function ExamsScreen() {
         <header className="exams-screen__header">
           <div className="exams-screen__headerInner">
             <div className="exams-screen__headerActions">
-              <HeaderPill onClick={() => navigateToHash('home')}>
+              <HeaderPill onClick={() => navigateToHash('v2/projectHome')}>
                 <ArrowLeft size={16} strokeWidth={1.9} />
                 Project Home
               </HeaderPill>
