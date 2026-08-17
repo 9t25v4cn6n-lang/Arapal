@@ -105,14 +105,14 @@ function ResearchDesk({
         onQuickSelect={onQuickSelect}
       />
 
-      <div className="project-research__deskBody">
+      <div className={`project-research__deskBody${selectedSegment ? '' : ' is-browse'}`}>
         <KnowledgeLedger
           rows={rows}
           selectedSegmentId={selectedSegmentId}
           onSelectSegment={onSelectSegment}
         />
 
-        <SourceReaderPanel
+        {selectedSegment ? <SourceReaderPanel
           mode={rightMode}
           selectedSegment={selectedSegment}
           citations={companionCitations}
@@ -120,7 +120,7 @@ function ResearchDesk({
           onSelectSegment={onSelectSegment}
           onOpenStudy={onOpenStudy}
           onClearSelection={onClearSelection}
-        />
+        /> : null}
       </div>
     </main>
   )
@@ -130,7 +130,11 @@ export default function ProjectResearchScreen({ route, shell }) {
   const [query, setQuery] = useState('')
   const [activeFilter, setActiveFilter] = useState('all')
   const [activeQuick, setActiveQuick] = useState(null)
-  const [selectedSegmentId, setSelectedSegmentId] = useState(researchSegments[0].id)
+  // Browse is the entry state. Pre-selecting the first row meant the inspector
+  // was always open, so the screen never showed the wide ledger it was designed
+  // around and a user arrived already committed to a segment they had not
+  // chosen.
+  const [selectedSegmentId, setSelectedSegmentId] = useState(null)
   const [rightMode, setRightMode] = useState('source')
 
   const stats = useMemo(() => getResearchStats(researchSegments), [])
@@ -1545,6 +1549,15 @@ const researchStyles = `
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(424px, 472px);
     overflow: hidden;
+  }
+
+  /* Browse gives the ledger the whole width and drops the inspector entirely.
+     The inspector lane was reserved whether or not anything was selected, so
+     headings truncated to "Pure water as ori..." beside 470px of empty panel.
+     This is the R2 Research treatment, kept in preference to R3's, which
+     retains the reserved lane. */
+  .project-research__deskBody.is-browse {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .project-research__ledgerPane {
