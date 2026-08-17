@@ -664,7 +664,12 @@ export default function SegmentationReviewScreen({ route, shell }) {
       <SegmentationReviewActionRegion
         segmentCount={segments.length}
         reviewCount={summary.totalReview}
+        readyCount={summary.ready}
         onApprove={() => shell.navigate('segmentationSuccess')}
+        // Re-segmenting means going back to the source and splitting again,
+        // which is the same destination "Edit source" already uses — a real
+        // action, not a button added to match a picture.
+        onResegment={() => shell.navigate('segmentationPasteNext')}
       />
     ),
   }

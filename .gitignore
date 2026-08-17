@@ -28,3 +28,8 @@ Arapal-source.zip
 Arapal-dist.zip
 screenshot-reference.zip
 ~$*
+
+# Playwright writes actual/diff images here on every failing run. They are
+# reproducible artefacts of a run, not a record of the product.
+test-results/
+playwright-report/

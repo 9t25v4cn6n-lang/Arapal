@@ -9,6 +9,7 @@ export function evaluate(config) {
   const {
     THRESHOLDS, TYPE_RAMP, TEXT_COLOR_POLICY, REQUIRED_FONT_FAMILIES,
     TRUNCATION_EXEMPT_SELECTORS = [],
+    DOCKED_CHROME_SELECTOR = '[data-docked-chrome]',
   } = config
   const findings = []
   const round = (n) => Math.round(n * 10) / 10
@@ -222,6 +223,18 @@ export function evaluate(config) {
       if (ox <= THRESHOLDS.maxOverlapPx || oy <= THRESHOLDS.maxOverlapPx) continue
       // A control legitimately contains its own label; skip same-control pairs.
       if (A.el.closest('button,a') && A.el.closest('button,a') === B.el.closest('button,a')) continue
+      // Chrome that is deliberately docked over a scroll region — a bottom action
+      // bar, a sticky header — passes over content by design, and the content is
+      // still reachable by scrolling. That is not the defect this rule is for.
+      //
+      // Declared per element rather than inferred from position:sticky, because
+      // the worst overlap this rule ever caught WAS a sticky element: a toolbar
+      // 82px wide sitting in a 64px lane, permanently covering a group header no
+      // amount of scrolling could reveal. Inferring from sticky would have
+      // excused it. An attribute makes each exemption a decision someone wrote
+      // down, and the reserved trailing space that makes docking honest is
+      // checked separately by scroll-without-affordance.
+      if (A.el.closest(DOCKED_CHROME_SELECTOR) || B.el.closest(DOCKED_CHROME_SELECTOR)) continue
       const key = describe(A.el) + '|' + describe(B.el)
       if (seenPairs.has(key)) continue
       seenPairs.add(key)

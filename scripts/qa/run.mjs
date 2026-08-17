@@ -13,7 +13,7 @@ import { chromium } from 'playwright'
 import path from 'node:path'
 import fs from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
-import { VIEWPORTS, ROUTES, THRESHOLDS, TYPE_RAMP, TEXT_COLOR_POLICY, REQUIRED_FONT_FAMILIES, TRUNCATION_EXEMPT_SELECTORS, RULES } from './standard.mjs'
+import { VIEWPORTS, ROUTES, THRESHOLDS, TYPE_RAMP, TEXT_COLOR_POLICY, REQUIRED_FONT_FAMILIES, TRUNCATION_EXEMPT_SELECTORS, DOCKED_CHROME_SELECTOR, RULES } from './standard.mjs'
 import { evaluate } from './probe.mjs'
 import { readBaseline, countByRouteRule, compare, ratchetDown, seedBaseline } from './ratchet.mjs'
 
@@ -73,7 +73,7 @@ let frames = VIEWPORTS
 if (args.frame) frames = VIEWPORTS.filter((v) => v.id === args.frame)
 if (args.quick) frames = VIEWPORTS.filter((v) => v.tier === 'build')
 
-const config = { THRESHOLDS, TYPE_RAMP, TEXT_COLOR_POLICY, REQUIRED_FONT_FAMILIES, TRUNCATION_EXEMPT_SELECTORS }
+const config = { THRESHOLDS, TYPE_RAMP, TEXT_COLOR_POLICY, REQUIRED_FONT_FAMILIES, TRUNCATION_EXEMPT_SELECTORS, DOCKED_CHROME_SELECTOR }
 const probeSource = evaluate.toString()
 
 const results = []

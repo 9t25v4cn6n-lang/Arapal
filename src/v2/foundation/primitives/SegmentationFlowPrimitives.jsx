@@ -2110,36 +2110,85 @@ export function ReviewOutput({
   )
 }
 
+/**
+ * The commit bar for Review, and it sticks to the bottom of the workspace.
+ *
+ * It used to be a centred block appended below the proposal list, which put
+ * "Approve & Continue" at y=1575 on the canonical 900px-tall frame — 675px
+ * below the fold, inside an inner scroll region, with nothing on screen saying
+ * it existed. The screen's whole purpose is to approve a structure and the
+ * approve action was invisible on arrival.
+ *
+ * R3 states this better and the design system was already waiting for it:
+ * flowChrome.actionRegionWash has existed unused since the tokens were written,
+ * which is a fade for exactly this kind of docked action region. Imported as a
+ * decision, not as pixels — the tally reads from the live summary rather than
+ * R3's fixture numbers, and the copy stays the codebase's own.
+ */
 export function SegmentationReviewActionRegion({
   segmentCount,
   reviewCount,
+  readyCount,
   onApprove,
+  onResegment,
 }) {
   return (
     <div
       data-debug-item="review_action_panel"
+      // Declares to the visual standard that this bar passes over the scroll
+      // region on purpose. The trailing space that keeps the last card readable
+      // is reserved by the workboard region, not by this bar.
+      data-docked-chrome=""
       style={{
         width: '100%',
-        maxWidth: flowMetrics.reviewCommandBarMaxWidth,
-        margin: flowMetrics.centeredMargin,
-        padding: `${spacing[20]} 0 0`,
-        display: 'grid',
-        justifyItems: 'center',
-        gap: spacing[12],
+        marginTop: spacing[20],
+        padding: `${spacing[16]} 0`,
+        // The wash keeps the list legible as it passes under the bar instead of
+        // ending at a hard line.
+        background: flowChrome.actionRegionWash,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: spacing[20],
+        flexWrap: 'wrap',
       }}
     >
-      <span style={{ ...flowType.operationalMeta, color: reviewCount > 0 ? colors.review : colors.success }}>
-        {reviewCount > 0 ? `${reviewCount} suggested checks remain` : 'Ready to continue'} · {segmentCount} segments prepared
-      </span>
-      <PrimaryCTA
-        icon={<Check size={16} strokeWidth={1.9} />}
-        minWidth={280}
-        height={52}
-        onClick={onApprove}
-        debugItem="approve_continue_cta"
-      >
-        Approve & Continue
-      </PrimaryCTA>
+      <div style={{ display: 'grid', gap: spacing[4], minWidth: 0 }}>
+        <span style={{ ...flowType.operationalMeta }}>
+          {/* successStrong / reviewStrong, not success / review: the token file
+              records the plain pair as fills and icons only. The checker never
+              caught these two because it cannot see an element scrolled out of
+              its own region — which is exactly what this bar being below the
+              fold did. */}
+          <span style={{ color: colors.successStrong }}>{readyCount} ready</span>
+          {reviewCount > 0 && (
+            <>
+              {' · '}
+              <span style={{ color: colors.reviewStrong }}>{reviewCount} to check</span>
+            </>
+          )}
+        </span>
+        <span style={{ ...flowType.operationalMeta }}>
+          {segmentCount} segments · source preserved
+        </span>
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: spacing[16] }}>
+        {onResegment && (
+          <FlowSecondaryButton onClick={onResegment} debugItem="resegment_button">
+            Re-segment
+          </FlowSecondaryButton>
+        )}
+        <PrimaryCTA
+          icon={<Check size={16} strokeWidth={1.9} />}
+          minWidth={260}
+          height={52}
+          onClick={onApprove}
+          debugItem="approve_continue_cta"
+        >
+          Approve &amp; Continue
+        </PrimaryCTA>
+      </div>
     </div>
   )
 }

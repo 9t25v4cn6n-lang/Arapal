@@ -62,6 +62,34 @@ test.describe('probe acuity — each rule proved on a known defect', () => {
     expect(ruleIds(findings)).toContain('overlap')
   })
 
+  test('allows declared docked chrome to pass over content', async ({ page }) => {
+    const findings = await probeWith(page, `
+      <div style="position:relative;height:80px">
+        <p style="position:absolute;left:0;top:40px;font-size:16px;color:#0F172A">A segment card</p>
+        <div data-docked-chrome style="position:absolute;left:0;top:36px;background:#FFF">
+          <button style="min-height:44px;padding:0 24px;font-size:14px">Approve</button>
+        </div>
+      </div>`)
+    expect(
+      ruleIds(findings),
+      'a bottom action bar passes over the scroll region by design and the content is still reachable',
+    ).not.toContain('overlap')
+  })
+
+  test('still sees an overlap when neither side declares itself chrome', async ({ page }) => {
+    const findings = await probeWith(page, `
+      <div style="position:relative;height:80px">
+        <p style="position:absolute;left:0;top:40px;font-size:16px;color:#0F172A">A segment card</p>
+        <div style="position:absolute;left:0;top:36px;background:#FFF">
+          <button style="min-height:44px;padding:0 24px;font-size:14px">Approve</button>
+        </div>
+      </div>`)
+    expect(
+      ruleIds(findings),
+      'the exemption must require the attribute — otherwise it excuses every collision',
+    ).toContain('overlap')
+  })
+
   test('sees text below the type floor', async ({ page }) => {
     const findings = await probeWith(page, `<p style="font-size:9px;color:#0F172A">tiny</p>`)
     expect(ruleIds(findings)).toContain('type-floor')

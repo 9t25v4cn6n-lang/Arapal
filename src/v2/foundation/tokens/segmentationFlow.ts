@@ -44,8 +44,13 @@ export const segmentationFlowChrome = {
     'linear-gradient(90deg, rgba(37, 99, 235, 0.18) 0%, rgba(37, 99, 235, 0.36) 50%, rgba(37, 99, 235, 0.18) 100%)',
   bridgeCore:
     'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.96) 0%, rgba(219, 234, 254, 0.92) 24%, rgba(37, 99, 235, 0.16) 100%)',
+  // Reaches full opacity early and stays there. The first version held 0.84 at
+  // 24% and 0.98 at the base, which on an 84px bar left the top third sheer
+  // enough for the segment cards passing underneath to show through the tally
+  // and the secondary action — so a deliberate dock read as a collision. A fade
+  // is there to soften the entry, not to let two things share the same pixels.
   actionRegionWash:
-    'linear-gradient(180deg, rgba(238, 244, 250, 0) 0%, rgba(238, 244, 250, 0.84) 24%, rgba(238, 244, 250, 0.98) 100%)',
+    'linear-gradient(180deg, rgba(238, 244, 250, 0) 0%, rgba(238, 244, 250, 0.96) 16%, rgb(238, 244, 250) 38%, rgb(238, 244, 250) 100%)',
 } as const
 
 export const segmentationFlowTypography = {
@@ -169,6 +174,14 @@ export const segmentationFlowMetrics = {
   expandedSourcePreviewMaxHeight: '220px',
   reviewWorkspaceMinHeight: '520px',
   reviewToolbarGutterGap: REVIEW_TOOLBAR_GUTTER_GAP,
+  // Trailing space under the review workboard so the last segment card can be
+  // scrolled clear of the docked action bar.
+  //
+  // Only the shortfall, not the bar's full height: the proposal panel already
+  // ends with its own padding, so reserving the whole 84px bar on top of that
+  // left about 145px of dead background between the last card and the bar at
+  // full scroll — clearance is the goal, a void is not.
+  reviewActionBarClearance: spacing[24],
   // Sticky top is relative to the body scrollport, whose top already sits below the shell header.
   reviewWorkspaceStickyTop: spacing[16],
   reviewCommandBarMaxWidth: '920px',

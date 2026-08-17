@@ -149,6 +149,15 @@ export const REQUIRED_FONT_FAMILIES = ['Playfair Display', 'Inter', 'Amiri']
  */
 export const DECORATIVE_SELECTOR = '[aria-hidden="true"]'
 
+/**
+ * Chrome that is deliberately docked over a scroll region and therefore allowed
+ * to pass over content: a bottom action bar, a sticky header. Marked with an
+ * attribute rather than detected from position:sticky, because sticky alone does
+ * not mean "intended" — the worst overlap this standard has caught was a sticky
+ * toolbar permanently covering a group header. Each use is a recorded decision.
+ */
+export const DOCKED_CHROME_SELECTOR = '[data-docked-chrome]'
+
 /** Rule registry. `blocking: true` means a violation fails the build. */
 export const RULES = {
   overlap: { blocking: true, title: 'Rendered elements overlap' },

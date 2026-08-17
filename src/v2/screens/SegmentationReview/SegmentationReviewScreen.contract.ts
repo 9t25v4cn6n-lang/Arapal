@@ -184,6 +184,12 @@ const layoutContract = createScreenLayoutContract({
         flex: '0 0 auto',
         alignContent: 'start',
         gridAutoRows: 'max-content',
+        // Clearance for the docked action bar. Without it the final segment card
+        // scrolls to the bottom and stops underneath the bar, so the one card the
+        // user scrolled all that way to reach is the one they cannot read.
+        // Docking chrome over content is only honest if the content can get out
+        // from under it.
+        paddingBottom: flowMetrics.reviewActionBarClearance,
       },
     },
     {
@@ -239,6 +245,17 @@ const layoutContract = createScreenLayoutContract({
       style: {
         flex: '0 0 auto',
         zIndex: 14,
+        // Docked, so the approve action is on screen the moment the screen is.
+        //
+        // Sticky resolves against the nearest scrollport but can only travel
+        // within its own parent's box, which is why declaring it on the bar
+        // itself did nothing: the bar's own wrapper is 104px tall and sits at
+        // the very end of 1648px of scroll, so it only "stuck" once you had
+        // already scrolled to the bottom. Declared here instead, on the region
+        // that IS a direct child of the full-height stage stack, so the travel
+        // range is the whole scroll.
+        position: 'sticky',
+        bottom: 0,
       },
     },
   ],
