@@ -43,6 +43,10 @@ const examsStyles = `
     --exams-accent-wash: #eff6ff;
     --exams-accent-mist: #dbeafe;
     --exams-success: #16a34a;
+    /* #16a34a is a 3:1 fill. It is used as pill and stat TEXT in this file,
+       which needs 4.5:1, so the text weight is a separate value. Same split the
+       V2 tokens make between success and successStrong. */
+    --exams-success-strong: #15803d;
     --exams-success-soft: rgba(22, 163, 74, 0.08);
     --exams-warning: #d97706;
     --exams-warning-soft: rgba(217, 119, 6, 0.12);
@@ -398,6 +402,48 @@ const examsStyles = `
     padding: 24px;
   }
 
+  /* Next assessment. Sizing is derived: the CTA keeps its intrinsic width and
+     the body takes the rest, so a long exam title reflows instead of squeezing
+     the button. */
+  .exams-screen__nextCard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding: 24px;
+  }
+
+  .exams-screen__nextBody {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+    flex: 1 1 320px;
+  }
+
+  .exams-screen__nextHeading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .exams-screen__nextTitle {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--exams-text-strong);
+  }
+
+  .exams-screen__nextMeta,
+  .exams-screen__nextNudge {
+    margin: 0;
+    font-size: 13px;
+    /* text-soft, which is this file's lightest permitted text value. There is no
+       --exams-text-muted; naming one that does not exist silently inherits. */
+    color: var(--exams-text-soft);
+  }
+
   .exams-screen__statLabel {
     margin: 0 0 10px;
     font-size: 11px; /* 11px is the type floor [DECISION] */
@@ -610,7 +656,7 @@ const examsStyles = `
   .exams-screen__metaPill.is-success {
     border-color: rgba(22, 163, 74, 0.22);
     background: var(--exams-success-soft);
-    color: var(--exams-success);
+    color: var(--exams-success-strong);
   }
 
   .exams-screen__metaPill.is-warning {
@@ -929,7 +975,7 @@ const examsStyles = `
     border-radius: 999px;
     border: 1px solid rgba(22, 163, 74, 0.18);
     background: rgba(22, 163, 74, 0.08);
-    color: var(--exams-success);
+    color: var(--exams-success-strong);
     font-size: 11px; /* 11px is the type floor [DECISION] */
     line-height: 1;
     letter-spacing: 0.14em;
@@ -1462,6 +1508,12 @@ function ExamsScreen() {
       window.clearTimeout(autosaveTimerRef.current);
     }
 
+    // Announcing "Saving" the moment an answer changes is the point of the
+    // indicator, so this one is deliberate rather than a cascade to remove. It
+    // became visible to the linter when attemptStartedAt joined the dependency
+    // list below — needed so the persisted payload carries the true start
+    // instant — which makes the effect re-run once more on attempt start.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- optimistic indicator, one render
     setAutosaveState('Saving');
     autosaveTimerRef.current = window.setTimeout(() => {
       const saved = writePersistedAttempt({
@@ -1519,6 +1571,10 @@ function ExamsScreen() {
       readyCount,
       totalCount: exams.length,
       averageScore,
+      // The single most actionable exam, so the screen can answer "what now"
+      // instead of only "how many". Imported from R3's Assessment studio, which
+      // leads with the next assessment rather than with three counters.
+      nextAssessment: exams.find((exam) => exam.status === 'ready') ?? null,
     };
   }, [exams]);
 
@@ -1592,7 +1648,6 @@ function ExamsScreen() {
     // rather than hidden behind an indirection that only defeats the analysis:
     // the render-phase read this replaced is fixed above, and that was the
     // actual defect.
-    // eslint-disable-next-line react-hooks/purity -- runs from onClick, not render
     const startedAt = Date.now();
     setAttemptStartedAt(startedAt);
     setNowMs(startedAt);
@@ -1726,6 +1781,39 @@ function ExamsScreen() {
                   Create scoped exams from meaningful study ranges, take them without leaving the app, and send misses back into study with context intact.
                 </p>
               </div>
+
+              {/* Next assessment, ahead of the counters.
+                  R3 leads this screen with the one exam you should sit now and
+                  a way to start it; live led with "Saved exams 2 / Ready to take
+                  1 / Recent score 82%", which is a report rather than an
+                  instruction. Same data, useful order. */}
+              {listStats.nextAssessment ? (
+                <div className="exams-screen__panel exams-screen__nextCard">
+                  <div className="exams-screen__nextBody">
+                    <div className="exams-screen__nextHeading">
+                      <span className="exams-screen__metaPill is-success">Ready</span>
+                      <p className="exams-screen__eyebrow">Next assessment</p>
+                    </div>
+                    <h2 className="exams-screen__nextTitle">{listStats.nextAssessment.title}</h2>
+                    <p className="exams-screen__nextMeta">
+                      {listStats.nextAssessment.scopeLabel}
+                      {' · '}
+                      {listStats.nextAssessment.questions.length} questions
+                      {' · ~'}
+                      {Math.max(8, listStats.nextAssessment.questions.length * 6)} min
+                    </p>
+                    <p className="exams-screen__nextNudge">Continue while the material is fresh.</p>
+                  </div>
+                  <button
+                    type="button"
+                    className="exams-screen__primaryButton"
+                    onClick={() => handleOpenTake(listStats.nextAssessment.id)}
+                  >
+                    <Play size={16} strokeWidth={1.9} />
+                    Start exam
+                  </button>
+                </div>
+              ) : null}
 
               <div className="exams-screen__statRow">
                 <div className="exams-screen__statCard">
