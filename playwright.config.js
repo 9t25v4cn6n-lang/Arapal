@@ -33,7 +33,10 @@ export default defineConfig({
     baseURL: 'http://localhost:5173',
     trace: 'off',
     screenshot: 'off',
-    launchOptions: { executablePath: localChromium() },
+    launchOptions: {
+      executablePath: localChromium(),
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    },
   },
   snapshotPathTemplate: '{testDir}/visual/__golden__/{arg}{ext}',
 })
