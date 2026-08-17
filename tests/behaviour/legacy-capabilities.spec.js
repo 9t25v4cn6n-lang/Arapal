@@ -163,9 +163,15 @@ test.describe('exam → study contextual handoff', () => {
     await jump.click()
     await page.waitForTimeout(1600)
 
-    expect(page.url()).toContain('study')
+    // The destination changed deliberately and this characterisation records the
+    // new intent rather than the old behaviour. Exams is production; legacy
+    // `#study` is classified surface: 'reference'. Sending a user from a shipping
+    // screen into a reference one was the defect, so the handoff now lands on the
+    // V2 Study — carrying the same context, which V2 reads via readContext's
+    // legacy-key fallback.
+    expect(page.url()).toContain('v2/studyWorkspace')
     const text = await body(page)
-    expect(text, 'Study announces the exam context it was opened with').toMatch(/Exam context/i)
+    expect(text, 'Study announces the exam context it was opened with').toMatch(/Exam miss|Exam context/i)
     expect(text).toMatch(/Dismiss/i)
   })
 

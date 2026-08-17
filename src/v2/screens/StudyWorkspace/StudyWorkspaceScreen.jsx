@@ -585,9 +585,14 @@ export default function StudyWorkspaceScreen({ route, shell }) {
         )}
       </div>
     ),
-    Layer4_Study_ContextRegion: (isLive && context && !contextDismissed) || (isLive && lastResult?.isSample) ? (
+    // Provenance does not depend on having a live project. The banner says "you
+    // arrived here from an exam miss", which is equally true in reference mode —
+    // and gating it on isLive meant redirecting Exams to the V2 Study silently
+    // dropped the handoff for anyone without a project, which is exactly the
+    // audience most likely to be exploring from Exams.
+    Layer4_Study_ContextRegion: (context && !contextDismissed) || (isLive && lastResult?.isSample) ? (
       <div className="study-v2__contextStrip">
-        {isLive && context && !contextDismissed ? (
+        {context && !contextDismissed ? (
           <div className="study-v2__contextBanner" role="status">
             <span className="study-v2__contextLabel">
               {navigation.describeContext(context)?.label}

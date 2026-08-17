@@ -625,26 +625,6 @@ const studyCss = `
     text-transform: uppercase;
   }
 
-  .study-v2__shellProgressBars {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
-
-  .study-v2__shellProgressBar {
-    width: clamp(46px, 3.6vw, 54px);
-    height: 6px;
-    border-radius: var(--study-pill);
-    background: color-mix(in srgb, var(--study-accent-mist) 38%, var(--study-line-soft));
-    transition: background-color var(--study-motion-panel), transform var(--study-motion-panel), opacity var(--study-motion-panel);
-  }
-
-  .study-v2__shellProgressBar.is-active {
-    background: linear-gradient(90deg, var(--study-accent), var(--study-accent-strong));
-    transform: scaleY(1.06);
-  }
-
   .study-v2__shellFocusButton {
     min-height: 36px;
     border: 1px solid color-mix(in srgb, var(--study-line-soft) 74%, transparent);
@@ -2288,11 +2268,6 @@ export function StudyShellProgress({
   progressTotal = 1,
 }) {
   const progressCurrent = Math.min(progressTotal, progressStep + 1)
-  const visibleBarCount = Math.min(progressTotal, 5)
-  const activeBarIndex =
-    visibleBarCount > 1 && progressTotal > 1
-      ? Math.round((progressStep / Math.max(progressTotal - 1, 1)) * (visibleBarCount - 1))
-      : 0
 
   return (
     <span
@@ -2303,11 +2278,13 @@ export function StudyShellProgress({
         <span className="study-v2__shellProgressLabelText">Segment </span>
         {progressCurrent} of {progressTotal}
       </span>
-      <span className="study-v2__shellProgressBars" aria-hidden="true">
-        {Array.from({ length: visibleBarCount }, (_, index) => (
-          <span key={index} className={`study-v2__shellProgressBar${index === activeBarIndex ? ' is-active' : ''}`} />
-        ))}
-      </span>
+      {/* The dot row is gone.
+          It was capped at five and mapped position proportionally, so on an
+          eight-segment project it lit the second of five dots directly beside the
+          words "Segment 3 of 8". Two readings of the same fact, side by side,
+          disagreeing — and the dots were aria-hidden, so they carried nothing for
+          assistive technology either. R3 states the count and shows nothing else,
+          which is the better decision and removes the contradiction. */}
     </span>
   )
 }
