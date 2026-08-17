@@ -77,6 +77,28 @@ async function clickText(page, pattern, timeout = 4000) {
   }
 }
 
+/**
+ * Click a control by its ACCESSIBLE NAME rather than its visible text.
+ *
+ * Needed because the two differ, and matching the wrong one produces a silent
+ * false negative rather than a failure. study-discussion was recorded unreachable
+ * for exactly that reason: the Study Companion toggle is labelled "Discuss this
+ * segment" for assistive technology and renders the word "Discuss", so a
+ * visible-text matcher never found it and the suite concluded the state did not
+ * exist. It does, it always did, and the state went uncovered while the project
+ * carried it as a parity gap.
+ */
+async function clickControl(page, pattern, timeout = 4000) {
+  const el = page.getByRole('button', { name: pattern }).first()
+  try {
+    await el.waitFor({ state: 'visible', timeout })
+    await el.click()
+    return true
+  } catch {
+    return false
+  }
+}
+
 async function fillFirst(page, selector, value) {
   const el = page.locator(selector).first()
   try {
@@ -134,10 +156,14 @@ export const STATES = [
     id: 'seg-options-open',
     hash: 'v2/segmentationPasteNext',
     area: 'segmentation',
+    // Was recorded unreachable against a class selector — [class*=splitButton] —
+    // that matches nothing, because the control is inline-styled and carries no
+    // className at all. It has always been there, named "Open action options".
+    // Two of this suite's recorded parity gaps were this same mistake: a driver
+    // looking for the wrong handle, reported as a missing product capability.
     async drive(page) {
       await fillFirst(page, 'textarea', SAMPLE_SOURCE)
-      const chevron = page.locator('[class*=splitButton], [class*=SplitButton]').first()
-      try { await chevron.click({ timeout: 3000 }); return true } catch { return false }
+      return clickControl(page, /open action options/i)
     },
   },
   // seg-processing and seg-loading are the two screens that advance on their own
@@ -193,7 +219,7 @@ export const STATES = [
     hash: 'v2/studyWorkspace',
     area: 'study',
     async drive(page) {
-      return clickText(page, /discuss this segment/i)
+      return clickControl(page, /discuss this segment/i)
     },
   },
   {
