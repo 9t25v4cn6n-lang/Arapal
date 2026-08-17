@@ -1,5 +1,3 @@
-import { colors } from '../tokens'
-
 function wordStyle(position) {
   return {
     position: 'absolute',

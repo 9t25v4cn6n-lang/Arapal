@@ -98,7 +98,9 @@ const layoutContract = createScreenLayoutContract({
         minHeight: '100%',
         flex: '0 0 auto',
         margin: flowMetrics.centeredMargin,
-        paddingBottom: spacing[64],
+        // paddingBottom removed: reviewPagePadding already sets the same 64px as
+        // its bottom value, and declaring both made React warn about mixing a
+        // shorthand with its own longhand on every rerender of this screen.
       },
     },
   ],

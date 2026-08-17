@@ -448,14 +448,6 @@ function FlowLead({ children, style = {} }) {
   )
 }
 
-function FlowActionSummary({ children, style = {} }) {
-  return (
-    <p data-debug-item="flow_action_summary" style={{ ...flowType.actionSummary, ...style }}>
-      {children}
-    </p>
-  )
-}
-
 function FlowSecondaryButton({ children, icon = null, onClick, variant = 'ghost', debugItem }) {
   const isPill = variant === 'pill'
 

@@ -7,8 +7,6 @@ import {
   ClipboardList,
   Home,
   List,
-  Plus,
-  Star,
   SplitSquareVertical,
 } from 'lucide-react';
 

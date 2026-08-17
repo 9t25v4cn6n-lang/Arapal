@@ -231,7 +231,7 @@ export function FloatDockPreview() {
 }
 
 export function FloatingDragResizePreview() {
-  const [shifted, setShifted] = useAutoToggle(false, 1800)
+  const [shifted] = useAutoToggle(false, 1800)
 
   return (
     <div style={{ ...previewShell(), minHeight: 220, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: spacing[20] }}>
@@ -265,7 +265,7 @@ export function FloatingDragResizePreview() {
 }
 
 export function EditorShortcutHintPreview() {
-  const [revealed, setRevealed] = useAutoToggle(false, 1800)
+  const [revealed] = useAutoToggle(false, 1800)
 
   return (
     <div style={previewShell()}>

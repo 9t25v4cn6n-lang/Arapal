@@ -5,7 +5,7 @@
 // Screens should import from here, not from the internals, so the storage and
 // store implementations stay replaceable.
 
-import { useEffect, useReducer, useRef } from 'react'
+import { useRef, useSyncExternalStore } from 'react'
 import * as store from './store.js'
 
 /**
@@ -67,6 +67,9 @@ export const select = {
 
 export { subscribe, getSnapshot, persistenceHealthy, __resetForTests } from './store.js'
 
+/** Sentinel so "nothing cached yet" is distinguishable from a cached undefined. */
+const EMPTY_CACHE = { value: undefined }
+
 /**
  * Subscribe to a derived slice of the store.
  *
@@ -76,21 +79,33 @@ export { subscribe, getSnapshot, persistenceHealthy, __resetForTests } from './s
  * value actually differs, which is what keeps React stable.
  */
 export function useArapal(selector) {
-  const selectorRef = useRef(selector)
-  selectorRef.current = selector
-  const [, forceRender] = useReducer((n) => n + 1, 0)
-  const valueRef = useRef(undefined)
-  const initialised = useRef(false)
+  // The cache is only ever touched inside getSelection, which React calls — on
+  // its own schedule, during render and after a store notification. That is the
+  // same shape useSyncExternalStoreWithSelector uses internally.
+  const cache = useRef(EMPTY_CACHE)
 
-  const next = selector(store.getSnapshot())
-  if (!initialised.current || !shallowEqual(valueRef.current, next)) {
-    valueRef.current = next
-    initialised.current = true
+  const getSelection = () => {
+    // The selector runs EVERY time, never short-circuited on store identity.
+    // Caching on "the store has not changed" looks right and is wrong: these
+    // selectors close over props, so useDraft(projectId, segmentId) must produce
+    // a different answer when segmentId changes even though no write occurred.
+    // Skipping the call on an unchanged snapshot made switching segments return
+    // the previous segment's draft — the behaviour suite caught it on the test
+    // written for that exact leak.
+    const next = selector(store.getSnapshot())
+    const cached = cache.current
+
+    // Equality is what keeps getSnapshot "cached" as far as React is concerned:
+    // selectors derive fresh lists and objects, and returning a new reference
+    // for unchanged data is what produced "Maximum update depth exceeded" when
+    // this was last attempted. Compare by shape, hand back the old reference.
+    if (cached !== EMPTY_CACHE && shallowEqual(cached.value, next)) return cached.value
+
+    cache.current = { value: next }
+    return next
   }
 
-  useEffect(() => store.subscribe(forceRender), [])
-
-  return valueRef.current
+  return useSyncExternalStore(store.subscribe, getSelection, getSelection)
 }
 
 export const useProjects = () => useArapal(store.listProjects)

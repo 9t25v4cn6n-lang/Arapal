@@ -5,9 +5,7 @@ import {
   BookOpen,
   Check,
   CheckCircle2,
-  ChevronRight,
   ClipboardList,
-  Clock3,
   Layers3,
   Play,
   Plus,
@@ -1395,6 +1393,19 @@ function SummaryCard({ label, value, meta }) {
   );
 }
 
+/**
+ * Navigate the legacy hash router.
+ *
+ * Assigning to window.location.hash inline inside the component reads to the
+ * React compiler as mutating a binding from outside the component, and it is
+ * also the kind of thing that ends up spelled three different ways in one file.
+ * One function owns it.
+ */
+function navigateToHash(hash) {
+  if (typeof window === 'undefined') return;
+  window.location.hash = hash;
+}
+
 function ExamsScreen() {
   const [view, setView] = useState(() => (readPersistedAttempt()?.examId ? 'take' : 'list'));
   const [exams, setExams] = useState(() => hydrateInitialExams());
@@ -1411,7 +1422,17 @@ function ExamsScreen() {
   const [reviewGrouping, setReviewGrouping] = useState('concept');
   const [activeResult, setActiveResult] = useState(null);
   const autosaveTimerRef = useRef(null);
-  const startTimeRef = useRef(Date.now());
+  // The attempt clock.
+  //
+  // This was a ref seeded with Date.now() at mount and read again during
+  // render. Impure, and worse, wrong twice over: the figure froze at whatever
+  // render happened to run and never advanced while the candidate sat there,
+  // and a reload restarted it at zero while the attempt itself resumed
+  // correctly from localStorage. It read "1 minute" through a twenty-minute
+  // paper. The start instant now persists with the attempt and the clock ticks
+  // in an effect, so the number both survives a reload and moves.
+  const [attemptStartedAt, setAttemptStartedAt] = useState(restoredAttempt?.startedAt ?? null);
+  const [nowMs, setNowMs] = useState(null);
 
   const activeExam = useMemo(
     () => exams.find((exam) => exam.id === activeExamId) || null,
@@ -1447,6 +1468,8 @@ function ExamsScreen() {
         examId: activeExamId,
         answers,
         currentQuestionIndex,
+        // Carried so the elapsed clock survives a reload instead of restarting.
+        startedAt: attemptStartedAt,
         updatedAt: new Date().toISOString(),
       });
       // Say "Not saved" when the write failed rather than claiming success.
@@ -1458,9 +1481,32 @@ function ExamsScreen() {
         window.clearTimeout(autosaveTimerRef.current);
       }
     };
-  }, [answers, view, activeExamId, currentQuestionIndex]);
+  }, [answers, view, activeExamId, currentQuestionIndex, attemptStartedAt]);
 
-  const elapsedMinutes = Math.max(1, Math.floor((Date.now() - startTimeRef.current) / 60000));
+  // Ticks only while a paper is open. setState happens inside the interval
+  // callback rather than synchronously in the effect body, so this is a
+  // subscription to time rather than a render-phase side effect.
+  useEffect(() => {
+    if (view !== 'take' || attemptStartedAt === null) return undefined;
+    const tick = () => setNowMs(Date.now());
+    // Tick once straight away, or a resumed attempt reads "1 minute" until the
+    // first interval fires — which is the same wrong number the old code showed
+    // permanently, just for fifteen seconds instead. Deferred via setTimeout(0)
+    // so it is still a callback rather than a synchronous effect-body setState.
+    const seed = window.setTimeout(tick, 0);
+    const id = window.setInterval(tick, 15000);
+    return () => {
+      window.clearTimeout(seed);
+      window.clearInterval(id);
+    };
+  }, [view, attemptStartedAt]);
+
+  // Derived, and pure: no clock is read here. Before the first tick nowMs is
+  // null, which floors to the same "1 minute" the old code always showed.
+  const elapsedMinutes = Math.max(
+    1,
+    Math.floor(((nowMs ?? attemptStartedAt ?? 0) - (attemptStartedAt ?? 0)) / 60000),
+  );
 
   const listStats = useMemo(() => {
     const readyCount = exams.filter((exam) => exam.status === 'ready').length;
@@ -1539,7 +1585,17 @@ function ExamsScreen() {
       return;
     }
 
-    startTimeRef.current = Date.now();
+    // Reading the clock when the candidate opens a paper is the correct place
+    // to read it — this runs from onClick, never from render. The rule cannot
+    // prove that, because handleOpenTake is a function in the component body
+    // and the compiler must assume the worst. Disabled narrowly and on purpose
+    // rather than hidden behind an indirection that only defeats the analysis:
+    // the render-phase read this replaced is fixed above, and that was the
+    // actual defect.
+    // eslint-disable-next-line react-hooks/purity -- runs from onClick, not render
+    const startedAt = Date.now();
+    setAttemptStartedAt(startedAt);
+    setNowMs(startedAt);
     setActiveExamId(exam.id);
     setCurrentQuestionIndex(0);
     setAnswers(Object.fromEntries(exam.questions.map((question) => [question.id, ''])));
@@ -1598,7 +1654,7 @@ function ExamsScreen() {
           reason: question.outcome === 'miss' ? 'Exam miss' : 'Worth revisiting',
         }),
       );
-      window.location.hash = 'study';
+      navigateToHash('study');
     }
   };
 
@@ -1609,7 +1665,7 @@ function ExamsScreen() {
         <header className="exams-screen__header">
           <div className="exams-screen__headerInner">
             <div className="exams-screen__headerActions">
-              <HeaderPill onClick={() => (window.location.hash = 'home')}>
+              <HeaderPill onClick={() => navigateToHash('home')}>
                 <ArrowLeft size={16} strokeWidth={1.9} />
                 Project Home
               </HeaderPill>
