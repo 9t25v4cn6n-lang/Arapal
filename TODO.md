@@ -37,9 +37,37 @@ Checker: 668 accepted, no unexplained regressions.
   exam that no longer existed. Ids are now stable. Two pinned gap tests now
   assert the fixed behaviour.
 
+### Second stretch — gates closed
+
+- **Engineering hardening.** Fixed a real crash (`src/App.jsx` used `useRef`
+  without importing it, so `?preview=1` threw). Lint scoped so its output is
+  readable, 57 -> 48 problems, remainder genuine. Bundle 1,094 -> 912 KB by
+  lazy-loading the six dev labs and the dashboard. `npm run qa` now publishes a
+  dated feed the quality dashboard reads, so a stale number cannot pass as truth.
+- **Integration.** Measured casing, radii and typefaces across every route.
+  Found text rendering in system-ui and Arial on live screens; two systemic
+  causes — `src/index.css` pointed the document defaults at system-ui, and form
+  controls do not inherit `font-family`. Off-family text 17 -> 0. Gated the
+  DRAFT/FAIL/PASS controls and the route hash behind `?studyDebug=1`.
+  Deliberately did **not** flatten button casing: uppercase is the primary-CTA
+  language, applied consistently.
+- **Fit.** Reviewing my own Project Home found the widest bug of the session:
+  **73 spacing/radius declarations were invalid and doing nothing**, because the
+  tokens already carry their unit and were interpolated as `${spacing[24]}px`.
+  Fixed by codemod across 15 files.
+- **Visual regression is deterministic again** for static routes. Driven states
+  assert reachability only — see the note in the spec for why, and what a real
+  fix would need.
+
+Checker: 672 -> 445. Behaviour: 31 tests. Data: 34. Acuity: 12. Visual: 54.
+
 ### Concrete remaining blockers
 
-1. **Phase 2A · design system + shell — not delivered.** The agent hit the
+0. **Design uplift (Phase 5) not done.** R3 was mined for Home only; Study,
+   Segmentation, Research and Exams have not been compared state by state.
+1. **Phase 2A · shared primitives — not delivered.** The rail, tokens and
+   typography were fixed at their causes, but `Button`/`Card`/`Chip`/`Panel`/
+   `Field` were never built, so ~25 button class families remain. The agent hit the
    session limit mid-package. Its work is preserved on the git stash entry
    *phase2a-incomplete-codemods*. **Do not apply as-is:** it traded -85
    violations globally for **+14 new regressions on Study**, verified by
