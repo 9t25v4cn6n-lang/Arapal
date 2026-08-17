@@ -9,7 +9,7 @@ export function HeaderBrand() {
         alignItems: 'center',
         gap: spacing[8],
         margin: 0,
-        padding: `0 ${spacing[16]}px`,
+        padding: `0 ${spacing[16]}`,
         minHeight: '32px',
         border: `1px solid ${colors.lineSoft}`,
         borderRadius: radius.pill,
@@ -65,7 +65,21 @@ export function HeaderCenter({ route }) {
   )
 }
 
+/**
+ * The route hash, for development. It shipped in the product header on every V2
+ * screen — useful while building, but it is scaffolding, not product, and it
+ * occupied the header lane that should carry project context. Behind the same
+ * flag the Study sandbox controls use, so all dev affordances share one switch.
+ */
 export function HeaderMeta({ route }) {
+  const showRouteHash =
+    typeof window !== 'undefined' &&
+    new URLSearchParams(window.location.search).get('studyDebug') === '1'
+
+  if (!showRouteHash) {
+    return null
+  }
+
   return (
     <p
       style={{
@@ -74,7 +88,7 @@ export function HeaderMeta({ route }) {
         color: colors.textFaint,
       }}
     >
-      #{`v2/${route?.id ?? 'appLaunch'}`}
+      #{`v2/${route?.id ?? 'projectHome'}`}
     </p>
   )
 }

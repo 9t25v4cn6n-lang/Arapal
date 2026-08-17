@@ -282,7 +282,7 @@ function LabNav({ shell, route }) {
               borderRadius: radius[16],
               background: isActive ? 'rgba(239, 246, 255, 0.96)' : 'rgba(255, 255, 255, 0.92)',
               boxShadow: isActive ? elevation.flat : 'none',
-              padding: `${spacing[10]}px ${spacing[12]}px`,
+              padding: `${spacing[10]} ${spacing[12]}`,
               display: 'flex',
               flexDirection: 'column',
               gap: spacing[4],

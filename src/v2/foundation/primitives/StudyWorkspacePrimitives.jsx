@@ -1115,18 +1115,18 @@ const studyCss = `
   .study-v2__contextStrip {
     display: flex;
     flex-direction: column;
-    gap: ${spacing[8]}px;
-    padding: 0 0 ${spacing[12]}px;
+    gap: ${spacing[8]};
+    padding: 0 0 ${spacing[12]};
   }
 
   .study-v2__contextBanner {
     display: flex;
     align-items: center;
-    gap: ${spacing[12]}px;
+    gap: ${spacing[12]};
     min-height: 44px;
-    padding: 0 ${spacing[16]}px;
+    padding: 0 ${spacing[16]};
     border: 1px solid ${colors.accentSoft};
-    border-radius: ${radius[12]}px;
+    border-radius: ${radius[12]};
     background: ${colors.accentWash};
   }
 
@@ -1152,7 +1152,7 @@ const studyCss = `
   .study-v2__contextDismiss {
     flex: 0 0 auto;
     min-height: 32px;
-    padding: 0 ${spacing[12]}px;
+    padding: 0 ${spacing[12]};
     border: 1px solid ${colors.lineSoft};
     border-radius: 999px;
     background: ${colors.surfacePrimary};
@@ -1168,10 +1168,10 @@ const studyCss = `
   /* The evaluation stub must announce itself wherever its output is shown. */
   .study-v2__sampleNotice {
     margin: 0;
-    padding: ${spacing[8]}px ${spacing[12]}px;
+    padding: ${spacing[8]} ${spacing[12]};
     border-left: 3px solid ${colors.review};
     background: ${colors.surfaceSoft};
-    border-radius: ${radius[8]}px;
+    border-radius: ${radius[8]};
     font-size: ${typography.bodyText.fontSize};
     line-height: 1.5;
     color: ${colors.textSoft};
@@ -2091,7 +2091,7 @@ export function StudyShellMeta({
               onClick={onClick}
               style={{
                 minHeight: '28px',
-                padding: `0 ${spacing[10]}px`,
+                padding: `0 ${spacing[10]}`,
                 borderRadius: radius[12],
                 border: `1px solid ${colors.lineSoft}`,
                 background: 'rgba(255,255,255,0.86)',

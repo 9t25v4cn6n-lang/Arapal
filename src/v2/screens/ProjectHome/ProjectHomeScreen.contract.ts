@@ -35,7 +35,7 @@ const layoutContract = createScreenLayoutContract({
       gridTemplateColumns: 'minmax(0, 1fr)',
       alignItems: 'stretch',
       justifyContent: 'stretch',
-      padding: `${spacing[32]}px ${spacing[40]}px ${spacing[32]}px`,
+      padding: `${spacing[32]} ${spacing[40]} ${spacing[32]}`,
       gap: spacing[24],
       overflow: 'hidden',
       textAlign: 'left',

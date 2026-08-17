@@ -111,7 +111,7 @@ function lexEntry({ arabic, mono, text, context }) {
         <div
           style={{
             marginTop: spacing[12],
-            padding: `${spacing[12]}px ${spacing[16]}px`,
+            padding: `${spacing[12]} ${spacing[16]}`,
             border: '1px solid #f3f4f6',
             borderRadius: radius[12],
             background: '#f9fafb',
@@ -258,7 +258,7 @@ export function EditorFormattingToolbarPreview() {
         <div
           style={{
             minHeight: 54,
-            padding: `0 ${spacing[16]}px`,
+            padding: `0 ${spacing[16]}`,
             display: 'flex',
             alignItems: 'center',
             gap: spacing[12],
@@ -499,7 +499,7 @@ export function FloatingSupportPreview() {
             <button type="button" style={{ width: 28, height: 28, border: 'none', borderRadius: radius.pill, background: 'rgba(255, 255, 255, 0.84)', color: '#475569', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
               <Maximize2 size={14} strokeWidth={1.8} />
             </button>
-            <button type="button" style={{ minHeight: 28, padding: `0 ${spacing[12]}px`, border: 'none', borderRadius: radius.pill, background: 'rgba(255, 255, 255, 0.84)', color: '#475569', display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700 }}>
+            <button type="button" style={{ minHeight: 28, padding: `0 ${spacing[12]}`, border: 'none', borderRadius: radius.pill, background: 'rgba(255, 255, 255, 0.84)', color: '#475569', display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700 }}>
               <Move size={14} strokeWidth={1.8} />
               Float
             </button>

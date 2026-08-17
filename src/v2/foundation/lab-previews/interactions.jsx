@@ -114,7 +114,7 @@ export function SegmentTreeExpandPreview() {
       {isOpen ? (
         <div style={{ display: 'grid', gap: spacing[6], paddingLeft: spacing[24] }}>
           {['2.1 Times of Prayer', '2.2 Conditions', '2.3 Jumu’ah'].map((rowLabel) => (
-            <div key={rowLabel} style={{ minHeight: 34, borderRadius: radius[12], background: 'rgba(255,255,255,0.92)', border: `1px solid ${colors.lineSoft}`, display: 'flex', alignItems: 'center', padding: `0 ${spacing[12]}px` }}>
+            <div key={rowLabel} style={{ minHeight: 34, borderRadius: radius[12], background: 'rgba(255,255,255,0.92)', border: `1px solid ${colors.lineSoft}`, display: 'flex', alignItems: 'center', padding: `0 ${spacing[12]}` }}>
               <span style={{ ...typography.bodyText, fontSize: 14, color: colors.textBody }}>{rowLabel}</span>
             </div>
           ))}

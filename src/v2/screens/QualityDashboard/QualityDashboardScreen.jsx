@@ -45,7 +45,7 @@ function StatusChip({ status, label = status }) {
       <span
         style={{
           minHeight: 20,
-          padding: `0 ${spacing[10]}px`,
+          padding: `0 ${spacing[10]}`,
           borderRadius: radius.pill,
           color: tone.color,
           display: 'inline-flex',
@@ -949,7 +949,7 @@ export default function QualityDashboardScreen({ route, shell }) {
                     style={{
                       display: 'grid',
                       gridTemplateColumns: '160px 88px minmax(0, 1fr)',
-                      padding: `${spacing[8]}px ${spacing[12]}px`,
+                      padding: `${spacing[8]} ${spacing[12]}`,
                       gap: spacing[12],
                       borderBottom: `1px solid ${colors.lineSoft}`,
                     }}
@@ -965,7 +965,7 @@ export default function QualityDashboardScreen({ route, shell }) {
                       style={{
                         display: 'grid',
                         gridTemplateColumns: '160px 88px minmax(0, 1fr)',
-                        padding: `${spacing[10]}px ${spacing[12]}px`,
+                        padding: `${spacing[10]} ${spacing[12]}`,
                         gap: spacing[12],
                         borderBottom: index < rows.length - 1 ? `1px solid ${colors.lineSoft}` : 'none',
                         alignItems: 'start',

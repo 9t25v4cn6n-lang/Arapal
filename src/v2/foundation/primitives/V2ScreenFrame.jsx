@@ -85,7 +85,7 @@ function getShellContainerOverrides(shell, contract) {
             pointerEvents: 'none',
           }
         : {
-            padding: `${spacing[24]}px ${spacing[20]}px`,
+            padding: `${spacing[24]} ${spacing[20]}`,
             gap: spacing[20],
             opacity: 1,
             pointerEvents: 'auto',

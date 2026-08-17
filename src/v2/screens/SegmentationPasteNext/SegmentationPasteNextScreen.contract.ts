@@ -69,7 +69,7 @@ const layoutContract = createScreenLayoutContract({
       flexDirection: 'column',
       alignItems: 'stretch',
       justifyContent: 'stretch',
-      padding: `${spacing[24]}px ${spacing[24]}px ${spacing[32]}px`,
+      padding: `${spacing[24]} ${spacing[24]} ${spacing[32]}`,
       gap: '0',
       overflow: 'auto',
       textAlign: 'left',

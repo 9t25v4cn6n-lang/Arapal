@@ -219,9 +219,9 @@ const rowTitle = {
 }
 
 const card = {
-  padding: `${spacing[24]}px`,
+  padding: `${spacing[24]}`,
   border: `1px solid ${colors.borderSoft}`,
-  borderRadius: `${radius[16]}px`,
+  borderRadius: `${radius[16]}`,
   background: colors.surfacePrimary,
 }
 
@@ -231,9 +231,9 @@ const row = {
   justifyContent: 'space-between',
   gap: spacing[16],
   minHeight: '56px',
-  padding: `0 ${spacing[16]}px`,
+  padding: `0 ${spacing[16]}`,
   border: `1px solid ${colors.borderSoft}`,
-  borderRadius: `${radius[12]}px`,
+  borderRadius: `${radius[12]}`,
   background: colors.surfacePrimary,
   color: colors.textBody,
   cursor: 'pointer',
@@ -244,7 +244,7 @@ const ghostButton = {
   alignItems: 'center',
   gap: spacing[8],
   minHeight: '44px',
-  padding: `0 ${spacing[16]}px`,
+  padding: `0 ${spacing[16]}`,
   border: `1px solid ${colors.borderSoft}`,
   borderRadius: radius.pill,
   background: colors.surfacePrimary,
@@ -261,7 +261,7 @@ const iconWell = {
   justifyContent: 'center',
   width: '44px',
   height: '44px',
-  borderRadius: `${radius[12]}px`,
+  borderRadius: `${radius[12]}`,
   background: colors.accentWash,
   color: colors.accentStrong,
 }
