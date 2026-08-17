@@ -69,7 +69,12 @@ for (const width of WIDTHS) {
           + ' A golden captured here would document the wrong screen.',
         ).toBe(true)
 
-        if (state.drive || state.reachabilityOnly) {
+        // A driven state may opt back IN to a pixel golden. The blanket rule
+        // exists because driven states flapped on settle — but settle now polls
+        // geometry until two reads agree and motion is frozen, so "driven" is no
+        // longer a reliable proxy for "unstable". Opting in per state keeps the
+        // safe default while letting a state earn a golden on evidence.
+        if ((state.drive || state.reachabilityOnly) && !state.pixelGolden) {
           // Unreachable is recorded, not failed — "this control does not exist
           // yet" is a product finding for the backlog, not a broken test. The
           // known case is seg-options-open: the V2 paste screen has no reliable

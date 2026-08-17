@@ -218,6 +218,13 @@ export const STATES = [
     id: 'study-discussion',
     hash: 'v2/studyWorkspace',
     area: 'study',
+    // Earns a pixel golden. Its composition was rewritten — discussion now
+    // reveals a full-height companion column instead of re-flowing the screen —
+    // and until this flag it was protected by nothing but the geometry checker,
+    // which cannot see whether the result looks right. Stability verified over
+    // repeated runs before switching it on; the panel carries no infinite
+    // animation, unlike the transition and loading screens.
+    pixelGolden: true,
     async drive(page) {
       return clickControl(page, /discuss this segment/i)
     },
