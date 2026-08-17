@@ -188,10 +188,20 @@ if (args.accept) {
   process.exit(0)
 }
 
+// A run may only lower the baseline if the run itself is trustworthy. Lowering
+// on an untrustworthy run is how the ratchet destroys its own record: a syntax
+// error in a shared primitive took the app down, all 13 routes reported nothing
+// to find, every route therefore looked "improved", and the baseline was
+// rewritten from 420 to 0 — with the blank-page guard printing the evidence
+// right next to it, because the guard only gated the exit code and ran after
+// the write. "Nothing found" is not "nothing wrong", and the ratchet must ask
+// that question before it moves, not after.
+const runIsTrustworthy = blankRoutes.length === 0 && consoleErrors.length === 0
+
 const baseline = await readBaseline()
 if (baseline.generatedAt) {
   verdict = compare(baseline, counts, checkedPairs)
-  if (verdict.improvements.length && !args.json) {
+  if (verdict.improvements.length && !args.json && runIsTrustworthy) {
     await ratchetDown(baseline, counts, checkedPairs, verdict.improvements)
   }
 }
@@ -248,7 +258,11 @@ if (args.json) {
     }
     if (verdict.improvements.length) {
       const paid = verdict.improvements.reduce((a, b) => a + b.delta, 0)
-      console.log(`\nFIXED — baseline lowered by ${paid}:`)
+      console.log(runIsTrustworthy
+        ? `\nFIXED — baseline lowered by ${paid}:`
+        : `\n${paid} fewer findings, but the baseline was NOT lowered — this run is not trustworthy`
+          + ` (${blankRoutes.length} blank route(s), ${consoleErrors.length} page error(s)).`
+          + ` Fix the run, then re-measure:`)
       for (const r of verdict.improvements.slice(0, 12)) {
         const [route, frame, rule] = r.key.split('::')
         console.log(`  ${route.padEnd(26)} ${frame.padEnd(11)} ${rule.padEnd(24)} ${r.was} -> ${r.now}  (-${r.delta})`)

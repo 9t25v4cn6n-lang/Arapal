@@ -554,7 +554,7 @@ const researchStyles = `
     text-overflow: ellipsis;
     white-space: nowrap;
     color: ${colors.textSoft};
-    font-size: 10px;
+    font-size: 11px;
     line-height: 1.35;
   }
 
@@ -630,7 +630,7 @@ const researchStyles = `
   .project-research__resultCount {
     color: ${colors.textFaint};
     font-family: ${typography.monoMeta.fontFamily};
-    font-size: 10px;
+    font-size: 11px;
     line-height: 1;
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -819,7 +819,7 @@ const researchStyles = `
     background: rgba(255, 255, 255, 0.72);
     color: ${colors.textSoft};
     font-family: ${typography.eyebrowLabel.fontFamily};
-    font-size: 8px;
+    font-size: 11px;
     line-height: 1;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -857,7 +857,7 @@ const researchStyles = `
     background: rgba(219, 234, 254, 0.42);
     color: ${colors.textSoft};
     font-style: normal;
-    font-size: 10px;
+    font-size: 11px;
     line-height: 1;
   }
 
@@ -956,7 +956,7 @@ const researchStyles = `
     color: ${colors.textSoft};
     padding: 0 ${spacing[8]};
     font-family: ${typography.studyControlLabel.fontFamily};
-    font-size: 10px;
+    font-size: 11px;
     line-height: 1;
     font-weight: 850;
     text-transform: uppercase;
@@ -1415,7 +1415,7 @@ const researchStyles = `
 
   .project-research__metricPill span,
   .project-research__actionHint {
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .project-research__actionHint {
@@ -1597,7 +1597,7 @@ const researchStyles = `
     text-overflow: ellipsis;
     white-space: nowrap;
     color: ${colors.textFaint};
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .project-research__rowList {
@@ -2058,7 +2058,7 @@ const researchStyles = `
     border-color: rgba(148, 163, 184, 0.32);
     background: rgba(255, 255, 255, 0.78);
     color: ${colors.textSoft};
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 0.02em;
     text-transform: none;
     font-weight: 850;

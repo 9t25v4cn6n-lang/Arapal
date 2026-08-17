@@ -293,7 +293,7 @@ const dashboardStyles = `
     padding: 0 ${spacing[16]};
     background: ${colors.accentWash};
     color: ${colors.accentStrong};
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .study-dashboard__resumeTitle {
@@ -371,7 +371,7 @@ const dashboardStyles = `
   }
 
   .study-dashboard__metaLabel {
-    font-size: 9.5px;
+    font-size: 11px;
     line-height: 1.2;
     color: ${colors.textFaint};
   }
@@ -477,7 +477,7 @@ const dashboardStyles = `
     writing-mode: vertical-rl;
     transform: rotate(180deg);
     font-family: ${typography.eyebrowLabel.fontFamily};
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     font-weight: 900;
@@ -502,15 +502,29 @@ const dashboardStyles = `
     transform: translateX(calc(100% + 32px));
     opacity: 0;
     pointer-events: none;
+    /* The closed drawer was invisible but still laid out, still in the tab order
+       and still in the accessibility tree — parked off-canvas by the transform.
+       Tabbing past "Study history" walked a keyboard user into a drawer they
+       could not see, with a Close button and a whole virtual list inside it. It
+       was also the largest single block of viewport-escape findings in the
+       product, 18 elements per frame, none of which were a layout fault.
+
+       visibility, not display: it transitions discretely — flipping to visible
+       at the start of the open and to hidden at the end of the close — so the
+       panel animates exactly as before while genuinely leaving the page when
+       shut. The inert attribute in the JSX states the same intent. */
+    visibility: hidden;
     transition:
       transform ${motion.panel},
-      opacity ${motion.panel};
+      opacity ${motion.panel},
+      visibility ${motion.panel};
   }
 
   .study-dashboard__historyPanel.is-open {
     transform: translateX(0);
     opacity: 1;
     pointer-events: auto;
+    visibility: visible;
   }
 
   .study-dashboard__historyHeader {
@@ -584,7 +598,7 @@ const dashboardStyles = `
 
   .study-dashboard__historyStat span {
     font-family: ${typography.eyebrowLabel.fontFamily};
-    font-size: 8.5px;
+    font-size: 11px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: ${colors.textFaint};
@@ -673,7 +687,7 @@ const dashboardStyles = `
     border: 1px solid ${colors.lineSoft};
     background: rgba(255, 255, 255, 0.82);
     color: ${colors.textSoft};
-    font-size: 8.5px;
+    font-size: 11px;
   }
 
   .study-dashboard__saveButton {
@@ -1065,7 +1079,13 @@ function StudyHistoryPanelContainer({ lesson }) {
         <PanelRightOpen size={16} strokeWidth={2} />
       </button>
 
-      <section className={`study-dashboard__historyPanel${isOpen ? ' is-open' : ''}`} aria-label="Study history panel">
+      <section
+        className={`study-dashboard__historyPanel${isOpen ? ' is-open' : ''}`}
+        aria-label="Study history panel"
+        // Nothing inside a closed drawer is reachable — by keyboard, by screen
+        // reader or by pointer. The CSS says the same thing; this says why.
+        inert={!isOpen}
+      >
         <header className="study-dashboard__historyHeader">
           <div className="study-dashboard__historyHeading">
             <span className="study-dashboard__historyIcon" aria-hidden="true">

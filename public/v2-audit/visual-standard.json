@@ -1,16 +1,15 @@
 {
- "generatedAt": "2026-08-17T07:48:23.097Z",
+ "generatedAt": "2026-08-17T08:08:26.008Z",
  "routes": 13,
  "frames": 4,
- "blocking": 420,
+ "blocking": 302,
  "byRule": {
-  "type-floor": 114,
+  "type-floor": 72,
   "scroll-hidden-majority": 9,
-  "contrast": 118,
+  "contrast": 114,
   "hit-target": 60,
   "unnamed-control": 24,
-  "overlap": 23,
-  "viewport-escape": 72
+  "overlap": 23
  },
  "byRoute": {
   "legacy-home": 19,
@@ -18,8 +17,8 @@
   "legacy-segmentation": 56,
   "legacy-exams": 16,
   "v2-projectHome": 0,
-  "v2-projects": 92,
-  "v2-projectResearch": 44,
+  "v2-projects": 0,
+  "v2-projectResearch": 18,
   "v2-segmentationPasteNext": 32,
   "v2-segmentationTransition": 12,
   "v2-segmentationLoading": 20,

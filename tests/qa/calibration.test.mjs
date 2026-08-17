@@ -102,3 +102,58 @@ test('declared font families actually load', () => {
     'requested once from src/index.css, not per-screen inside runtime <style> blocks.',
   )
 })
+
+// ── the ratchet must not lower itself on an untrustworthy run ────────────────
+//
+// This is a regression test for a real incident, twice over. A syntax error in
+// a shared primitive took the whole app down; every route rendered nothing;
+// "nothing found" was read as "everything fixed"; and the baseline was rewritten
+// from 420 accepted violations to 0 — destroying the only record of what debt
+// existed. The blank-page guard had already detected it and printed the
+// evidence, but it only set the exit code, and it ran after the write.
+//
+// The guard now has to be consulted before the ratchet moves. These tests pin
+// the wiring, because the failure is silent and self-erasing: once the baseline
+// is zeroed, nothing is left to compare against and the next run looks clean.
+
+test('SAFETY: run.mjs gates the ratchet on a trustworthy run', () => {
+  const source = fs.readFileSync(path.join(process.cwd(), 'scripts', 'qa', 'run.mjs'), 'utf8')
+
+  assert.match(
+    source,
+    /const runIsTrustworthy\s*=\s*blankRoutes\.length === 0 && consoleErrors\.length === 0/,
+    'run.mjs must define runIsTrustworthy from the blank-route and page-error evidence',
+  )
+
+  const call = source.match(/if \(([^)]*)\)\s*\{\s*\n\s*await ratchetDown\(/)
+  assert.ok(call, 'ratchetDown must be called inside a guarded if-statement')
+  assert.match(
+    call[1],
+    /runIsTrustworthy/,
+    'ratchetDown must never run unless the run is trustworthy — a broken build otherwise zeroes the baseline',
+  )
+
+  // Ordering matters as much as the condition: the evidence has to be collected
+  // before it is consulted.
+  assert.ok(
+    source.indexOf('const runIsTrustworthy') < source.indexOf('await ratchetDown('),
+    'runIsTrustworthy must be computed before ratchetDown is reached',
+  )
+})
+
+test('SAFETY: the accepted baseline is never empty while the report has findings', () => {
+  const BASELINE = path.join(process.cwd(), 'artifacts', 'qa', 'baseline.json')
+  if (!fs.existsSync(BASELINE) || !report) return
+
+  const baseline = JSON.parse(fs.readFileSync(BASELINE, 'utf8'))
+  const accepted = Object.values(baseline.accepted ?? {}).reduce((a, n) => a + n, 0)
+  const blocking = (report.findings ?? []).filter((f) => RULES[f.ruleId]?.blocking).length
+
+  if (blocking > 0) {
+    assert.ok(
+      accepted > 0,
+      `the report holds ${blocking} blocking findings but the baseline accepts 0 —`
+      + ' the ratchet has been zeroed, which is the signature of a lowering on a broken run',
+    )
+  }
+})
