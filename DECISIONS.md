@@ -192,3 +192,35 @@ tracked, not hidden — it is discharged by porting the behaviour and deleting t
 not by styling them. The same distinction is mirrored in `eslint.config.js`, where those
 two legacy files are exempt from `no-unused-vars` because their unused declarations are
 the port's input.
+
+---
+
+## 2026-08-17 · Reading the stylesheet is not evidence about the running product
+
+**Decision.** A claim about what the product *shows* must come from the running
+product. Confirming that a CSS class exists, or that a component accepts a prop,
+is evidence about the source — not about what a user sees.
+
+**Why.** Asked about the Study rail showing every segment as an empty circle, I
+checked `StudyWorkspacePrimitives.jsx`, found `is-submitted` and `is-failed`
+markers wired to `record.submissionState`, and reported that the capability was
+already there and the screenshot simply had no completed segments. The markers
+were real. The data never arrived: the rail's `segmentRecords` was local state
+seeded from the reference fixture and keyed `'1.1'`/`'1.3'`, which cannot match a
+live segment id, and nothing wrote the store's records into it.
+
+The consequence was not cosmetic. A user could finish every segment of a project
+and the product would never acknowledge one of them — no marker, no counter
+movement. It stayed hidden because `currentRecord` reads the store directly, so
+the segment in front of you always looked right; only the overview lied.
+
+Found by driving the journey end to end rather than reasoning about it, which is
+also what turned the Function gate from "31 tests pass" into an actual pass.
+
+**Consequence.**
+- `§Evidence Standard` already ranks the running application above source. This
+  records the specific way that ordering gets violated: reading source *about*
+  rendering and calling it verified.
+- Live mode and reference mode must not diverge silently. Where a screen has
+  both, anything derived for display needs a live path and a reference path, and
+  the live path is the one to check first.
