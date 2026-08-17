@@ -248,7 +248,10 @@ export const routeRegistry = {
         groupId: 'projects',
         label: 'Project Research',
         shortLabel: 'RX',
-        iconKey: 'projects',
+        // Its own glyph, not Projects'. The rail is icon-only by default, so two
+        // adjacent destinations sharing Layers3 were indistinguishable — you could
+        // not tell Projects from Project Research without expanding the rail.
+        iconKey: 'projectResearch',
         order: 21,
         routeId: 'projectResearch',
       },

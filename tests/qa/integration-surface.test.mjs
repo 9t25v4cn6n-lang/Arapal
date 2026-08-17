@@ -97,6 +97,26 @@ test('Exams is reachable from the V2 rail, and returns into V2', () => {
   )
 })
 
+test('no two rail destinations share an icon', () => {
+  // The rail is icon-only until expanded, so two destinations with the same glyph
+  // are two destinations the user cannot tell apart. Projects and Project
+  // Research both used `projects` and sat next to each other.
+  const registry = readFileSync(path.join(REPO, 'src/v2/app/routeRegistry.ts'), 'utf8')
+  const visible = registry.split(/\brail:\s*\{/).slice(1).filter((block) => /visible:\s*true/.test(block))
+  const keys = visible
+    .map((block) => block.match(/iconKey:\s*'([^']+)'/)?.[1])
+    .filter(Boolean)
+
+  const seen = new Set()
+  const duplicated = keys.filter((key) => (seen.has(key) ? true : (seen.add(key), false)))
+  assert.deepEqual(
+    duplicated,
+    [],
+    `rail destinations sharing an icon: ${duplicated.join(', ')}`,
+  )
+  assert.ok(keys.length >= 5, `expected the visible rail destinations to declare icons, found ${keys.length}`)
+})
+
 test('every production route in the standard has somewhere to come back to', () => {
   // A production route with no rail entry and no external entry can only be
   // reached by typing its hash, which is how Exams was lost.

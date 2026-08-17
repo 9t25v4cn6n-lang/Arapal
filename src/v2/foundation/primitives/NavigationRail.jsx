@@ -1,4 +1,4 @@
-import { BookOpen, ClipboardList, FolderGit2, Home, Layers3, Pin, PinOff, SplitSquareVertical } from 'lucide-react'
+import { BookOpen, ClipboardList, FolderGit2, Home, Layers3, Pin, PinOff, SplitSquareVertical, TextSearch } from 'lucide-react'
 import { useState } from 'react'
 import { colors, motion, radius, spacing, typography } from '../tokens'
 import IconActionButton from './IconActionButton'
@@ -7,6 +7,8 @@ import { getIdentityBadgeStyle, identityBadgeChrome } from './identityBadgePrese
 const iconMap = {
   home: Home,
   projects: Layers3,
+  // Research is "search and inspect project knowledge" — its own screen says so.
+  projectResearch: TextSearch,
   study: BookOpen,
   segmentation: SplitSquareVertical,
   exams: ClipboardList,
