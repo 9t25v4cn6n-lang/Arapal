@@ -1,10 +1,10 @@
 {
- "generatedAt": "2026-08-17T09:35:58.305Z",
+ "generatedAt": "2026-08-17T10:02:42.495Z",
  "routes": 13,
  "frames": 4,
- "blocking": 142,
+ "blocking": 126,
  "byRule": {
-  "type-floor": 52,
+  "type-floor": 36,
   "contrast": 40,
   "hit-target": 20,
   "unnamed-control": 16,
@@ -14,7 +14,7 @@
   "legacy-home": 19,
   "legacy-study": 51,
   "legacy-segmentation": 56,
-  "legacy-exams": 16,
+  "legacy-exams": 0,
   "v2-projectHome": 0,
   "v2-projects": 0,
   "v2-projectResearch": 0,

@@ -200,7 +200,7 @@ const examsStyles = `
 
   .exams-screen__brandMeta {
     margin: 0;
-    font-size: 10px;
+    font-size: 11px; /* 11px is the type floor [DECISION] */
     line-height: 1;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -402,7 +402,7 @@ const examsStyles = `
 
   .exams-screen__statLabel {
     margin: 0 0 10px;
-    font-size: 10px;
+    font-size: 11px; /* 11px is the type floor [DECISION] */
     line-height: 1;
     letter-spacing: 0.15em;
     text-transform: uppercase;
@@ -602,7 +602,7 @@ const examsStyles = `
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 10px;
+    font-size: 11px; /* 11px is the type floor [DECISION] */
     line-height: 1;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -820,7 +820,7 @@ const examsStyles = `
 
   .exams-screen__questionRowLabel {
     margin: 0 0 8px;
-    font-size: 10px;
+    font-size: 11px; /* 11px is the type floor [DECISION] */
     line-height: 1;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -908,7 +908,7 @@ const examsStyles = `
 
   .exams-screen__asideBlockTitle {
     margin: 0 0 8px;
-    font-size: 10px;
+    font-size: 11px; /* 11px is the type floor [DECISION] */
     line-height: 1;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -932,7 +932,7 @@ const examsStyles = `
     border: 1px solid rgba(22, 163, 74, 0.18);
     background: rgba(22, 163, 74, 0.08);
     color: var(--exams-success);
-    font-size: 10px;
+    font-size: 11px; /* 11px is the type floor [DECISION] */
     line-height: 1;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -1044,7 +1044,7 @@ const examsStyles = `
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 10px;
+    font-size: 11px; /* 11px is the type floor [DECISION] */
     line-height: 1;
     letter-spacing: 0.14em;
     text-transform: uppercase;

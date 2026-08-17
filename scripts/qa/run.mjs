@@ -139,7 +139,9 @@ for (const frame of frames) {
     if (landedHash !== route.hash) {
       driftedRoutes.push(`${route.id}@${frame.id} asked for #${route.hash}, measured #${landedHash}`)
     }
-    for (const f of out.findings) results.push({ route: route.id, app: route.app, frame: frame.id, ...f })
+    for (const f of out.findings) {
+      results.push({ route: route.id, app: route.app, surface: route.surface ?? 'production', frame: frame.id, ...f })
+    }
   }
 }
 await browser.close()
@@ -158,6 +160,8 @@ const payload = {
   frames: frames.map((f) => f.id),
   totals: {
     blocking: blocking.length,
+    productionBlocking: blocking.filter((b) => b.surface !== 'reference').length,
+    referenceBlocking: blocking.filter((b) => b.surface === 'reference').length,
     advisory: advisory.length,
     byRule: Object.fromEntries(Object.entries(byRule).map(([k, v]) => [k, v.length])),
     byRoute: Object.fromEntries(
@@ -266,7 +270,16 @@ if (args.json) {
     blankRoutes.forEach((r) => console.log(`  ${r}`))
   }
   console.log('\n' + '─'.repeat(78))
+    // The release-candidate Floor gate is about the PRODUCTION surface. The
+  // reference screens are retained only as behaviour sources until their
+  // behaviour is ported, so their debt is real but it is debt against code
+  // scheduled for deletion. Reported separately so neither number can hide
+  // behind the other.
+  const productionBlocking = blocking.filter((b) => b.surface !== 'reference')
+  const referenceBlocking = blocking.filter((b) => b.surface === 'reference')
   console.log(`violations: ${blocking.length}   advisory: ${advisory.length}   report: artifacts/qa/visual-standard.json`)
+  console.log(`  production surface: ${productionBlocking.length}${productionBlocking.length === 0 ? '  ← Floor gate' : ''}`)
+  console.log(`  reference (legacy, pending behaviour port): ${referenceBlocking.length}`)
   if (baseline.generatedAt) {
     if (verdict.regressions.length) {
       console.log(`\nNEW violations not in the accepted baseline (${verdict.regressions.length}):`)

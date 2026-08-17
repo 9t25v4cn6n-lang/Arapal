@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-17T09:31:43.161Z",
+ "generatedAt": "2026-08-17T10:02:42.498Z",
  "accepted": {
   "legacy-home::1440x900::type-floor": 3,
   "legacy-study::1440x900::scroll-hidden-majority": 0,
@@ -10,7 +10,7 @@
   "legacy-segmentation::1440x900::type-floor": 6,
   "legacy-segmentation::1440x900::contrast": 6,
   "legacy-segmentation::1440x900::unnamed-control": 1,
-  "legacy-exams::1440x900::type-floor": 4,
+  "legacy-exams::1440x900::type-floor": 0,
   "v2-projects::1440x900::viewport-escape": 0,
   "v2-projects::1440x900::type-floor": 0,
   "v2-projects::1440x900::contrast": 0,
@@ -43,7 +43,7 @@
   "legacy-segmentation::1366x768::type-floor": 6,
   "legacy-segmentation::1366x768::contrast": 6,
   "legacy-segmentation::1366x768::unnamed-control": 1,
-  "legacy-exams::1366x768::type-floor": 4,
+  "legacy-exams::1366x768::type-floor": 0,
   "v2-projects::1366x768::viewport-escape": 0,
   "v2-projects::1366x768::type-floor": 0,
   "v2-projects::1366x768::contrast": 0,
@@ -76,7 +76,7 @@
   "legacy-segmentation::1920x1080::type-floor": 6,
   "legacy-segmentation::1920x1080::contrast": 6,
   "legacy-segmentation::1920x1080::unnamed-control": 1,
-  "legacy-exams::1920x1080::type-floor": 4,
+  "legacy-exams::1920x1080::type-floor": 0,
   "v2-projects::1920x1080::viewport-escape": 0,
   "v2-projects::1920x1080::type-floor": 0,
   "v2-projects::1920x1080::contrast": 0,
@@ -110,7 +110,7 @@
   "legacy-segmentation::1280x800::type-floor": 6,
   "legacy-segmentation::1280x800::contrast": 6,
   "legacy-segmentation::1280x800::unnamed-control": 1,
-  "legacy-exams::1280x800::type-floor": 4,
+  "legacy-exams::1280x800::type-floor": 0,
   "v2-projects::1280x800::viewport-escape": 0,
   "v2-projects::1280x800::type-floor": 0,
   "v2-projects::1280x800::contrast": 0,
@@ -136,6 +136,6 @@
   "v2-segmentationSuccess::1280x800::contrast": 0,
   "v2-segmentationSuccess::1280x800::hit-target": 0
  },
- "total": 142,
+ "total": 126,
  "note": "Accepted visual-standard debt. May only decrease. Regenerate with: npm run qa:accept"
 }

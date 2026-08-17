@@ -21,18 +21,36 @@ export const VIEWPORTS = [
   { id: '1280x800', width: 1280, height: 800, tier: 'validate' },
 ]
 
-/** Product routes. Dev labs are excluded from the product standard by design. */
+/**
+ * Product routes. Dev labs are excluded from the product standard by design.
+ *
+ * `surface` encodes the plan's own §2.1 decision, so it is checkable rather than
+ * argued in prose:
+ *
+ *   production — a screen a user is expected to reach in a release. Must be
+ *                clean. This is what the release-candidate Floor gate means by
+ *                "the current production surface".
+ *   reference  — a legacy screen retained ONLY as a behaviour source until its
+ *                behaviour is ported. Still measured, and its findings still
+ *                reported, but they are debt against an implementation that is
+ *                scheduled for deletion rather than release.
+ *
+ * The distinction is deliberately narrow. Exams is production: the plan says to
+ * "preserve the working legacy capability until the V2 replacement has genuine
+ * parity", which makes it the shipping Exams, not a reference copy.
+ */
 export const ROUTES = [
-  // Legacy — retained until their V2 replacements reach parity.
-  { id: 'legacy-home', hash: 'home', app: 'legacy' },
-  { id: 'legacy-study', hash: 'study', app: 'legacy' },
-  { id: 'legacy-segmentation', hash: 'segmentation', app: 'legacy' },
-  { id: 'legacy-exams', hash: 'exams', app: 'legacy' },
+  // Legacy — retained as behaviour sources until their behaviour is ported.
+  { id: 'legacy-home', hash: 'home', app: 'legacy', surface: 'reference' },
+  { id: 'legacy-study', hash: 'study', app: 'legacy', surface: 'reference' },
+  { id: 'legacy-segmentation', hash: 'segmentation', app: 'legacy', surface: 'reference' },
+  // Production: this is the shipping Exams until a V2 replacement reaches parity.
+  { id: 'legacy-exams', hash: 'exams', app: 'legacy', surface: 'production' },
   // V2 — the V1 product surface.
-  { id: 'v2-projectHome', hash: 'v2/projectHome', app: 'v2' },
-  { id: 'v2-projects', hash: 'v2/projects', app: 'v2' },
-  { id: 'v2-projectResearch', hash: 'v2/projectResearch', app: 'v2' },
-  { id: 'v2-segmentationPasteNext', hash: 'v2/segmentationPasteNext', app: 'v2' },
+  { id: 'v2-projectHome', hash: 'v2/projectHome', app: 'v2', surface: 'production' },
+  { id: 'v2-projects', hash: 'v2/projects', app: 'v2', surface: 'production' },
+  { id: 'v2-projectResearch', hash: 'v2/projectResearch', app: 'v2', surface: 'production' },
+  { id: 'v2-segmentationPasteNext', hash: 'v2/segmentationPasteNext', app: 'v2', surface: 'production' },
   // These two advance on a timer — loading after 1200ms, transition after
   // 2200ms — and the checker probes at 2600ms. Without the pause flag both were
   // measuring whatever they had navigated to, under the earlier route's name:
@@ -40,11 +58,11 @@ export const ROUTES = [
   // and the transition route was reporting the review screen's. Two of thirteen
   // routes silently pointed at the wrong thing, which is the same shape of
   // blindness as the old checker's screenCount: 1.
-  { id: 'v2-segmentationTransition', hash: 'v2/segmentationTransition', app: 'v2', query: 'v2FlowPause=1' },
-  { id: 'v2-segmentationLoading', hash: 'v2/segmentationLoading', app: 'v2', query: 'v2FlowPause=1' },
-  { id: 'v2-segmentationReview', hash: 'v2/segmentationReview', app: 'v2' },
-  { id: 'v2-segmentationSuccess', hash: 'v2/segmentationSuccess', app: 'v2' },
-  { id: 'v2-studyWorkspace', hash: 'v2/studyWorkspace', app: 'v2' },
+  { id: 'v2-segmentationTransition', hash: 'v2/segmentationTransition', app: 'v2', query: 'v2FlowPause=1', surface: 'production' },
+  { id: 'v2-segmentationLoading', hash: 'v2/segmentationLoading', app: 'v2', query: 'v2FlowPause=1', surface: 'production' },
+  { id: 'v2-segmentationReview', hash: 'v2/segmentationReview', app: 'v2', surface: 'production' },
+  { id: 'v2-segmentationSuccess', hash: 'v2/segmentationSuccess', app: 'v2', surface: 'production' },
+  { id: 'v2-studyWorkspace', hash: 'v2/studyWorkspace', app: 'v2', surface: 'production' },
 ]
 
 export const THRESHOLDS = {
