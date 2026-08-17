@@ -827,17 +827,27 @@ const researchStyles = `
     white-space: nowrap;
   }
 
+  /* The -Strong values, not success/review: the token file records the plain
+     pair as fills and icons only, and a pill's tone IS its text colour.
+     "Completed" measured 3.2:1 and both amber states 3.1:1. */
   .project-research__statusPill.is-ready {
     border-color: rgba(22, 163, 74, 0.18);
     background: rgba(240, 253, 244, 0.68);
-    color: ${colors.success};
+    color: ${colors.successStrong};
   }
 
-  .project-research__statusPill.is-review,
-  .project-research__statusPill.is-weak {
+  .project-research__statusPill.is-review {
     border-color: rgba(217, 119, 6, 0.2);
     background: rgba(255, 251, 235, 0.72);
-    color: ${colors.review};
+    color: ${colors.reviewStrong};
+  }
+
+  /* A weak area is not the same state as needs-revision, and the token file
+     added a third semantic, critical, precisely so the two would stop sharing one amber. */
+  .project-research__statusPill.is-weak {
+    border-color: rgba(190, 18, 60, 0.2);
+    background: rgba(255, 241, 242, 0.72);
+    color: ${colors.critical};
   }
 
   .project-research__tagCell {
@@ -855,7 +865,10 @@ const researchStyles = `
     padding: ${spacing[4]} ${spacing[8]};
     border-radius: ${radius.pill};
     background: rgba(219, 234, 254, 0.42);
-    color: ${colors.textSoft};
+    /* textMuted, not textSoft. textSoft clears 4.5:1 on white but the chip's own
+       blue tint takes it to 4.3:1 — a text colour is only as good as what sits
+       behind it, and a chip changes what sits behind it. */
+    color: ${colors.textMuted};
     font-style: normal;
     font-size: 11px;
     line-height: 1;
@@ -2043,7 +2056,9 @@ const researchStyles = `
 
   .project-research__tagCell em {
     background: rgba(15, 23, 42, 0.055);
-    color: ${colors.textSoft};
+    /* Same reasoning as the base rule: a slate tint behind textSoft takes it
+       under 4.5:1. This later rule was quietly reinstating the failing value. */
+    color: ${colors.textMuted};
   }
 
   .project-research__resultStatus {
@@ -2067,14 +2082,19 @@ const researchStyles = `
   .project-research__statusPill.is-ready {
     border-color: rgba(22, 163, 74, 0.16);
     background: rgba(240, 253, 244, 0.46);
-    color: ${colors.success};
+    color: ${colors.successStrong};
   }
 
-  .project-research__statusPill.is-review,
-  .project-research__statusPill.is-weak {
+  .project-research__statusPill.is-review {
     border-color: rgba(217, 119, 6, 0.22);
     background: rgba(255, 251, 235, 0.58);
-    color: ${colors.review};
+    color: ${colors.reviewStrong};
+  }
+
+  .project-research__statusPill.is-weak {
+    border-color: rgba(190, 18, 60, 0.22);
+    background: rgba(255, 241, 242, 0.58);
+    color: ${colors.critical};
   }
 
   .project-research__rightWorkspace {

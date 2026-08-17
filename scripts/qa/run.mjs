@@ -79,6 +79,8 @@ const probeSource = evaluate.toString()
 const results = []
 const consoleErrors = []
 const blankRoutes = []
+// Routes that navigated away before they were measured.
+const driftedRoutes = []
 
 /** Below this, the page did not render and its result is meaningless. */
 const MIN_RENDERED_ELEMENTS = 20
@@ -109,7 +111,8 @@ page.on('pageerror', (e) => consoleErrors.push(String(e).slice(0, 200)))
 for (const frame of frames) {
   await page.setViewportSize({ width: frame.width, height: frame.height })
   for (const route of routes) {
-    await page.goto(`${BASE}/?chrome=0#${route.hash}`, { waitUntil: 'domcontentloaded' })
+    const query = route.query ? `&${route.query}` : ''
+    await page.goto(`${BASE}/?chrome=0${query}#${route.hash}`, { waitUntil: 'domcontentloaded' })
     await page.reload({ waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(2600) // intro/transition animations settle
     // Fonts change every metric this checker measures, so a late webfont turns
@@ -126,6 +129,15 @@ for (const frame of frames) {
     // across 13 routes — the same blindness the old dashboard had.
     if ((out.stats?.elements ?? 0) < MIN_RENDERED_ELEMENTS) {
       blankRoutes.push(`${route.id}@${frame.id} (${out.stats?.elements ?? 0} elements)`)
+    }
+
+    // Did we measure the screen we asked for? Two routes in this list advance on
+    // a timer, and before they were pinned the checker attributed one screen's
+    // findings to another route's name for months. Attributing a finding to the
+    // wrong screen is worse than missing it: it sends the fix to the wrong file.
+    const landedHash = (await page.evaluate(() => location.hash)).replace(/^#/, '')
+    if (landedHash !== route.hash) {
+      driftedRoutes.push(`${route.id}@${frame.id} asked for #${route.hash}, measured #${landedHash}`)
     }
     for (const f of out.findings) results.push({ route: route.id, app: route.app, frame: frame.id, ...f })
   }
@@ -155,6 +167,7 @@ const payload = {
   findings: results,
   pageErrors: [...new Set(consoleErrors)],
   blankRoutes,
+  driftedRoutes,
 }
 
 await fs.mkdir(path.dirname(REPORT), { recursive: true })
@@ -174,6 +187,7 @@ await fs.writeFile(PUBLISHED, JSON.stringify({
   byRule: payload.totals.byRule,
   byRoute: payload.totals.byRoute,
   blankRoutes: payload.blankRoutes,
+  driftedRoutes: payload.driftedRoutes,
 }, null, 1))
 
 // ── ratchet ──────────────────────────────────────────────────────────────────
@@ -196,7 +210,7 @@ if (args.accept) {
 // right next to it, because the guard only gated the exit code and ran after
 // the write. "Nothing found" is not "nothing wrong", and the ratchet must ask
 // that question before it moves, not after.
-const runIsTrustworthy = blankRoutes.length === 0 && consoleErrors.length === 0
+const runIsTrustworthy = blankRoutes.length === 0 && consoleErrors.length === 0 && driftedRoutes.length === 0
 
 const baseline = await readBaseline()
 if (baseline.generatedAt) {
@@ -207,6 +221,7 @@ if (baseline.generatedAt) {
 }
 const gated =
   blankRoutes.length > 0 ||
+  driftedRoutes.length > 0 ||
   (baseline.generatedAt ? verdict.regressions.length > 0 : blocking.length > 0)
 
 if (args.json) {
@@ -242,6 +257,10 @@ if (args.json) {
       if (a.offRampSizes) console.log(`  type-drift ${a.route}@${a.frame}: ${a.offRampSizes.length} off-ramp sizes → ${a.offRampSizes.join(', ')}`)
     }
   }
+  if (driftedRoutes.length) {
+    console.log(`\nMEASURED THE WRONG SCREEN (${driftedRoutes.length}) — findings would be filed against the wrong route:`)
+    driftedRoutes.forEach((r) => console.log(`  ${r}`))
+  }
   if (blankRoutes.length) {
     console.log(`\nDID NOT RENDER (${blankRoutes.length}) — these results are meaningless, not clean:`)
     blankRoutes.forEach((r) => console.log(`  ${r}`))
@@ -261,7 +280,8 @@ if (args.json) {
       console.log(runIsTrustworthy
         ? `\nFIXED — baseline lowered by ${paid}:`
         : `\n${paid} fewer findings, but the baseline was NOT lowered — this run is not trustworthy`
-          + ` (${blankRoutes.length} blank route(s), ${consoleErrors.length} page error(s)).`
+          + ` (${blankRoutes.length} blank route(s), ${driftedRoutes.length} drifted route(s),`
+          + ` ${consoleErrors.length} page error(s)).`
           + ` Fix the run, then re-measure:`)
       for (const r of verdict.improvements.slice(0, 12)) {
         const [route, frame, rule] = r.key.split('::')

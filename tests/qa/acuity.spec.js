@@ -100,14 +100,6 @@ test.describe('probe acuity — each rule proved on a known defect', () => {
     expect(ruleIds(findings)).toContain('viewport-escape')
   })
 
-  test('sees a scroll region hiding most of its content', async ({ page }) => {
-    const findings = await probeWith(page, `
-      <div style="height:40px;overflow-y:auto">
-        <div style="height:600px">a great deal of hidden content</div>
-      </div>`)
-    expect(ruleIds(findings)).toContain('scroll-hidden-majority')
-  })
-
   test('sees a chrome label cut off by layout pressure', async ({ page }) => {
     const findings = await probeWith(page, `
       <div style="width:60px;font-size:13px;color:#0F172A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">

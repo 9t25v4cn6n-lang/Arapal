@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-17T08:45:12.086Z",
+ "generatedAt": "2026-08-17T09:35:58.305Z",
  "base": "http://localhost:5173",
  "routes": [
   "legacy-home",
@@ -23,28 +23,27 @@
   "1280x800"
  ],
  "totals": {
-  "blocking": 194,
-  "advisory": 45,
+  "blocking": 142,
+  "advisory": 41,
   "byRule": {
    "type-floor": 52,
-   "scroll-hidden-majority": 9,
-   "contrast": 66,
-   "hit-target": 24,
-   "unnamed-control": 20,
-   "overlap": 23
+   "contrast": 40,
+   "hit-target": 20,
+   "unnamed-control": 16,
+   "overlap": 14
   },
   "byRoute": {
    "legacy-home": 19,
-   "legacy-study": 54,
+   "legacy-study": 51,
    "legacy-segmentation": 56,
    "legacy-exams": 16,
    "v2-projectHome": 0,
    "v2-projects": 0,
-   "v2-projectResearch": 18,
+   "v2-projectResearch": 0,
    "v2-segmentationPasteNext": 0,
    "v2-segmentationTransition": 0,
-   "v2-segmentationLoading": 4,
-   "v2-segmentationReview": 27,
+   "v2-segmentationLoading": 0,
+   "v2-segmentationReview": 0,
    "v2-segmentationSuccess": 0,
    "v2-studyWorkspace": 0
   }
@@ -95,17 +94,6 @@
     56
    ],
    "rampSize": 15
-  },
-  {
-   "route": "legacy-study",
-   "app": "legacy",
-   "frame": "1440x900",
-   "ruleId": "scroll-hidden-majority",
-   "selector": "div.fg-center__textBlock.fg-center__textBlock--source",
-   "label": "لا تصح الجمعة إلا في مصر جامع أو في مصلى الم",
-   "hiddenPx": 318,
-   "shownPx": 240,
-   "hiddenRatio": "57%"
   },
   {
    "route": "legacy-study",
@@ -478,65 +466,6 @@
    "route": "v2-projectResearch",
    "app": "v2",
    "frame": "1440x900",
-   "ruleId": "scroll-hidden-majority",
-   "selector": "div.project-research__rowList",
-   "label": "1.1الماء المطلق طهور لا يخرج عن الطهورية إلا",
-   "hiddenPx": 2727,
-   "shownPx": 549,
-   "hiddenRatio": "83.2%"
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "contrast",
-   "selector": "em",
-   "label": "purity",
-   "color": "rgb(100, 116, 139)",
-   "sizePx": 11,
-   "ratio": 4.3,
-   "required": 4.5
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "contrast",
-   "selector": "span.project-research__statusPill.is-ready",
-   "label": "Completed",
-   "color": "rgb(22, 163, 74)",
-   "sizePx": 11,
-   "ratio": 3.2,
-   "required": 4.5
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "contrast",
-   "selector": "span.project-research__statusPill.is-review",
-   "label": "Needs revision",
-   "color": "rgb(217, 119, 6)",
-   "sizePx": 11,
-   "ratio": 3.1,
-   "required": 4.5
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "contrast",
-   "selector": "span.project-research__statusPill.is-weak",
-   "label": "Weak area",
-   "color": "rgb(217, 119, 6)",
-   "sizePx": 11,
-   "ratio": 3.1,
-   "required": 4.5
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "frame": "1440x900",
    "ruleId": "type-drift",
    "offRampSizes": [
     15.5,
@@ -561,88 +490,9 @@
    "frame": "1440x900",
    "ruleId": "type-drift",
    "offRampSizes": [
-    66
-   ],
-   "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "contrast",
-   "selector": "p",
-   "label": "Segment 1",
-   "color": "rgb(100, 116, 139)",
-   "sizePx": 11,
-   "ratio": 4.5,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "type-drift",
-   "offRampSizes": [
     47.52
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "overlap",
-   "selector": "span",
-   "label": "1.1",
-   "otherSelector": "button",
-   "otherLabel": "list",
-   "overlapPx": "26x19"
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "overlap",
-   "selector": "p",
-   "label": "وكانت السماء صافية والهواء بارداً على نحوٍ خ",
-   "otherSelector": "button",
-   "otherLabel": "Split",
-   "overlapPx": "30x27.8"
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "overlap",
-   "selector": "button",
-   "label": "Undo",
-   "otherSelector": "button",
-   "otherLabel": "Collapse Opening movement",
-   "overlapPx": "31x23.8"
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "2.2",
-   "color": "rgb(255, 255, 255)",
-   "sizePx": 11,
-   "ratio": 3.2,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "Segment 1",
-   "color": "rgb(100, 116, 139)",
-   "sizePx": 11,
-   "ratio": 4.5,
-   "required": 4.5
   },
   {
    "route": "v2-segmentationReview",
@@ -653,25 +503,6 @@
     47.52
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "unnamed-control",
-   "selector": "input",
-   "tag": "INPUT",
-   "boxPx": "200x21.4"
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1440x900",
-   "ruleId": "hit-target",
-   "selector": "input",
-   "label": "",
-   "boxPx": "200x21.4",
-   "minPx": 24
   },
   {
    "route": "v2-segmentationSuccess",
@@ -738,17 +569,6 @@
     56
    ],
    "rampSize": 15
-  },
-  {
-   "route": "legacy-study",
-   "app": "legacy",
-   "frame": "1366x768",
-   "ruleId": "scroll-hidden-majority",
-   "selector": "div.fg-center__textBlock.fg-center__textBlock--source",
-   "label": "لا تصح الجمعة إلا في مصر جامع أو في مصلى الم",
-   "hiddenPx": 318,
-   "shownPx": 240,
-   "hiddenRatio": "57%"
   },
   {
    "route": "legacy-study",
@@ -1121,53 +941,6 @@
    "route": "v2-projectResearch",
    "app": "v2",
    "frame": "1366x768",
-   "ruleId": "scroll-hidden-majority",
-   "selector": "div.project-research__rowList",
-   "label": "1.1الماء المطلق طهور لا يخرج عن الطهورية إلا",
-   "hiddenPx": 2931,
-   "shownPx": 345,
-   "hiddenRatio": "89.5%"
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "contrast",
-   "selector": "span.project-research__statusPill.is-ready",
-   "label": "Completed",
-   "color": "rgb(22, 163, 74)",
-   "sizePx": 11,
-   "ratio": 3.2,
-   "required": 4.5
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "contrast",
-   "selector": "span.project-research__statusPill.is-review",
-   "label": "Needs revision",
-   "color": "rgb(217, 119, 6)",
-   "sizePx": 11,
-   "ratio": 3.1,
-   "required": 4.5
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "contrast",
-   "selector": "span.project-research__statusPill.is-weak",
-   "label": "Weak area",
-   "color": "rgb(217, 119, 6)",
-   "sizePx": 11,
-   "ratio": 3.1,
-   "required": 4.5
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "frame": "1366x768",
    "ruleId": "type-drift",
    "offRampSizes": [
     15.5,
@@ -1192,99 +965,9 @@
    "frame": "1366x768",
    "ruleId": "type-drift",
    "offRampSizes": [
-    66
-   ],
-   "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "contrast",
-   "selector": "p",
-   "label": "Segment 1",
-   "color": "rgb(100, 116, 139)",
-   "sizePx": 11,
-   "ratio": 4.5,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "type-drift",
-   "offRampSizes": [
     45.078
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "scroll-hidden-majority",
-   "selector": "div",
-   "label": "ReviewReview & refineCheck AraPal’s proposed",
-   "hiddenPx": 926,
-   "shownPx": 718,
-   "hiddenRatio": "56.3%"
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "overlap",
-   "selector": "span",
-   "label": "1.1",
-   "otherSelector": "button",
-   "otherLabel": "list",
-   "overlapPx": "26x19"
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "overlap",
-   "selector": "p",
-   "label": "وكانت السماء صافية والهواء بارداً على نحوٍ خ",
-   "otherSelector": "button",
-   "otherLabel": "Split",
-   "overlapPx": "30x27.8"
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "overlap",
-   "selector": "button",
-   "label": "Undo",
-   "otherSelector": "button",
-   "otherLabel": "Collapse Opening movement",
-   "overlapPx": "31x23.8"
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "2.2",
-   "color": "rgb(255, 255, 255)",
-   "sizePx": 11,
-   "ratio": 3.2,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "Segment 1",
-   "color": "rgb(100, 116, 139)",
-   "sizePx": 11,
-   "ratio": 4.5,
-   "required": 4.5
   },
   {
    "route": "v2-segmentationReview",
@@ -1295,25 +978,6 @@
     45.078
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "unnamed-control",
-   "selector": "input",
-   "tag": "INPUT",
-   "boxPx": "200x21.4"
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1366x768",
-   "ruleId": "hit-target",
-   "selector": "input",
-   "label": "",
-   "boxPx": "200x21.4",
-   "minPx": 24
   },
   {
    "route": "v2-segmentationSuccess",
@@ -1751,65 +1415,6 @@
    "route": "v2-projectResearch",
    "app": "v2",
    "frame": "1920x1080",
-   "ruleId": "scroll-hidden-majority",
-   "selector": "div.project-research__rowList",
-   "label": "1.1الماء المطلق طهور لا يخرج عن الطهورية إلا",
-   "hiddenPx": 2548,
-   "shownPx": 728,
-   "hiddenRatio": "77.8%"
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "contrast",
-   "selector": "em",
-   "label": "purity",
-   "color": "rgb(100, 116, 139)",
-   "sizePx": 11,
-   "ratio": 4.3,
-   "required": 4.5
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "contrast",
-   "selector": "span.project-research__statusPill.is-ready",
-   "label": "Completed",
-   "color": "rgb(22, 163, 74)",
-   "sizePx": 11,
-   "ratio": 3.2,
-   "required": 4.5
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "contrast",
-   "selector": "span.project-research__statusPill.is-review",
-   "label": "Needs revision",
-   "color": "rgb(217, 119, 6)",
-   "sizePx": 11,
-   "ratio": 3.1,
-   "required": 4.5
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "contrast",
-   "selector": "span.project-research__statusPill.is-weak",
-   "label": "Weak area",
-   "color": "rgb(217, 119, 6)",
-   "sizePx": 11,
-   "ratio": 3.1,
-   "required": 4.5
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "frame": "1920x1080",
    "ruleId": "type-drift",
    "offRampSizes": [
     15.5,
@@ -1817,71 +1422,6 @@
     25
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationTransition",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "type-drift",
-   "offRampSizes": [
-    66
-   ],
-   "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "contrast",
-   "selector": "p",
-   "label": "Segment 1",
-   "color": "rgb(100, 116, 139)",
-   "sizePx": 11,
-   "ratio": 4.5,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "2.2",
-   "color": "rgb(255, 255, 255)",
-   "sizePx": 11,
-   "ratio": 3.2,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "Segment 1",
-   "color": "rgb(100, 116, 139)",
-   "sizePx": 11,
-   "ratio": 4.5,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "unnamed-control",
-   "selector": "input",
-   "tag": "INPUT",
-   "boxPx": "200x21.4"
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1920x1080",
-   "ruleId": "hit-target",
-   "selector": "input",
-   "label": "",
-   "boxPx": "200x21.4",
-   "minPx": 24
   },
   {
    "route": "v2-segmentationSuccess",
@@ -2025,17 +1565,6 @@
     64
    ],
    "rampSize": 15
-  },
-  {
-   "route": "legacy-study",
-   "app": "legacy",
-   "frame": "1280x800",
-   "ruleId": "scroll-hidden-majority",
-   "selector": "div.fg-center__textBlock.fg-center__textBlock--source",
-   "label": "لا تصح الجمعة إلا في مصر جامع أو في مصلى الم",
-   "hiddenPx": 428,
-   "shownPx": 240,
-   "hiddenRatio": "64.1%"
   },
   {
    "route": "legacy-study",
@@ -2441,53 +1970,6 @@
    "route": "v2-projectResearch",
    "app": "v2",
    "frame": "1280x800",
-   "ruleId": "scroll-hidden-majority",
-   "selector": "div.project-research__rowList",
-   "label": "1.1الماء المطلق طهور لا يخرج عن الطهورية إلا",
-   "hiddenPx": 2897,
-   "shownPx": 379,
-   "hiddenRatio": "88.4%"
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "contrast",
-   "selector": "span.project-research__statusPill.is-ready",
-   "label": "Completed",
-   "color": "rgb(22, 163, 74)",
-   "sizePx": 11,
-   "ratio": 3.2,
-   "required": 4.5
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "contrast",
-   "selector": "span.project-research__statusPill.is-review",
-   "label": "Needs revision",
-   "color": "rgb(217, 119, 6)",
-   "sizePx": 11,
-   "ratio": 3.1,
-   "required": 4.5
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "contrast",
-   "selector": "span.project-research__statusPill.is-weak",
-   "label": "Weak area",
-   "color": "rgb(217, 119, 6)",
-   "sizePx": 11,
-   "ratio": 3.1,
-   "required": 4.5
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "frame": "1280x800",
    "ruleId": "type-drift",
    "offRampSizes": [
     15.5,
@@ -2512,99 +1994,9 @@
    "frame": "1280x800",
    "ruleId": "type-drift",
    "offRampSizes": [
-    64
-   ],
-   "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "contrast",
-   "selector": "p",
-   "label": "Segment 1",
-   "color": "rgb(100, 116, 139)",
-   "sizePx": 11,
-   "ratio": 4.5,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationLoading",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "type-drift",
-   "offRampSizes": [
     42.24
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "scroll-hidden-majority",
-   "selector": "div",
-   "label": "ReviewReview & refineCheck AraPal’s proposed",
-   "hiddenPx": 921,
-   "shownPx": 750,
-   "hiddenRatio": "55.1%"
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "overlap",
-   "selector": "span",
-   "label": "1.1",
-   "otherSelector": "button",
-   "otherLabel": "list",
-   "overlapPx": "26x19"
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "overlap",
-   "selector": "p",
-   "label": "وكانت السماء صافية والهواء بارداً على نحوٍ خ",
-   "otherSelector": "button",
-   "otherLabel": "Split",
-   "overlapPx": "30x27.8"
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "overlap",
-   "selector": "button",
-   "label": "Undo",
-   "otherSelector": "button",
-   "otherLabel": "Collapse Opening movement",
-   "overlapPx": "31x23.8"
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "contrast",
-   "selector": "div",
-   "label": "2.2",
-   "color": "rgb(255, 255, 255)",
-   "sizePx": 11,
-   "ratio": 3.2,
-   "required": 4.5
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "contrast",
-   "selector": "span",
-   "label": "Segment 1",
-   "color": "rgb(100, 116, 139)",
-   "sizePx": 11,
-   "ratio": 4.5,
-   "required": 4.5
   },
   {
    "route": "v2-segmentationReview",
@@ -2615,25 +2007,6 @@
     42.24
    ],
    "rampSize": 15
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "unnamed-control",
-   "selector": "input",
-   "tag": "INPUT",
-   "boxPx": "200x21.4"
-  },
-  {
-   "route": "v2-segmentationReview",
-   "app": "v2",
-   "frame": "1280x800",
-   "ruleId": "hit-target",
-   "selector": "input",
-   "label": "",
-   "boxPx": "200x21.4",
-   "minPx": 24
   },
   {
    "route": "v2-segmentationSuccess",
@@ -2658,5 +2031,6 @@
   }
  ],
  "pageErrors": [],
- "blankRoutes": []
+ "blankRoutes": [],
+ "driftedRoutes": []
 }

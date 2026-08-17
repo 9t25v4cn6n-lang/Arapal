@@ -161,6 +161,23 @@ code {
    rendering outside the product's typefaces, including the Study segment tree.
    Inheriting the family (not the size or weight) fixes the whole class rather
    than each control that happens to be noticed. */
+/* box-sizing does not inherit, so declaring it on body did nothing for anything
+   inside body. Thirteen components had each re-declared it on their own subtree,
+   and everything outside those thirteen was content-box — where a declared width
+   is a promise the element does not keep.
+
+   That is not an abstraction worry. The segment toolbar declared width: 64px to
+   match the 64px lane reserved for it, then rendered 82px once its own padding
+   and border were added on top, and spent the difference sitting on the segment
+   cards. Three of the product's overlap findings were that one element.
+
+   Declared once, universally, as the reset it should always have been. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 button,
 input,
 select,

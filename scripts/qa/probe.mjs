@@ -181,16 +181,12 @@ export function evaluate(config) {
         boxPx: el.clientHeight, contentPx: el.scrollHeight,
       })
     }
-    // ── RULE: scroll-hidden-majority ────────────────────────────────────────
-    if (scrollableY && dy > 8) {
-      const ratio = dy / el.scrollHeight
-      if (ratio > THRESHOLDS.maxUnsignalledScrollRatio) {
-        add('scroll-hidden-majority', {
-          selector: describe(el), label: label(el),
-          hiddenPx: dy, shownPx: el.clientHeight, hiddenRatio: round(ratio * 100) + '%',
-        })
-      }
-    }
+    // Does this region tell the user there is more, one way or another?
+    // A visible scrollbar is an affordance. So is a faded edge. Shared by both
+    // scroll rules below, because both are really asking the same question.
+    const hidesScrollbar = cs.scrollbarWidth === 'none'
+    const signals = cs.maskImage !== 'none' || cs.webkitMaskImage !== 'none'
+    const announcesMore = !hidesScrollbar || signals
 
     // ── RULE: scroll-without-affordance ─────────────────────────────────────
     // A region that scrolls but hides its scrollbar looks identical to one that
@@ -198,8 +194,6 @@ export function evaluate(config) {
     // visible, or something else must say "there is more" — a fade mask is what
     // this codebase uses. Neither is a defect the geometry rules can see, which
     // is why a half-sliced line of Arabic survived a clean report.
-    const hidesScrollbar = cs.scrollbarWidth === 'none'
-    const signals = cs.maskImage !== 'none' || cs.webkitMaskImage !== 'none'
     const overflowAxes = []
     if (scrollableY && dy > THRESHOLDS.minSignallableOverflowPx) overflowAxes.push('y')
     if (scrollableX && dx > THRESHOLDS.minSignallableOverflowPx) overflowAxes.push('x')

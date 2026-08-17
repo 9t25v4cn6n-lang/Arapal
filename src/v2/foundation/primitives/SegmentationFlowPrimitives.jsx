@@ -201,7 +201,9 @@ function getReviewStateChrome(reviewState, selected = false) {
       border: flowChrome.amberLine,
       background: flowChrome.amberTintSurface,
       headerBackground: flowChrome.amberTintStrong,
-      badgeBackground: colors.review,
+      // reviewStrong, not review: white on #D97706 measures 3.2:1, which is
+      // below AA for an 11px badge number. On #B45309 it clears it.
+      badgeBackground: colors.reviewStrong,
       badgeColor: colors.surfacePrimary,
       shadow: flowChrome.amberShadow,
     }
@@ -327,6 +329,11 @@ const flowType = {
     lineHeight: 1.2,
     letterSpacing: '0.1em',
     fontWeight: 650,
+    // textMuted, and carried by the style rather than left to each call site.
+    // Seven sites paired this style with textSoft, which clears 4.5:1 on white
+    // and does not on the amber, blue and slate tinted panels these labels
+    // actually sit on. Owning the colour here means the pairing is decided once.
+    color: colors.textMuted,
   },
   toolbarSelection: {
     margin: 0,
@@ -338,7 +345,9 @@ const flowType = {
   },
   meta: {
     ...typography.eyebrowLabel,
-    color: colors.textSoft,
+    // textMuted for the same reason as operationalMeta: these labels sit on the
+    // flow's tinted panels, where textSoft's 4.5:1-on-white becomes 4.4:1.
+    color: colors.textMuted,
   },
 }
 
@@ -771,7 +780,10 @@ function TransitionSegmentList() {
             animationDelay: flowMetrics.segmentRevealDelays[index] ?? flowMetrics.segmentRevealDelays[0],
           }}
         >
-          <p style={{ margin: `0 0 ${spacing[8]}`, color: colors.accentStrong, ...flowType.meta }}>{segment.label}</p>
+          {/* flowType.meta last would overwrite the colour, which is what had
+              been happening: the chip title was meant to read as accent and
+              rendered in the meta grey instead. */}
+          <p style={{ margin: `0 0 ${spacing[8]}`, ...flowType.meta, color: colors.accentStrong }}>{segment.label}</p>
           <p
             dir="rtl"
             lang="ar"
@@ -1098,7 +1110,7 @@ function GroupTitleInput({ group, stale = false, onChange }) {
       data-debug-item="group_title_editor"
       style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[8], minWidth: 0, flex: '1 1 auto' }}
     >
-      <span style={{ ...flowType.operationalMeta, color: colors.textSoft, whiteSpace: 'nowrap' }}>
+      <span style={{ ...flowType.operationalMeta, whiteSpace: 'nowrap' }}>
         {group.number}.
       </span>
       {editing ? (
@@ -1208,7 +1220,7 @@ export function SegmentationReviewIntro({ summary }) {
             Check AraPal’s proposed meaning groups, fix only the segments that need attention, then approve the structure for study.
           </FlowLead>
         </div>
-        <span style={{ ...flowType.operationalMeta, color: colors.textSoft }}>
+        <span style={{ ...flowType.operationalMeta }}>
           Source preserved · {segmentCount} proposed segments · {checkLabel}
         </span>
       </div>
@@ -1302,7 +1314,7 @@ export function ReviewMarkerPanel({
   return (
     <FlowPanel
       title="Segment outline"
-      barEnd={<span style={{ ...flowType.operationalMeta, color: colors.textSoft }}>{markers.length} segments</span>}
+      barEnd={<span style={{ ...flowType.operationalMeta }}>{markers.length} segments</span>}
       bodyStyle={{ padding: `${spacing[16]} ${spacing[16]} ${spacing[20]}` }}
       style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}
       debugItem="marker_panel"
@@ -1419,8 +1431,12 @@ export function ReviewMarkerPanel({
                           type="text"
                           value={marker.label}
                           onChange={(event) => onLabelChange(marker.id, event.target.value)}
+                          // Nameless to a screen reader, and 21.4px tall against
+                          // the 24px target floor.
+                          aria-label={`Rename segment ${marker.displayNumber ?? marker.id}`}
                           style={{
                             minWidth: 0,
+                            minHeight: spacing[24],
                             border: 'none',
                             background: 'transparent',
                             color: colors.textBody,
@@ -1507,7 +1523,13 @@ export function SegmentationReviewSelectedToolbar({
       onToggleFloating={onToggleFloating}
       debugItem="selected_segment_toolbar"
       style={isFloating ? undefined : {
-        transform: `translateX(clamp(0px, calc((100vw - 1400px) / 2 - ${flowMetrics.reviewToolbarRailWidth} - ${flowMetrics.reviewToolbarGutterGap}), calc(${flowMetrics.reviewToolbarRailWidth} + ${flowMetrics.reviewToolbarGutterGap})))`,
+        // Moves into the gutter reviewPagePadding reserves for it — the same
+        // value, from the same constant, so the two cannot drift apart. The old
+        // expression clamped a translation derived from (100vw - 1400px) / 2,
+        // which is a guess about how much page margin happens to be left over;
+        // at 1440 the answer was "not enough", so the toolbar simply sat on the
+        // content it was meant to sit beside.
+        transform: `translateX(${flowMetrics.reviewToolbarGutter})`,
         zIndex: 32,
       }}
     >
@@ -1826,7 +1848,7 @@ function BoundaryAdjustPreview({ segment, nextSegment, onMoveBoundary, onCancelB
               minWidth: 0,
             }}
           >
-            <span style={{ ...flowType.operationalMeta, color: colors.textSoft }}>
+            <span style={{ ...flowType.operationalMeta }}>
               {index === 0 ? 'Selected segment' : 'Next segment'}
             </span>
             <p
@@ -1923,7 +1945,7 @@ export function ReviewOutput({
       title="Segment proposal"
       barEnd={
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[12], flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-          <span style={{ ...flowType.operationalMeta, color: colors.textSoft }}>{segments.length} segments</span>
+          <span style={{ ...flowType.operationalMeta }}>{segments.length} segments</span>
           <ProposalViewToggle value={viewMode} onChange={onViewModeChange} />
         </div>
       }
@@ -1970,7 +1992,7 @@ export function ReviewOutput({
                     cursor: 'pointer',
                   }}
                 >
-                  <span style={{ ...flowType.operationalMeta, color: colors.textSoft }}>{group.segments.length} segments</span>
+                  <span style={{ ...flowType.operationalMeta }}>{group.segments.length} segments</span>
                   {collapsed ? <ChevronDown size={14} strokeWidth={1.9} /> : <ChevronUp size={14} strokeWidth={1.9} />}
                 </button>
               </div>
@@ -2033,7 +2055,7 @@ export function ReviewOutput({
                           >
                             {segment.displayNumber}
                           </StepNumberBadge>
-                          <span style={{ ...flowType.operationalMeta, color: colors.textSoft, minWidth: 0, flex: '1 1 auto' }}>
+                          <span style={{ ...flowType.operationalMeta, minWidth: 0, flex: '1 1 auto' }}>
                             {segment.label}
                           </span>
                           {boundaryActive ? (

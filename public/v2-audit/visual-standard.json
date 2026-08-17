@@ -1,30 +1,30 @@
 {
- "generatedAt": "2026-08-17T08:45:12.086Z",
+ "generatedAt": "2026-08-17T09:35:58.305Z",
  "routes": 13,
  "frames": 4,
- "blocking": 194,
+ "blocking": 142,
  "byRule": {
   "type-floor": 52,
-  "scroll-hidden-majority": 9,
-  "contrast": 66,
-  "hit-target": 24,
-  "unnamed-control": 20,
-  "overlap": 23
+  "contrast": 40,
+  "hit-target": 20,
+  "unnamed-control": 16,
+  "overlap": 14
  },
  "byRoute": {
   "legacy-home": 19,
-  "legacy-study": 54,
+  "legacy-study": 51,
   "legacy-segmentation": 56,
   "legacy-exams": 16,
   "v2-projectHome": 0,
   "v2-projects": 0,
-  "v2-projectResearch": 18,
+  "v2-projectResearch": 0,
   "v2-segmentationPasteNext": 0,
   "v2-segmentationTransition": 0,
-  "v2-segmentationLoading": 4,
-  "v2-segmentationReview": 27,
+  "v2-segmentationLoading": 0,
+  "v2-segmentationReview": 0,
   "v2-segmentationSuccess": 0,
   "v2-studyWorkspace": 0
  },
- "blankRoutes": []
+ "blankRoutes": [],
+ "driftedRoutes": []
 }

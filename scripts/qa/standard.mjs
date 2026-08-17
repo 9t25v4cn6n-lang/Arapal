@@ -33,8 +33,15 @@ export const ROUTES = [
   { id: 'v2-projects', hash: 'v2/projects', app: 'v2' },
   { id: 'v2-projectResearch', hash: 'v2/projectResearch', app: 'v2' },
   { id: 'v2-segmentationPasteNext', hash: 'v2/segmentationPasteNext', app: 'v2' },
-  { id: 'v2-segmentationTransition', hash: 'v2/segmentationTransition', app: 'v2' },
-  { id: 'v2-segmentationLoading', hash: 'v2/segmentationLoading', app: 'v2' },
+  // These two advance on a timer — loading after 1200ms, transition after
+  // 2200ms — and the checker probes at 2600ms. Without the pause flag both were
+  // measuring whatever they had navigated to, under the earlier route's name:
+  // "v2-segmentationLoading" was reporting findings from the transition screen,
+  // and the transition route was reporting the review screen's. Two of thirteen
+  // routes silently pointed at the wrong thing, which is the same shape of
+  // blindness as the old checker's screenCount: 1.
+  { id: 'v2-segmentationTransition', hash: 'v2/segmentationTransition', app: 'v2', query: 'v2FlowPause=1' },
+  { id: 'v2-segmentationLoading', hash: 'v2/segmentationLoading', app: 'v2', query: 'v2FlowPause=1' },
   { id: 'v2-segmentationReview', hash: 'v2/segmentationReview', app: 'v2' },
   { id: 'v2-segmentationSuccess', hash: 'v2/segmentationSuccess', app: 'v2' },
   { id: 'v2-studyWorkspace', hash: 'v2/studyWorkspace', app: 'v2' },
@@ -129,7 +136,11 @@ export const RULES = {
   overlap: { blocking: true, title: 'Rendered elements overlap' },
   'content-clipped': { blocking: true, title: 'Container clips its own content' },
   'container-undersized': { blocking: true, title: 'Container is smaller than the content it holds' },
-  'scroll-hidden-majority': { blocking: true, title: 'Scroll region hides most of its content with no affordance' },
+  // RETIRED. It asked the same question as scroll-without-affordance and was a
+  // strict subset of it: same overflow condition, plus a ratio. Two rules for
+  // one defect double-counted it in the ratchet and made the totals read as
+  // worse than the product was. The concern now lives in one rule with the
+  // better name and the implementation that matches it.
   'viewport-escape': { blocking: true, title: 'Element sits outside the frame' },
   'type-floor': { blocking: true, title: 'Text below the minimum size' },
   contrast: { blocking: true, title: 'Text below the contrast minimum' },

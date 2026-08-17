@@ -7,7 +7,7 @@
 // pixels are ideal forever". Never update it merely to make the suite green.
 
 import { test, expect } from '@playwright/test'
-import { STATES, WIDTHS, gotoState, dynamicMasks } from './states.mjs'
+import { STATES, WIDTHS, gotoState, dynamicMasks, landedOnOwnScreen } from './states.mjs'
 
 // Freeze motion and randomness so the suite measures product change, not noise.
 const STABILISE = `
@@ -57,7 +57,19 @@ for (const width of WIDTHS) {
         // measures boxes rather than pixels and is deterministic, and their
         // behaviour by tests/behaviour. Restoring pixel goldens here needs a
         // real settle signal from the app, not a longer wait.
-        if (state.drive) {
+        // Every state must still be on the screen it names. A state that
+        // navigated away captures a different screen under this name, and the
+        // golden then passes forever while covering nothing it claims to —
+        // seg-processing held a picture of the Success screen for exactly that
+        // reason. Asserted for all states, golden or reachability-only.
+        const landing = await landedOnOwnScreen(page, state)
+        expect(
+          landing.ok,
+          `State "${state.id}" names #${state.hash} but the page is on #${landing.hash}.`
+          + ' A golden captured here would document the wrong screen.',
+        ).toBe(true)
+
+        if (state.drive || state.reachabilityOnly) {
           // Unreachable is recorded, not failed — "this control does not exist
           // yet" is a product finding for the backlog, not a broken test. The
           // known case is seg-options-open: the V2 paste screen has no reliable

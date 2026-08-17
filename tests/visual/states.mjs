@@ -98,8 +98,16 @@ export const STATES = [
     id: 'v2-home-returning',
     hash: 'v2/projectHome',
     area: 'home',
+    // "Explore with a sample" seeds the sample AND navigates to Study — that is
+    // the button's job. So this state, named for the returning Project Home,
+    // was capturing the Study Workspace. It had no pixel golden to give it away
+    // (driven states are reachability-only), and nothing else asked which screen
+    // it had actually reached. Seed, then come back to the screen it names.
     async drive(page) {
-      return clickText(page, /explore with a sample/i)
+      const seeded = await clickText(page, /explore with a sample/i)
+      if (!seeded) return false
+      await page.evaluate(() => { window.location.hash = 'v2/projectHome' })
+      return true
     },
   },
   { id: 'projects-library', hash: 'v2/projects', area: 'projects' },
@@ -132,13 +140,23 @@ export const STATES = [
       try { await chevron.click({ timeout: 3000 }); return true } catch { return false }
     },
   },
-  { id: 'seg-processing', hash: 'v2/segmentationTransition', area: 'segmentation' },
-  // seg-loading is deliberately absent from the golden set. It is a transient
-  // screen whose indicator advances continuously, so there is no stable frame
-  // to compare against; capturing one produced a state that failed on roughly
-  // one run in three. Excluding it is honest — a suite that flaps is worse than
-  // a suite with a recorded gap. Its layout is still covered by `npm run qa`,
-  // which measures geometry rather than pixels.
+  // seg-processing and seg-loading are the two screens that advance on their own
+  // — loading after 1200ms, the transition after 2200ms — and gotoState settles
+  // for 2400ms before capturing. So the golden checked in under the name
+  // "seg-processing" was a picture of the Success screen: a duplicate of
+  // seg-success under the wrong name, while the transition screen it claimed to
+  // cover had no coverage at all. Nobody noticed, because a wrong-but-stable
+  // golden passes forever.
+  //
+  // Both are held to reachability only, with the pause flag so they at least stay
+  // on the screen they name. Pixels are the wrong instrument here: every element
+  // on both screens carries an infinite animation — a spinning seal, flying
+  // chips, a pulsing bridge — so a pixel golden would either flap or need every
+  // moving part masked, which is a golden of the gaps between the content.
+  // Geometry is covered by `npm run qa`, which freezes motion and now asserts it
+  // measured the route it asked for.
+  { id: 'seg-processing', hash: 'v2/segmentationTransition', area: 'segmentation', query: 'v2FlowPause=1', reachabilityOnly: true },
+  { id: 'seg-loading', hash: 'v2/segmentationLoading', area: 'segmentation', query: 'v2FlowPause=1', reachabilityOnly: true },
   { id: 'seg-review', hash: 'v2/segmentationReview', area: 'segmentation' },
   {
     id: 'seg-review-active-edit',
@@ -245,7 +263,8 @@ export const SAMPLE_SOURCE =
  * reach the state, which the caller records rather than treating as a failure.
  */
 export async function gotoState(page, state) {
-  await page.goto(`/?chrome=0#${state.hash}`, { waitUntil: 'domcontentloaded' })
+  const query = state.query ? `&${state.query}` : ''
+  await page.goto(`/?chrome=0${query}#${state.hash}`, { waitUntil: 'domcontentloaded' })
   // Start every state from empty storage.
   //
   // The suite used to be isolated by accident: nothing persisted, so no state
@@ -270,6 +289,18 @@ export async function gotoState(page, state) {
     return reached
   }
   return true
+}
+
+/**
+ * Did the page stay on the screen the state names?
+ *
+ * A state that navigates away captures a different screen under this state's
+ * name, and the golden then passes forever while covering nothing it claims to.
+ * That is exactly what happened to seg-processing. Cheap to check, so checked.
+ */
+export async function landedOnOwnScreen(page, state) {
+  const hash = (await page.evaluate(() => location.hash)).replace(/^#/, '')
+  return { ok: hash === state.hash, hash }
 }
 
 /**

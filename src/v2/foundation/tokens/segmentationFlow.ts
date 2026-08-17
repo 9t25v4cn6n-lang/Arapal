@@ -127,10 +127,30 @@ export const segmentationFlowMotionStyles = `
   }
 `
 
+// The docked review toolbar's rail plus the gap between it and the content.
+// Declared once, above the metrics, because two things must agree on it: the page
+// padding that reserves the space, and the toolbar that moves into it. They
+// disagreeing is what put the toolbar on top of the content.
+const REVIEW_TOOLBAR_RAIL_WIDTH = '64px'
+const REVIEW_TOOLBAR_GUTTER_GAP = spacing[16]
+const REVIEW_TOOLBAR_GUTTER = `calc(${REVIEW_TOOLBAR_RAIL_WIDTH} + ${REVIEW_TOOLBAR_GUTTER_GAP})`
+
 export const segmentationFlowMetrics = {
   centeredMargin: '0 auto',
   pagePadding: `clamp(${spacing[24]}, 5vh, ${spacing[64]}) clamp(${spacing[24]}, 4vw, ${spacing[48]})`,
-  reviewPagePadding: `${spacing[16]} clamp(${spacing[24]}, 4vw, ${spacing[48]}) ${spacing[64]}`,
+  // Four values, because the inline-end inset is not the inline-start one: the
+  // end reserves the docked toolbar's rail. Without that reservation the rail had
+  // nowhere to be — the toolbar tried to escape into the page margin using a
+  // translateX derived from (100vw - 1400px) / 2, which at the canonical 1440
+  // viewport offers 20px against the 80px the rail needs, so it stayed put, on
+  // top of the segment proposal's group headers and card edges. Reserved in the
+  // layout rather than guessed from the viewport.
+  reviewPagePadding: [
+    spacing[16],
+    `calc(clamp(${spacing[24]}, 4vw, ${spacing[48]}) + ${REVIEW_TOOLBAR_GUTTER})`,
+    spacing[64],
+    `clamp(${spacing[24]}, 4vw, ${spacing[48]})`,
+  ].join(' '),
   transitionShellPadding: `clamp(${spacing[32]}, 4vw, ${spacing[48]})`,
   loadingAdvanceDelayMs: 1200,
   transitionAdvanceDelayMs: 2200,
@@ -148,7 +168,7 @@ export const segmentationFlowMetrics = {
   compactSourcePreviewMaxHeight: `calc(${spacing[32]} + ${spacing[32]})`,
   expandedSourcePreviewMaxHeight: '220px',
   reviewWorkspaceMinHeight: '520px',
-  reviewToolbarGutterGap: spacing[16],
+  reviewToolbarGutterGap: REVIEW_TOOLBAR_GUTTER_GAP,
   // Sticky top is relative to the body scrollport, whose top already sits below the shell header.
   reviewWorkspaceStickyTop: spacing[16],
   reviewCommandBarMaxWidth: '920px',
@@ -157,7 +177,9 @@ export const segmentationFlowMetrics = {
   reviewToolButtonMinHeight: '32px',
   reviewMarkerRailMinWidth: '240px',
   reviewMarkerRailMaxWidth: '320px',
-  reviewToolbarRailWidth: '64px',
+  reviewToolbarRailWidth: REVIEW_TOOLBAR_RAIL_WIDTH,
+  // The reserved lane the docked toolbar occupies: rail + gap.
+  reviewToolbarGutter: REVIEW_TOOLBAR_GUTTER,
   reviewMarkerRowMinHeight: '40px',
   reviewSegmentCardMinWidth: '300px',
   bridgePulseDelay: '900ms',
