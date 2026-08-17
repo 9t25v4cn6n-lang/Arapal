@@ -157,12 +157,24 @@ const layoutContract = createScreenLayoutContract({
       style: {
         alignSelf: 'flex-end',
         width: flowMetrics.reviewToolbarRailWidth,
-        height: 0,
+        // A real band, not a zero-height anchor.
+        //
+        // This was height: 0, so the toolbar inside simply overflowed downward
+        // from wherever the anchor happened to land — 378px down the lane at
+        // 1280x800 — and ran 148px past the fold with delete and float
+        // unpressable, sitting 84px on top of the Approve bar. Capping the
+        // toolbar's own max-height could not fix that: the toolbar was already
+        // shorter than the cap. The problem was where it started, not how tall it
+        // was.
+        //
+        // Giving the region the height it is actually allowed to occupy means
+        // sticky pins a band, the toolbar starts at the top of that band, and the
+        // reserve keeps its bottom clear of the docked action bar.
+        height: `calc(100vh - ${flowMetrics.reviewToolbarViewportReserve})`,
         position: 'sticky',
         top: flowMetrics.reviewWorkspaceStickyTop,
         zIndex: 12,
         minWidth: 0,
-        marginBottom: `calc(${spacing[20]} * -1)`,
       },
     },
     {

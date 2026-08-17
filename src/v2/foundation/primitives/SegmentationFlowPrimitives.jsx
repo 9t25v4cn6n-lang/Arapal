@@ -1523,6 +1523,25 @@ export function SegmentationReviewSelectedToolbar({
         // content it was meant to sit beside.
         transform: `translateX(${flowMetrics.reviewToolbarGutter})`,
         zIndex: 32,
+        // The palette must fit the frame it travels with.
+        //
+        // Its height is data-dependent — the tool list grows with what is
+        // selected — and it was unbounded, so at 1280x800 it ran 148px past the
+        // fold with delete and float permanently unpressable, and sat 84px on top
+        // of the Approve bar. Being sticky is what made that unrecoverable:
+        // scrolling moves the toolbar too, so nothing brings the lost half back.
+        //
+        // The reserve is the chrome this lane genuinely shares with: the shell
+        // header, the page's own top inset, and the docked action bar plus its
+        // clearance. Overflow scrolls, with the fade the standard requires so a
+        // cut list still says there is more.
+        // Bounded by the band the region now provides rather than by the
+        // viewport, so the two cannot disagree about where the bottom is.
+        maxHeight: '100%',
+        overflowY: 'auto',
+        scrollbarWidth: 'none',
+        maskImage: 'linear-gradient(to bottom, #000 calc(100% - 20px), transparent 100%)',
+        WebkitMaskImage: 'linear-gradient(to bottom, #000 calc(100% - 20px), transparent 100%)',
       }}
     >
       <DockableToolbarActionGroup orientation={toolbarOrientation}>

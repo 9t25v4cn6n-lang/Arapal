@@ -175,7 +175,9 @@ export const RULES = {
   // one defect double-counted it in the ratchet and made the totals read as
   // worse than the product was. The concern now lives in one rule with the
   // better name and the implementation that matches it.
-  'viewport-escape': { blocking: true, title: 'Element sits outside the frame' },
+  'viewport-escape': { blocking: true, title: 'Element sits outside the frame (horizontal)' },
+  // Vertical reachability, which viewport-escape never measured.
+  'control-unreachable': { blocking: true, title: 'Control lies outside the frame and cannot be scrolled into view' },
   'type-floor': { blocking: true, title: 'Text below the minimum size' },
   contrast: { blocking: true, title: 'Text below the contrast minimum' },
   'hit-target': { blocking: true, title: 'Interactive target below the minimum' },

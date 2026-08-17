@@ -118,6 +118,57 @@ test.describe('probe acuity — each rule proved on a known defect', () => {
     ).not.toContain('slack-beside-clipped-content')
   })
 
+  test('sees a sticky control pushed below the frame', async ({ page }) => {
+    const findings = await probeWith(page, `
+      <div style="height:400px;overflow-y:auto">
+        <div style="height:1200px;position:relative">
+          <div style="position:sticky;top:1000px">
+            <button style="min-height:44px;padding:0 24px;font-size:14px">Delete</button>
+          </div>
+        </div>
+      </div>`)
+    expect(
+      ruleIds(findings),
+      'sticky travels WITH the viewport, so scrolling never brings it back — the control is unpressable',
+    ).toContain('control-unreachable')
+  })
+
+  test('leaves an ordinary control below the fold alone', async ({ page }) => {
+    const findings = await probeWith(page, `
+      <div style="height:200px;overflow-y:auto">
+        <div style="height:900px">
+          <button style="min-height:44px;margin-top:700px;padding:0 24px;font-size:14px">Save</button>
+        </div>
+      </div>`)
+    expect(
+      ruleIds(findings),
+      'a control inside a scroll region is reached by scrolling; that is not a defect',
+    ).not.toContain('control-unreachable')
+  })
+
+  test('docked chrome may cover text but not another control', async ({ page }) => {
+    const overText = await probeWith(page, `
+      <div style="position:relative;height:90px">
+        <p style="position:absolute;left:0;top:40px;font-size:16px;color:#0F172A">a paragraph</p>
+        <div data-docked-chrome style="position:absolute;left:0;top:36px;background:#FFF">
+          <button style="min-height:44px;padding:0 24px;font-size:14px">Approve</button>
+        </div>
+      </div>`)
+    expect(ruleIds(overText), 'passing over content is what docking is').not.toContain('overlap')
+
+    const overControl = await probeWith(page, `
+      <div style="position:relative;height:90px">
+        <button style="position:absolute;left:0;top:40px;min-height:44px;padding:0 12px;font-size:14px">Delete</button>
+        <div data-docked-chrome style="position:absolute;left:0;top:36px;background:#FFF">
+          <button style="min-height:44px;padding:0 24px;font-size:14px">Approve</button>
+        </div>
+      </div>`)
+    expect(
+      ruleIds(overControl),
+      'a bar covering a button is a control the user cannot press',
+    ).toContain('overlap')
+  })
+
   test('sees text below the type floor', async ({ page }) => {
     const findings = await probeWith(page, `<p style="font-size:9px;color:#0F172A">tiny</p>`)
     expect(ruleIds(findings)).toContain('type-floor')

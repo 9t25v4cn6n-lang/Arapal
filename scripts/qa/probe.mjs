@@ -265,7 +265,16 @@ export function evaluate(config) {
       // excused it. An attribute makes each exemption a decision someone wrote
       // down, and the reserved trailing space that makes docking honest is
       // checked separately by scroll-without-affordance.
-      if (A.el.closest(DOCKED_CHROME_SELECTOR) || B.el.closest(DOCKED_CHROME_SELECTOR)) continue
+      // Narrow on purpose: docked chrome may pass over CONTENT, never over
+      // another control. A bar covering a paragraph is a dock; a bar covering a
+      // button is a control the user cannot press. The first version of this
+      // exemption excused both, and hid a floating toolbar sitting 84px on top
+      // of the Approve bar at 1280x800.
+      const aDocked = !!A.el.closest(DOCKED_CHROME_SELECTOR)
+      const bDocked = !!B.el.closest(DOCKED_CHROME_SELECTOR)
+      const aInteractive = A.el.matches(FOCUSABLE) || !!A.el.closest('button,a')
+      const bInteractive = B.el.matches(FOCUSABLE) || !!B.el.closest('button,a')
+      if ((aDocked && !bInteractive) || (bDocked && !aInteractive)) continue
       const key = describe(A.el) + '|' + describe(B.el)
       if (seenPairs.has(key)) continue
       seenPairs.add(key)
@@ -273,6 +282,39 @@ export function evaluate(config) {
         selector: describe(A.el), label: label(A.el),
         otherSelector: describe(B.el), otherLabel: label(B.el),
         overlapPx: `${round(ox)}x${round(oy)}`,
+      })
+    }
+  }
+
+  // ── RULE: control-unreachable ──────────────────────────────────────────────
+  // A control whose box lies outside the frame AND that cannot be scrolled into
+  // view, because it or an ancestor is sticky or fixed and therefore travels WITH
+  // the viewport instead of through it.
+  //
+  // viewport-escape does not cover this: despite being titled "Element sits
+  // outside the frame" it only ever measured the horizontal axis — the escape is
+  // Math.max(r.right - innerWidth, -r.left) and nothing looked at the bottom
+  // edge. So the review toolbar could run 148px past the fold at 1280x800 with
+  // its lower half — including delete and float — permanently unpressable, and
+  // the standard reported the surface clean.
+  for (const el of controls) {
+    const r = el.getBoundingClientRect()
+    if (r.height < 4 || r.width < 4) continue
+    let travelsWithViewport = false
+    let node = el
+    while (node && node !== document.body) {
+      const pos = getComputedStyle(node).position
+      if (pos === 'sticky' || pos === 'fixed') { travelsWithViewport = true; break }
+      node = node.parentElement
+    }
+    if (!travelsWithViewport) continue
+    const belowFold = r.bottom - window.innerHeight
+    const aboveFold = -r.top
+    const outside = Math.max(belowFold, aboveFold)
+    if (outside > THRESHOLDS.maxViewportEscapePx) {
+      add('control-unreachable', {
+        selector: describe(el), label: label(el),
+        escapePx: round(outside), top: round(r.top), bottom: round(r.bottom),
       })
     }
   }

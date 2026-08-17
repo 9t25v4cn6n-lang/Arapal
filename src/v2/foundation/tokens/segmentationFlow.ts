@@ -140,6 +140,11 @@ const REVIEW_TOOLBAR_RAIL_WIDTH = '64px'
 const REVIEW_TOOLBAR_GUTTER_GAP = spacing[16]
 const REVIEW_TOOLBAR_GUTTER = `calc(${REVIEW_TOOLBAR_RAIL_WIDTH} + ${REVIEW_TOOLBAR_GUTTER_GAP})`
 
+// Named so the toolbar's height budget is readable arithmetic instead of a magic
+// number. The action bar is a 52px CTA inside 16px of padding.
+const SHELL_HEADER_HEIGHT = '50px'
+const REVIEW_ACTION_BAR_HEIGHT = `calc(52px + ${spacing[16]} + ${spacing[16]})`
+
 export const segmentationFlowMetrics = {
   centeredMargin: '0 auto',
   pagePadding: `clamp(${spacing[24]}, 5vh, ${spacing[64]}) clamp(${spacing[24]}, 4vw, ${spacing[48]})`,
@@ -174,6 +179,10 @@ export const segmentationFlowMetrics = {
   expandedSourcePreviewMaxHeight: '220px',
   reviewWorkspaceMinHeight: '520px',
   reviewToolbarGutterGap: REVIEW_TOOLBAR_GUTTER_GAP,
+  // Vertical chrome the docked toolbar shares its lane with, so its max height
+  // can be derived rather than guessed: the shell header, the review page's top
+  // inset, and the action bar plus the clearance beneath it.
+  reviewToolbarViewportReserve: `calc(${SHELL_HEADER_HEIGHT} + ${spacing[16]} + ${REVIEW_ACTION_BAR_HEIGHT} + ${spacing[24]})`,
   // Trailing space under the review workboard so the last segment card can be
   // scrolled clear of the docked action bar.
   //

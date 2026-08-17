@@ -17,7 +17,8 @@ Measured against `ARAPAL_RELEASE_CONVERGENCE_PLAN.md` §10. Status is
 | Fit | not started | No independent UX critique yet. |
 | Visual quality | partial | Professional rendered-state review done for the screens touched this cycle; not swept across all canonical states. |
 | Integration | not started | Cross-product consistency review. |
-| Unknowns | listed | Mobile 390 px untouched (agreed lowest priority). Chromium cannot launch inside the command sandbox (`bootstrap_check_in … Permission denied`), so the pre-commit gate fails safe and is advisory here; `npm run qa` is run manually instead. |
+| Unknowns | listed, plus one new | See "Toolbar reachability" below. |
+| ~~Unknowns~~ | listed | Mobile 390 px untouched (agreed lowest priority). Chromium cannot launch inside the command sandbox (`bootstrap_check_in … Permission denied`), so the pre-commit gate fails safe and is advisory here; `npm run qa` is run manually instead. |
 
 ---
 
@@ -218,3 +219,43 @@ Recorded in `FIGMA-SPEC.md` §3.2. The two that cost the most time:
 
 - `resize()` after setting `layoutSizing* = 'FILL'` silently reverts the node to FIXED.
 - `setBoundVariableForPaint()` returns a paint whose literal colour is black with the alias attached; component nodes resolve it, **instance children render black.** Seed the paint with the variable's resolved RGB.
+
+## 2026-08-17 · Open defect: review toolbar reachability on short frames
+
+**Tracked debt, not hidden:** 5 `control-unreachable` findings on
+`v2-segmentationReview` at 1366×768 and 1280×800, recorded in
+`artifacts/qa/baseline.json`. They are pre-existing defects newly made visible
+by a new rule, not regressions.
+
+**What is wrong.** The docked tool palette holds 11 controls in one vertical
+stack. Its region sits third in the stage stack, so at rest it begins ~378px
+down; on a 768/800-tall frame the lower controls (`Advanced edit`, `Remove`,
+`Float toolbar`) fall past the fold. Because the region is `position: sticky`
+it travels with the viewport, so scrolling never brings them back.
+
+**Already fixed in this pass.** The region was `height: 0`, so the toolbar
+overflowed downward from wherever the anchor landed and sat 84px on top of the
+Approve bar. It now has a real band bounded by
+`reviewToolbarViewportReserve`, which removed all the overlap findings
+(production surface 18 → 5).
+
+**What remains is a composition decision, not another CSS pass.** At its
+resting offset a short frame can show about seven controls. Options, in the
+order I would consider them:
+
+1. Move the toolbar region to the top of the stage stack so it gets the whole
+   band at rest, rather than starting below the intro and source tray.
+2. Group the tools so only the primary set is always visible, with the rest
+   behind a disclosure — the palette currently shows every tool unconditionally.
+3. Let it wrap to two columns on short frames.
+
+Option 1 is the smallest change and probably correct; it needs a rendered
+review at all four frames because it alters document order.
+
+**Why the standard missed this until now.** `viewport-escape` is titled
+"Element sits outside the frame" and only ever measured the horizontal axis —
+`Math.max(r.right - innerWidth, -r.left)`, with nothing looking at the bottom
+edge. A control could sit entirely below the fold and the checker reported the
+surface clean. That is now `control-unreachable`, which asks the reachability
+question rather than the geometry one: a control outside the frame whose
+ancestor is sticky or fixed cannot be scrolled to.
