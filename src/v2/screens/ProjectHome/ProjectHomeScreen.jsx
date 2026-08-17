@@ -25,6 +25,20 @@ import {
 export default function ProjectHomeScreen({ route, shell }) {
   const projects = useProjects()
   const currentProject = useCurrentProject()
+  // Completed count per project, so the list can say which one needs attention.
+  // Only the current project's progress was read, which left every other row
+  // showing a bare title and a segment count — a list you cannot triage from.
+  //
+  // NUMBERS, not progress objects. useArapal compares one level with Object.is,
+  // so a map of freshly-derived objects is a new value on every call: getSnapshot
+  // never looks cached and React spins into "Maximum update depth exceeded". The
+  // hook's own docstring warns about exactly this and I walked into it anyway.
+  // The total needs no selector at all — it is project.segmentIds.length.
+  const completedByProject = useArapal((s) => {
+    const out = {}
+    for (const project of projects) out[project.id] = select.getProjectProgress(project.id, s).completed
+    return out
+  })
   const progress = useArapal((s) =>
     currentProject ? select.getProjectProgress(currentProject.id, s) : null)
 
@@ -58,7 +72,7 @@ export default function ProjectHomeScreen({ route, shell }) {
     ),
 
     Layer3_Home_Body: hasWork
-      ? <ReturningState projects={projects} current={currentProject} progress={progress} onResume={resume} onNewSource={openSegmentation} />
+      ? <ReturningState projects={projects} current={currentProject} progress={progress} completedByProject={completedByProject} onResume={resume} onNewSource={openSegmentation} />
       : <EmptyState onAddSource={openSegmentation} onUseSample={() => { seedSampleProject(); shell.navigate('studyWorkspace') }} />,
   }
 
@@ -93,7 +107,7 @@ function EmptyState({ onAddSource, onUseSample }) {
   )
 }
 
-function ReturningState({ projects, current, progress, onResume, onNewSource }) {
+function ReturningState({ projects, current, progress, completedByProject, onResume, onNewSource }) {
   const next = progress?.nextSegment
   return (
     <div style={{ display: 'grid', gap: spacing[24], alignContent: 'start' }}>
@@ -135,24 +149,57 @@ function ReturningState({ projects, current, progress, onResume, onNewSource }) 
           </button>
         </div>
         <div style={{ display: 'grid', gap: spacing[8] }}>
-          {projects.map((project) => (
-            <button
-              key={project.id}
-              type="button"
-              onClick={() => onResume(project)}
-              style={{ ...row }}
-            >
-              <span style={{ display: 'grid', gap: spacing[4], minWidth: 0, textAlign: 'left' }}>
-                <strong style={{ ...rowTitle }}>{project.title}</strong>
-                <span style={{ ...meta }}>{project.segmentIds.length} segments</span>
-              </span>
-              <ArrowRight size={16} strokeWidth={1.9} />
-            </button>
-          ))}
+          {projects.map((project) => {
+            const total = project.segmentIds.length
+            const completed = completedByProject?.[project.id] ?? 0
+
+            return (
+              <button
+                key={project.id}
+                type="button"
+                onClick={() => onResume(project)}
+                style={{ ...row }}
+              >
+                <span style={{ display: 'grid', gap: spacing[8], minWidth: 0, textAlign: 'left', flex: '1 1 auto' }}>
+                  <strong style={{ ...rowTitle }}>{project.title}</strong>
+                  {/* What the row is for: telling projects apart. It used to read
+                      "N segments", which is the one fact that does not help you
+                      choose — every project has some. Progress and recency are
+                      what say which one is waiting for you. */}
+                  <span style={{ ...meta }}>
+                    {completed} of {total} studied
+                    {formatLastActive(project.updatedAt) ? ` · ${formatLastActive(project.updatedAt)}` : ''}
+                  </span>
+                  {total ? <ProgressBar completed={completed} total={total} /> : null}
+                </span>
+                <ArrowRight size={16} strokeWidth={1.9} />
+              </button>
+            )
+          })}
         </div>
       </div>
     </div>
   )
+}
+
+/**
+ * Recency in the coarsest honest unit.
+ *
+ * Deliberately not "2 minutes ago": this is a study tool where the useful
+ * question is whether you touched something today, this week, or long enough ago
+ * to have lost the thread. Returns null rather than a guess when the timestamp is
+ * missing or unparseable, so the row simply omits it.
+ */
+function formatLastActive(iso) {
+  if (!iso) return null
+  const then = Date.parse(iso)
+  if (Number.isNaN(then)) return null
+  const days = Math.floor((Date.now() - then) / 86400000)
+  if (days <= 0) return 'today'
+  if (days === 1) return 'yesterday'
+  if (days < 7) return `${days}d ago`
+  if (days < 28) return `${Math.floor(days / 7)}w ago`
+  return `${Math.floor(days / 28)}mo ago`
 }
 
 function ProgressBar({ completed, total }) {
