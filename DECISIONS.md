@@ -278,3 +278,52 @@ in `segmentation-handoff.spec.js`.
   gaps in `legacy-capabilities.spec.js` should be confirmed as legacy-only defects
   (they are: draft never persisted, draft leaks between segments — both already
   correct in V2 and covered by passing tests).
+
+---
+
+## 2026-08-17 · Two R3 comparisons that are product questions, not uplift
+
+The uplift pass imports decisions where the better one is clear. These two are
+not mine to settle, and both are recorded rather than acted on.
+
+### 1. Project Home and Projects both lead with "resume"
+
+Live Project Home opens with *"Pick up where you left off."* and a CONTINUE card.
+Live Projects opens with *"One clear next step."* and RESUME STUDY. Two screens
+answering the same question, one click apart.
+
+R3 separates them: **Home** is a command centre — next action plus recent work —
+and **Projects** is a library for finding: search, filter chips
+(All / Ready to continue / Needs setup / Archived), and a card grid.
+
+Ours already has search, per-lesson progress and status dots on Projects, so the
+missing capability is triage filters, not browsing. But adding filters to a screen
+that opens with a resume panel treats the symptom. The question is whether
+Projects should lead with *finding* now that Home leads with *resuming*.
+
+`§2.1` says keep the selected V2 Projects implementation, so changing what that
+screen is for is a product decision, not a design import. **Recommendation:**
+make Projects the library and let Home keep the resume lead. Not done.
+
+### 2. "Manual start" does not start anything manual
+
+Choosing METHOD → *Manual start* and continuing lands on **Review**, which reads
+*"Check AraPal's proposed meaning groups."* The option promises the user will do
+the segmenting; the flow gives them an AI proposal to check.
+
+Reading the routing, "manual" currently means *skip quick-publish and review it
+yourself* — coherent behaviour, wrong name. `getPostSegmentationRoute` sends
+`method === 'manual'` to `segmentationReview`, and the popover offers no
+explanatory meta for the method options the way it does for style and granularity.
+
+R3 has a real **Set segment boundaries** screen: a markers panel, a compiled
+preview with an *Awaiting markers* empty state, and an approve action disabled
+until at least one boundary exists.
+
+Two honest routes, and they cost very different amounts:
+- **Relabel** to describe what it does (review the proposal yourself). Minutes.
+- **Build** the boundary editor R3 specifies. A feature, not an uplift.
+
+Either is defensible; shipping the current label is not, because it promises
+authoring and delivers review. Not changed, because renaming a product option on
+my own judgement is the kind of quiet scope decision `§5.4` warns against.
