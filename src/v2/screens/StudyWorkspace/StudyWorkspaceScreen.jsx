@@ -104,6 +104,9 @@ function readInitialDiscussionOpen() {
   return new URLSearchParams(window.location.search).get('studyDiscuss') === '1'
 }
 
+// Stable empty, so an absent project does not churn the reference each render.
+const EMPTY_SEGMENT_RECORDS = {}
+
 function createInitialSegmentRecords() {
   const initialStudyState = readInitialStudyState()
 
@@ -194,6 +197,30 @@ export default function StudyWorkspaceScreen({ route, shell }) {
 
   const storeRecord = useArapal((s) =>
     isLive && currentSegment ? select.getStudyRecord(project.id, currentSegment.id, s) : null)
+
+  /**
+   * Every segment's record, for the rail's markers and the STUDIED counter.
+   *
+   * These read `segmentRecords` below, which is local state seeded from the
+   * reference fixture and keyed '1.1'/'1.3'. In live mode those keys cannot match
+   * a real segment id, and nothing ever wrote the store's records into it — so a
+   * user could submit every segment and the rail would show three empty circles
+   * and STUDIED 0 / 3 forever. The current segment looked right only because
+   * `currentRecord` reads the store directly, which is what hid it.
+   *
+   * The wrapper object is rebuilt per call and that is fine: the record values
+   * inside it are the store's own stable references, so useArapal's shallowEqual
+   * sees no change until a record actually changes.
+   */
+  const liveSegmentRecords = useArapal((s) => {
+    if (!isLive || !project) return EMPTY_SEGMENT_RECORDS
+    const out = {}
+    for (const segment of activeSegments) {
+      const record = select.getStudyRecord(project.id, segment.id, s)
+      if (record) out[segment.id] = record
+    }
+    return out
+  })
   const storeDraft = useArapal((s) =>
     isLive && currentSegment ? select.getDraft(project.id, currentSegment.id, s) : null)
   const lastResult = useArapal((s) =>
@@ -463,7 +490,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
       <StudySegmentNavigator
         nodes={activeNodes}
         currentSegmentId={currentSegment.id}
-        segmentRecords={segmentRecords}
+        segmentRecords={isLive ? liveSegmentRecords : segmentRecords}
         collapsed={segmentRailCollapsed}
         onToggleCollapsed={() => setSegmentRailCollapsed((current) => !current)}
         onSelectSegment={selectSegment}
