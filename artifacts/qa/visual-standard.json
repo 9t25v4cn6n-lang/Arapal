@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-17T00:36:03.439Z",
+ "generatedAt": "2026-08-17T00:46:25.368Z",
  "base": "http://localhost:5173",
  "routes": [
   "legacy-home",
@@ -23,20 +23,20 @@
   "1280x800"
  ],
  "totals": {
-  "blocking": 428,
+  "blocking": 420,
   "advisory": 48,
   "byRule": {
    "type-floor": 114,
    "scroll-hidden-majority": 9,
    "contrast": 118,
-   "hit-target": 68,
+   "hit-target": 60,
    "unnamed-control": 24,
    "overlap": 23,
    "viewport-escape": 72
   },
   "byRoute": {
    "legacy-home": 19,
-   "legacy-study": 62,
+   "legacy-study": 54,
    "legacy-segmentation": 56,
    "legacy-exams": 16,
    "v2-projectHome": 0,
@@ -177,27 +177,7 @@
    "ruleId": "hit-target",
    "selector": "button.fg-left__toggle",
    "label": "Collapse segments",
-   "boxPx": "16x16",
-   "minPx": 24
-  },
-  {
-   "route": "legacy-study",
-   "app": "legacy",
-   "frame": "1440x900",
-   "ruleId": "hit-target",
-   "selector": "button.fg-center__tinyButton",
-   "label": "Previous",
-   "boxPx": "74.9x16",
-   "minPx": 24
-  },
-  {
-   "route": "legacy-study",
-   "app": "legacy",
-   "frame": "1440x900",
-   "ruleId": "hit-target",
-   "selector": "button.fg-center__tinyButton",
-   "label": "Next",
-   "boxPx": "50.1x16",
+   "boxPx": "16x24",
    "minPx": 24
   },
   {
@@ -234,7 +214,7 @@
    "ruleId": "hit-target",
    "selector": "button.fg-right__toggle",
    "label": "Collapse support panels",
-   "boxPx": "16x16",
+   "boxPx": "16x24",
    "minPx": 24
   },
   {
@@ -244,7 +224,7 @@
    "ruleId": "hit-target",
    "selector": "button.fg-right__expand",
    "label": "Expand Guidance",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -254,7 +234,7 @@
    "ruleId": "hit-target",
    "selector": "button.fg-right__expand",
    "label": "Expand Lexicography",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -264,7 +244,7 @@
    "ruleId": "hit-target",
    "selector": "button.fg-right__expand",
    "label": "Expand Phrasing",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -1151,7 +1131,7 @@
    "label": "Undo",
    "otherSelector": "button",
    "otherLabel": "Collapse Opening movement",
-   "overlapPx": "31x22"
+   "overlapPx": "31x23.8"
   },
   {
    "route": "v2-segmentationReview",
@@ -1249,7 +1229,7 @@
    "ruleId": "hit-target",
    "selector": "button",
    "label": "Collapse Opening movement",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -1278,7 +1258,7 @@
    "ruleId": "hit-target",
    "selector": "button",
    "label": "Collapse Route and supply check",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -1288,7 +1268,7 @@
    "ruleId": "hit-target",
    "selector": "button",
    "label": "Collapse Camp rhythm",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -1298,7 +1278,7 @@
    "ruleId": "hit-target",
    "selector": "button",
    "label": "Collapse Closing detail",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -1480,27 +1460,7 @@
    "ruleId": "hit-target",
    "selector": "button.fg-left__toggle",
    "label": "Collapse segments",
-   "boxPx": "16x16",
-   "minPx": 24
-  },
-  {
-   "route": "legacy-study",
-   "app": "legacy",
-   "frame": "1366x768",
-   "ruleId": "hit-target",
-   "selector": "button.fg-center__tinyButton",
-   "label": "Previous",
-   "boxPx": "74.9x16",
-   "minPx": 24
-  },
-  {
-   "route": "legacy-study",
-   "app": "legacy",
-   "frame": "1366x768",
-   "ruleId": "hit-target",
-   "selector": "button.fg-center__tinyButton",
-   "label": "Next",
-   "boxPx": "50.1x16",
+   "boxPx": "16x24",
    "minPx": 24
   },
   {
@@ -1537,7 +1497,7 @@
    "ruleId": "hit-target",
    "selector": "button.fg-right__toggle",
    "label": "Collapse support panels",
-   "boxPx": "16x16",
+   "boxPx": "16x24",
    "minPx": 24
   },
   {
@@ -1547,7 +1507,7 @@
    "ruleId": "hit-target",
    "selector": "button.fg-right__expand",
    "label": "Expand Guidance",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -1557,7 +1517,7 @@
    "ruleId": "hit-target",
    "selector": "button.fg-right__expand",
    "label": "Expand Lexicography",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -1567,7 +1527,7 @@
    "ruleId": "hit-target",
    "selector": "button.fg-right__expand",
    "label": "Expand Phrasing",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -2443,7 +2403,7 @@
    "label": "Undo",
    "otherSelector": "button",
    "otherLabel": "Collapse Opening movement",
-   "overlapPx": "31x22"
+   "overlapPx": "31x23.8"
   },
   {
    "route": "v2-segmentationReview",
@@ -2541,7 +2501,7 @@
    "ruleId": "hit-target",
    "selector": "button",
    "label": "Collapse Opening movement",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -2570,7 +2530,7 @@
    "ruleId": "hit-target",
    "selector": "button",
    "label": "Collapse Route and supply check",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -2580,7 +2540,7 @@
    "ruleId": "hit-target",
    "selector": "button",
    "label": "Collapse Camp rhythm",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -2590,7 +2550,7 @@
    "ruleId": "hit-target",
    "selector": "button",
    "label": "Collapse Closing detail",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -2761,27 +2721,7 @@
    "ruleId": "hit-target",
    "selector": "button.fg-left__toggle",
    "label": "Collapse segments",
-   "boxPx": "16x16",
-   "minPx": 24
-  },
-  {
-   "route": "legacy-study",
-   "app": "legacy",
-   "frame": "1920x1080",
-   "ruleId": "hit-target",
-   "selector": "button.fg-center__tinyButton",
-   "label": "Previous",
-   "boxPx": "74.9x16",
-   "minPx": 24
-  },
-  {
-   "route": "legacy-study",
-   "app": "legacy",
-   "frame": "1920x1080",
-   "ruleId": "hit-target",
-   "selector": "button.fg-center__tinyButton",
-   "label": "Next",
-   "boxPx": "50.1x16",
+   "boxPx": "16x24",
    "minPx": 24
   },
   {
@@ -2818,7 +2758,7 @@
    "ruleId": "hit-target",
    "selector": "button.fg-right__toggle",
    "label": "Collapse support panels",
-   "boxPx": "16x16",
+   "boxPx": "16x24",
    "minPx": 24
   },
   {
@@ -2828,7 +2768,7 @@
    "ruleId": "hit-target",
    "selector": "button.fg-right__expand",
    "label": "Expand Guidance",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -2838,7 +2778,7 @@
    "ruleId": "hit-target",
    "selector": "button.fg-right__expand",
    "label": "Expand Lexicography",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -2848,7 +2788,7 @@
    "ruleId": "hit-target",
    "selector": "button.fg-right__expand",
    "label": "Expand Phrasing",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -3796,7 +3736,7 @@
    "ruleId": "hit-target",
    "selector": "button",
    "label": "Collapse Opening movement",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -3825,7 +3765,7 @@
    "ruleId": "hit-target",
    "selector": "button",
    "label": "Collapse Route and supply check",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -3835,7 +3775,7 @@
    "ruleId": "hit-target",
    "selector": "button",
    "label": "Collapse Camp rhythm",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -3845,7 +3785,7 @@
    "ruleId": "hit-target",
    "selector": "button",
    "label": "Collapse Closing detail",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -4137,27 +4077,7 @@
    "ruleId": "hit-target",
    "selector": "button.fg-left__toggle",
    "label": "Collapse segments",
-   "boxPx": "16x16",
-   "minPx": 24
-  },
-  {
-   "route": "legacy-study",
-   "app": "legacy",
-   "frame": "1280x800",
-   "ruleId": "hit-target",
-   "selector": "button.fg-center__tinyButton",
-   "label": "Previous",
-   "boxPx": "74.9x16",
-   "minPx": 24
-  },
-  {
-   "route": "legacy-study",
-   "app": "legacy",
-   "frame": "1280x800",
-   "ruleId": "hit-target",
-   "selector": "button.fg-center__tinyButton",
-   "label": "Next",
-   "boxPx": "50.1x16",
+   "boxPx": "16x24",
    "minPx": 24
   },
   {
@@ -4194,7 +4114,7 @@
    "ruleId": "hit-target",
    "selector": "button.fg-right__toggle",
    "label": "Collapse support panels",
-   "boxPx": "16x16",
+   "boxPx": "16x24",
    "minPx": 24
   },
   {
@@ -4204,7 +4124,7 @@
    "ruleId": "hit-target",
    "selector": "button.fg-right__expand",
    "label": "Expand Guidance",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -4214,7 +4134,7 @@
    "ruleId": "hit-target",
    "selector": "button.fg-right__expand",
    "label": "Expand Lexicography",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -4224,7 +4144,7 @@
    "ruleId": "hit-target",
    "selector": "button.fg-right__expand",
    "label": "Expand Phrasing",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -5100,7 +5020,7 @@
    "label": "Undo",
    "otherSelector": "button",
    "otherLabel": "Collapse Opening movement",
-   "overlapPx": "31x22"
+   "overlapPx": "31x23.8"
   },
   {
    "route": "v2-segmentationReview",
@@ -5198,7 +5118,7 @@
    "ruleId": "hit-target",
    "selector": "button",
    "label": "Collapse Opening movement",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -5227,7 +5147,7 @@
    "ruleId": "hit-target",
    "selector": "button",
    "label": "Collapse Route and supply check",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -5237,7 +5157,7 @@
    "ruleId": "hit-target",
    "selector": "button",
    "label": "Collapse Camp rhythm",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {
@@ -5247,7 +5167,7 @@
    "ruleId": "hit-target",
    "selector": "button",
    "label": "Collapse Closing detail",
-   "boxPx": "22x22",
+   "boxPx": "22x24",
    "minPx": 24
   },
   {

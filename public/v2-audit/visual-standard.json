@@ -1,20 +1,20 @@
 {
- "generatedAt": "2026-08-17T00:36:03.439Z",
+ "generatedAt": "2026-08-17T00:46:25.368Z",
  "routes": 13,
  "frames": 4,
- "blocking": 428,
+ "blocking": 420,
  "byRule": {
   "type-floor": 114,
   "scroll-hidden-majority": 9,
   "contrast": 118,
-  "hit-target": 68,
+  "hit-target": 60,
   "unnamed-control": 24,
   "overlap": 23,
   "viewport-escape": 72
  },
  "byRoute": {
   "legacy-home": 19,
-  "legacy-study": 62,
+  "legacy-study": 54,
   "legacy-segmentation": 56,
   "legacy-exams": 16,
   "v2-projectHome": 0,

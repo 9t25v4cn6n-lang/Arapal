@@ -138,3 +138,13 @@ select,
 textarea {
   font-family: inherit;
 }
+
+/* WCAG 2.5.8 target size. Text-styled buttons ("Edit", "Show source", "Always
+   skip this animation") were rendering 13-14px tall, which is a hit target no
+   one can reliably use. Applied once here rather than per control, because the
+   offenders carry no shared class — they are inline-styled one-offs, which is
+   itself the reason a shared control primitive is still owed. */
+button,
+[role='button'] {
+  min-height: 24px;
+}

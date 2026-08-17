@@ -1,10 +1,10 @@
 {
- "generatedAt": "2026-08-17T00:36:03.442Z",
+ "generatedAt": "2026-08-17T00:46:25.372Z",
  "accepted": {
   "legacy-home::1440x900::type-floor": 3,
   "legacy-study::1440x900::scroll-hidden-majority": 1,
   "legacy-study::1440x900::contrast": 4,
-  "legacy-study::1440x900::hit-target": 7,
+  "legacy-study::1440x900::hit-target": 5,
   "legacy-study::1440x900::unnamed-control": 3,
   "legacy-segmentation::1440x900::overlap": 1,
   "legacy-segmentation::1440x900::type-floor": 6,
@@ -37,7 +37,7 @@
   "legacy-home::1366x768::type-floor": 3,
   "legacy-study::1366x768::scroll-hidden-majority": 1,
   "legacy-study::1366x768::contrast": 4,
-  "legacy-study::1366x768::hit-target": 7,
+  "legacy-study::1366x768::hit-target": 5,
   "legacy-study::1366x768::unnamed-control": 3,
   "legacy-segmentation::1366x768::overlap": 1,
   "legacy-segmentation::1366x768::type-floor": 6,
@@ -70,7 +70,7 @@
   "v2-segmentationSuccess::1366x768::hit-target": 1,
   "legacy-home::1920x1080::type-floor": 3,
   "legacy-study::1920x1080::contrast": 4,
-  "legacy-study::1920x1080::hit-target": 7,
+  "legacy-study::1920x1080::hit-target": 5,
   "legacy-study::1920x1080::unnamed-control": 3,
   "legacy-segmentation::1920x1080::overlap": 1,
   "legacy-segmentation::1920x1080::type-floor": 6,
@@ -104,7 +104,7 @@
   "legacy-study::1280x800::scroll-hidden-majority": 1,
   "legacy-study::1280x800::overlap": 3,
   "legacy-study::1280x800::contrast": 4,
-  "legacy-study::1280x800::hit-target": 7,
+  "legacy-study::1280x800::hit-target": 5,
   "legacy-study::1280x800::unnamed-control": 3,
   "legacy-segmentation::1280x800::overlap": 1,
   "legacy-segmentation::1280x800::type-floor": 6,
@@ -136,6 +136,6 @@
   "v2-segmentationSuccess::1280x800::contrast": 1,
   "v2-segmentationSuccess::1280x800::hit-target": 1
  },
- "total": 428,
+ "total": 420,
  "note": "Accepted visual-standard debt. May only decrease. Regenerate with: npm run qa:accept"
 }
