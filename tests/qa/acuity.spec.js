@@ -13,9 +13,9 @@
 
 import { test, expect } from '@playwright/test'
 import { evaluate } from '../../scripts/qa/probe.mjs'
-import { THRESHOLDS, TYPE_RAMP, TEXT_COLOR_POLICY, REQUIRED_FONT_FAMILIES } from '../../scripts/qa/standard.mjs'
+import { THRESHOLDS, TYPE_RAMP, TEXT_COLOR_POLICY, REQUIRED_FONT_FAMILIES, TRUNCATION_EXEMPT_SELECTORS } from '../../scripts/qa/standard.mjs'
 
-const CONFIG = { THRESHOLDS, TYPE_RAMP, TEXT_COLOR_POLICY, REQUIRED_FONT_FAMILIES }
+const CONFIG = { THRESHOLDS, TYPE_RAMP, TEXT_COLOR_POLICY, REQUIRED_FONT_FAMILIES, TRUNCATION_EXEMPT_SELECTORS }
 const probeSource = evaluate.toString()
 
 /** Inject `html` into a blank page, run the probe, return its findings. */
@@ -106,6 +106,53 @@ test.describe('probe acuity — each rule proved on a known defect', () => {
         <div style="height:600px">a great deal of hidden content</div>
       </div>`)
     expect(ruleIds(findings)).toContain('scroll-hidden-majority')
+  })
+
+  test('sees a chrome label cut off by layout pressure', async ({ page }) => {
+    const findings = await probeWith(page, `
+      <div style="width:60px;font-size:13px;color:#0F172A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+        SOURCE TEXT
+      </div>`)
+    expect(ruleIds(findings)).toContain('label-truncated')
+  })
+
+  test('does not report a truncation the design declares', async ({ page }) => {
+    const findings = await probeWith(page, `
+      <div data-truncates style="width:60px;font-size:13px;color:#0F172A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+        A project title supplied by the user
+      </div>`)
+    expect(
+      ruleIds(findings),
+      'user data is expected to ellipsise; only the product’s own chrome must fit',
+    ).not.toContain('label-truncated')
+  })
+
+  test('sees a scroll region that hides its scrollbar and signals nothing', async ({ page }) => {
+    const findings = await probeWith(page, `
+      <div style="height:60px;overflow-y:auto;scrollbar-width:none">
+        <div style="height:400px;font-size:14px;color:#0F172A">a great deal of content</div>
+      </div>`)
+    expect(ruleIds(findings)).toContain('scroll-without-affordance')
+  })
+
+  test('accepts a hidden scrollbar when the edge is faded instead', async ({ page }) => {
+    const findings = await probeWith(page, `
+      <div style="height:60px;overflow-y:auto;scrollbar-width:none;
+                  mask-image:linear-gradient(to bottom,#000 calc(100% - 24px),transparent 100%)">
+        <div style="height:400px;font-size:14px;color:#0F172A">a great deal of content</div>
+      </div>`)
+    expect(
+      ruleIds(findings),
+      'a faded edge is a real affordance; the rule is about silence, not about scrollbars',
+    ).not.toContain('scroll-without-affordance')
+  })
+
+  test('leaves a visible scrollbar alone', async ({ page }) => {
+    const findings = await probeWith(page, `
+      <div style="height:60px;overflow-y:auto">
+        <div style="height:400px;font-size:14px;color:#0F172A">a great deal of content</div>
+      </div>`)
+    expect(ruleIds(findings)).not.toContain('scroll-without-affordance')
   })
 
   test('treats a deliberate ellipsis as designed, not clipped', async ({ page }) => {

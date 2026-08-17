@@ -174,7 +174,10 @@ export function KnowledgeLedgerRow({ segment, isSelected, onSelectSegment }) {
       </span>
       <span className="project-research__resultMeta">
         <span className="project-research__topicCell">
-          <strong>{segment.heading}</strong>
+          {/* The segment's own heading. One line with an ellipsis is the design
+              for a ledger row, so the truncation is declared rather than left
+              for the visual standard to read as a defect. */}
+          <strong data-truncates="">{segment.heading}</strong>
           <small>{segment.chapter} · {segment.topic}</small>
           <span className="project-research__translationPreview project-research__translationPreview--inline">
             {segment.bestTranslation}

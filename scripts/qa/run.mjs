@@ -13,7 +13,7 @@ import { chromium } from 'playwright'
 import path from 'node:path'
 import fs from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
-import { VIEWPORTS, ROUTES, THRESHOLDS, TYPE_RAMP, TEXT_COLOR_POLICY, REQUIRED_FONT_FAMILIES, RULES } from './standard.mjs'
+import { VIEWPORTS, ROUTES, THRESHOLDS, TYPE_RAMP, TEXT_COLOR_POLICY, REQUIRED_FONT_FAMILIES, TRUNCATION_EXEMPT_SELECTORS, RULES } from './standard.mjs'
 import { evaluate } from './probe.mjs'
 import { readBaseline, countByRouteRule, compare, ratchetDown, seedBaseline } from './ratchet.mjs'
 
@@ -73,7 +73,7 @@ let frames = VIEWPORTS
 if (args.frame) frames = VIEWPORTS.filter((v) => v.id === args.frame)
 if (args.quick) frames = VIEWPORTS.filter((v) => v.tier === 'build')
 
-const config = { THRESHOLDS, TYPE_RAMP, TEXT_COLOR_POLICY, REQUIRED_FONT_FAMILIES }
+const config = { THRESHOLDS, TYPE_RAMP, TEXT_COLOR_POLICY, REQUIRED_FONT_FAMILIES, TRUNCATION_EXEMPT_SELECTORS }
 const probeSource = evaluate.toString()
 
 const results = []
@@ -84,7 +84,26 @@ const blankRoutes = []
 const MIN_RENDERED_ELEMENTS = 20
 
 const browser = await chromium.launch({ executablePath: await resolveExecutable() })
-const page = await (await browser.newContext()).newPage()
+const context = await browser.newContext()
+// A measurement must not depend on when it was taken. The segmentation
+// transition animates continuously, so its opacity — and therefore its measured
+// contrast — differed between runs and reported phantom regressions on a route
+// nobody had touched. A gate that fires at random is a gate people learn to
+// ignore, so motion is stopped for measurement rather than waited out.
+await context.addInitScript(() => {
+  const style = document.createElement('style')
+  style.textContent = `*, *::before, *::after {
+    animation-delay: -1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0s !important;
+  }`
+  const attach = () => document.head?.appendChild(style)
+  if (document.head) attach()
+  else document.addEventListener('DOMContentLoaded', attach, { once: true })
+})
+const page = await context.newPage()
 page.on('pageerror', (e) => consoleErrors.push(String(e).slice(0, 200)))
 
 for (const frame of frames) {
@@ -93,6 +112,10 @@ for (const frame of frames) {
     await page.goto(`${BASE}/?chrome=0#${route.hash}`, { waitUntil: 'domcontentloaded' })
     await page.reload({ waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(2600) // intro/transition animations settle
+    // Fonts change every metric this checker measures, so a late webfont turns
+    // real geometry into noise. Now that they are self-hosted this resolves
+    // immediately, but the wait is what makes that a guarantee.
+    await page.evaluate(() => document.fonts?.ready).catch(() => {})
     const out = await page.evaluate(
       ([src, cfg]) => new Function('config', `return (${src})(config)`)(cfg),
       [probeSource, config],

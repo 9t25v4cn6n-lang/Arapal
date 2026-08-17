@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import {
+  AlertCircle,
   AlertTriangle,
   AlignCenter,
   AlignLeft,
@@ -31,6 +32,60 @@ import IconActionButton from './IconActionButton'
 import PrimaryCTA from './PrimaryCTA'
 import { colors, elevation, motion, radius, spacing, typography } from '../tokens'
 
+// Resolved once at module scope, not per render: the submit handler already
+// accepts either modifier, so the label must name the one this machine uses.
+// A constant also keeps the rendered width stable for screenshot comparison.
+const IS_APPLE = typeof navigator !== 'undefined'
+  && /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent || '')
+const SUBMIT_SHORTCUT = IS_APPLE ? '⌘ ↵' : 'Ctrl ↵'
+const SUBMIT_SHORTCUT_LABEL = IS_APPLE ? 'Command + Enter' : 'Ctrl + Enter'
+
+/**
+ * Scroll affordance for a region whose content is cut by its own edge.
+ *
+ * Both scroll regions in Study hid their scrollbars, so a half-sliced line of
+ * Arabic and a half-visible lexicography chip read as clipping — a defect —
+ * rather than as "there is more this way". This reports which edges still have
+ * content beyond them so the caller can fade exactly those, and nothing when
+ * everything already fits. One hook rather than two copies, because the defect
+ * is a class: any hidden-scrollbar region has it.
+ *
+ * Children are observed as well as the region: a late-arriving webfont changes
+ * scrollHeight without changing the region's own box.
+ */
+function useScrollAffordance(axis) {
+  const ref = useRef(null)
+  const [edges, setEdges] = useState({ start: false, end: false })
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return undefined
+
+    const measure = () => {
+      const size = axis === 'x' ? el.clientWidth : el.clientHeight
+      const total = axis === 'x' ? el.scrollWidth : el.scrollHeight
+      const position = axis === 'x' ? el.scrollLeft : el.scrollTop
+      const next = { start: position > 1, end: total - size - position > 1 }
+      // Same object when nothing changed, so a scroll event cannot spin renders.
+      setEdges((previous) => (
+        previous.start === next.start && previous.end === next.end ? previous : next
+      ))
+    }
+
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(el)
+    for (const child of el.children) observer.observe(child)
+    el.addEventListener('scroll', measure, { passive: true })
+    return () => {
+      observer.disconnect()
+      el.removeEventListener('scroll', measure)
+    }
+  }, [axis])
+
+  return [ref, { 'data-more-start': edges.start || undefined, 'data-more-end': edges.end || undefined }]
+}
+
 const studyCss = `
   .study-v2,
   .study-v2 * {
@@ -55,6 +110,7 @@ const studyCss = `
     --study-line-strong: ${colors.lineStrong};
     --study-success: ${colors.success};
     --study-review: ${colors.review};
+    --study-review-strong: ${colors.reviewStrong};
     --study-radius-12: ${radius[12]};
     --study-radius-16: ${radius[16]};
     --study-radius-24: ${radius[24]};
@@ -173,6 +229,58 @@ const studyCss = `
     scrollbar-gutter: stable;
   }
 
+  /* R3 import: the tree now says how much is left, per chapter and overall.
+     The live tree showed plain markers with no sense of progress at all. */
+  .study-v2__chapterCount {
+    justify-self: end;
+    font-size: var(--study-control-size);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--study-text-soft);
+  }
+
+  .study-v2__srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .study-v2__railFooter {
+    flex: 0 0 auto;
+    display: grid;
+    gap: var(--study-space-8);
+    padding: var(--study-space-12) var(--study-space-16);
+    border-top: 1px solid var(--study-line-soft);
+  }
+
+  .study-v2__railFooterLabel {
+    font-size: var(--study-control-size);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--study-text-soft);
+  }
+
+  .study-v2__railProgress {
+    display: block;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--study-accent-mist, rgba(219, 234, 254, 0.9));
+    overflow: hidden;
+  }
+
+  .study-v2__railProgress > span {
+    display: block;
+    height: 100%;
+    background: var(--study-accent);
+  }
+
   .study-v2__railBody {
     padding: var(--study-space-12) 0 var(--study-space-20);
   }
@@ -211,6 +319,9 @@ const studyCss = `
   }
 
   .study-v2__folderRow {
+    /* chevron · label · remaining count. Declared here rather than on the
+       shared row rule so a segment row cannot grow a third column. */
+    grid-template-columns: auto minmax(0, 1fr) auto;
     margin-top: var(--study-space-4);
     color: var(--study-text-strong);
     font-weight: 700;
@@ -806,7 +917,11 @@ const studyCss = `
     /* The header keeps its size; the body is what yields. */
     flex: 0 0 auto;
     min-height: calc(var(--study-space-32) + var(--study-space-24));
-    padding: 0 var(--study-space-24);
+    /* 16, not 24: the body's inset is a reading measure, the header's is a
+       control gutter. At the docked width 48px of a 382px header went to air
+       while the title and the utility row fought over the remaining 334 and
+       both lost — the title ellipsised to "SOURCE T…". */
+    padding: 0 var(--study-space-16);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -847,14 +962,20 @@ const studyCss = `
     letter-spacing: 0.12em;
     text-transform: uppercase;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
+  /* A card header's controls are one row. Wrapping let "Copy" drop below "A-/A+"
+     and doubled the header height, which read as a broken header rather than as
+     a reflow. The title is what yields instead — it ellipsises. */
   .study-v2__actionRow {
     display: inline-flex;
     align-items: center;
     justify-content: flex-end;
     gap: var(--study-space-8);
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    flex: 0 0 auto;
   }
 
   .study-v2__miniPill {
@@ -943,6 +1064,45 @@ const studyCss = `
 
   .study-v2__lexStrip::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Scroll affordance. A cut edge with no scrollbar reads as clipping, so fade
+     whichever edge still has content beyond it — and only that edge, so nothing
+     is faded when everything already fits. Driven by useScrollAffordance. */
+  .study-v2__lexStrip[data-more-end] {
+    mask-image: linear-gradient(to right, #000 calc(100% - var(--study-space-32)), transparent 100%);
+  }
+
+  .study-v2__lexStrip[data-more-start] {
+    mask-image: linear-gradient(to right, transparent 0, #000 var(--study-space-32));
+  }
+
+  .study-v2__lexStrip[data-more-start][data-more-end] {
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--study-space-32),
+      #000 calc(100% - var(--study-space-32)),
+      transparent 100%
+    );
+  }
+
+  .study-v2__sourceBody[data-more-end] {
+    mask-image: linear-gradient(to bottom, #000 calc(100% - var(--study-space-24)), transparent 100%);
+  }
+
+  .study-v2__sourceBody[data-more-start] {
+    mask-image: linear-gradient(to bottom, transparent 0, #000 var(--study-space-24));
+  }
+
+  .study-v2__sourceBody[data-more-start][data-more-end] {
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      #000 var(--study-space-24),
+      #000 calc(100% - var(--study-space-24)),
+      transparent 100%
+    );
   }
 
   .study-v2__lexTerm {
@@ -1177,15 +1337,30 @@ const studyCss = `
     color: ${colors.textSoft};
   }
 
+  /* Two rows, because the footer carries two different kinds of thing and they
+     have opposite needs. A submit error must be read in full, so it gets its
+     own full-width row and is allowed to wrap. The shortcut affordance must
+     never steal width from the actions, so it is a fixed-width keycap rather
+     than a sentence that shrinks. The previous single row made the error
+     shrinkable and the shortcut ellipsised to "⌘ Ente…" at the docked width. */
   .study-v2__editorFooter {
-    /* Was a rigid 3-column grid, so at narrow widths the hint and the Discuss
-       button occupied the same pixels instead of reflowing. Wrapping lets the
-       row give way; the actions stay together and the hint drops when there is
-       genuinely not enough room for all three. */
-    /* nowrap with a shrinkable hint. Flex items in a nowrap row cannot overlap
-       as long as something is allowed to give, and the hint is that something —
-       so the actions stay on one line at every width instead of stacking, and
-       the original grid's collision is still impossible. */
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--study-space-8);
+  }
+
+  .study-v2__editorError {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--study-space-8);
+    min-width: 0;
+    color: var(--study-review-strong);
+    font-size: var(--study-control-size);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .study-v2__editorActions {
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
@@ -1205,19 +1380,21 @@ const studyCss = `
     justify-content: center;
   }
 
-  .study-v2__hint {
+  .study-v2__shortcut {
+    margin-right: auto;
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--study-space-24);
+    padding: 0 var(--study-space-8);
+    border: 1px solid var(--study-line-soft);
+    border-radius: var(--study-radius-12);
+    background: var(--study-surface-soft);
     color: var(--study-text-soft);
+    font-family: inherit;
     font-size: var(--study-control-size);
     font-weight: 600;
-    /* flex-basis 0, not auto: the hint must claim no intrinsic width, so the
-       actions stay on one row wherever they fit and the hint is what gives way.
-       With '1 1 auto' it held its full width and pushed Submit onto a second
-       row even at 1440, where there was ample room. */
-    flex: 1 1 0;
-    min-width: 0;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   .study-v2__secondaryAction {
@@ -1232,6 +1409,10 @@ const studyCss = `
     padding: 0 var(--study-space-16);
     font-size: var(--study-body-size);
     font-weight: 700;
+    /* A control's label is one line. Left to wrap, this one broke into three
+       lines inside the pill at the docked width and squashed its own icon. */
+    white-space: nowrap;
+    flex: 0 0 auto;
     cursor: pointer;
   }
 
@@ -2033,7 +2214,9 @@ export function StudyShellTitleBar({
           <div className="study-v2__shellTitleLine" aria-label={`${segmentLabel}, ${title}, ${chapterLabel}`}>
             <span className="study-v2__shellTitleText">{segmentLabel}</span>
             <span className="study-v2__shellTitleDivider" aria-hidden="true" />
-            <span className="study-v2__shellProjectText">{title}</span>
+            {/* The project and book name: the user's content. An ellipsis is
+                the design for a fixed shell header, so it is declared. */}
+            <span className="study-v2__shellProjectText" data-truncates="">{title}</span>
           </div>
         </div>
       </div>
@@ -2187,6 +2370,16 @@ export function StudySegmentNavigator({
   )
 
   const visibleFiles = nodes.filter((node) => node.type === 'file')
+  const isDone = (id) => (segmentRecords[id] ?? {}).submissionState === 'submitted'
+  const studiedCount = visibleFiles.filter((node) => isDone(node.id)).length
+
+  // Segments belonging to each chapter, so a folder can show how much is left.
+  const chapterCounts = {}
+  let currentChapter = null
+  for (const node of nodes) {
+    if (node.type === 'folder') { currentChapter = node.id; chapterCounts[currentChapter] = 0; continue }
+    if (currentChapter && !isDone(node.id)) chapterCounts[currentChapter] += 1
+  }
 
   if (collapsed) {
     return (
@@ -2239,6 +2432,14 @@ export function StudySegmentNavigator({
               >
                 {isOpen ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
                 <span className="study-v2__segmentLabel">{node.label}</span>
+                {/* A finished chapter shows nothing: its segments already carry
+                    green markers, so "0" would be noise, not information. */}
+                {chapterCounts[node.id] ? (
+                  <span className="study-v2__chapterCount">
+                    {chapterCounts[node.id]}
+                    <span className="study-v2__srOnly"> segments left</span>
+                  </span>
+                ) : null}
               </button>
             )
           }
@@ -2267,6 +2468,23 @@ export function StudySegmentNavigator({
           )
         })}
       </div>
+      {visibleFiles.length ? (
+        <div className="study-v2__railFooter" data-debug-item="study_segment_progress">
+          <span className="study-v2__railFooterLabel">
+            Studied {studiedCount} / {visibleFiles.length}
+          </span>
+          <span
+            className="study-v2__railProgress"
+            role="progressbar"
+            aria-valuenow={studiedCount}
+            aria-valuemin={0}
+            aria-valuemax={visibleFiles.length}
+            aria-label="Segments studied"
+          >
+            <span style={{ width: `${visibleFiles.length ? (studiedCount / visibleFiles.length) * 100 : 0}%` }} />
+          </span>
+        </div>
+      ) : null}
     </aside>
   )
 }
@@ -2355,6 +2573,8 @@ export function StudySourceCard({
   onDecreaseFont,
   onIncreaseFont,
 }) {
+  const [bodyRef, bodyEdges] = useScrollAffordance('y')
+
   return (
     <section className="study-v2__sourceGroup">
       {showSegmentNavigation ? (
@@ -2377,12 +2597,12 @@ export function StudySourceCard({
           <button type="button" className="study-v2__miniPill" onClick={onIncreaseFont} disabled={fontScale >= 1.44} title="Increase source text size">
             A+
           </button>
-          <button type="button" className="study-v2__miniPill" title="Copy source text">
-            <Copy size={14} />
-            Copy
-          </button>
+          {/* Icon-only, like every other control in a card-header utility row.
+              The written label was the one text item in that row and cost ~46px
+              of a header that had none to spare. */}
+          <IconActionButton size="utility-sm" label="Copy source text" title="Copy source text" icon={<Copy strokeWidth={1.8} />} />
         </CardHeader>
-        <div className="study-v2__cardBody study-v2__sourceBody">
+        <div ref={bodyRef} className="study-v2__cardBody study-v2__sourceBody" {...bodyEdges}>
           <p
             className="study-v2__arabicSource"
             dir="rtl"
@@ -2399,13 +2619,15 @@ export function StudySourceCard({
 }
 
 export function StudyQuickLexicography({ terms }) {
+  const [stripRef, stripEdges] = useScrollAffordance('x')
+
   return (
     <section className="study-v2__studyStack" style={{ gap: 'var(--study-space-12)' }} data-debug-item="study_quick_lexicography">
       <div className="study-v2__lexHeader">
         <BookOpen size={13} strokeWidth={1.9} />
         Quick Lexicography
       </div>
-      <div className="study-v2__lexStrip">
+      <div ref={stripRef} className="study-v2__lexStrip" {...stripEdges}>
         {terms.map((term) => (
           <div key={term.transliteration} className="study-v2__lexTerm" title={term.description}>
             <span className="study-v2__arabicInline" dir="rtl">{term.arabic}</span>
@@ -2452,7 +2674,7 @@ export function StudyTranslationEditor({
   docked = false,
   fillHeight = false,
   disabled = false,
-  hint = null,
+  error = null,
 }) {
   const isControlled = typeof value === 'string'
   const [uncontrolledDraft, setUncontrolledDraft] = useState('')
@@ -2524,19 +2746,37 @@ export function StudyTranslationEditor({
               }}
             />
             <div className="study-v2__editorFooter">
-              <span className="study-v2__hint">{hint ?? '⌘ Enter to submit'}</span>
-              <button
-                type="button"
-                className="study-v2__secondaryAction"
-                onClick={onDiscuss}
-                title={discussionOpen ? 'Hide study companion' : 'Discuss this segment'}
-              >
-                <MessageSquare size={15} strokeWidth={1.9} />
-                {discussionOpen ? 'Hide discussion' : 'Discuss this segment'}
-              </button>
-              <PrimaryCTA minWidth={132} height={44} icon={<Send size={15} strokeWidth={1.9} />} onClick={onSubmit} title={failed ? 'Submit again' : 'Submit translation'}>
-                {failed ? 'Submit again' : 'Submit'}
-              </PrimaryCTA>
+              {error ? (
+                <p className="study-v2__editorError" role="alert">
+                  <AlertCircle size={15} strokeWidth={2} style={{ flex: '0 0 auto', marginTop: '1px' }} />
+                  {error}
+                </p>
+              ) : null}
+              <div className="study-v2__editorActions">
+                <kbd className="study-v2__shortcut" aria-hidden="true">{SUBMIT_SHORTCUT}</kbd>
+                <button
+                  type="button"
+                  className="study-v2__secondaryAction"
+                  onClick={onDiscuss}
+                  // The visible label is what the docked width affords; the
+                  // accessible name stays the full phrase so the control is not
+                  // ambiguous to a screen reader or in a tooltip.
+                  aria-label={discussionOpen ? 'Hide the discussion for this segment' : 'Discuss this segment'}
+                  title={discussionOpen ? 'Hide the discussion for this segment' : 'Discuss this segment'}
+                >
+                  <MessageSquare size={15} strokeWidth={1.9} />
+                  {discussionOpen ? 'Hide' : 'Discuss'}
+                </button>
+                <PrimaryCTA
+                  minWidth={132}
+                  height={44}
+                  icon={<Send size={15} strokeWidth={1.9} />}
+                  onClick={onSubmit}
+                  title={`${failed ? 'Submit again' : 'Submit translation'} (${SUBMIT_SHORTCUT_LABEL})`}
+                >
+                  {failed ? 'Submit again' : 'Submit'}
+                </PrimaryCTA>
+              </div>
             </div>
           </div>
         </StudyPanel>

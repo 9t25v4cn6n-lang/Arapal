@@ -6,7 +6,10 @@
 // source of false positives in a naive geometric checker.
 
 export function evaluate(config) {
-  const { THRESHOLDS, TYPE_RAMP, TEXT_COLOR_POLICY, REQUIRED_FONT_FAMILIES } = config
+  const {
+    THRESHOLDS, TYPE_RAMP, TEXT_COLOR_POLICY, REQUIRED_FONT_FAMILIES,
+    TRUNCATION_EXEMPT_SELECTORS = [],
+  } = config
   const findings = []
   const round = (n) => Math.round(n * 10) / 10
 
@@ -112,7 +115,19 @@ export function evaluate(config) {
     }
     return false
   }
-  const textLeaves = content.filter(ownsText)
+
+  // A visually-hidden element carries text for assistive technology and renders
+  // none. Measuring it as rendered text is how the truncation rule first
+  // reported a 1px sr-only span as a cut label: correct arithmetic, wrong
+  // subject. Its size and its clip are both part of the idiom, so both are
+  // checked rather than trusting either alone.
+  const isScreenReaderOnly = (e) => {
+    const r = e.getBoundingClientRect()
+    if (r.width > 2 && r.height > 2) return false
+    const cs = getComputedStyle(e)
+    return cs.position === 'absolute' || cs.clipPath !== 'none' || cs.overflow === 'hidden'
+  }
+  const textLeaves = content.filter((e) => ownsText(e) && !isScreenReaderOnly(e))
 
   const FOCUSABLE = 'a[href],button,input,select,textarea,[tabindex]:not([tabindex="-1"]),[role="button"]'
   const controls = content.filter((e) => e.matches(FOCUSABLE))
@@ -175,6 +190,25 @@ export function evaluate(config) {
           hiddenPx: dy, shownPx: el.clientHeight, hiddenRatio: round(ratio * 100) + '%',
         })
       }
+    }
+
+    // ── RULE: scroll-without-affordance ─────────────────────────────────────
+    // A region that scrolls but hides its scrollbar looks identical to one that
+    // clips: the content is simply cut at a hard edge. Either the scrollbar is
+    // visible, or something else must say "there is more" — a fade mask is what
+    // this codebase uses. Neither is a defect the geometry rules can see, which
+    // is why a half-sliced line of Arabic survived a clean report.
+    const hidesScrollbar = cs.scrollbarWidth === 'none'
+    const signals = cs.maskImage !== 'none' || cs.webkitMaskImage !== 'none'
+    const overflowAxes = []
+    if (scrollableY && dy > THRESHOLDS.minSignallableOverflowPx) overflowAxes.push('y')
+    if (scrollableX && dx > THRESHOLDS.minSignallableOverflowPx) overflowAxes.push('x')
+    if (overflowAxes.length > 0 && hidesScrollbar && !signals) {
+      add('scroll-without-affordance', {
+        selector: describe(el), label: label(el),
+        axis: overflowAxes.join('+'),
+        hiddenPx: overflowAxes.includes('y') ? dy : dx,
+      })
     }
   }
 
@@ -266,6 +300,32 @@ export function evaluate(config) {
   }
   if (driftSizes.size > 0) {
     add('type-drift', { offRampSizes: [...driftSizes].sort((a, b) => a - b), rampSize: TYPE_RAMP.length })
+  }
+
+  // ── RULE: label-truncated ──────────────────────────────────────────────────
+  // A deliberate ellipsis on user data is design; a cut on the product's own
+  // chrome is a defect. "SOURCE TEXT" rendering as "SOURCE T…" is not a smaller
+  // version of the label, it is a different and wrong one — and the existing
+  // rules exempt every ellipsis equally, so it reported clean.
+  const seenTruncation = new Set()
+  const exempt = (el) => TRUNCATION_EXEMPT_SELECTORS.some((sel) => {
+    try { return el.closest(sel) } catch { return false }
+  })
+  for (const el of textLeaves) {
+    if (exempt(el)) continue
+    const cs = getComputedStyle(el)
+    // Only a single-line, non-wrapping element can be cut horizontally in a way
+    // the user reads as truncation; a wrapped paragraph is measured elsewhere.
+    if (cs.whiteSpace !== 'nowrap' && cs.whiteSpace !== 'pre') continue
+    const cut = el.scrollWidth - el.clientWidth
+    if (cut <= THRESHOLDS.maxLabelClipPx) continue
+    const key = describe(el) + '|' + label(el)
+    if (seenTruncation.has(key)) continue
+    seenTruncation.add(key)
+    add('label-truncated', {
+      selector: describe(el), label: label(el),
+      cutPx: round(cut), shownPx: el.clientWidth, neededPx: el.scrollWidth,
+    })
   }
 
   // ── RULE: hit-target + unnamed-control ─────────────────────────────────────

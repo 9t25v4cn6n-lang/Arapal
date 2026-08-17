@@ -235,14 +235,9 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     return () => window.clearTimeout(timer)
   }, [discussionClosing])
 
-  useEffect(() => {
-    if (!readInitialDiscussionOpen()) {
-      return
-    }
-
-    setDiscussionClosing(false)
-    setDiscussionOpen(true)
-  }, [])
+  // The mount effect that used to sit here re-set the exact values the two
+  // useState initialisers above already produce, costing a second render pass
+  // on every load of the screen for no change in state.
 
   const segmentMeta = useMemo(
     () => ({
@@ -268,6 +263,15 @@ export default function StudyWorkspaceScreen({ route, shell }) {
   }
 
   const handleSubmit = () => {
+    // The refusal is a property of submitting a translation, not a property of
+    // the live store. Guarding only the live branch meant the fixture route —
+    // the one the demo and every visual state actually run — still accepted an
+    // empty box and marked the segment submitted.
+    if (!draftValue.trim()) {
+      setSubmitError('Write a translation before submitting.')
+      return
+    }
+
     if (isLive) {
       const outcome = actions.submitSegment({ projectId: project.id, segmentId: currentSegment.id })
       if (!outcome.ok) {
@@ -532,7 +536,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
               <StudyTranslationEditor
                 value={draftValue}
                 onChange={handleDraftChange}
-                hint={submitError ?? undefined}
+                error={submitError ?? undefined}
                 failed={currentState === 'failed'}
                 onSubmit={handleSubmit}
                 onDiscuss={toggleDiscussion}

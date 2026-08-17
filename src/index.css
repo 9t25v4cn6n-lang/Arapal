@@ -1,8 +1,30 @@
 /* Typeface loading — single source. Every family the product declares must be
    requested here. Per-screen @import inside runtime <style> blocks left Inter
    and Amiri declared-but-never-loaded on every route (visual-standard:
-   font-not-loaded, 104 violations). */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap');
+   font-not-loaded, 104 violations).
+
+   Self-hosted, not fetched from fonts.googleapis.com at runtime. The whole type
+   system was a third-party network dependency: on a slow, offline or blocked
+   connection the product rendered in fallback faces, and every user's IP was
+   disclosed to a third party to read a page. It also made the visual suite
+   non-deterministic — a face that arrived after capture reflowed the text and
+   read as a regression on whichever state happened to load first. Bundling the
+   files removes the request, the privacy exposure and the race together. */
+@import '@fontsource/playfair-display/400.css';
+@import '@fontsource/playfair-display/500.css';
+@import '@fontsource/playfair-display/600.css';
+@import '@fontsource/playfair-display/700.css';
+@import '@fontsource/playfair-display/800.css';
+@import '@fontsource/playfair-display/900.css';
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+@import '@fontsource/amiri/400.css';
+@import '@fontsource/amiri/400-italic.css';
+@import '@fontsource/amiri/700.css';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/600.css';
 
 :root {
   --text: #6b6375;

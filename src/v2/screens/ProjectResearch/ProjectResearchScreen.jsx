@@ -768,6 +768,9 @@ const researchStyles = `
     text-align: right;
   }
 
+  /* The topic is the segment's own title — the user's content, not chrome — so
+     one line with an ellipsis is the design for a ledger row. The element
+     carries data-truncates to declare that to the visual standard. */
   .project-research__topicCell strong {
     overflow: hidden;
     text-overflow: ellipsis;

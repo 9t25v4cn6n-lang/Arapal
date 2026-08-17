@@ -1061,7 +1061,10 @@ function GroupTitleWarning() {
   )
 }
 
-function GroupTitleInput({ group, compact = false, stale = false, onChange }) {
+// `compact` used to pick between a 150px and a 220px hardcoded width. Both are
+// gone: the field and the label now take the width their row actually has, so
+// there is nothing left for the caller to choose.
+function GroupTitleInput({ group, stale = false, onChange }) {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(group.title)
 
@@ -1084,7 +1087,7 @@ function GroupTitleInput({ group, compact = false, stale = false, onChange }) {
   return (
     <span
       data-debug-item="group_title_editor"
-      style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[8], minWidth: 0 }}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[8], minWidth: 0, flex: '1 1 auto' }}
     >
       <span style={{ ...flowType.operationalMeta, color: colors.textSoft, whiteSpace: 'nowrap' }}>
         {group.number}.
@@ -1112,7 +1115,11 @@ function GroupTitleInput({ group, compact = false, stale = false, onChange }) {
           }}
           style={{
             minWidth: 0,
-            width: compact ? '150px' : '220px',
+            // Was a fixed 150/220px. The field now takes the width the row
+            // actually has, so editing a title cannot be narrower than reading
+            // it, and neither is decided independently of the container.
+            flex: '1 1 auto',
+            width: 'auto',
             border: `1px solid ${flowChrome.blueLine}`,
             borderRadius: radius[10],
             background: colors.surfacePrimary,
@@ -1126,9 +1133,12 @@ function GroupTitleInput({ group, compact = false, stale = false, onChange }) {
         <>
           <span
             data-debug-item="group_title_text"
+            // The title is the user's own text, so an ellipsis is the design
+            // once the row genuinely runs out — declared, not inferred.
+            data-truncates=""
             style={{
               minWidth: 0,
-              maxWidth: compact ? '150px' : '220px',
+              flex: '1 1 auto',
               color: colors.textBody,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -1314,7 +1324,6 @@ export function ReviewMarkerPanel({
               >
                 <GroupTitleInput
                   group={group}
-                  compact
                   stale={staleGroupIds.includes(group.id)}
                   onChange={onGroupTitleChange}
                 />

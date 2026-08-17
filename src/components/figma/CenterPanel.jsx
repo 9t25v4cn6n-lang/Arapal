@@ -421,6 +421,15 @@ const centerPanelStyles = `
     display: none;
   }
 
+  /* The strip hides its scrollbar, so a term cut by the right edge read as a
+     clipped chip rather than as "there are more". Faded here unconditionally
+     rather than position-aware: this screen is retained pending its port, and a
+     static fade is the smallest change that stops the cut reading as a defect.
+     The V2 equivalent uses useScrollAffordance and fades only the live edge. */
+  .fg-center__lexStrip {
+    mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent 100%);
+  }
+
   .fg-center__lexTerm {
     position: relative;
     flex-shrink: 0;
@@ -1871,7 +1880,8 @@ export default function CenterPanel({
         <div className="fg-center__header">
           <div className="fg-center__headerRow">
             <div className="fg-center__headerMain">
-              <h1 className="fg-center__title">
+              {/* Book and chapter name: user content, ellipsis by design. */}
+              <h1 className="fg-center__title" data-truncates="">
                 <BookOpen size={30} color="#2563eb" strokeWidth={1.9} />
                 Al-Hidayah • The Book of Prayer
               </h1>

@@ -64,7 +64,35 @@ export const THRESHOLDS = {
 
   /** Nothing may sit outside the frame. [CONTRACT] "end-to-end partitions only". */
   maxViewportEscapePx: 2,
+
+  /**
+   * How much of a label may be cut before it counts as truncated.
+   * [DECISION] A control's own label and a section's own title are authored,
+   * finite strings — the layout is expected to hold them. User data (a project
+   * title, a source extract) legitimately ellipsises and is exempt by selector,
+   * not by tolerance, so this stays tight.
+   */
+  maxLabelClipPx: 1,
+
+  /**
+   * A scroll region below this overflow is not worth signalling — subpixel and
+   * rounding overflow is not content the user needs to reach.
+   */
+  minSignallableOverflowPx: 8,
 }
+
+/**
+ * Elements whose text is user data or source content, where an ellipsis is the
+ * design rather than a defect. Everything else that clips a label is reported.
+ * Kept as an explicit list so each exemption is a recorded decision.
+ */
+export const TRUNCATION_EXEMPT_SELECTORS = [
+  '[data-truncates]',
+  '.project-research__resultTitle',
+  '.project-research__resultExtract',
+  '.study-v2__segmentLabel',
+  '.fg-center__textBlock',
+]
 
 /**
  * Approved type ramp, in px. Any rendered size outside this set is drift.
@@ -108,5 +136,12 @@ export const RULES = {
   'hit-target': { blocking: true, title: 'Interactive target below the minimum' },
   'unnamed-control': { blocking: true, title: 'Interactive control has no accessible name' },
   'font-not-loaded': { blocking: true, title: 'Declared font family never loads' },
+  // Both added after the checker reported "no change" on a Study frame where a
+  // section title had ellipsised to "SOURCE T…", a button label had broken onto
+  // three lines inside its own pill, and two scroll regions were slicing content
+  // at a hard edge with their scrollbars hidden. Found by eye, which means they
+  // were missing rules — see CLAUDE.md.
+  'label-truncated': { blocking: true, title: 'A chrome label or control label is cut off by layout pressure' },
+  'scroll-without-affordance': { blocking: true, title: 'Scroll region hides its scrollbar and gives no other signal' },
   'type-drift': { blocking: false, title: 'Rendered size outside the approved ramp' },
 }
