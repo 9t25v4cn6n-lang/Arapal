@@ -224,3 +224,51 @@ also what turned the Function gate from "31 tests pass" into an actual pass.
 - Live mode and reference mode must not diverge silently. Where a screen has
   both, anything derived for display needs a live path and a reference path, and
   the live path is the one to check first.
+
+---
+
+## 2026-08-17 · Behaviour parity re-characterised: V2 Study is ahead of legacy
+
+**Decision.** The Behaviour-parity gate is assessed against the **running screens**,
+control by control, not against the plan's earlier assumption. On that evidence
+the "Study port" the plan calls the real remaining build is largely already done.
+
+Measured at 1440×900 on 2026-08-17:
+
+| | Legacy Study | V2 Study |
+|---|---|---|
+| Interactive controls | 23 | **39** |
+| Discussion companion | present | present, plus a full-height column layout |
+| Support cards | expand only | expand **+ float + fullscreen**, per card |
+| Segment navigation | none in-screen | real list with per-chapter progress |
+| Rich text | none | bold, italic, two alignments, expand |
+
+Each legacy capability characterised in `tests/behaviour/legacy-capabilities.spec.js`
+was then checked against V2 directly:
+
+- **Options menu** — V2's popover exposes METHOD (AI / Manual), SEGMENTATION
+  STYLE (Sentence / Meaning groups / Topic-led), GRANULARITY (Tighter / Balanced /
+  Broader) and PREFERENCES (Quick mode, Show segmentation animation). Full parity.
+- **The splitter is real** — verified live: the same five-sentence source yields
+  **3 segments at Balanced and 5 at Tighter**.
+- **Submission, persistence, discussion, segment navigation, context handoff** —
+  all verified in V2 this session.
+- **Exam context, attempt-survives-reload, no-resurrect** — these belong to Exams,
+  which is retained *production* per `§2.1`, not a port target.
+
+**One genuine gap found and fixed.** V2 persisted only `method`, `quickMode` and
+`showSegmentationTransition`; `readSegmentationFlowPreferences` whitelists fields,
+so **style and granularity were discarded on read** — and they were also hard-coded
+at mount in the paste screen. Choosing "Tighter" and returning silently
+re-segmented the next source differently. Both ends fixed, with a regression test
+in `segmentation-handoff.spec.js`.
+
+**Consequence.**
+- The remaining parity question is **navigation destinations**, not Study
+  behaviour: the V2 rail still lacks `Review Queue`, `Completed` and `Profile`,
+  which legacy has. Exams was the fourth and is now wired.
+- `src/components/figma/` and `MakeSegmentationFlowScreen.jsx` are closer to
+  deletable than the plan assumes. Before deleting, the two `test.fixme` legacy
+  gaps in `legacy-capabilities.spec.js` should be confirmed as legacy-only defects
+  (they are: draft never persisted, draft leaks between segments — both already
+  correct in V2 and covered by passing tests).

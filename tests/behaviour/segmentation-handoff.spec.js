@@ -22,6 +22,40 @@ async function openPaste(page) {
 }
 
 test.describe('segmentation → study handoff', () => {
+  test('granularity and style survive a reload, because they change the output', async ({ page }) => {
+    await openPaste(page)
+
+    // Granularity is not a cosmetic preference: on a five-sentence source it
+    // takes the result from three segments to five. It was omitted from the
+    // preference store AND hard-coded at mount, so choosing Tighter and coming
+    // back silently re-segmented the next source differently.
+    await page.getByRole('button', { name: /open action options/i }).first().click()
+    await page.waitForTimeout(400)
+    await page.getByRole('button', { name: /tighter/i }).first().click()
+    await page.waitForTimeout(300)
+
+    await page.locator('textarea').first().fill(SOURCE)
+    await page.waitForTimeout(300)
+    await page.getByRole('button', { name: /segment text/i }).first().click()
+    await page.waitForTimeout(4000)
+
+    const stored = await page.evaluate(() => localStorage.getItem('arapal:v2:segmentation-flow'))
+    expect(JSON.parse(stored).granularity, 'granularity is persisted').toBe('tight')
+
+    await page.goto('/?chrome=0#v2/segmentationPasteNext', { waitUntil: 'domcontentloaded' })
+    await page.waitForTimeout(2400)
+    await page.getByRole('button', { name: /open action options/i }).first().click()
+    await page.waitForTimeout(400)
+
+    const tighterSelected = await page.evaluate(() => {
+      const rows = [...document.querySelectorAll('button')].filter((b) => /Tighter/.test(b.textContent))
+      return rows.some((b) => b.getAttribute('aria-pressed') === 'true'
+        || b.getAttribute('aria-checked') === 'true'
+        || /is-selected|is-active/.test(String(b.className)))
+    })
+    expect(tighterSelected, 'the reloaded screen re-selects the stored granularity').toBe(true)
+  })
+
   test('the pasted source becomes a real project with real segments', async ({ page }) => {
     await openPaste(page)
     await page.locator('textarea').first().fill(SOURCE)

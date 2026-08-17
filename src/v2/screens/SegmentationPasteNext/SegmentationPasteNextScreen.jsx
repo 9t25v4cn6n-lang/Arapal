@@ -60,8 +60,11 @@ function deriveProjectTitle(rawText) {
 export default function SegmentationPasteNextScreen({ route, shell }) {
   const [rawText, setRawText] = useState(initialText)
   const [method, setMethod] = useState(() => readSegmentationFlowPreferences().method)
-  const [style, setStyle] = useState('meaning')
-  const [granularity, setGranularity] = useState('balanced')
+  // Seeded from the stored preferences like method is, rather than hard-coded.
+  // These were literals, so the popover's own defaults won every mount and the
+  // user's choice could not survive a reload even once the store carried it.
+  const [style, setStyle] = useState(() => readSegmentationFlowPreferences().style)
+  const [granularity, setGranularity] = useState(() => readSegmentationFlowPreferences().granularity)
   const [quickMode, setQuickMode] = useState(() => readSegmentationFlowPreferences().quickMode)
   const [showSegmentationTransition, setShowSegmentationTransition] = useState(
     () => readSegmentationFlowPreferences().showSegmentationTransition,
@@ -220,6 +223,8 @@ export default function SegmentationPasteNextScreen({ route, shell }) {
 
             saveSegmentationFlowPreferences({
               method: selectedMethod.id,
+              style,
+              granularity,
               quickMode,
               showSegmentationTransition,
             })
