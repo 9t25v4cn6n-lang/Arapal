@@ -25,6 +25,18 @@ const reclaimTrailingTrack = (tracking) => ({
   marginInlineEnd: `-${tracking}`,
 })
 
+const sourceIntakeBrandStyles = `
+  /* display lives here, not inline. An inline style beats a stylesheet rule, so
+     the first version of this — class added, inline display: 'grid' left in
+     place — matched the media query and changed nothing. The same shape as the
+     inline minHeight that quietly defeated the document-level target floor. */
+  .source-intake-brand__text { display: grid; }
+
+  @media (max-width: 560px) {
+    .source-intake-brand__text { display: none; }
+  }
+`
+
 export default function SourceIntakeBrand({
   title = 'Source Intake',
   subtitle = 'Segmentation',
@@ -32,6 +44,14 @@ export default function SourceIntakeBrand({
   debugItem,
 }) {
   return (
+    <>
+      {/* Below the mobile breakpoint the header lane cannot hold Back, a
+          three-step indicator and a two-line brand label. Something has to go,
+          and this is the part that carries the least: the badge still marks the
+          mode and the step bar still says where you are, whereas the label was
+          ellipsising to "Source Inta…" / "Segmentati…" on every screen of the
+          flow — six truncations that said nothing the screen did not already. */}
+      <style>{sourceIntakeBrandStyles}</style>
     <div
       data-debug-item={debugItem}
       style={{
@@ -53,7 +73,10 @@ export default function SourceIntakeBrand({
       >
         {icon}
       </div>
-      <div style={{ display: 'grid', gap: sourceIntakeBrandMetrics.textStackGap, minWidth: 0 }}>
+      <div
+        className="source-intake-brand__text"
+        style={{ gap: sourceIntakeBrandMetrics.textStackGap, minWidth: 0 }}
+      >
         <p
           style={{
             margin: 0,
@@ -91,5 +114,6 @@ export default function SourceIntakeBrand({
         </p>
       </div>
     </div>
+    </>
   )
 }

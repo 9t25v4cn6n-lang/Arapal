@@ -19,6 +19,11 @@ export const VIEWPORTS = [
   { id: '1366x768', width: 1366, height: 768, tier: 'validate' },
   { id: '1920x1080', width: 1920, height: 1080, tier: 'validate' },
   { id: '1280x800', width: 1280, height: 800, tier: 'validate' },
+  // Mobile. [DECISION 2026-08-16] "A 390px version is required for V1, built
+  // after the desktop surface is correct." The desktop surface is correct, so
+  // the frame is declared — a scope item that nothing measures is a scope item
+  // nobody can finish.
+  { id: '390x844', width: 390, height: 844, tier: 'mobile' },
 ]
 
 /**
