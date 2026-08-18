@@ -425,10 +425,20 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     },
     Layer4_Study_PrimaryScroll: {
       style: {
+        // A percentage inset cannot be capped into behaving at mobile.
+        //
+        // 20% takes a fifth of the frame from each side at EVERY width, so on a
+        // 390px phone it spent 132px of a 330px body on margin and left the work
+        // column at 198px. min() does not help — 20% of 330 is 66, already below
+        // any sensible cap — because the problem is not that the value gets too
+        // large but that it stays proportional when it should stop. That is a
+        // breakpoint, so it uses the breakpoint.
         padding:
-          discussionMode
-            ? '16px clamp(16px, 3vw, 40px) 24px'
-            : '16px 20% 24px',
+          isMobile
+            ? '16px 16px 24px'
+            : discussionMode
+              ? '16px clamp(16px, 3vw, 40px) 24px'
+              : '16px 20% 24px',
         transition: `padding ${motion.panel}`,
       },
     },
