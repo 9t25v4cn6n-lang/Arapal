@@ -14,6 +14,7 @@ import {
   StudyTranslationEditor,
   StudyWorkspaceStyles,
 } from '../../foundation/primitives/StudyWorkspacePrimitives'
+import useIsMobileViewport from '../../foundation/primitives/useIsMobileViewport'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import { motion } from '../../foundation/tokens'
 import layoutContract from './StudyWorkspaceScreen.contract'
@@ -119,7 +120,23 @@ function createInitialSegmentRecords() {
   }
 }
 
-function getWorkspaceColumns({ focusMode, segmentRailCollapsed, supportRailCollapsed, discussionMode = false }) {
+function getWorkspaceColumns({ focusMode, segmentRailCollapsed, supportRailCollapsed, discussionMode = false, isMobile = false }) {
+  // One column at mobile. The three-column workspace is 208px of segments plus
+  // 308px of support before the work itself gets a pixel, which on a 390px frame
+  // put the support rail's right edge at 576 — 186px outside the window, with no
+  // way to scroll to it because the rail is chrome. Width is an input to this
+  // function rather than a media query because these columns are written inline,
+  // and inline styles beat stylesheets.
+  if (isMobile) {
+    // Zero-width rails, not one column. The three regions carry explicit
+    // gridColumn assignments, so collapsing the track list to a single column
+    // landed all three in column 1 and the lexicography row overlapped the
+    // editor by 80px. Giving the rails 0px keeps every region in its own track
+    // and lets the work column take the frame — the same shape focus mode uses,
+    // which is what mobile wants anyway.
+    return '0px minmax(0, 1fr) 0px'
+  }
+
   if (focusMode) {
     return '0px minmax(0, 1fr) 0px'
   }
@@ -161,6 +178,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
   const [discussionClosing, setDiscussionClosing] = useState(false)
   const [manualNotesBySegment, setManualNotesBySegment] = useState({})
   const showSandboxControls = readSandboxControlsEnabled()
+  const isMobile = useIsMobileViewport()
 
   // One list, whichever mode we are in, so everything below is written once.
   const activeSegments = isLive
@@ -396,7 +414,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     },
     Layer2_Study_WorkspaceRoot: {
       style: {
-        gridTemplateColumns: getWorkspaceColumns({ focusMode, segmentRailCollapsed, supportRailCollapsed, discussionMode }),
+        gridTemplateColumns: getWorkspaceColumns({ focusMode, segmentRailCollapsed, supportRailCollapsed, discussionMode, isMobile }),
         transition: `grid-template-columns ${motion.panel}`,
       },
     },

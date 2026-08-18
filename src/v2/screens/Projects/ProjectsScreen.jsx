@@ -444,6 +444,15 @@ const dashboardStyles = `
     justify-content: center;
   }
 
+  /* The history rail is a vertical tab pinned to the right edge. At 390px there
+     is no edge to spare — it and its button pushed 36-50px outside the frame,
+     and being chrome there was no scrolling to it. The history it opens is
+     reachable from the dashboard itself, so on mobile the tab goes rather than
+     the capability. */
+  @media (max-width: 560px) {
+    .study-dashboard__historyRail { display: none; }
+  }
+
   .study-dashboard__historyRailButton {
     width: 58px;
     min-height: 240px;

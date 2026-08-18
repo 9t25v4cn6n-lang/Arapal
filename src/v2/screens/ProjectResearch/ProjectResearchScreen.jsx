@@ -329,6 +329,15 @@ const researchStyles = `
     gap: ${spacing[8]};
   }
 
+  /* Three 88px minimums plus gaps need 280px before the panel's own padding, so
+     at 390px the strip and its last pill ran outside the frame. auto-fit lets it
+     become two rows rather than one row that does not fit. */
+  @media (max-width: 560px) {
+    .project-research__metricStrip {
+      grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+    }
+  }
+
   .project-research__metricPill {
     min-height: 52px;
     display: grid;
