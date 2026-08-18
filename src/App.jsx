@@ -283,7 +283,10 @@ export default function App() {
       return 'segmentation'
     }
 
-    if (hash === 'exams') {
+    // #exams and #projects never reach this function any more: RootApp resolves
+    // both to their V2 screens before the legacy app is asked for anything. The
+    // legacy Exams stays reachable at #exams-legacy as a behaviour source.
+    if (hash === 'exams-legacy') {
       return 'exams'
     }
 

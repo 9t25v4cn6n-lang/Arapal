@@ -13,7 +13,10 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
-  ChevronsRight,
+  PanelLeftClose,
+  PanelLeftOpen,
+  PanelRightClose,
+  PanelRightOpen,
   Copy,
   Info,
   Italic,
@@ -304,12 +307,39 @@ const studyCss = `
     gap: var(--study-space-16);
   }
 
+  /* The collapsed support rail is a DOCK, not a leftover.
+     ───────────────────────────────────────────────────
+     It used to be three 40px icon buttons stacked against the top edge of an
+     840px rail: the functionality survived collapsing and the architecture did
+     not, so the strongest support panel in the product became three specks in a
+     corner. The tiles now share the rail's height between them — each is
+     flex: 1 with a floor and a ceiling, so three modules give three tall tiles
+     and six give six shorter ones without the rule changing — and each carries
+     its own name down its spine, so a module is identifiable without hovering
+     it first. */
   .study-v2__collapsedRailBody {
-    padding: var(--study-space-12) var(--study-space-8);
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: var(--study-space-12) var(--study-space-8) var(--study-space-16);
     display: flex;
     flex-direction: column;
-    gap: var(--study-space-12);
-    align-items: center;
+    gap: var(--study-space-8);
+    align-items: stretch;
+  }
+
+  .study-v2__collapsedSupportLabel {
+    writing-mode: vertical-rl;
+    font-size: ${typography.eyebrowLabel.fontSize};
+    line-height: 1;
+    font-weight: ${typography.eyebrowLabel.fontWeight};
+    letter-spacing: ${typography.eyebrowLabel.letterSpacing};
+    text-transform: uppercase;
+    color: var(--study-text-soft);
+    /* The tile is 56px of usable height at worst; a long module name must clip
+       rather than push the icon out of the tile. */
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
   }
 
   .study-v2__segmentRow,
@@ -502,7 +532,7 @@ const studyCss = `
     flex: 0 0 auto;
     color: var(--study-text-strong);
     font-family: var(--study-body-font);
-    font-size: 19px;
+    font-size: ${typography.sectionTitle.fontSize};
     line-height: 1.08;
     font-weight: 845;
     letter-spacing: -0.024em;
@@ -525,7 +555,7 @@ const studyCss = `
     text-overflow: ellipsis;
     color: color-mix(in srgb, var(--study-text-body) 82%, var(--study-text-soft));
     font-family: var(--study-body-font);
-    font-size: 14px;
+    font-size: ${typography.supportSubtext.fontSize};
     line-height: 1.14;
     font-weight: 635;
     letter-spacing: 0.01em;
@@ -775,21 +805,31 @@ const studyCss = `
        what its scroll affordance already existed for, so a long Arabic passage
        gets MORE room rather than the void getting bigger. The editor sits
        directly under the lexicography and grows with what is typed into it. */
-    /* Every row is sized by its content and the stack sits at the top.
+    /* Read at the top, write at the bottom.
+       ─────────────────────────────────────
+       Four arrangements have now been tried in this rule, and the argument each
+       time was about where the leftover height should go.
 
-       Three arrangements were tried here and the first two both manufactured a
-       void. An empty 1fr spacer row put ~150px of blank background between the
-       passage and the box it is typed into. Giving that 1fr to the source row
-       instead moved the same emptiness INSIDE the source card — 111px of white
-       under a short passage, because the card stretched and the Arabic did not.
+         1. an empty 1fr spacer row  — a ~150px hole between the passage and the
+            box it is typed into.
+         2. the slack to the source  — the same hole, moved INSIDE the source
+            card: 111px of white under a short passage.
+         3. every row content-sized  — no hole, but the composer then floats
+            directly under the lexicography with ~180px of unused canvas beneath
+            it, which is what review saw as a top-heavy, underused workspace.
 
-       Slack should not be handed to a component that has nothing to do with it.
-       Content-sized rows leave the remainder at the bottom of the lane, which is
-       ordinary trailing space rather than a hole in the middle of the reading
-       path. A long passage still gets room: the panel grows to what it needs and
-       scrolls beyond that. */
-    grid-template-rows: auto auto auto;
-    align-content: start;
+       The mistake common to all three was treating the leftover as something to
+       park. It is not: this is a writing surface, and the one component that can
+       spend extra height USEFULLY is the box you write the translation into.
+
+       So the editor row takes the slack, the editor grows into it up to a cap,
+       and it sits at the bottom of its row — which anchors the lower canvas
+       without hard-coding where the bottom is. Any residue at very tall
+       viewports lands above the editor as breathing room between reading and
+       writing, and the cap is what keeps a tall frame from turning the writing
+       area into an intimidating empty field. */
+    grid-template-rows: auto auto minmax(var(--study-editor-min, 200px), 1fr);
+    align-content: stretch;
     grid-template-areas:
       "source companion"
       "lex companion"
@@ -819,13 +859,30 @@ const studyCss = `
      to be stretched to a floor once no row is fighting for the leftover. */
   .study-v2__composer.is-discussing {
     grid-template-columns: minmax(0, 1fr) minmax(340px, 0.82fr);
-    grid-template-rows: auto auto auto;
+    /* The SAME row model as the default state. Restating it as three auto rows
+       here dropped the editor's floor, so on a 768px frame the companion,
+       the retry banner and the source between them squeezed the writing area to
+       about 180px and the third line of the user's own translation was cut at a
+       hard edge. The floor is the point: whatever else is on this screen, there
+       is always a usable box to write in, and the source card above it scrolls
+       instead — which is what its scroll affordance is for. */
+    grid-template-rows: auto auto minmax(240px, 1fr);
     grid-template-areas:
       "source companion"
       "lex companion"
       "editor companion";
     column-gap: var(--study-space-20);
     align-items: stretch;
+  }
+
+  /* The passage yields to the writing area in this mode, not the other way
+     round. Discussion is where the centre column is narrowest and the retry
+     banner is most likely to be present; with the source card free to take its
+     full content height the editor was left about 90px and cut the user's own
+     second line at a hard edge. The card scrolls — that is what its scroll
+     affordance is for — and the full passage is one scroll away. */
+  .study-v2__composer.is-discussing .study-v2__composerSource {
+    max-height: 240px;
   }
 
   .study-v2__composerSource {
@@ -871,7 +928,13 @@ const studyCss = `
     grid-area: editor;
     min-width: 0;
     min-height: 0;
+    /* end + height: 100% + a cap. The height claims the row so the writing area
+       actually grows; the cap stops a 1080px-tall frame producing a 600px empty
+       field; end-alignment puts whatever is left over above the editor rather than
+       below it, so the composer is the last thing in the canvas. */
     align-self: end;
+    height: 100%;
+    max-height: 420px;
     transition:
       transform var(--study-motion-panel),
       opacity var(--study-motion-panel);
@@ -2058,13 +2121,21 @@ const studyCss = `
 
   .study-v2__collapsedSupportButton {
     width: 100%;
-    min-height: calc(var(--study-space-64) + var(--study-space-16));
+    /* An equal share of the rail, floored so it stays a comfortable target and
+       capped so three modules on a 1080px frame do not become three 300px
+       slabs. The distribution is the rule; the number of modules is an input. */
+    flex: 1 1 0;
+    min-height: calc(var(--study-space-64) + var(--study-space-24));
+    max-height: 240px;
     border: 1px solid var(--support-border, var(--study-line-soft));
     border-radius: var(--study-radius-16);
     background: var(--support-bg, var(--study-surface));
-    display: inline-flex;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: var(--study-space-12);
+    padding: var(--study-space-12) var(--study-space-4);
     color: var(--support-icon, var(--study-accent));
     cursor: pointer;
     transition:
@@ -2074,13 +2145,19 @@ const studyCss = `
       box-shadow var(--study-motion-micro);
   }
 
-  .study-v2__collapsedSupportButton:hover {
+  .study-v2__collapsedSupportButton:hover,
+  .study-v2__collapsedSupportButton:focus-visible {
     border-color: var(--support-icon, var(--study-accent));
     background: color-mix(in srgb, var(--support-bg, var(--study-accent-wash)) 90%, var(--study-surface));
     box-shadow:
       0 var(--study-space-12) 26px color-mix(in srgb, var(--support-icon, var(--study-accent)) 16%, transparent),
       inset 0 0 0 1px color-mix(in srgb, var(--support-icon, var(--study-accent)) 24%, transparent);
     transform: translateX(-3px);
+  }
+
+  .study-v2__collapsedSupportButton:hover .study-v2__collapsedSupportLabel,
+  .study-v2__collapsedSupportButton:focus-visible .study-v2__collapsedSupportLabel {
+    color: var(--support-icon, var(--study-accent));
   }
 
   .study-v2__collapsedSupportButton:focus-visible {
@@ -2308,9 +2385,11 @@ export function StudyShellMeta({
   onDraft,
   onFail,
   onPass,
+  progress = null,
 }) {
   return (
     <div className="study-v2 study-v2__shellMetaCluster" data-debug-item="study_shell_meta_cluster">
+      {progress}
       {showSandboxControls ? (
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[4] }}>
           {[['Draft', onDraft], ['Fail', onFail], ['Pass', onPass]].map(([label, onClick]) => (
@@ -2391,14 +2470,29 @@ export function StudyStatusChip({ state, compact = false }) {
   )
 }
 
+/**
+ * The pane toggle.
+ *
+ * It was a double chevron pointing in a direction, which tells you which way
+ * something will move but not WHAT — the review note was that a user cannot
+ * predict what the control does before pressing it. A panel glyph says it: a
+ * frame with one edge filled, opening or closing on the side the pane is on.
+ * The accessible name and the tooltip now name the panel too ("Expand support
+ * panel"), so the affordance reads the same by sight, by hover and by
+ * screen reader, without adding any explanatory UI to the rail.
+ */
 export function StudyPaneToggle({ collapsed, label, onClick, side = 'left' }) {
+  const Icon = side === 'left'
+    ? (collapsed ? PanelLeftOpen : PanelLeftClose)
+    : (collapsed ? PanelRightOpen : PanelRightClose)
+
   return (
     <IconActionButton
       size="utility-sm"
       label={label}
       title={label}
       onClick={onClick}
-      icon={collapsed === (side === 'left') ? <ChevronsRight strokeWidth={1.8} /> : <ChevronsLeft strokeWidth={1.8} />}
+      icon={<Icon strokeWidth={1.8} />}
     />
   )
 }
@@ -2653,7 +2747,10 @@ export function StudySourceCard({
             className="study-v2__arabicSource"
             dir="rtl"
             style={{
-              fontSize: `calc((var(--study-arabic-size) - 2px) * ${fontScale})`,
+              // The ramp step, scaled by the reader's own A-/A+ control. The
+              // -2px was an untraceable adjustment that put the product's
+              // primary reading size one point off its own ramp at rest.
+              fontSize: `calc(var(--study-arabic-size) * ${fontScale})`,
             }}
           >
             {sourceText}
@@ -3216,7 +3313,7 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
     return (
       <aside className="study-v2 study-v2__railPanel study-v2__supportPanel is-collapsed" data-debug-item="study_support_collapsed">
         <div className="study-v2__supportHeader" style={{ justifyContent: 'center', padding: 0 }}>
-          <StudyPaneToggle collapsed={collapsed} side="right" label="Expand support" onClick={onToggleCollapsed} />
+          <StudyPaneToggle collapsed={collapsed} side="right" label="Expand support panel" onClick={onToggleCollapsed} />
         </div>
         <div className="study-v2__collapsedRailBody">
           {cards.map((card) => (
@@ -3231,9 +3328,16 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
               onMouseLeave={closePreview}
               onFocus={(event) => openPreview(card.id, Math.max(12, event.currentTarget.offsetTop - 8))}
               onBlur={closePreview}
-              onClick={() => openFloatingCard(card.id)}
+              // Expands the panel with this module open. It used to detach the
+              // card into a floating window, which is a power feature reached
+              // by an ordinary click on the most obvious control in the rail —
+              // and it left the rail still collapsed, so the relationship
+              // between the tile and the panel it belongs to was never shown.
+              // Floating is still one click away, from the hover preview.
+              onClick={() => expandFromCollapsedPreview(card.id)}
             >
               <span className="study-v2__supportIcon">{card.icon}</span>
+              <span className="study-v2__collapsedSupportLabel">{card.title}</span>
             </button>
           ))}
         </div>
@@ -3273,7 +3377,7 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
     <aside className="study-v2 study-v2__railPanel study-v2__supportPanel" data-debug-item="study_support_rail">
       <div className="study-v2__supportHeader">
         <span>Support</span>
-        <StudyPaneToggle collapsed={collapsed} side="right" label="Collapse support" onClick={onToggleCollapsed} />
+        <StudyPaneToggle collapsed={collapsed} side="right" label="Collapse support panel" onClick={onToggleCollapsed} />
       </div>
       <div className="study-v2__supportBody">
         {cards.map((card) => (

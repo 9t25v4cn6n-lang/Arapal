@@ -13,11 +13,18 @@ import {
   X,
 } from 'lucide-react'
 import { colors } from '../../foundation/tokens'
+import { Badge, Chip } from '../../foundation/primitives/CompactControls'
+
+/**
+ * Research states three kinds of fact about a segment and used to draw each one
+ * with its own local CSS: a status pill, a tag `<em>`, and a quick-refinement
+ * chip. All three are now the shared compact-control family, so a Research
+ * status badge and an Exams status badge are the same object.
+ */
+const researchStatusTone = { ready: 'ready', weak: 'critical', review: 'review' }
 
 export function StatusBadge({ tone = 'review', children }) {
-  const toneClass = tone === 'ready' ? ' is-ready' : tone === 'weak' ? ' is-weak' : ' is-review'
-
-  return <span className={`project-research__statusPill${toneClass}`}>{children}</span>
+  return <Badge tone={researchStatusTone[tone] ?? 'review'}>{children}</Badge>
 }
 
 export function StatusPill(props) {
@@ -114,15 +121,20 @@ export function ResearchSearchCommand({
 
       <div className="project-research__searchMeta">
         <div className="project-research__chipRow" aria-label="Quick refinements">
+          {/* These four were the clearest evidence in the product that the
+              compact-control family had no single definition: the base
+              stylesheet gave the chip 11px/850 at 30px, then two later override
+              blocks in the same file restated it and the last one declared no
+              type at all — so the filters inherited the document's 18px and
+              rendered larger than any other control on the screen. */}
           {quickRefinements.map((refinement) => (
-            <button
+            <Chip
               key={refinement.id}
-              type="button"
-              className={`project-research__chip${activeQuick === refinement.id ? ' is-active' : ''}`}
+              active={activeQuick === refinement.id}
               onClick={() => onQuickSelect(activeQuick === refinement.id ? null : refinement.id)}
             >
               {refinement.label}
-            </button>
+            </Chip>
           ))}
         </div>
         <span className="project-research__resultCount">{resultCount} visible · {activeFilterLabel}</span>
@@ -185,7 +197,7 @@ export function KnowledgeLedgerRow({ segment, isSelected, onSelectSegment }) {
         </span>
         <span className="project-research__tagCell">
           {segment.tags.slice(0, 2).map((tag) => (
-            <em key={tag}>{tag}</em>
+            <Badge key={tag} tone="quiet">{tag}</Badge>
           ))}
         </span>
       </span>

@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, Plus, Sparkles } from 'lucide-react'
+import { ArrowRight, BookOpen, ClipboardPaste, Plus, SplitSquareVertical, Sparkles } from 'lucide-react'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import PrimaryCTA from '../../foundation/primitives/PrimaryCTA'
 import { colors, radius, spacing, typography } from '../../foundation/tokens'
@@ -58,59 +58,135 @@ export default function ProjectHomeScreen({ route, shell }) {
 
   const slots = {
     Layer3_Home_Lead: (
-      <div style={{ display: 'grid', gap: spacing[8] }}>
-        <span style={{ ...eyebrow }}>{hasWork ? 'Project home' : 'Welcome'}</span>
-        <h1 style={{ ...display, margin: 0 }}>
+      <div style={{ display: 'grid', gap: spacing[8], justifyItems: hasWork ? 'start' : 'center' }}>
+        <span style={{ ...eyebrow }}>{hasWork ? 'Project home' : 'Welcome to Arapal'}</span>
+        <h1 style={{ ...display, margin: 0, textAlign: hasWork ? 'left' : 'center' }}>
           {hasWork ? 'Pick up where you left off.' : 'Add your first source.'}
         </h1>
-        <p style={{ ...lead, margin: 0, maxWidth: '58ch' }}>
+        <p style={{ ...lead, margin: 0, maxWidth: '54ch', textAlign: hasWork ? 'left' : 'center' }}>
           {hasWork
             ? 'One project, one segment, one clear next action.'
-            : 'Paste a text and Arapal will turn it into study-ready segments. Nothing is here yet — that is expected.'}
+            : 'Paste any Arabic text. Arapal preserves it exactly, proposes study-ready segments, and takes you into the translation loop.'}
         </p>
       </div>
     ),
 
     Layer3_Home_Body: hasWork
       ? <ReturningState projects={projects} current={currentProject} progress={progress} completedByProject={completedByProject} onResume={resume} onNewSource={openSegmentation} />
-      : <EmptyState onAddSource={openSegmentation} onUseSample={() => { seedSampleProject(); shell.navigate('studyWorkspace') }} />,
+      : <FirstRunState onAddSource={openSegmentation} onUseSample={() => { seedSampleProject(); shell.navigate('studyWorkspace') }} />,
   }
 
-  return <V2ScreenFrame contract={layoutContract} route={route} shell={shell} screenSlots={slots} />
+  // First run is a COMPOSITION, not a paragraph in the corner. The returning
+  // state is a working list and belongs at the top of the frame; the first run
+  // has one thing to say and the whole canvas to say it in, so it is centred.
+  // Two arrangements of one contract, chosen by state — not two screens.
+  const containerOverrides = hasWork ? {} : {
+    Layer2_Home_Root: {
+      style: {
+        // Both rows sized by content and the pair centred in the frame. The
+        // contract's working arrangement is `auto minmax(0, 1fr)`, which is
+        // right for a list — but here it made the lead row absorb the slack and
+        // opened 250px of nothing between the invitation and its own button.
+        gridTemplateRows: 'auto auto',
+        alignContent: 'center',
+        justifyItems: 'center',
+        gap: spacing[32],
+        padding: spacing[40],
+        overflow: 'auto',
+      },
+    },
+    Layer3_Home_Lead: { style: { gridRow: 'auto', width: '100%', maxWidth: '760px', alignItems: 'center' } },
+    Layer3_Home_Body: { style: { gridRow: 'auto', width: '100%', overflow: 'visible', alignItems: 'center' } },
+  }
+
+  return (
+    <V2ScreenFrame
+      contract={layoutContract}
+      route={route}
+      shell={shell}
+      screenSlots={slots}
+      containerOverrides={containerOverrides}
+    />
+  )
 }
 
 // ── states ───────────────────────────────────────────────────────────────────
 
+const firstRunJourney = [
+  {
+    icon: ClipboardPaste,
+    title: 'Paste a source',
+    text: 'Arapal keeps the original exactly as you gave it. Nothing is rewritten.',
+  },
+  {
+    icon: SplitSquareVertical,
+    title: 'Approve the segments',
+    text: 'Review the proposed meaning groups before any of it becomes study material.',
+  },
+  {
+    icon: BookOpen,
+    title: 'Study and get feedback',
+    text: 'Translate segment by segment, with lexicography and phrasing beside you.',
+  },
+]
+
 /**
- * The empty state states the invitation once.
+ * The first run.
  *
- * It used to wrap a card around a SECOND title and lead — "Start from a source /
- * Paste any Arabic text…" directly beneath the page's own "Add your first source.
- * / Paste a text and Arapal will turn it into study-ready segments." The same
- * thing said twice, ten pixels apart, on the screen whose own subtitle is "your
- * work and one clear next action".
+ * It used to be an invitation and two buttons in the top-left corner of a
+ * 1,389 x 850 canvas, which reads as a screen whose content failed to load
+ * rather than as a product waiting for you. The fix is not a bigger heading: it
+ * is saying enough about what happens next that the first action is worth
+ * taking, and composing it in the frame rather than against its corner.
  *
- * R3 states it once on the backdrop with a single action and no card, and that is
- * the better decision. The card and the duplicate copy are gone. The sample route
- * stays, because it is a real capability a first-time user wants and R3 simply
- * does not offer it — but it reads as secondary, and its caveat sits with it
- * rather than orphaned below a card.
+ * The three steps are the product's actual pipeline — Source, Review, Study —
+ * the same one the segmentation flow's step bar names. That makes them
+ * orientation, not decoration, and it is why there are no invented metrics or
+ * dashboard cards here: a first-run screen has no data to report and should not
+ * pretend otherwise.
  */
-function EmptyState({ onAddSource, onUseSample }) {
+function FirstRunState({ onAddSource, onUseSample }) {
   return (
-    <div style={{ display: 'grid', gap: spacing[16], justifyItems: 'start', maxWidth: '640px' }}>
-      <div style={{ display: 'flex', gap: spacing[12], flexWrap: 'wrap', alignItems: 'center' }}>
-        <PrimaryCTA icon={<Plus size={16} strokeWidth={1.9} />} onClick={onAddSource} minWidth={168}>
-          Add source
-        </PrimaryCTA>
-        <button type="button" style={{ ...ghostButton }} onClick={onUseSample}>
-          <Sparkles size={15} strokeWidth={1.9} />
-          Explore with a sample
-        </button>
+    <div style={{ display: 'grid', gap: spacing[40], justifyItems: 'center', width: '100%', maxWidth: '880px' }}>
+      <div style={{ display: 'grid', gap: spacing[12], justifyItems: 'center' }}>
+        <div style={{ display: 'flex', gap: spacing[12], flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
+          <PrimaryCTA icon={<Plus size={16} strokeWidth={1.9} />} onClick={onAddSource} minWidth={200}>
+            Add source
+          </PrimaryCTA>
+          <button type="button" style={{ ...ghostButton }} onClick={onUseSample}>
+            <Sparkles size={15} strokeWidth={1.9} />
+            Explore with a sample
+          </button>
+        </div>
+        <p style={{ ...meta, margin: 0, textAlign: 'center' }}>
+          Sample content is clearly labelled and can be deleted at any time.
+        </p>
       </div>
-      <p style={{ ...meta, margin: 0 }}>
-        Sample content is clearly labelled and can be deleted at any time.
-      </p>
+
+      <ol
+        aria-label="How Arapal works"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gap: spacing[24],
+          width: '100%',
+          margin: 0,
+          padding: `${spacing[24]} 0 0`,
+          listStyle: 'none',
+          borderTop: `1px solid ${colors.borderSoft}`,
+        }}
+      >
+        {firstRunJourney.map((step, index) => (
+          <li key={step.title} style={{ display: 'grid', gap: spacing[8], alignContent: 'start', minWidth: 0 }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[8], color: colors.accentBase }}>
+              <step.icon size={16} strokeWidth={1.9} />
+              <span style={{ ...typography.eyebrowLabel, color: colors.textFaint }}>Step {index + 1}</span>
+            </span>
+            <strong style={{ ...typography.sectionTitle, color: colors.textStrong }}>{step.title}</strong>
+            <p style={{ ...typography.supportSubtext, margin: 0, color: colors.textSoft }}>{step.text}</p>
+          </li>
+        ))}
+      </ol>
     </div>
   )
 }
@@ -228,45 +304,38 @@ function ProgressBar({ completed, total }) {
 
 // ── local style objects, all derived from tokens ─────────────────────────────
 
+// Each of these is a type ROLE plus a colour, nothing else. They used to be
+// assembled from parts of two different roles — `displayTitle.fontFamily` with
+// `studyPageTitle.fontSize`, `cardTitle.fontFamily` with
+// `studySectionTitle.fontSize` — which is how the product's front door came to
+// have the smallest heading of any screen in it.
 const eyebrow = {
-  fontFamily: typography.eyebrowLabel.fontFamily,
-  fontSize: typography.eyebrowLabel.fontSize,
-  letterSpacing: typography.eyebrowLabel.letterSpacing,
-  textTransform: 'uppercase',
-  fontWeight: 700,
+  ...typography.eyebrowLabel,
   color: colors.accentStrong,
 }
 
 const display = {
-  fontFamily: typography.displayTitle.fontFamily,
-  fontSize: typography.studyPageTitle.fontSize,
-  lineHeight: 1.1,
+  ...typography.heroTitle,
   color: colors.textStrong,
 }
 
 const lead = {
-  fontFamily: typography.bodyText.fontFamily,
-  fontSize: typography.supportSubtext.fontSize,
-  lineHeight: 1.55,
+  ...typography.leadText,
   color: colors.textBody,
 }
 
 const meta = {
-  fontFamily: typography.bodyText.fontFamily,
-  fontSize: typography.bodyText.fontSize,
+  ...typography.metaText,
   color: colors.textSoft,
 }
 
 const cardTitle = {
-  fontFamily: typography.cardTitle.fontFamily,
-  fontSize: typography.studySectionTitle?.fontSize ?? typography.cardTitle.fontSize,
+  ...typography.cardTitle,
   color: colors.textStrong,
 }
 
 const rowTitle = {
-  fontFamily: typography.bodyText.fontFamily,
-  fontSize: typography.supportSubtext.fontSize,
-  fontWeight: 600,
+  ...typography.sectionTitle,
   color: colors.textStrong,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
@@ -304,9 +373,7 @@ const ghostButton = {
   borderRadius: radius.pill,
   background: colors.surfacePrimary,
   color: colors.textBody,
-  fontFamily: typography.bodyText.fontFamily,
-  fontSize: typography.bodyText.fontSize,
-  fontWeight: 600,
+  ...typography.controlLabel,
   cursor: 'pointer',
 }
 

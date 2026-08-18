@@ -231,10 +231,17 @@ export default function ScreenContractRenderer({ contract, slotContent = {}, con
 
     const TagName = container.as || 'div'
     const override = containerOverrides[container.name] ?? null
-    const slotNode =
-      container.name === 'Layer2_Body_Backdrop'
-        ? <BodyBackdropPreset />
-        : slotContent[container.name] ?? null
+    // The backdrop is resolved by ROLE, not by one hard-coded container name.
+    // It used to test `name === 'Layer2_Body_Backdrop'`, which is a container
+    // that only exists in contracts using the default body split — so the two
+    // screens that declare their own backdrop lane, Project Home and Exams,
+    // rendered an empty div and no atmosphere at all. That is a large part of
+    // why the product's front door reads as unfinished: every other screen has
+    // the diagonal system and the watermark behind it and those two had a flat
+    // gradient.
+    const isBackdrop =
+      container.semanticRole === 'body-backdrop' || container.name === 'Layer2_Body_Backdrop'
+    const slotNode = isBackdrop ? <BodyBackdropPreset /> : slotContent[container.name] ?? null
     const childNames = childMap.get(container.name) ?? []
     const isActive = debugEnabled && activeContainerName === container.name
     const handleMouseEnter = composeEventHandlers(

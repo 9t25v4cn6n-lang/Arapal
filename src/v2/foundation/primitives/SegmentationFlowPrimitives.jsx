@@ -32,7 +32,6 @@ import {
   readSegmentationFlowPreferences,
   saveSegmentationFlowPreferences,
 } from './segmentationFlowState'
-import SourceIntakeBrand from './SourceIntakeBrand'
 import StepBar, { StepNumberBadge } from './StepBar'
 import {
   colors,
@@ -347,10 +346,20 @@ const flowType = {
   },
 }
 
+/**
+ * The flow's header: identity (from the shell) + Back, the step bar, nothing on
+ * the end.
+ *
+ * The end lane used to carry a two-line "SOURCE INTAKE / SEGMENTATION NEXT"
+ * badge. Two lines of tracked uppercase do not fit a 50px bar — the block ran
+ * from 5px to 44px inside it, which is what reads as text colliding with the
+ * lower boundary — and it was the fourth thing on the screen saying which mode
+ * you were in, after the rail's highlighted destination, the step bar directly
+ * beside it, and the page's own title. It said nothing and it did not fit.
+ */
 export function getSegmentationFlowHeaderSlots({
   shell,
   stepIndex,
-  brandSubtitle,
   backRoute = 'segmentationPasteNext',
 }) {
   return {
@@ -361,14 +370,6 @@ export function getSegmentationFlowHeaderSlots({
     ),
     Layer1_Header_CenterLane: (
       <StepBar debugItem="step_bar" steps={segmentationFlowSteps} currentIndex={stepIndex} />
-    ),
-    Layer1_Header_EndLane: (
-      <SourceIntakeBrand
-        title="Source Intake"
-        subtitle={brandSubtitle}
-        icon={<Scissors size={16} strokeWidth={1.9} />}
-        debugItem="source_intake_brand"
-      />
     ),
   }
 }
@@ -815,7 +816,13 @@ export function SegmentationTransitionView({ shell }) {
           borderRadius: radius[32],
           background: flowChrome.translucentShell,
           boxShadow: elevation.rest,
-          overflow: 'hidden',
+          // The page is the scroll owner; this shell must not be a second one.
+          // `hidden` here meant that at 1366x768 and 1280x800 the shell cut 119px
+          // off its own two panels while the page beneath it had room to scroll —
+          // content hidden by a container that was only ever clipping to keep a
+          // corner radius tidy. The radius still clips the shell's own gradient;
+          // it no longer clips the panels inside it.
+          overflow: 'visible',
           padding: flowMetrics.transitionShellPadding,
         }}
       >
@@ -1223,11 +1230,15 @@ export function SegmentationReviewIntro({ summary }) {
           justifyContent: 'flex-end',
         }}
       >
+        {/* Only states that actually occurred. A "0 NEEDS REVIEW" pill in review
+            amber and a "0 SUGGESTED CHECK" pill in accent blue put two coloured
+            markers on the screen for two things that are not happening — the eye
+            goes to them and finds nothing. Same rule as the exam result summary. */}
         {[
           ['Ready', summary.ready, 'success'],
           ['Needs review', summary.needsReview, 'review'],
           ['Suggested check', summary.secondLook, 'accent'],
-        ].map(([label, value, tone]) => (
+        ].filter(([, value]) => Number(value) > 0).map(([label, value, tone]) => (
           <StatusPill key={label} value={value} tone={tone}>
             {label}
           </StatusPill>

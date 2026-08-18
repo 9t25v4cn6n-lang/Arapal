@@ -1,4 +1,4 @@
-import { Edit3, Scissors, Sparkles } from 'lucide-react'
+import { Edit3, Sparkles } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import BackPill from '../../foundation/primitives/BackPill'
 import EditorSurface from '../../foundation/primitives/EditorSurface'
@@ -11,13 +11,12 @@ import {
   readSegmentationFlowPreferences,
   saveSegmentationFlowPreferences,
 } from '../../foundation/primitives/segmentationFlowState'
-import SourceIntakeBrand from '../../foundation/primitives/SourceIntakeBrand'
 import SplitCTA from '../../foundation/primitives/SplitCTA'
 import { actions, select, getSnapshot } from '../../data'
 import { generateMarkers, markersToChunks } from '../../lib/segmentation'
 import StepBar from '../../foundation/primitives/StepBar'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
-import { colors, radius, segmentationFlowSteps, spacing, typography } from '../../foundation/tokens'
+import { colors, segmentationFlowSteps, spacing, typography } from '../../foundation/tokens'
 import layoutContract from './SegmentationPasteNextScreen.contract'
 
 // The flow's own step list, not a second copy of it. This screen kept its own
@@ -36,20 +35,10 @@ const centeredActionWidth = {
   margin: '0 auto',
 }
 
-const segmentationModePillChrome = {
-  border: '1px solid rgba(37, 99, 235, 0.12)',
-  surface: 'rgba(255, 255, 255, 0.76)',
-  insetHighlight: 'inset 0 1px 0 rgba(255,255,255,0.9)',
-}
-
-const segmentationPasteNextContainerOverrides = {
-  Layer1_Header_StartLane: {
-    style: {
-      paddingLeft: spacing[4],
-      paddingRight: spacing[16],
-    },
-  },
-}
+// The start lane's inset is the shell's decision now — it is where the identity
+// mark aligns to the navigation rail's spine, which is not something one screen
+// of one flow gets a vote on. This used to restate paddingLeft: 4px.
+const segmentationPasteNextContainerOverrides = {}
 
 /** First few words of the source, so a project is recognisable in the library. */
 function deriveProjectTitle(rawText) {
@@ -92,33 +81,13 @@ export default function SegmentationPasteNextScreen({ route, shell }) {
       </BackPill>
     ),
     Layer1_Header_CenterLane: <StepBar debugItem="step_bar" steps={workspaceSteps} currentIndex={0} />,
-    Layer1_Header_EndLane: (
-      <SourceIntakeBrand
-        title="Source Intake"
-        subtitle="Segmentation Next"
-        icon={<Scissors size={16} strokeWidth={1.9} />}
-        debugItem="source_intake_brand"
-      />
-    ),
-    Layer4_SegmentationNext_ModeBand: (
-      <div
-        data-debug-item="mode_pill"
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: spacing[8],
-          padding: `0 ${spacing[12]}`,
-          minHeight: '32px',
-          border: segmentationModePillChrome.border,
-          borderRadius: radius.pill,
-          background: segmentationModePillChrome.surface,
-          color: colors.accentBase,
-          boxShadow: segmentationModePillChrome.insetHighlight,
-        }}
-      >
-        <span style={{ ...typography.eyebrowLabel, color: colors.accentBase }}>Source + Segmentation</span>
-      </div>
-    ),
+    // Layer4_SegmentationNext_ModeBand is deliberately empty.
+    //
+    // It held a "SOURCE + SEGMENTATION" pill directly above a heading that says
+    // "Paste your source text.", under a step bar reading Source · Review ·
+    // Publish, beside a navigation rail with the Source + Segmentation
+    // destination highlighted. Four statements of the same fact stacked
+    // vertically. The three that carry orientation stay; the pill goes.
     Layer4_SegmentationNext_HeaderBand: (
       <h1
         data-debug-item="display_title"
@@ -128,9 +97,7 @@ export default function SegmentationPasteNextScreen({ route, shell }) {
           maxWidth: '100%',
           minWidth: 0,
           color: colors.textStrong,
-          fontFamily: typography.cardTitle.fontFamily,
-          fontSize: `clamp(${typography.cardTitle.fontSize}, 3vw, ${typography.displayTitle.fontSize})`,
-          lineHeight: typography.cardTitle.lineHeight,
+          ...typography.heroTitle,
           textAlign: 'center',
           textWrap: 'balance',
           overflowWrap: 'anywhere',
@@ -147,9 +114,7 @@ export default function SegmentationPasteNextScreen({ route, shell }) {
           width: '100%',
           maxWidth: '640px',
           color: colors.textSoft,
-          ...typography.supportSubtext,
-          fontSize: `clamp(${typography.eyebrowLabel.fontSize}, 1.2vw, ${typography.supportSubtext.fontSize})`,
-          letterSpacing: '0.01em',
+          ...typography.leadText,
           textAlign: 'center',
         }}
       >
@@ -280,20 +245,6 @@ export default function SegmentationPasteNextScreen({ route, shell }) {
             />
           }
         />
-
-        <p
-          data-debug-item="action_support_copy"
-          style={{
-            margin: 0,
-            maxWidth: '52ch',
-            color: colors.textSoft,
-            ...typography.bodyText,
-            textAlign: 'center',
-          }}
-        >
-          The preserved source remains untouched. The next step generates a proposal that you can review before it
-          becomes study truth.
-        </p>
       </div>
     ),
   }

@@ -4,6 +4,84 @@ Only consequential, durable or likely-to-be-revisited decisions belong here.
 
 ---
 
+## 2026-08-18 · One type ramp, and the document default is the body role
+
+**Decision.** `src/v2/foundation/tokens/typography.ts` holds ONE ramp of ten
+steps — 11, 12, 13, 15, 17, 20, 23, 26, 34, 44 — addressed by semantic role. The
+parallel `study*` ramp is gone (its names remain as aliases onto the roles). The
+document default in `index.css` is the body role, 15px, not the Vite template's
+18px, and the global 0.18px letter-spacing is removed.
+
+**Why.** Measured before deciding: the production surface was rendering 24
+distinct sizes and 11 distinct weights across eight screens. Every element
+rendering at 18px was INHERITING it, never declaring it — Exams' back pill, tab
+buttons, lead paragraph and metadata, and Research's filter labels and filter
+chips. Those are exactly the two areas review called "a different visual
+language" and "controls imported from another interface". One wrong default,
+two screens' worth of symptoms.
+
+**Consequence.** `TYPE_RAMP` in `scripts/qa/standard.mjs` is this ramp and fails
+the build when they part. Any size a screen needs that no role provides is a
+missing role, not a licence for a literal.
+
+---
+
+## 2026-08-18 · Application identity belongs to the header, not the rail
+
+**Decision.** The Arapal mark and wordmark sit in `Layer1_Header_StartLane` on
+every V2 screen and are a control that returns to Project Home. The navigation
+rail begins with its first destination; its pin control moved to the rail's
+foot. The header's three lanes have one meaning each — start: who this is;
+centre: where you are; end: what you can do here — and a screen may add to the
+start lane but may not replace it.
+
+**Why.** Identity at the top of a list of destinations reads as the first
+destination. Four screens had each decided the header composition for
+themselves, which is how Study came to put its segment title where the logo goes
+and Segmentation came to have no identity at all.
+
+**Consequence.** Study's segment title moved to the centre lane and its progress
+counter to the end lane. Segmentation's two-line "SOURCE INTAKE / SEGMENTATION
+NEXT" badge is gone: two lines of tracked uppercase do not fit a 50px bar, and
+it was the fourth thing on the screen naming the mode.
+
+---
+
+## 2026-08-18 · Exams is a V2 screen; every production route is now V2
+
+**Decision.** Exams is rebuilt at `#v2/exams` on the shared shell
+(`src/v2/screens/Exams/`), with its model lifted verbatim from the legacy screen.
+`#exams` resolves to it. The legacy implementation stays reachable at
+`#exams-legacy` and is reclassified `surface: 'reference'` in the visual
+standard, alongside legacy home, study and segmentation.
+
+**Why.** Exams was the last product screen still rendering in the legacy app: its
+own header, its own atmosphere, a 1,167-line stylesheet that never adopted a
+token, and the legacy preview's screen-switcher drawn over the top of its own
+header. It was reviewed as a different visual language because it was a
+different application.
+
+**Consequence.** The plan's §2.1 exception ("preserve the working legacy
+capability until the V2 replacement has genuine parity") is discharged — parity
+is evidenced by `tests/behaviour/legacy-capabilities.spec.js` passing against
+the V2 surface. Its IA was rebuilt around the three jobs the screen exists for,
+so the next assessment is the library's promoted first row rather than a card
+duplicating a row that duplicates a counter.
+
+---
+
+## 2026-08-18 · Two content measures, not one
+
+**Decision.** `measure.readable` (1080px) for a single column of rows, a form or
+a first-run composition; `measure.wide` (1400px) for a workspace that genuinely
+uses its panes.
+
+**Why.** The doctrine's single 1400px default is right for Research and Study and
+wrong for a list: at the canonical frame a full-width row puts a title at one end
+and a control at the other with a metre of nothing between them.
+
+---
+
 ## 2026-08-07 · Home is rebuilt on the V2 shell, not legacy chrome
 
 **Decision.** The three Home frames use the V2 shell — 50 px header, 51.43 px collapsed rail, V2 body backdrop — with legacy `#home` content placed inside the V2 body area.

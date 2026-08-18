@@ -28,7 +28,6 @@ export default function SegmentationLoadingScreen({ route, shell }) {
     ...getSegmentationFlowHeaderSlots({
       shell,
       stepIndex: 1,
-      brandSubtitle: 'Preparing',
       backRoute: 'segmentationPasteNext',
     }),
     Layer3_SegmentationFlow_Page: <SegmentationLoadingView />,

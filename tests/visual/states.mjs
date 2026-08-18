@@ -270,22 +270,26 @@ export const STATES = [
   },
 
   // ── Exams (legacy — the only working exam flow) ───────────────────────────
-  { id: 'exams-library', hash: 'exams', area: 'exams' },
+  // Exams is a V2 route now; #exams normalises to it, and landedOnOwnScreen
+  // compares the settled hash, so the state has to name where it settles.
+  { id: 'exams-library', hash: 'v2/exams', area: 'exams' },
   {
     id: 'exams-builder',
-    hash: 'exams',
+    hash: 'v2/exams',
     area: 'exams',
-    async drive(page) { return clickText(page, /create exam/i) },
+    // The V2 Exams surface names these differently from the legacy one it
+    // replaced. Same four states, same order, current labels.
+    async drive(page) { return clickText(page, /new assessment/i) },
   },
   {
     id: 'exams-attempt',
-    hash: 'exams',
+    hash: 'v2/exams',
     area: 'exams',
-    async drive(page) { return clickText(page, /open exam/i) },
+    async drive(page) { return clickText(page, /start exam/i) },
   },
   {
     id: 'exams-results',
-    hash: 'exams',
+    hash: 'v2/exams',
     area: 'exams',
     async drive(page) { return clickText(page, /review results/i) },
   },
@@ -305,7 +309,9 @@ export const SAMPLE_SOURCE =
  */
 export async function gotoState(page, state) {
   const query = state.query ? `&${state.query}` : ''
-  await page.goto(`/?chrome=0${query}#${state.hash}`, { waitUntil: 'domcontentloaded' })
+  // intro=0 for the same reason the visual-standard runner uses it: the shell's
+  // entry animation must not decide which frame a golden captures.
+  await page.goto(`/?chrome=0&intro=0${query}#${state.hash}`, { waitUntil: 'domcontentloaded' })
   // Start every state from empty storage.
   //
   // The suite used to be isolated by accident: nothing persisted, so no state

@@ -578,7 +578,6 @@ export default function SegmentationReviewScreen({ route, shell }) {
       shell,
       // Review is the middle step now, not the last one.
       stepIndex: 1,
-      brandSubtitle: 'Review',
       backRoute: 'segmentationSuccess',
     }),
     Layer4_Review_IntroRegion: <SegmentationReviewIntro summary={summary} />,

@@ -53,24 +53,36 @@ export const segmentationFlowChrome = {
     'linear-gradient(180deg, rgba(238, 244, 250, 0) 0%, rgba(238, 244, 250, 0.96) 16%, rgb(238, 244, 250) 38%, rgb(238, 244, 250) 100%)',
 } as const
 
+/**
+ * Every size here is now a type ROLE rather than a viewport formula.
+ *
+ * The three title sizes used to be `clamp()` expressions whose middle terms were
+ * vw units, so the flow's own headings rendered 43.2px, 47.52px and 66px at the
+ * canonical 1440 frame — three sizes, none of them on the ramp, none of them
+ * equal to the heading size of any other screen in the product. A screen title
+ * is a role decision, not a function of window width; where a title genuinely
+ * has to yield, the layout contract's mobile block is where it says so.
+ */
 export const segmentationFlowTypography = {
-  pageTitleFontSize: `clamp(${typography.cardTitle.fontSize}, 3.3vw, ${typography.displayTitle.fontSize})`,
-  ceremonialTitleFontSize: `clamp(${typography.displayTitle.fontSize}, 5vw, calc(${typography.displayTitle.fontSize} + ${spacing[16]}))`,
-  actionTitleFontSize: `clamp(${typography.cardTitle.fontSize}, 3vw, ${typography.displayTitle.fontSize})`,
-  panelHeaderTitleFontSize: '13px',
-  panelHeaderTitleWeight: 650,
-  operationalMetaFontSize: '11px', // raised to the 11px type floor
-  toolbarSelectionFontSize: '14px',
+  pageTitleFontSize: typography.heroTitle.fontSize,
+  ceremonialTitleFontSize: typography.displayTitle.fontSize,
+  actionTitleFontSize: typography.heroTitle.fontSize,
+  panelHeaderTitleFontSize: typography.subsectionTitle.fontSize,
+  panelHeaderTitleWeight: typography.subsectionTitle.fontWeight,
+  operationalMetaFontSize: typography.eyebrowLabel.fontSize,
+  toolbarSelectionFontSize: typography.supportSubtext.fontSize,
   compactActionWeight: typography.ctaLabel.fontWeight,
-  sourcePreviewFontSize: '17px',
-  segmentCardFontSize: '16px',
-  markerInputFontSize: '12.5px',
+  // The source is the principal object of this flow, so it reads at the Arabic
+  // roles rather than at a size chosen to make a panel fit.
+  sourcePreviewFontSize: typography.arabicCompact.fontSize,
+  segmentCardFontSize: typography.arabicCompact.fontSize,
+  markerInputFontSize: typography.supportSubtext.fontSize,
   leadLineHeight: 1.7,
   sourceLineHeight: 1.75,
-  sourcePreviewLineHeight: 1.8,
+  sourcePreviewLineHeight: typography.arabicCompact.lineHeight,
   segmentCardLineHeight: 1.85,
-  markerInputWeight: 600,
-  successStatValueWeight: 500,
+  markerInputWeight: typography.controlLabel.fontWeight,
+  successStatValueWeight: typography.statValue.fontWeight,
 } as const
 
 export const segmentationFlowMotionStyles = `

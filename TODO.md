@@ -1,5 +1,35 @@
 # Arapal — Current Stage and Next Milestones
 
+## 2026-08-18 · Public-release visual refinement pass — desktop
+
+Ran against `ARAPAL_PUBLIC_RELEASE_VISUAL_REFINEMENT_PASS(1).md`. Stage 0
+(foundations) first, then the eighteen findings, then an independent sweep.
+
+**Standing evidence, all re-run after the last change.**
+
+| Check | Result |
+|---|---|
+| `npm run qa` (4 desktop frames × 14 routes) | production surface **0** |
+| `npm run qa` (390×844) | 21 on V2 production — see below |
+| visual regression | 56/56, twice consecutively, goldens re-accepted |
+| behaviour | 36 passed, 2 skipped (pre-existing `fixme`) |
+| node data + store | 34 passed |
+| `vite build` | clean |
+| eslint | 16 errors, unchanged from the start of the pass |
+
+**Known gap, carried forward: the 390px frame.** The mobile frame is declared in
+the standard but the layouts behind it are not built (`DECISIONS.md`,
+2026-08-16, sequences mobile last). This pass is desktop; it left 21 findings on
+V2 production routes at 390×844, against roughly 13 before it. Two belong to the
+new Exams route. The regression was largely the header start lane and the
+Projects master floor, both of which were given mobile behaviour during the
+pass; what remains is unbuilt mobile layout, not desktop debt. Do not read the
+desktop zero as a mobile claim.
+
+**Next milestone.** The 390px version, as the last V1 scope item.
+
+---
+
 ## 2026-08-18 · RELEASE CANDIDATE — desktop production surface
 
 Declared against `ARAPAL_RELEASE_CONVERGENCE_PLAN.md` §10. All eleven dimensions

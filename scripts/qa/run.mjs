@@ -53,6 +53,7 @@ function routesForChangedFile(file) {
   if (/ProjectHomeScreen/.test(f)) hits.add('legacy-home')
   if (/MakeSegmentationFlowScreen/.test(f)) hits.add('legacy-segmentation')
   if (/screens\/ExamsScreen/.test(f)) hits.add('legacy-exams')
+  if (/v2\/screens\/Exams\//.test(f)) hits.add('v2-exams')
   if (/screens\/ProjectsScreen/.test(f)) hits.add('legacy-projects')
   if (/v2\/screens\/([A-Za-z]+)\//.test(f)) {
     const name = f.match(/v2\/screens\/([A-Za-z]+)\//)[1]
@@ -112,7 +113,10 @@ for (const frame of frames) {
   await page.setViewportSize({ width: frame.width, height: frame.height })
   for (const route of routes) {
     const query = route.query ? `&${route.query}` : ''
-    await page.goto(`${BASE}/?chrome=0${query}#${route.hash}`, { waitUntil: 'domcontentloaded' })
+    // intro=0 suppresses the shell's entry animation. A 1.1s hold followed by a
+    // 720ms outro is exactly the kind of thing that makes a capture suite report
+    // whichever frame it happened to catch.
+    await page.goto(`${BASE}/?chrome=0&intro=0${query}#${route.hash}`, { waitUntil: 'domcontentloaded' })
     await page.reload({ waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(2600) // intro/transition animations settle
     // Fonts change every metric this checker measures, so a late webfont turns

@@ -155,10 +155,10 @@ test.describe('legacy study — submission, support and discussion', () => {
 test.describe('exam → study contextual handoff', () => {
   test('jumping to study writes a context payload and lands on the right segment', async ({ page }) => {
     await go(page, 'exams')
-    await page.getByText(/review results/i).first().click()
+    await page.getByRole('button', { name: /review results/i }).first().click()
     await page.waitForTimeout(900)
 
-    const jump = page.getByRole('button', { name: /jump to study/i }).first()
+    const jump = page.getByRole('button', { name: /open in study|jump to study/i }).first()
     await expect(jump, 'results offer a per-item route into Study').toBeVisible()
     await jump.click()
     await page.waitForTimeout(1600)
@@ -177,9 +177,9 @@ test.describe('exam → study contextual handoff', () => {
 
   test('exam context is carried in session storage, not guessed', async ({ page }) => {
     await go(page, 'exams')
-    await page.getByText(/review results/i).first().click()
+    await page.getByRole('button', { name: /review results/i }).first().click()
     await page.waitForTimeout(900)
-    await page.getByRole('button', { name: /jump to study/i }).first().click()
+    await page.getByRole('button', { name: /open in study|jump to study/i }).first().click()
     await page.waitForTimeout(1200)
 
     const ctx = await page.evaluate(() => {
@@ -217,7 +217,9 @@ test.describe('known gaps — these SHOULD fail once fixed, update them then', (
     await page.reload({ waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(2400)
 
-    await page.getByText(/open exam/i).first().click()
+    // "Start exam" on the promoted next-assessment row, "Open exam"/"Retake" on
+    // the rest. Matching the capability rather than one screen's wording.
+    await page.getByRole('button', { name: /start exam|open exam|retake/i }).first().click()
     await page.waitForTimeout(800)
     await page.locator('textarea').first().fill('answer that should survive')
     // The indicator debounces at 600ms; wait for the write it now really does.

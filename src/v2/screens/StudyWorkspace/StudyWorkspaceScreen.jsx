@@ -490,22 +490,27 @@ export default function StudyWorkspaceScreen({ route, shell }) {
 
   const screenSlots = {
     Layer2_Study_WorkspaceRoot: <StudyWorkspaceStyles />,
-    Layer1_Header_StartLane: (
+    // The centre lane is "where you are", so the segment under work belongs
+    // there. It used to sit in the start lane, where the application identity
+    // goes — which is why Study was the one screen in the product with no
+    // Arapal mark on it. The progress counter moves to the end lane beside
+    // Focus view, where the screen's own controls live.
+    Layer1_Header_CenterLane: (
       <StudyShellTitleBar
         chapterLabel={segmentMeta.chapterLabel}
         segmentLabel={currentSegment.label}
       />
     ),
-    Layer1_Header_CenterLane: (
-      <StudyShellProgress
-        routeLabel={route?.label ?? 'Study Workspace'}
-        progressText={segmentMeta.progressText}
-        progressStep={segmentMeta.progressStep}
-        progressTotal={segmentMeta.progressTotal}
-      />
-    ),
     Layer1_Header_EndLane: (
       <StudyShellMeta
+        progress={(
+          <StudyShellProgress
+            routeLabel={route?.label ?? 'Study Workspace'}
+            progressText={segmentMeta.progressText}
+            progressStep={segmentMeta.progressStep}
+            progressTotal={segmentMeta.progressTotal}
+          />
+        )}
         focusMode={focusMode}
         onToggleFocus={() => setFocusMode((current) => !current)}
         showSandboxControls={showSandboxControls}
@@ -598,12 +603,10 @@ export default function StudyWorkspaceScreen({ route, shell }) {
                 discussionOpen={discussionVisible}
                 focusMode={focusMode}
                 docked
-                // Not stretched in discussion mode any more. fillHeight existed to
-                // make the editor match a half-height companion card; now the
-                // companion is a full-height column and the editor sits in a
-                // content-sized row, so stretching it only recreated the ~340px
-                // empty box. It grows with what is typed, in both modes.
-                fillHeight={false}
+                // The editor's row now carries the workspace's leftover height
+                // (capped), so the textarea fills the panel it is given rather
+                // than opening at two lines inside a taller box.
+                fillHeight
               />
             </div>
             <div className="study-v2__composerCompanion">

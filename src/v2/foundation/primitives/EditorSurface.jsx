@@ -78,37 +78,6 @@ function Corner({ style }) {
   )
 }
 
-function WindowButtons() {
-  return (
-    <div aria-hidden="true" style={{ display: 'inline-flex', gap: editorSurfaceMetrics.windowButtonGap }}>
-      <span
-        style={{
-          width: editorSurfaceMetrics.windowDotSize,
-          height: editorSurfaceMetrics.windowDotSize,
-          borderRadius: radius.pill,
-          background: editorSurfaceChrome.windowButtonFill,
-        }}
-      />
-      <span
-        style={{
-          width: editorSurfaceMetrics.windowDotSize,
-          height: editorSurfaceMetrics.windowDotSize,
-          borderRadius: radius.pill,
-          background: editorSurfaceChrome.windowButtonFill,
-        }}
-      />
-      <span
-        style={{
-          width: editorSurfaceMetrics.windowWideDotWidth,
-          height: editorSurfaceMetrics.windowDotSize,
-          borderRadius: radius.pill,
-          background: editorSurfaceChrome.windowButtonFill,
-        }}
-      />
-    </div>
-  )
-}
-
 function ShortcutKey({ children, scale }) {
   return (
     <span
@@ -284,7 +253,6 @@ export default function EditorSurface({
               data-debug-item="editor_header_left_slot"
               style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[12], minWidth: 0 }}
             >
-              <WindowButtons />
               <div
                 style={{
                   minWidth: 0,
@@ -373,6 +341,9 @@ export default function EditorSurface({
               // the field has content, which is exactly when a screen-reader user
               // is most likely to come back to it.
               aria-label={ariaLabel ?? placeholder}
+              // Arabic pasted into an LTR field renders its punctuation on the
+              // wrong side without this.
+              dir="auto"
               readOnly={readOnly}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
@@ -388,9 +359,26 @@ export default function EditorSurface({
                 padding: bodyInset,
                 background: colors.surfacePrimary,
                 color: editorSurfaceMetrics.textareaTone,
-                fontFamily: typography.bodyText.fontFamily,
-                fontSize: typography.bodyText.fontSize,
-                lineHeight: typography.bodyText.lineHeight,
+                // The source is the principal object on this screen, so it is
+                // typed as SOURCE text, not as English body copy.
+                //
+                // It was `bodyText` — an Inter stack. Inter has no Arabic, so
+                // every pasted Arabic source fell back to whatever the system
+                // happened to offer, at the body size, while the same passage in
+                // Study renders in Amiri two ramp steps larger. That is the
+                // whole of "the source text is dramatically smaller than
+                // comparable reading content elsewhere": the field was never
+                // told it holds a source.
+                //
+                // Inter FIRST and Amiri behind it, deliberately: font fallback
+                // is per glyph, so Latin resolves to Inter and Arabic to Amiri,
+                // which is what a field that must accept either one wants. The
+                // size is the compact Arabic role rather than the full study
+                // reading size — a long paste field legitimately runs denser
+                // than a card holding one segment.
+                fontFamily: `Inter, ${typography.arabicCompact.fontFamily}`,
+                fontSize: typography.arabicCompact.fontSize,
+                lineHeight: typography.arabicCompact.lineHeight,
                 boxSizing: 'border-box',
               }}
             />

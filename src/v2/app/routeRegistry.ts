@@ -7,6 +7,8 @@ import patternLabLayoutContract from '../screens/PatternLab/PatternLabScreen.con
 import qualityDashboardLayoutContract from '../screens/QualityDashboard/QualityDashboardScreen.contract'
 import ProjectHomeScreen from '../screens/ProjectHome/ProjectHomeScreen'
 import projectHomeLayoutContract from '../screens/ProjectHome/ProjectHomeScreen.contract'
+import ExamsScreen from '../screens/Exams/ExamsScreen'
+import examsLayoutContract from '../screens/Exams/ExamsScreen.contract'
 import ProjectsScreen from '../screens/Projects/ProjectsScreen'
 import projectsLayoutContract from '../screens/Projects/ProjectsScreen.contract'
 import ProjectResearchScreen from '../screens/ProjectResearch/ProjectResearchScreen'
@@ -390,24 +392,17 @@ export const routeRegistry = {
     },
   },
 
-  /**
-   * Exams — a rail destination with no V2 screen behind it, on purpose.
-   *
-   * Exams is production (§2.1 preserves the working legacy capability until a V2
-   * replacement reaches parity) but exists only on the legacy hash. Nothing in
-   * the V2 surface linked to it: no rail entry, no button, no link anywhere, so
-   * the shipping assessment capability was reachable only by typing #exams. A
-   * whole product area behind a URL nobody is told about is a dead end.
-   *
-   * `externalHash` sends the rail out to the legacy route. The entry carries no
-   * component because there is no V2 Exams to render, and AppV2 treats a
-   * component-less entry as unroutable so `#v2/exams` cannot resolve to it.
-   * When V2 Exams exists this becomes an ordinary entry and externalHash goes.
-   */
   exams: {
     id: 'exams',
     label: 'Exams',
+    component: ExamsScreen,
+    layoutContract: examsLayoutContract,
     shell: {
+      showRail: true,
+      header: {
+        modeLabel: 'Exams',
+        description: 'Scoped assessment and remediation',
+      },
       rail: {
         visible: true,
         groupId: 'exams',
@@ -415,7 +410,7 @@ export const routeRegistry = {
         shortLabel: 'EX',
         iconKey: 'exams',
         order: 50,
-        externalHash: 'exams',
+        routeId: 'exams',
       },
     },
   },

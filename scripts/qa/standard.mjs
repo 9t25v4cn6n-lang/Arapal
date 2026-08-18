@@ -40,17 +40,20 @@ export const VIEWPORTS = [
  *                reported, but they are debt against an implementation that is
  *                scheduled for deletion rather than release.
  *
- * The distinction is deliberately narrow. Exams is production: the plan says to
- * "preserve the working legacy capability until the V2 replacement has genuine
- * parity", which makes it the shipping Exams, not a reference copy.
+ * The distinction is deliberately narrow. Exams was the last entry on the
+ * production side of that line: §2.1 kept the legacy screen shipping "until the
+ * V2 replacement has genuine parity". The V2 replacement now exists on the
+ * shared shell, so every production route is V2 and every legacy route is a
+ * behaviour source. That is the line the plan was always aiming at.
  */
 export const ROUTES = [
   // Legacy — retained as behaviour sources until their behaviour is ported.
   { id: 'legacy-home', hash: 'home', app: 'legacy', surface: 'reference' },
   { id: 'legacy-study', hash: 'study', app: 'legacy', surface: 'reference' },
   { id: 'legacy-segmentation', hash: 'segmentation', app: 'legacy', surface: 'reference' },
-  // Production: this is the shipping Exams until a V2 replacement reaches parity.
-  { id: 'legacy-exams', hash: 'exams', app: 'legacy', surface: 'production' },
+  // The V2 replacement exists, so legacy Exams is a behaviour source like the
+  // other three. It is reachable only at #exams-legacy now; #exams redirects.
+  { id: 'legacy-exams', hash: 'exams-legacy', app: 'legacy', surface: 'reference' },
   // V2 — the V1 product surface.
   { id: 'v2-projectHome', hash: 'v2/projectHome', app: 'v2', surface: 'production' },
   { id: 'v2-projects', hash: 'v2/projects', app: 'v2', surface: 'production' },
@@ -68,6 +71,7 @@ export const ROUTES = [
   { id: 'v2-segmentationReview', hash: 'v2/segmentationReview', app: 'v2', surface: 'production' },
   { id: 'v2-segmentationSuccess', hash: 'v2/segmentationSuccess', app: 'v2', surface: 'production' },
   { id: 'v2-studyWorkspace', hash: 'v2/studyWorkspace', app: 'v2', surface: 'production' },
+  { id: 'v2-exams', hash: 'v2/exams', app: 'v2', surface: 'production' },
 ]
 
 export const THRESHOLDS = {
@@ -133,11 +137,16 @@ export const TRUNCATION_EXEMPT_SELECTORS = [
 
 /**
  * Approved type ramp, in px. Any rendered size outside this set is drift.
- * Derived from src/v2/foundation/tokens/typography.ts with the sub-floor steps
- * raised per [DECISION]. Kept explicit rather than imported so that correcting
- * the tokens is a deliberate act checked against this list.
+ * This is `scale` in src/v2/foundation/tokens/typography.ts. Kept explicit
+ * rather than imported so that correcting the tokens is a deliberate act
+ * checked against this list.
+ *
+ * It used to hold fifteen steps including 11.5, 12.5, 14, 16, 18, 22.5 and 25 —
+ * pairs one point apart that no eye can distinguish and that therefore licensed
+ * every screen to sit one step away from every other. Ten steps, each visibly
+ * different from its neighbours, is a ramp you can actually hold a product to.
  */
-export const TYPE_RAMP = [11, 11.5, 12, 13, 14, 15, 16, 18, 20, 22.5, 23, 26, 32, 40, 50]
+export const TYPE_RAMP = [11, 12, 13, 15, 17, 20, 23, 26, 34, 44]
 
 /**
  * Colours that may carry text, with their measured contrast on the app's two

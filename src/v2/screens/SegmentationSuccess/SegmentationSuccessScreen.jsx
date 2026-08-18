@@ -16,7 +16,6 @@ export default function SegmentationSuccessScreen({ route, shell }) {
       shell,
       // Publish: the terminal step, so the indicator can say the flow is done.
       stepIndex: 2,
-      brandSubtitle: 'Ready',
       backRoute: 'segmentationReview',
     }),
     Layer3_SegmentationFlow_Page: <SegmentationSuccessView shell={shell} publishedSegments={publishedSegments} />,

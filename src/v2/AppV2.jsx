@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import { defaultRouteId, getPrimaryRailRoutes, routeRegistry } from './app/routeRegistry'
 import { shellSizing } from './foundation/layout/shellSizing'
+import { useAppIntro } from './foundation/primitives/AppIntro'
 import useNavigationRailState from './foundation/primitives/useNavigationRailState'
 
 export default function AppV2({ routeId = defaultRouteId }) {
@@ -12,6 +13,7 @@ export default function AppV2({ routeId = defaultRouteId }) {
   const activeRoute = requested?.component ? requested : routeRegistry[defaultRouteId]
   const ActiveScreen = activeRoute.component
   const navigationRailState = useNavigationRailState()
+  const [introPhase, introOverlay] = useAppIntro()
 
   const railItems = getPrimaryRailRoutes()
   const { isNavPinned, isNavHovered, isNavExpanded } = navigationRailState
@@ -62,5 +64,21 @@ export default function AppV2({ routeId = defaultRouteId }) {
     ...navigationRailState,
   }
 
-  return <Suspense fallback={null}><ActiveScreen route={activeRoute} shell={shell} /></Suspense>
+  return (
+    <>
+      {/* The stage is muted only while the intro is on top of it, and the class
+          is applied to a wrapper rather than to the screen so no screen has to
+          know the animation exists. */}
+      <div
+        className={`arapal-intro-stage${introPhase === 'intro' ? ' is-muted' : ''}`}
+        // Sizing is inline because the class's stylesheet unmounts with the
+        // overlay: the wrapper must lay out identically whether the intro is
+        // playing, leaving, or was never there.
+        style={{ flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}
+      >
+        <Suspense fallback={null}><ActiveScreen route={activeRoute} shell={shell} /></Suspense>
+      </div>
+      {introOverlay}
+    </>
+  )
 }

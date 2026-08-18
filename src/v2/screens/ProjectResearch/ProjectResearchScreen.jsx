@@ -12,6 +12,7 @@ import {
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import { colors, motion, radius, spacing, typography } from '../../foundation/tokens'
 import layoutContract from './ProjectResearchScreen.contract'
+import { compactControl } from '../../foundation/tokens/compactControl'
 import {
   KnowledgeLedger,
   LensSpine,
@@ -289,7 +290,7 @@ const researchStyles = `
   .project-research__title {
     margin: 0;
     font-family: ${typography.displayTitle.fontFamily};
-    font-size: 34px;
+    font-size: ${typography.heroTitle.fontSize};
     line-height: 1;
     letter-spacing: 0;
     color: ${colors.textStrong};
@@ -306,7 +307,7 @@ const researchStyles = `
 
   .project-research__lead {
     max-width: 760px;
-    font-size: 13px;
+    font-size: ${typography.supportSubtext.fontSize};
     line-height: 1.52;
   }
 
@@ -344,14 +345,14 @@ const researchStyles = `
 
   .project-research__metricPill strong {
     font-family: ${typography.studySectionTitle.fontFamily};
-    font-size: 18px;
+    font-size: ${typography.leadText.fontSize};
     line-height: 1;
     color: ${colors.textStrong};
   }
 
   .project-research__metricPill span,
   .project-research__actionHint {
-    font-size: 11px;
+    font-size: ${typography.eyebrowLabel.fontSize};
     line-height: 1.35;
   }
 
@@ -368,7 +369,7 @@ const researchStyles = `
     color: ${colors.accentStrong};
     box-shadow: 0 10px 24px rgba(37, 99, 235, 0.09);
     font-family: ${typography.ctaLabel.fontFamily};
-    font-size: 12px;
+    font-size: ${typography.metaText.fontSize};
     line-height: 1;
     font-weight: 800;
     letter-spacing: 0.08em;
@@ -443,7 +444,7 @@ const researchStyles = `
   .project-research__emptyInspector h2 {
     margin: 0;
     font-family: ${typography.studySectionTitle.fontFamily};
-    font-size: 15px;
+    font-size: ${typography.bodyText.fontSize};
     line-height: 1.25;
     font-weight: 850;
     color: ${colors.textStrong};
@@ -482,7 +483,7 @@ const researchStyles = `
     border-radius: ${radius[16]};
     text-align: left;
     font-family: ${typography.studyControlLabel.fontFamily};
-    font-size: 12px;
+    font-size: ${typography.metaText.fontSize};
     line-height: 1;
     font-weight: 800;
   }
@@ -515,7 +516,7 @@ const researchStyles = `
 
   .project-research__filterButton strong {
     justify-self: end;
-    font-size: 11px;
+    font-size: ${typography.eyebrowLabel.fontSize};
     color: ${colors.textFaint};
   }
 
@@ -546,7 +547,7 @@ const researchStyles = `
     text-overflow: ellipsis;
     white-space: nowrap;
     font-family: ${typography.studyControlLabel.fontFamily};
-    font-size: 12px;
+    font-size: ${typography.metaText.fontSize};
     line-height: 1.2;
   }
 
@@ -555,7 +556,7 @@ const researchStyles = `
     text-overflow: ellipsis;
     white-space: nowrap;
     color: ${colors.textSoft};
-    font-size: 11px;
+    font-size: ${typography.eyebrowLabel.fontSize};
     line-height: 1.35;
   }
 
@@ -597,7 +598,12 @@ const researchStyles = `
     background: rgba(248, 251, 255, 0.94);
   }
 
+  /* The whole search pill is the target, so the input has to fill it. Its
+     height came from the inherited line-height and measured 22.8px — below the
+     WCAG 2.5.8 minimum for the primary control on the screen. Same defect as the
+     Projects search field, same fix. */
   .project-research__searchBox input {
+    align-self: stretch;
     width: 100%;
     min-width: 0;
     border: 0;
@@ -605,20 +611,13 @@ const researchStyles = `
     background: transparent;
     color: ${colors.textBody};
     font-family: ${typography.studyBody.fontFamily};
-    font-size: 14px;
+    font-size: ${typography.supportSubtext.fontSize};
   }
 
   .project-research__searchBox input::placeholder {
     color: ${colors.textFaint};
   }
 
-  .project-research__chipRow {
-    min-width: 0;
-    display: flex;
-    gap: ${spacing[8]};
-    overflow-x: auto;
-    padding: 0;
-  }
 
   .project-research__searchMeta {
     min-width: 0;
@@ -631,14 +630,17 @@ const researchStyles = `
   .project-research__resultCount {
     color: ${colors.textFaint};
     font-family: ${typography.monoMeta.fontFamily};
-    font-size: 11px;
+    font-size: ${typography.eyebrowLabel.fontSize};
     line-height: 1;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     white-space: nowrap;
   }
 
-  .project-research__chip,
+  /* The inspector's actions are the compact-control sm step, stated in terms
+     of the token rather than in numbers that happened to be typed here. The
+     quick-refinement chips used to share this rule and were then overridden
+     twice further down the same stylesheet; they are the shared <Chip> now. */
   .project-research__secondaryAction,
   .project-research__relatedRow button,
   .project-research__promptRow button,
@@ -648,14 +650,16 @@ const researchStyles = `
     align-items: center;
     justify-content: center;
     gap: ${spacing[8]};
-    border: 1px solid ${colors.lineSoft};
+    min-height: ${compactControl.sm.heightPx}px;
+    padding: 0 ${compactControl.sm.paddingXPx}px;
+    border: 1px solid ${colors.borderSoft};
     border-radius: ${radius.pill};
-    background: rgba(255, 255, 255, 0.9);
-    color: ${colors.textSoft};
-    font-family: ${typography.studyControlLabel.fontFamily};
-    font-size: 11px;
+    background: ${colors.surfacePrimary};
+    color: ${colors.textMuted};
+    font-family: ${compactControl.sm.type.fontFamily};
+    font-size: ${compactControl.sm.type.fontSize};
     line-height: 1;
-    font-weight: 850;
+    font-weight: ${compactControl.sm.type.fontWeight};
     cursor: pointer;
     transition:
       border-color ${motion.micro},
@@ -664,19 +668,11 @@ const researchStyles = `
       box-shadow ${motion.micro};
   }
 
-  .project-research__chip {
-    min-height: 30px;
-    padding: 0 ${spacing[12]};
-    white-space: nowrap;
-  }
-
-  .project-research__chip:hover,
-  .project-research__chip.is-active,
   .project-research__secondaryAction:hover,
   .project-research__relatedRow button:hover,
   .project-research__promptRow button:hover,
   .project-research__citationRow button:hover {
-    border-color: ${colors.lineStrong};
+    border-color: rgba(147, 197, 253, 0.7);
     color: ${colors.accentStrong};
     background: ${colors.accentWash};
   }
@@ -740,7 +736,7 @@ const researchStyles = `
     background: ${colors.accentWash};
     color: ${colors.accentStrong};
     font-family: ${typography.studyControlLabel.fontFamily};
-    font-size: 12px;
+    font-size: ${typography.metaText.fontSize};
     font-weight: 900;
   }
 
@@ -764,7 +760,7 @@ const researchStyles = `
     -webkit-box-orient: vertical;
     color: ${colors.textStrong};
     font-family: ${typography.studyArabicInline.fontFamily};
-    font-size: 15.5px;
+    font-size: ${typography.arabicCompact.fontSize};
     line-height: 1.58;
     text-align: right;
   }
@@ -777,7 +773,7 @@ const researchStyles = `
     text-overflow: ellipsis;
     white-space: nowrap;
     font-family: ${typography.studySectionTitle.fontFamily};
-    font-size: 13px;
+    font-size: ${typography.supportSubtext.fontSize};
     line-height: 1.25;
     color: ${colors.textStrong};
   }
@@ -786,7 +782,7 @@ const researchStyles = `
   .project-research__translationPreview {
     color: ${colors.textSoft};
     font-family: ${typography.studySupportText.fontFamily};
-    font-size: 12px;
+    font-size: ${typography.metaText.fontSize};
     line-height: 1.45;
   }
 
@@ -801,6 +797,18 @@ const researchStyles = `
     display: none;
   }
 
+  /* Layout only — the tags themselves are shared Badges now. It must not wrap:
+     the ledger row has a fixed height, so a second line of tags pushed out of
+     the row and printed on top of the row beneath it. Tags are supporting
+     metadata, so clipping the third one is the right loss to take. */
+  .project-research__tagCell {
+    min-width: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: ${spacing[4]};
+    overflow: hidden;
+  }
+
   .project-research__resultStatus {
     display: grid;
     justify-items: end;
@@ -808,72 +816,16 @@ const researchStyles = `
     color: ${colors.textFaint};
   }
 
-  .project-research__statusPill {
-    width: fit-content;
-    min-height: 28px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 ${spacing[12]};
-    border: 1px solid ${colors.lineSoft};
-    border-radius: ${radius.pill};
-    background: rgba(255, 255, 255, 0.72);
-    color: ${colors.textSoft};
-    font-family: ${typography.eyebrowLabel.fontFamily};
-    font-size: 11px;
-    line-height: 1;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    font-weight: 900;
-    white-space: nowrap;
-  }
 
   /* The -Strong values, not success/review: the token file records the plain
      pair as fills and icons only, and a pill's tone IS its text colour.
      "Completed" measured 3.2:1 and both amber states 3.1:1. */
-  .project-research__statusPill.is-ready {
-    border-color: rgba(22, 163, 74, 0.18);
-    background: rgba(240, 253, 244, 0.68);
-    color: ${colors.successStrong};
-  }
 
-  .project-research__statusPill.is-review {
-    border-color: rgba(217, 119, 6, 0.2);
-    background: rgba(255, 251, 235, 0.72);
-    color: ${colors.reviewStrong};
-  }
 
   /* A weak area is not the same state as needs-revision, and the token file
      added a third semantic, critical, precisely so the two would stop sharing one amber. */
-  .project-research__statusPill.is-weak {
-    border-color: rgba(190, 18, 60, 0.2);
-    background: rgba(255, 241, 242, 0.72);
-    color: ${colors.critical};
-  }
 
-  .project-research__tagCell {
-    min-width: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: ${spacing[4]};
-  }
 
-  .project-research__tagCell em {
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    padding: ${spacing[4]} ${spacing[8]};
-    border-radius: ${radius.pill};
-    background: rgba(219, 234, 254, 0.42);
-    /* textMuted, not textSoft. textSoft clears 4.5:1 on white but the chip's own
-       blue tint takes it to 4.3:1 — a text colour is only as good as what sits
-       behind it, and a chip changes what sits behind it. */
-    color: ${colors.textMuted};
-    font-style: normal;
-    font-size: 11px;
-    line-height: 1;
-  }
 
   .project-research__emptyState,
   .project-research__emptyInspector,
@@ -900,7 +852,7 @@ const researchStyles = `
     margin: 0;
     max-width: 280px;
     color: ${colors.textSoft};
-    font-size: 12px;
+    font-size: ${typography.metaText.fontSize};
     line-height: 1.5;
   }
 
@@ -970,7 +922,7 @@ const researchStyles = `
     color: ${colors.textSoft};
     padding: 0 ${spacing[8]};
     font-family: ${typography.studyControlLabel.fontFamily};
-    font-size: 11px;
+    font-size: ${typography.eyebrowLabel.fontSize};
     line-height: 1;
     font-weight: 850;
     text-transform: uppercase;
@@ -988,7 +940,7 @@ const researchStyles = `
   .project-research__sourceTitle {
     margin: ${spacing[4]} 0 0;
     font-family: ${typography.studySectionTitle.fontFamily};
-    font-size: 16px;
+    font-size: ${typography.bodyText.fontSize};
     line-height: 1.25;
     color: ${colors.textStrong};
   }
@@ -1044,14 +996,14 @@ const researchStyles = `
     margin: 0;
     color: ${colors.textBody};
     font-family: ${typography.studySupportText.fontFamily};
-    font-size: 13px;
+    font-size: ${typography.supportSubtext.fontSize};
     line-height: 1.6;
   }
 
   .project-research__blockContent .project-research__arabicFull {
     color: ${colors.textStrong};
     font-family: ${typography.studyArabicSource.fontFamily};
-    font-size: 20px;
+    font-size: ${typography.cardTitle.fontSize};
     line-height: 1.8;
     text-align: right;
   }
@@ -1070,7 +1022,7 @@ const researchStyles = `
     margin: ${spacing[8]} 0 0;
     padding-inline-start: ${spacing[20]};
     color: ${colors.textBody};
-    font-size: 12px;
+    font-size: ${typography.metaText.fontSize};
     line-height: 1.55;
   }
 
@@ -1092,20 +1044,20 @@ const researchStyles = `
   .project-research__vocabList strong {
     color: ${colors.textStrong};
     font-family: ${typography.studyArabicInline.fontFamily};
-    font-size: 17px;
+    font-size: ${typography.leadText.fontSize};
     line-height: 1.35;
   }
 
   .project-research__vocabList span {
     color: ${colors.textFaint};
     font-family: ${typography.monoMeta.fontFamily};
-    font-size: 11px;
+    font-size: ${typography.eyebrowLabel.fontSize};
   }
 
   .project-research__vocabList p {
     margin: 0;
     color: ${colors.textBody};
-    font-size: 12px;
+    font-size: ${typography.metaText.fontSize};
     line-height: 1.45;
   }
 
@@ -1187,7 +1139,7 @@ const researchStyles = `
     -webkit-box-orient: vertical;
     margin: 0;
     color: ${colors.textBody};
-    font-size: 11.5px;
+    font-size: ${typography.eyebrowLabel.fontSize};
     line-height: 1.45;
   }
 
@@ -1232,7 +1184,7 @@ const researchStyles = `
     color: ${colors.textBody};
     padding: ${spacing[12]};
     font-family: ${typography.studyBody.fontFamily};
-    font-size: 13px;
+    font-size: ${typography.supportSubtext.fontSize};
     line-height: 1.4;
     outline: none;
   }
@@ -1254,7 +1206,7 @@ const researchStyles = `
 
   @media (max-width: 1500px) {
     .project-research__title {
-      font-size: 32px;
+      font-size: ${typography.heroTitle.fontSize};
     }
 
     .project-research__resultRow {
@@ -1269,11 +1221,11 @@ const researchStyles = `
     }
 
     .project-research__title {
-      font-size: 30px;
+      font-size: ${typography.pageTitle.fontSize};
     }
 
     .project-research__lead {
-      font-size: 13px;
+      font-size: ${typography.supportSubtext.fontSize};
     }
 
     .project-research__metricStrip {
@@ -1294,9 +1246,6 @@ const researchStyles = `
       min-height: 44px;
     }
 
-    .project-research__chip {
-      min-height: 30px;
-    }
 
     .project-research__rightHeader {
       padding: ${spacing[12]};
@@ -1304,17 +1253,17 @@ const researchStyles = `
 
     .project-research__dossierTitle,
     .project-research__sourceTitle {
-      font-size: 15px;
+      font-size: ${typography.bodyText.fontSize};
     }
 
     .project-research__dossierMeta,
     .project-research__sourceMeta {
-      font-size: 13px;
+      font-size: ${typography.supportSubtext.fontSize};
       line-height: 1.35;
     }
 
     .project-research__blockContent .project-research__arabicFull {
-      font-size: 18px;
+      font-size: ${typography.leadText.fontSize};
       line-height: 1.65;
     }
 
@@ -1343,7 +1292,7 @@ const researchStyles = `
 
     .project-research__arabicExtract {
       -webkit-line-clamp: 1;
-      font-size: 14.5px;
+      font-size: ${typography.bodyText.fontSize};
       line-height: 1.45;
     }
 
@@ -1385,7 +1334,7 @@ const researchStyles = `
 
   .project-research__title {
     color: ${colors.surfacePrimary};
-    font-size: 25px;
+    font-size: ${typography.pageTitle.fontSize};
     line-height: 1;
   }
 
@@ -1436,12 +1385,12 @@ const researchStyles = `
   }
 
   .project-research__metricPill strong {
-    font-size: 14px;
+    font-size: ${typography.supportSubtext.fontSize};
   }
 
   .project-research__metricPill span,
   .project-research__actionHint {
-    font-size: 11px;
+    font-size: ${typography.eyebrowLabel.fontSize};
   }
 
   .project-research__actionHint {
@@ -1460,23 +1409,39 @@ const researchStyles = `
     gap: ${spacing[12]};
   }
 
+  /* ATTENTION HIERARCHY.
+     ──────────────────
+     These two panels — the lens list and the revision queue — used to be
+     near-black slabs (#101827 to #172033) with a 44px ambient shadow. They were
+     the highest-contrast objects on the screen by a wide margin, and what they
+     hold is secondary navigation and an aggregate. The thing this screen exists
+     for — the selected segment and the action you would take on it — was white
+     on white beside them, so the eye landed on the filter list first, every
+     time, whatever was selected.
+
+     Quiet surfaces now, in the product's own panel language. Nothing is removed
+     and no density is lost: the rail is exactly as usable, it simply stops
+     shouting over the object it is there to filter. The dark treatment stays on
+     the masthead alone, where it carries the project's identity and has nothing
+     to compete with. */
   .project-research__filterRail .project-research__panel {
-    border-color: rgba(255, 255, 255, 0.1);
-    background:
-      radial-gradient(circle at 16% 4%, rgba(147, 197, 253, 0.2), transparent 26%),
-      linear-gradient(180deg, #101827 0%, #172033 100%);
-    color: rgba(241, 245, 249, 0.94);
-    box-shadow: 0 18px 44px rgba(15, 23, 42, 0.18);
+    border-color: ${colors.borderSoft};
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 251, 255, 0.92) 100%);
+    color: ${colors.textBody};
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
   }
 
-  .project-research__filterRail .project-research__eyebrow,
+  .project-research__filterRail .project-research__eyebrow {
+    color: ${colors.accentStrong};
+  }
+
   .project-research__filterRail .project-research__panelTitle {
-    color: rgba(241, 245, 249, 0.96);
+    color: ${colors.textStrong};
   }
 
   .project-research__panelHeader {
     padding: ${spacing[16]};
-    border-bottom-color: rgba(255, 255, 255, 0.1);
+    border-bottom-color: ${colors.borderSoft};
   }
 
   .project-research__filterList {
@@ -1486,7 +1451,7 @@ const researchStyles = `
 
   .project-research__filterButton,
   .project-research__revisionButton {
-    color: rgba(226, 232, 240, 0.84);
+    color: ${colors.textMuted};
     background: transparent;
   }
 
@@ -1496,27 +1461,36 @@ const researchStyles = `
   }
 
   .project-research__filterIcon {
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(219, 234, 254, 0.92);
+    background: ${colors.accentWash};
+    color: ${colors.accentBase};
   }
 
+  /* textMuted, not textSoft. At 11px on the rail's near-white surface textSoft
+     measures 4.4:1 — under AA by a tenth. The rail went light in this pass, and
+     a text colour is only as good as what sits behind it. */
   .project-research__filterButton strong,
   .project-research__revisionButton small {
-    color: rgba(203, 213, 225, 0.66);
+    color: ${colors.textMuted};
   }
 
+  /* The accent now marks the SELECTED lens rather than lifting the whole rail. */
   .project-research__filterButton:hover,
-  .project-research__filterButton.is-active,
   .project-research__revisionButton:hover {
-    border-color: rgba(147, 197, 253, 0.36);
-    background: rgba(239, 246, 255, 0.1);
-    color: ${colors.surfacePrimary};
-    box-shadow: inset 3px 0 0 ${colors.accentSoft};
+    border-color: rgba(147, 197, 253, 0.5);
+    background: rgba(239, 246, 255, 0.66);
+    color: ${colors.accentStrong};
+  }
+
+  .project-research__filterButton.is-active {
+    border-color: rgba(147, 197, 253, 0.72);
+    background: ${colors.accentWash};
+    color: ${colors.accentStrong};
+    box-shadow: inset 3px 0 0 ${colors.accentBase};
   }
 
   .project-research__filterButton.is-active .project-research__filterIcon {
-    background: ${colors.surfacePrimary};
-    color: ${colors.accentStrong};
+    background: ${colors.accentBase};
+    color: ${colors.surfacePrimary};
   }
 
   .project-research__revisionPanel {
@@ -1550,7 +1524,7 @@ const researchStyles = `
   }
 
   .project-research__searchCopy h2 {
-    font-size: 17px;
+    font-size: ${typography.leadText.fontSize};
   }
 
   .project-research__searchBox {
@@ -1561,17 +1535,7 @@ const researchStyles = `
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8);
   }
 
-  .project-research__chip {
-    min-height: 28px;
-    border-color: rgba(15, 23, 42, 0.1);
-    background: transparent;
-  }
 
-  .project-research__chip.is-active {
-    background: #111827;
-    border-color: #111827;
-    color: ${colors.surfacePrimary};
-  }
 
   .project-research__deskBody {
     min-height: 0;
@@ -1607,7 +1571,7 @@ const researchStyles = `
     border-bottom: 1px solid rgba(15, 23, 42, 0.07);
     color: ${colors.textSoft};
     font-family: ${typography.studyControlLabel.fontFamily};
-    font-size: 11px;
+    font-size: ${typography.eyebrowLabel.fontSize};
     font-weight: 850;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -1623,7 +1587,7 @@ const researchStyles = `
     text-overflow: ellipsis;
     white-space: nowrap;
     color: ${colors.textFaint};
-    font-size: 11px;
+    font-size: ${typography.eyebrowLabel.fontSize};
   }
 
   .project-research__rowList {
@@ -1675,21 +1639,18 @@ const researchStyles = `
   }
 
   .project-research__arabicExtract {
-    font-size: 16px;
+    font-size: ${typography.bodyText.fontSize};
     line-height: 1.65;
   }
 
   .project-research__topicCell strong {
-    font-size: 13.5px;
+    font-size: ${typography.supportSubtext.fontSize};
   }
 
   .project-research__translationPreview {
     color: ${colors.textBody};
   }
 
-  .project-research__tagCell em {
-    background: rgba(15, 23, 42, 0.06);
-  }
 
   .project-research__rightWorkspace {
     height: 100%;
@@ -1788,7 +1749,7 @@ const researchStyles = `
   }
 
   .project-research__blockContent .project-research__arabicFull {
-    font-size: 21px;
+    font-size: ${typography.cardTitle.fontSize};
     line-height: 1.9;
   }
 
@@ -1817,7 +1778,7 @@ const researchStyles = `
 
   .project-research__answerCard p {
     -webkit-line-clamp: unset;
-    font-size: 13px;
+    font-size: ${typography.supportSubtext.fontSize};
     line-height: 1.6;
   }
 
@@ -1847,7 +1808,7 @@ const researchStyles = `
     }
 
     .project-research__title {
-      font-size: 24px;
+      font-size: ${typography.arabicSourceText.fontSize};
     }
 
     .project-research__deskToolbar {
@@ -1871,7 +1832,7 @@ const researchStyles = `
       min-height: 36px;
       gap: ${spacing[8]};
       padding: ${spacing[4]} ${spacing[8]};
-      font-size: 11px;
+      font-size: ${typography.eyebrowLabel.fontSize};
     }
 
     .project-research__filterIcon {
@@ -1914,7 +1875,7 @@ const researchStyles = `
     }
 
     .project-research__blockContent .project-research__arabicFull {
-      font-size: 18.5px;
+      font-size: ${typography.leadText.fontSize};
     }
   }
 
@@ -1935,25 +1896,8 @@ const researchStyles = `
     align-items: center;
   }
 
-  .project-research__chip {
-    min-height: 32px;
-    border-color: rgba(148, 163, 184, 0.3);
-    background: rgba(255, 255, 255, 0.82);
-    color: ${colors.textBody};
-  }
 
-  .project-research__chip:hover {
-    border-color: rgba(37, 99, 235, 0.28);
-    background: rgba(239, 246, 255, 0.76);
-    color: ${colors.accentStrong};
-  }
 
-  .project-research__chip.is-active {
-    border-color: rgba(37, 99, 235, 0.28);
-    background: ${colors.accentWash};
-    color: ${colors.accentStrong};
-    box-shadow: inset 0 0 0 1px rgba(147, 197, 253, 0.38);
-  }
 
   .project-research__ledgerHeader {
     padding: ${spacing[12]} ${spacing[20]};
@@ -2043,19 +1987,19 @@ const researchStyles = `
 
   .project-research__arabicExtract {
     -webkit-line-clamp: 2;
-    font-size: 15.5px;
+    font-size: ${typography.arabicCompact.fontSize};
     line-height: 1.62;
   }
 
   .project-research__translationPreview {
     -webkit-line-clamp: 2;
     color: ${colors.textBody};
-    font-size: 12px;
+    font-size: ${typography.metaText.fontSize};
     line-height: 1.45;
   }
 
   .project-research__topicCell strong {
-    font-size: 13px;
+    font-size: ${typography.supportSubtext.fontSize};
     line-height: 1.25;
   }
 
@@ -2063,16 +2007,7 @@ const researchStyles = `
     color: ${colors.textSoft};
   }
 
-  .project-research__tagCell {
-    gap: ${spacing[4]};
-  }
 
-  .project-research__tagCell em {
-    background: rgba(15, 23, 42, 0.055);
-    /* Same reasoning as the base rule: a slate tint behind textSoft takes it
-       under 4.5:1. This later rule was quietly reinstating the failing value. */
-    color: ${colors.textMuted};
-  }
 
   .project-research__resultStatus {
     grid-area: status;
@@ -2080,35 +2015,9 @@ const researchStyles = `
     justify-items: end;
   }
 
-  .project-research__statusPill {
-    min-height: 24px;
-    padding: 0 ${spacing[8]};
-    border-color: rgba(148, 163, 184, 0.32);
-    background: rgba(255, 255, 255, 0.78);
-    color: ${colors.textSoft};
-    font-size: 11px;
-    letter-spacing: 0.02em;
-    text-transform: none;
-    font-weight: 850;
-  }
 
-  .project-research__statusPill.is-ready {
-    border-color: rgba(22, 163, 74, 0.16);
-    background: rgba(240, 253, 244, 0.46);
-    color: ${colors.successStrong};
-  }
 
-  .project-research__statusPill.is-review {
-    border-color: rgba(217, 119, 6, 0.22);
-    background: rgba(255, 251, 235, 0.58);
-    color: ${colors.reviewStrong};
-  }
 
-  .project-research__statusPill.is-weak {
-    border-color: rgba(190, 18, 60, 0.22);
-    background: rgba(255, 241, 242, 0.58);
-    color: ${colors.critical};
-  }
 
   .project-research__rightWorkspace {
     background: rgba(248, 251, 255, 0.92);
@@ -2140,9 +2049,6 @@ const researchStyles = `
     gap: ${spacing[8]};
   }
 
-  .project-research__inspectorLabelRow .project-research__statusPill {
-    flex: 0 0 auto;
-  }
 
   .project-research__rightHeader .project-research__eyebrow,
   .project-research__rightHeader .project-research__sourceTitle {
@@ -2153,13 +2059,13 @@ const researchStyles = `
     color: ${colors.accentStrong};
     text-transform: none;
     letter-spacing: 0.02em;
-    font-size: 12px;
+    font-size: ${typography.metaText.fontSize};
     font-weight: 900;
   }
 
   .project-research__rightHeader .project-research__sourceTitle {
     margin-top: 0;
-    font-size: 18px;
+    font-size: ${typography.leadText.fontSize};
     line-height: 1.3;
   }
 
@@ -2239,7 +2145,7 @@ const researchStyles = `
     direction: rtl;
     max-width: 100%;
     overflow-wrap: anywhere;
-    font-size: 22px;
+    font-size: ${typography.arabicSourceText.fontSize};
     line-height: 1.95;
     text-align: right;
   }
@@ -2301,12 +2207,35 @@ const researchStyles = `
       padding: ${spacing[8]} ${spacing[8]} ${spacing[32]};
     }
 
+    /* The floor has to match the arrangement it is in.
+       This template stacks two areas — the extract, then the topic and tags —
+       and it kept the 104px floor from the single-line arrangement above it.
+       104px does not hold 16px padding + a 28px extract + a 12px gap + a 66px
+       meta stack, so the metadata printed below its own row and over the row
+       beneath: an overlap the standard catches at 1366 and 1280.
+
+       140px is that sum, rounded up. Stated here rather than left to intrinsic
+       sizing because the ledger's rows must stay uniform — a list you scan is
+       one whose rows are the same height. */
     .project-research__resultRow {
-      min-height: 104px;
+      min-height: 140px;
       grid-template-columns: 44px minmax(0, 1fr) minmax(78px, auto);
       grid-template-areas:
         "id arabic status"
         "id meta status";
+    }
+
+    /* Tags go at this width. The row stacks into two areas here and the height
+       budget — 16px padding, an extract that is one line or two, a gap, then
+       the topic and the tags — does not close: the tag row printed below its
+       own row and over the row beneath it. Reflow before failure means dropping
+       the least load-bearing element, and that is the tags: they are supporting
+       metadata, they repeat in the inspector for whichever row is selected, and
+       the topic line directly above them already says what the segment is
+       about. The alternative was a variable row height, which costs the ledger
+       the uniform rhythm that makes it scannable. */
+    .project-research__tagCell {
+      display: none;
     }
 
     .project-research__resultTranslation {
@@ -2322,9 +2251,6 @@ const researchStyles = `
       padding-top: ${spacing[4]};
     }
 
-    .project-research__tagCell {
-      display: none;
-    }
 
     .project-research__translationPreview--inline {
       display: -webkit-box;
@@ -2345,7 +2271,7 @@ const researchStyles = `
     }
 
     .project-research__blockContent .project-research__arabicFull {
-      font-size: 19px;
+      font-size: ${typography.cardTitle.fontSize};
       line-height: 1.8;
     }
 
