@@ -14,7 +14,11 @@ It is untouched, and no gate currently measures it — there is no 390px frame i
 implementation work, not real-world uncertainty, and it is named here rather
 than folded into a pass.
 
-**Standing evidence** (all re-run at the point of declaring):
+**Standing evidence.** Verified in ONE clean run of all three Playwright suites
+together (`tests/visual tests/behaviour tests/qa`, 118 passed / 2 skipped, exit
+0), not three separate runs stitched together. The first declaration cited three
+runs taken at different times, which is not the same claim — recorded here
+because assembling evidence in one state is the whole point of the gate.
 
 | Check | Result |
 |---|---|
