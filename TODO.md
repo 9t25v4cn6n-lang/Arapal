@@ -1,6 +1,49 @@
 # Arapal — Current Stage and Next Milestones
 
-## 2026-08-17 · Release-candidate gate status
+## 2026-08-18 · RELEASE CANDIDATE — desktop production surface
+
+Declared against `ARAPAL_RELEASE_CONVERGENCE_PLAN.md` §10. All eleven dimensions
+are evidenced for the surface that section measures: its viewports are 1440×900,
+1366×768, 1920×1080 and 1280×800, all desktop.
+
+**Scope of the claim.** This is a release candidate for the DESKTOP production
+surface. It is not all of V1. `DECISIONS.md` (2026-08-16) records that a 390px
+mobile version is required for V1, sequenced last so it gates nothing earlier.
+It is untouched, and no gate currently measures it — there is no 390px frame in
+`scripts/qa/standard.mjs` or `tests/visual/states.mjs`. That is unfinished
+implementation work, not real-world uncertainty, and it is named here rather
+than folded into a pass.
+
+**Standing evidence** (all re-run at the point of declaring):
+
+| Check | Result |
+|---|---|
+| `npm run qa` | production surface **0**, reference 126, zero blank/drifted routes, zero page errors |
+| visual regression | 56 states, 0 unreachable |
+| behaviour | 36 passing, 2 skipped |
+| probe acuity | 26, every rule proved on a synthetic defect |
+| node (data + qa) | 56 |
+| eslint | 18 errors, each justified in commit `99edb9b` |
+
+**Known limits, recorded not hidden.**
+- Pixel diffing has a contrast-and-size floor: an 18px icon swap moves ~150px
+  against a 1,037px gate. Identity questions belong in assertions, not
+  screenshots — which is why the rail-icon rule is a node test.
+- Above ~1460px the review palette sits further into the margin than the
+  content. Verified as no overlap; a cosmetic detachment at one frame.
+- `study-discussion` has no pixel golden. Driven states are reachability-only
+  because they used to flap; that reason may no longer hold now motion is frozen
+  and the driver is fixed. Worth revisiting deliberately.
+- 126 reference findings on `legacy-home`, `legacy-study`, `legacy-segmentation`.
+  Discharged by porting their behaviour and deleting them, not by styling them.
+- Chromium cannot launch inside the command sandbox, so the pre-commit gate fails
+  safe and is advisory here. `npm run qa` was run manually before every commit.
+
+**Next phase: mobile 390px.** Not started.
+
+---
+
+## 2026-08-17 · Gate status detail
 
 Measured against `ARAPAL_RELEASE_CONVERGENCE_PLAN.md` §10. Status is
 **NOT RELEASE READY** — 4 of 11 dimensions evidenced.
@@ -14,8 +57,8 @@ Measured against `ARAPAL_RELEASE_CONVERGENCE_PLAN.md` §10. Status is
 | Function | **pass** | Whole journey driven by hand at 1440×900 on 2026-08-17, not inferred from unit-scoped tests: pasted a real Arabic source → splitter derived 3 segments → project created titled from the source with `isSample: false` → Study opened on that source ("SEGMENT 1 OF 3") → wrote a translation → submitted → result recorded. Reported counts match stored counts at every step. Plus 31 behaviour tests. The pass found a real defect (see below). |
 | Persistence | **pass** | Verified across a full reload in the same run: the submission survived, the rail marker read `is-active is-submitted` and the footer `STUDIED 1 / 3`. Covered by test for the leak clause too — a draft does not leak to the next segment, and a completed attempt does not resurrect. |
 | Behaviour parity | **pass** | Re-characterised by driving the running screens: V2 Study has 39 controls to legacy's 23 and is a superset; every characterised legacy capability is present in V2 or belongs to Exams (retained production). One real gap found and fixed (style/granularity were not persisted). The three rail destinations V2 appeared to lack — Review Queue, Completed, Profile — are dead controls in legacy: clicking each changes neither hash nor content. No parity debt remains. See `DECISIONS.md` 2026-08-17. |
-| Fit | **in progress** | First critique pass done on the states not already scrutinised. Project Home's empty state fixed: it stated the same invitation twice — page title "Add your first source." plus a card repeating it as "Start from a source" — on the screen whose own subtitle is "one clear next action". Now stated once, no card, matching R3's decision. Remaining: the same pass over Projects, Segmentation paste/transition/loading/success. |
-| Visual quality | partial | Professional rendered-state review done for the screens touched this cycle; not swept across all canonical states. |
+| Fit | **pass, with one recorded non-import** | Critique pass over all ten production routes. Fixed: Project Home stated its invitation twice; the segmentation flow had no step it could finish on (Success sat on Review's index); Projects and Project Research shared one rail icon. Reviewed and deliberately NOT changed: R3's Study header order (nav left / identity centre / count right). Ours is nav-fixed already — Previous/Next hold at y=66 under scroll, verified — so the difference is information order, not behaviour, and §2.2 asks for demonstrably superior decisions rather than resemblance. The genuinely superior part of that header, dropping the dash row that restated the segment count, was imported earlier in 81d9c07. |
+| Visual quality | **pass, with limits recorded** | Rendered review at 1440×900 across every production route, plus 1280×800 where a defect was suspected. Found and fixed this cycle: the Study composer's manufactured voids, a source card holding 111px spare while clipping its own passage, a translation box hiding the user's typed text, discussion mode rebuilding the layout, the review palette running 148px past the fold with unpressable controls. Two limits are recorded rather than tuned away: pixel diffing has a contrast-and-size floor (an 18px icon swap moves ~150px against a 1,037px gate), and above ~1460px the review palette sits further into the margin than the content — verified as no overlap. |
 | Integration | **pass** | Every V2 route renders the identical six-item rail in the same order. Exams was a one-way door — reachable from V2 but exiting to legacy `#home`/`#study`, screens the standard classifies as reference, with no rail and no route back. Its exits now target the V2 production surface, and `readContext` reads the legacy key as well as its own so the Exam→Study handoff (§2.3 protected) arrives with provenance intact. Verified live and covered by a new test. |
 | Unknowns | listed, plus one new | See "Toolbar reachability" below. |
 
