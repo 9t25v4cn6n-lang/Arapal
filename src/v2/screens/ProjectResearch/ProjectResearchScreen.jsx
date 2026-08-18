@@ -329,14 +329,6 @@ const researchStyles = `
     gap: ${spacing[8]};
   }
 
-  /* Three 88px minimums plus gaps need 280px before the panel's own padding, so
-     at 390px the strip and its last pill ran outside the frame. auto-fit lets it
-     become two rows rather than one row that does not fit. */
-  @media (max-width: 560px) {
-    .project-research__metricStrip {
-      grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
-    }
-  }
 
   .project-research__metricPill {
     min-height: 52px;
@@ -1418,6 +1410,18 @@ const researchStyles = `
     gap: ${spacing[4]};
   }
 
+  /* Placed after the last base rule for this class, which is the only position
+     that works. There are two conflicting base rules — one declaring grid with
+     three tracks, this one declaring flex — and this later one wins, which also
+     silently defeated an existing display:none breakpoint further up. A rule
+     added anywhere above it does nothing.
+
+     At 390px the strip and its pills ran outside the frame. The counts it shows
+     are also in the ledger header, so on mobile it goes rather than wraps. */
+  @media (max-width: 560px) {
+    .project-research__metricStrip { display: none; }
+  }
+
   .project-research__metricPill {
     min-height: 32px;
     min-width: 0;
@@ -2355,4 +2359,29 @@ const researchStyles = `
       justify-self: stretch;
     }
   }
+
+  /* Mobile: stack the desk instead of narrowing it further.
+     The breakpoint cascade above walks the inspector lane down from 472px to
+     432px and stops, so at 390px the ledger and the inspector were still side by
+     side and both were cut — the title clipped inside its own block, "Find
+     project knowle…", the ledger pushed off the frame. Narrowing a two-column
+     desk has a floor; below it the answer is one column.
+
+     Last in the file on purpose: several rules for these classes appear at top
+     level after the earlier breakpoints, and at equal specificity the later
+     declaration wins.
+
+     This stacks the ledger and inspector. It does NOT fix the panels above them
+     — the lens rail and search panel sit in contract-rendered regions whose
+     columns are written inline by ScreenContractRenderer, so no stylesheet can
+     reach them. That needs a mobile signal threaded through the contract layer
+     and is recorded in TODO.md rather than half-done here. */
+  @media (max-width: 560px) {
+    .project-research__deskBody,
+    .project-research__deskBody.is-browse {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+  }
+
 `

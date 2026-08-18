@@ -191,6 +191,18 @@ const studyCss = `
     overflow: hidden;
   }
 
+  /* After the base rule, not before it. At equal specificity the later
+     declaration wins, so the first version of this sat above .study-v2__railPanel
+     and was overridden by the very rule it meant to override.
+
+     A 0px grid track is not the same as hidden: the panel's children keep their
+     intrinsic widths and spill out of it, which is how the support rail's header
+     and body escaped the frame. Six findings that read as separate escapes were
+     one missing declaration. */
+  @media (max-width: 560px) {
+    .study-v2__railPanel { display: none; }
+  }
+
   .study-v2__supportPanel {
     border-right: 0;
     border-left: 1px solid var(--study-line-soft);

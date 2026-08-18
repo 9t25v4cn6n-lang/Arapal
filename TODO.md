@@ -43,7 +43,40 @@ because assembling evidence in one state is the whole point of the gate.
 - Chromium cannot launch inside the command sandbox, so the pre-commit gate fails
   safe and is advisory here. `npm run qa` was run manually before every commit.
 
-**Next phase: mobile 390px.** Not started.
+**Next phase: mobile 390px.** In progress — production surface at 390x844 is
+**16**, down from 41 when the frame was declared. Desktop unaffected throughout
+(0 at 1440x900 and 1280x800).
+
+Fixed so far, all at shared causes: the flow header's brand label (10
+truncations across the segmentation screens), the Study rails (zero-width *and*
+`display: none`, because a 0px grid track still lays its children out), the
+Study inset (a 20% padding took 132px of a 330px body — a percentage cannot be
+capped into behaving, so it uses the breakpoint), Projects' history tab, and the
+Research metric strip.
+
+### Known blocker: Research at mobile needs a contract-level signal
+
+`v2-projectResearch` still renders its lens rail and search panel side by side
+at 390px, both cut. The ledger/inspector split now stacks, but the panels above
+it sit in **contract-rendered regions whose `gridTemplateColumns` is written
+inline** by `ScreenContractRenderer` — no stylesheet can reach them, exactly as
+no media query could reach the Study columns.
+
+Study solved this by taking width as an input to the function that already
+computes its columns from state. Research cannot: its columns come from the
+static contract object, which has no access to runtime state. The fix is to
+thread a mobile signal through the contract layer — either the renderer
+selecting a `mobile` variant of each region's style, or contracts becoming
+functions of viewport. That is an architectural change and is deliberately not
+started at the end of a long session.
+
+### Note on reading the mobile count
+
+Two "improvements" this phase scored **better while being worse**, because
+collapsed and clipped elements stop being measurable. A single-column Study read
+22 while the lexicography row overlapped the editor by 80px; widening the work
+column moved the total 28 -> 29. A count from a broken layout is not comparable
+to a count from a working one — check the render, not just the number.
 
 ---
 
