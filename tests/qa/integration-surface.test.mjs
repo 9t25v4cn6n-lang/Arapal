@@ -117,6 +117,32 @@ test('no two rail destinations share an icon', () => {
   assert.ok(keys.length >= 5, `expected the visible rail destinations to declare icons, found ${keys.length}`)
 })
 
+test('every visible rail destination resolves a real icon', () => {
+  // The rail falls back to a generic glyph when an iconKey is not in the map, so
+  // a typo does not break the build or the layout — it just quietly draws the
+  // wrong thing. Project Home shipped a folder-with-git-nodes icon that way,
+  // because the map said `home` and the registry said `projectHome`.
+  const registry = readFileSync(path.join(REPO, 'src/v2/app/routeRegistry.ts'), 'utf8')
+  const rail = readFileSync(path.join(REPO, 'src/v2/foundation/primitives/NavigationRail.jsx'), 'utf8')
+
+  const mapBody = rail.slice(rail.indexOf('const iconMap = {'), rail.indexOf('}', rail.indexOf('const iconMap = {')))
+  const declared = new Set([...mapBody.matchAll(/^\s*([A-Za-z0-9_]+)\s*:/gm)].map((m) => m[1]))
+
+  const requested = registry
+    .split(/\brail:\s*\{/).slice(1)
+    .filter((block) => /visible:\s*true/.test(block))
+    .map((block) => block.match(/iconKey:\s*'([^']+)'/)?.[1])
+    .filter(Boolean)
+
+  const missing = [...new Set(requested)].filter((key) => !declared.has(key))
+  assert.deepEqual(
+    missing,
+    [],
+    `rail iconKeys with no entry in iconMap, so they render the fallback: ${missing.join(', ')}`,
+  )
+  assert.ok(requested.length >= 5, `expected visible rail destinations to declare icons, found ${requested.length}`)
+})
+
 test('every production route in the standard has somewhere to come back to', () => {
   // A production route with no rail entry and no external entry can only be
   // reached by typing its hash, which is how Exams was lost.

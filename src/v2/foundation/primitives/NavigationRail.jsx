@@ -5,7 +5,12 @@ import IconActionButton from './IconActionButton'
 import { getIdentityBadgeStyle, identityBadgeChrome } from './identityBadgePresets'
 
 const iconMap = {
-  home: Home,
+  // Keyed to match routeRegistry's iconKey exactly. This was `home` while the
+  // registry asked for `projectHome`, so the lookup missed and Project Home
+  // silently rendered the FolderGit2 fallback — a folder-with-git-nodes glyph
+  // for the product's front door. The fallback is what hid it: an unresolved key
+  // still draws something plausible.
+  projectHome: Home,
   projects: Layers3,
   // Research is "search and inspect project knowledge" — its own screen says so.
   projectResearch: TextSearch,
