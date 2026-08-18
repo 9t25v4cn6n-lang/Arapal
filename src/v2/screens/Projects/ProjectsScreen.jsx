@@ -260,6 +260,20 @@ const dashboardStyles = `
     overflow: hidden;
   }
 
+  /* After the base rule, because the base rule sets overflow: hidden and at equal
+     specificity the later declaration wins. I placed this above it first and it
+     did nothing — the same source-order mistake as the Study rail, made twice.
+
+     The card is a grid item with overflow: hidden, so once its row is sized it
+     cannot grow: at 390px it held 122px for 749px of in-flow content — the hero
+     and the footer, including the resume action the card exists to offer — and
+     hid 629px. Both children are static, so that is real content, not a
+     decorative layer bleeding past its box. The clip keeps the gradient inside
+     the rounded corners, which on a phone is worth less than the content. */
+  @media (max-width: 560px) {
+    .study-dashboard__resumeCard { overflow: visible; }
+  }
+
   .study-dashboard__resumeHero {
     min-height: 244px;
     display: grid;
