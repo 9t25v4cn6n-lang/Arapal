@@ -2382,6 +2382,22 @@ const researchStyles = `
       grid-template-columns: minmax(0, 1fr);
     }
 
+    /* The masthead declares minmax(0, 1fr) auto, but "Study mode" is 182px and
+       cannot shrink, so on a 306px header the title got the 78px remainder and
+       wrapped mid-word — "Al-", "Hidayah", "knowled", "explorer" — clipped by
+       the block behind it. They cannot share a row at this width, so they stop
+       sharing one.
+
+       The background goes with it: that gradient hard-cuts dark to light at 34%
+       to sit behind a title on the left and a button on the right, which reads
+       as a broken edge once they are stacked. */
+    .project-research__masthead {
+      grid-template-columns: minmax(0, 1fr);
+      gap: ${spacing[12]};
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.94));
+    }
+
+    .project-research__titleGroup { grid-template-columns: minmax(0, 1fr); }
   }
 
 `

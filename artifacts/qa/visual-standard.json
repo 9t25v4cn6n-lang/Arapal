@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-18T11:04:07.393Z",
+ "generatedAt": "2026-08-18T11:11:59.839Z",
  "base": "http://localhost:5173",
  "routes": [
   "legacy-home",
@@ -24,20 +24,20 @@
   "390x844"
  ],
  "totals": {
-  "blocking": 190,
-  "productionBlocking": 16,
+  "blocking": 188,
+  "productionBlocking": 14,
   "referenceBlocking": 174,
   "advisory": 48,
   "byRule": {
    "type-floor": 42,
    "contrast": 48,
-   "hit-target": 26,
+   "hit-target": 25,
    "unnamed-control": 19,
    "overlap": 23,
    "container-undersized": 6,
-   "viewport-escape": 19,
+   "viewport-escape": 17,
    "slack-beside-clipped-content": 2,
-   "content-clipped": 2,
+   "content-clipped": 3,
    "label-truncated": 3
   },
   "byRoute": {
@@ -47,7 +47,7 @@
    "legacy-exams": 1,
    "v2-projectHome": 0,
    "v2-projects": 4,
-   "v2-projectResearch": 4,
+   "v2-projectResearch": 2,
    "v2-segmentationPasteNext": 1,
    "v2-segmentationTransition": 3,
    "v2-segmentationLoading": 0,
@@ -2762,26 +2762,13 @@
    "app": "v2",
    "surface": "production",
    "frame": "390x844",
-   "ruleId": "viewport-escape",
-   "selector": "p.project-research__eyebrow",
-   "label": "Project search",
-   "escapePx": 24.3,
-   "left": 325,
-   "right": 414.3,
-   "decorative": false
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "surface": "production",
-   "frame": "390x844",
-   "ruleId": "viewport-escape",
-   "selector": "h2",
-   "label": "Find project knowledge",
-   "escapePx": 24.3,
-   "left": 325,
-   "right": 414.3,
-   "decorative": false
+   "ruleId": "content-clipped",
+   "selector": "main.project-research.project-research__desk",
+   "label": "Project searchFind project knowledgeNeeds re",
+   "axis": "y",
+   "hiddenPx": 112,
+   "boxPx": 69,
+   "contentPx": 181
   },
   {
    "route": "v2-projectResearch",
@@ -2790,6 +2777,7 @@
    "frame": "390x844",
    "ruleId": "type-drift",
    "offRampSizes": [
+    15.5,
     17,
     24
    ],
@@ -2801,22 +2789,11 @@
    "surface": "production",
    "frame": "390x844",
    "ruleId": "label-truncated",
-   "selector": "span.project-research__resultCount",
-   "label": "30 visible · All knowledge",
-   "cutPx": 163,
-   "shownPx": 32,
-   "neededPx": 195
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "surface": "production",
-   "frame": "390x844",
-   "ruleId": "hit-target",
-   "selector": "input",
-   "label": "Search project knowledge",
-   "boxPx": "4x25.2",
-   "minPx": 24
+   "selector": "small",
+   "label": "Arabic extract · Translation signal · Status",
+   "cutPx": 124,
+   "shownPx": 186,
+   "neededPx": 310
   },
   {
    "route": "v2-segmentationPasteNext",
