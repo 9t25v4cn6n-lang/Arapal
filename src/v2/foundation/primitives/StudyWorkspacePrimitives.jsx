@@ -1056,15 +1056,35 @@ const studyCss = `
     align-items: center;
     justify-content: space-between;
     gap: var(--study-space-16);
+    /* The title outranks the utilities. The earlier fix widened the header's
+       usable width, but the title and the utility row are still flex siblings
+       and the utilities are three icon buttons that cannot meaningfully shrink —
+       so every further narrowing came out of the title alone, which at 1100
+       reached "SOU…". A card header that has to use two rows is fine; a card
+       whose name is three letters and an ellipsis is not. */
+    flex-wrap: wrap;
+    row-gap: var(--study-space-8);
     border-bottom: 1px solid color-mix(in srgb, var(--card-line, var(--study-line-soft)) 70%, transparent);
     background: var(--card-bg, color-mix(in srgb, var(--study-accent-wash) 36%, var(--study-surface)));
   }
 
   .study-v2__cardTitleRow {
     min-width: 0;
+    /* The header wraps BEFORE the title loses a single character. A fixed basis
+       only moved the threshold — 12ch was enough for "Source text" to survive
+       and not enough for "Best in class translation", so one card read in full
+       and its neighbour still said "BEST IN CL…". Asking for the title's own
+       width makes the rule the intent: these labels are short and known, and a
+       two-row header costs nothing next to a card that cannot say its name. */
+    flex: 1 1 auto;
+    min-width: max-content;
     display: flex;
     align-items: center;
     gap: var(--study-space-12);
+  }
+
+  .study-v2__cardHeader .study-v2__actionRow {
+    flex: 0 0 auto;
   }
 
   .study-v2__badge {
@@ -1936,6 +1956,15 @@ const studyCss = `
 
   .study-v2__progressText {
     margin: 0;
+    /* Yields by clipping, never by wrapping. At 1100 the middle column narrowed
+       and "SEGMENT 1 OF 2" — uppercase, letter-spaced — stacked into a
+       four-line tower beside a 172px button that cannot shrink, which grew the
+       whole bar. Same rule as the top bar: the status readout is what gives way
+       when the row runs out of width, and it gives way quietly. */
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     color: var(--study-text-soft);
     font-size: var(--study-control-size);
     font-weight: 800;
