@@ -5,23 +5,31 @@
 Brief: `ARAPAL_PUBLIC_RELEASE_VISUAL_QA_PASS_2_SCREENSHOTS/ARAPAL_PUBLIC_RELEASE_VISUAL_QA_PASS_2.md`
 Ledger: `ARAPAL_QA_PASS_2_VERIFICATION_LEDGER.md`
 
-21 of 42 findings PASS, 3 PARTIAL, 18 not reached. Desktop production surface is
-at 0 violations across 1280/1366/1440/1920; behaviour suite 36 passed.
+36 of 42 findings PASS, 1 NOT REPRODUCED, 2 PARTIAL, 3 not reached. Desktop
+production surface is at 0 violations across 1280/1366/1440/1920; behaviour suite
+36 passed, 2 skipped.
 
-Next, in this order:
+Remaining, in this order:
 
-1. **Finding 9 — one support-module state architecture.** The largest remaining
-   item, and findings 10, 11, 32, 33 and 35 are its symptoms. Doing them
-   separately would produce five patches over the same missing abstraction.
-   It also owns new-defect #3: Guidance, Lexicography, Phrasing and Key Takeaways
-   still assert segment-specific fixture content in live mode, which is the same
-   untruth finding 12 was about.
-2. **Findings 3, 22, 23, 38 — Research header and ledger as one responsive model.**
-3. **Findings 4, 26, 27, 28, 39 — Source Intake containment, alignment and legibility.**
-4. **Finding 16 — Review & Refine recomposed around inspect → adjust → approve.**
-5. **Finding 2 remainder** — migrate the remaining user-content surfaces onto
+1. **Findings 4 and 27 — Source Intake containment and alignment.** One piece of
+   responsive work: the bottom AI action can be cut off on the right, the
+   PRESERVED SOURCE pill can clip, preserved content can escape its parent, and
+   the heading/editor bounds do not share a grid. Do them together.
+2. **Finding 28 — the segmentation settings popover covers the page title and
+   most of the source it is configuring.** Reconsider anchor, width, max-height.
+3. **Finding 16 — Review & Refine.** The largest remaining item and the only one
+   needing design rather than a fix: recompose around inspect → adjust → approve.
+   Underused lower viewport, status and actions stranded at viewport edges, an
+   unexplained icon-only vertical toolbar with unclear scope.
+4. **Finding 2 remainder** — migrate the remaining user-content surfaces onto
    `getScriptAwareRole`: Projects list, Research ledger, Study segment rail, Exams.
-6. **390×844.** 20 production violations, still unbuilt.
+   Project Home is done and verified with real Arabic titles.
+5. **Finding 31 remainder** — Study segment rail truncates Arabic correctly (RTL
+   side verified) but offers no tooltip or full-title access.
+6. **390×844.** 18 production violations, still unbuilt.
+
+New defect still open: `AI SEGMENT TEXT` has no accessible name despite visible
+text — `read_page` returns a bare button.
 
 ## 2026-08-18 · Public-release visual refinement pass — desktop
 

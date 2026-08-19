@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-19T11:50:20.038Z",
+ "generatedAt": "2026-08-19T12:49:48.673Z",
  "base": "http://localhost:5173",
  "routes": [
   "legacy-home",
@@ -25,8 +25,8 @@
   "390x844"
  ],
  "totals": {
-  "blocking": 191,
-  "productionBlocking": 19,
+  "blocking": 190,
+  "productionBlocking": 18,
   "referenceBlocking": 172,
   "advisory": 21,
   "byRule": {
@@ -39,7 +39,7 @@
    "viewport-escape": 19,
    "slack-beside-clipped-content": 4,
    "content-clipped": 2,
-   "label-truncated": 3
+   "label-truncated": 2
   },
   "byRoute": {
    "legacy-home": 27,
@@ -48,7 +48,7 @@
    "legacy-exams": 1,
    "v2-projectHome": 0,
    "v2-projects": 3,
-   "v2-projectResearch": 2,
+   "v2-projectResearch": 1,
    "v2-segmentationPasteNext": 3,
    "v2-segmentationTransition": 1,
    "v2-segmentationLoading": 0,
@@ -2465,21 +2465,9 @@
    "selector": "main.project-research.project-research__desk",
    "label": "Project searchFind project knowledgeNeeds re",
    "axis": "y",
-   "hiddenPx": 142,
-   "boxPx": 71,
+   "hiddenPx": 162,
+   "boxPx": 51,
    "contentPx": 213
-  },
-  {
-   "route": "v2-projectResearch",
-   "app": "v2",
-   "surface": "production",
-   "frame": "390x844",
-   "ruleId": "label-truncated",
-   "selector": "small",
-   "label": "Arabic extract · Translation signal · Status",
-   "cutPx": 124,
-   "shownPx": 186,
-   "neededPx": 310
   },
   {
    "route": "v2-segmentationPasteNext",

@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-08-19T11:50:20.038Z",
+ "generatedAt": "2026-08-19T12:49:48.673Z",
  "routes": 14,
  "frames": 5,
- "blocking": 191,
+ "blocking": 190,
  "byRule": {
   "type-floor": 42,
   "contrast": 48,
@@ -13,7 +13,7 @@
   "viewport-escape": 19,
   "slack-beside-clipped-content": 4,
   "content-clipped": 2,
-  "label-truncated": 3
+  "label-truncated": 2
  },
  "byRoute": {
   "legacy-home": 27,
@@ -22,7 +22,7 @@
   "legacy-exams": 1,
   "v2-projectHome": 0,
   "v2-projects": 3,
-  "v2-projectResearch": 2,
+  "v2-projectResearch": 1,
   "v2-segmentationPasteNext": 3,
   "v2-segmentationTransition": 1,
   "v2-segmentationLoading": 0,

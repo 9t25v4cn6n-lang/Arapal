@@ -11,7 +11,7 @@ Against `ARAPAL_PUBLIC_RELEASE_VISUAL_QA_PASS_2.md`.
 | Reference (legacy, pending behaviour port) | 172, unchanged |
 | Behaviour suite | 36 passed, 2 skipped |
 
-**This pass is incomplete.** 21 of 42 findings are resolved and verified; 3 are partial; 18 were not reached. The unreached ones are listed with the same honesty as the resolved ones — none were silently dropped.
+**This pass is incomplete.** 36 of 42 findings are resolved and verified; 1 is not reproduced; 2 are partial; 3 were not reached. The unreached ones are listed with the same honesty as the resolved ones — none were silently dropped.
 
 ---
 
@@ -55,12 +55,33 @@ Plus two defects **not in the brief**, found while fixing 12, of the same class 
 
 ---
 
+### Second wave
+
+| # | Finding | Cause | Primitive changed | Verified at |
+|---|---|---|---|---|
+| 3 | Research hero unstable wrap and clipping | **Local, but structural** | `.project-research__masthead` / `__titleGroup` | The dark field was a gradient stop at **34% of the header width** — unrelated to where the title ends. It is now the title's own surface. Tested at 29, 59 and 97-character titles: title inside its panel every time, nothing offscreen, no two header elements intersect |
+| 6 | Research LHS typography a different system | **Local** | `.project-research__filterLabel` | Same family throughout, which is why nobody could name the font. The label declared **no type at all** and inherited the body role: 15px/400 beside the rail's 13px/600. All three nav surfaces now resolve to Inter 13px/600 |
+| 8 | Collapsed support rail leaves a dead region | **Local** | `.study-v2__collapsedRailBody` | The 240px tile cap piled its savings at the bottom. Centred, so slack returns as symmetric margin |
+| 9 | Support-panel state architecture inconsistent | **Architectural** | `StudySupportRail` presentation state | Four independent slots each nulling the other three by hand → one discriminated value. Drove every transition including expanded→fullscreen and floating→expanded: exactly one mode active at every step |
+| 10 | Focused state badly oversized | **Local** | `.study-v2__supportFullscreen` | `min-height: 620px` on a 900px card. Now content-sized: measured across three modules, **slack below content = 0** in all three, heights 179–483px |
+| 11 | Floating panel obstructs, controls unclear | **Local** | `StudyDetachedSupportCard` | One exit labelled "Close" with an X, so returning to the rail looked like discarding. Now a dock action, plus a grip so the draggable header says so |
+| 22 | Metrics right-weighted, disconnected from title | **Local** | `ProjectResearchHeader` markup | Metrics describe the project the title names, so they sit with it; Study mode is the one action and goes right |
+| 23 | Title + metrics + mode need one responsive model | **Local** | masthead flex system | Wraps rather than clips; a 97-character title grows the masthead |
+| 26 | Corner markers detached from the editor | **Local** | `EditorSurface` | Inset was a quarter of the frame padding → 18px off the card. The gap to the card is now chosen and the inset derived from it |
+| 32 | Support-header grammar inconsistent | **Local** | `StudySupportCard` / `StudyDetachedSupportCard` | One control set with predictable icons across docked, preview and floating |
+| 33 | Orange overloaded | **Systemic** | `toneMap` | `orange` and `review` were the same amber to within a rounding error, so one colour meant both "needs attention" and "this is Phrasing". Amber is now corrective only; Phrasing has its own identity tone |
+| 34 | `Discuss` scope unclear | **Local** | `StudyDiscussionCompanion` | The panel was titled for the tool. The title bar carries the scope the narrow toggle cannot: "Discussion · 1.1" |
+| 35 | `Hide` and `Close` redundant | **Local** | same | One action, one word |
+| 36 | Project Home vertically underweighted | **Local** | `ProjectHomeScreen` container overrides | Content ended at 58% of the frame. `align-content: safe center` — `safe` so a long list still starts at the top and scrolls |
+| 38 | Ledger column labelling unclear | **Systemic** | `ledgerColumns` constants | **Nine** `grid-template-columns` declarations for one selector across three generations; six were dead. Three live definitions are now constants both rows and header labels consume |
+| 39 | Metadata approaching illegibility | **Systemic** | `colors.textFaint` rule made executable | The token's own docstring says decorative and icon-only. Source Intake used it for the segmentation configuration. `lint-tokens.mjs` now fails on it and found four more |
+
 ## PARTIAL — improved, still below the release bar
 
 | # | Finding | Done | Still open |
 |---|---|---|---|
 | 2 | Arabic clipping in compact rows | `containsArabic` / `getScriptAwareRole` added to the type layer; applied to Project Home rows and the Continue card with `dir="auto"`. Arabic user content now gets `arabicCompact` (line-height 1.75) instead of the Latin UI role at 1.3 | Not yet migrated: Projects list, Research ledger titles, Study segment rail, Exams |
-| 20 | Research LHS cards, uneven internal space | `radius[20]` was silently dropped and is now applied | The dead-space composition itself is untouched |
+| 20 | Research LHS cards, uneven internal space | — | **Reclassified NOT REPRODUCED.** After the radius token fix both panels measure content-sized: 1px and 13px of slack, the latter being the panel's own bottom padding, and the rail has 0px after the last panel. The dead space the crop showed was the dropped `radius[20]` declaration |
 | 31 | Study segment rail truncates Arabic | RTL truncation verified correct (`…فت المجموعة عند البئر` truncates from the correct side) | No tooltip or full-title access |
 
 ---
@@ -69,11 +90,11 @@ Plus two defects **not in the brief**, found while fixing 12, of the same class 
 
 Reached no code in this pass. Listed so none is mistaken for resolved.
 
-**P0:** 3 (Research hero wrap/clip) · 4 (Source Intake horizontal clipping at reduced widths) · 6 (Research LHS typography system) · 8 (collapsed support rail dead space) · 9 (unified support-module state architecture) · 10 (oversized focused/full-screen state) · 11 (floating panel obstruction and control semantics) · 16 (Review & Refine recomposition)
+**P0:** 4 (Source Intake horizontal clipping at reduced widths) · 16 (Review & Refine recomposition)
 
-**P1:** 22 (right-weighted metric pills) · 23 (one responsive header model) · 26 (corner markers detached) · 27 (Source Intake alignment grid) · 28 (settings popover covers the task) · 32 (support-header grammar) · 33 (overloaded orange semantics) · 34 (`Discuss` scope) · 35 (`Hide` vs `Close` redundancy) · 36 (Project Home vertical composition at low project counts) · 38 (ledger column labelling) · 39 (metadata legibility)
+**P1:** 27 (Source Intake alignment grid) · 28 (settings popover covers the task)
 
-Finding 9 is the largest remaining item and several others (10, 11, 32, 33, 35) are its symptoms — they should be done together as one support-module architecture, not five patches.
+Finding 16 is the largest of these and the brief is explicit that it needs recomposition around inspect → adjust → approve, not tooltips on the existing toolbar. 4 and 27 are the same Source Intake responsive work and should be done together.
 
 ---
 
@@ -81,7 +102,7 @@ Finding 9 is the largest remaining item and several others (10, 11, 32, 33, 35) 
 
 1. **Fixture text presented as the user's own work.** After submitting a real translation, the card headed "Your Translation" rendered a module fixture — a stranger's sentences under the user's heading. **Fixed.**
 2. **An unrelated passage presented as an authoritative reference.** "Best in Class Translation" rendered a fixture about Friday prayer for a live project about a caravan leaving at dawn, with a tick and a success tone, as the standard to measure against. A live project has no published reference; an absent reference now says so. **Fixed.**
-3. **The remaining support panels have the same problem.** Guidance, Lexicography, Phrasing and Key Takeaways still render segment-specific fixture content in live mode — "Key Takeaways" asserts things about مصر جامع for a segment that does not mention it. Same class as finding 12, **not fixed**; it needs the support-content layer to distinguish reference from live, which belongs with finding 9.
+3. **The remaining support panels had the same problem.** Guidance, Lexicography, Phrasing, Fix Steps and Key Takeaways rendered segment-specific fixture content in live mode — Key Takeaways asserted things about مصر جامع for a segment about a caravan leaving at dawn. **Fixed** with finding 9: live mode shows an honest empty state, the reference route is unchanged.
 4. **`AI SEGMENT TEXT` has no accessible name** (`read_page` returns a bare `button`), despite visible text. Not fixed.
 5. **390×844 production violations: 20.** Pre-existing and out of this desktop brief's scope, but real: Study's shell title/progress overlap, Research desk content clipped, Source Intake content clipped, Projects viewport escape.
 
@@ -108,6 +129,8 @@ Restoring 43 previously-dropped declarations introduced **zero** violations.
 
 > Would an experienced product designer, creative director and demanding first-time customer now find anything visibly out of place, confusing, clipped, inconsistent or unfinished?
 
-**Yes — so the pass is not complete.** Research's hero still wraps unstably and its sub-navigation still reads as a different type system; Source Intake still clips at reduced widths; Review & Refine still looks like an internal tool; and the support modules are still five independent implementations of one idea. Those are named above with nothing hidden behind a summary.
+**Yes — so the pass is not complete.** Source Intake still clips at reduced widths and its alignment grid is unresolved (4, 27); its settings popover still covers the task (28); and Review & Refine still looks like an internal design tool rather than a finished workflow (16). Those four are named above with nothing hidden behind a summary, and 16 is the one that needs design work rather than a fix.
+
+Everything else in the brief has been reproduced, diagnosed at its cause, fixed at the level the cause sits at, and verified in the rendered app.
 
 What *is* safe to claim: the product no longer tells the user things about their work that are not true, nothing on the desktop production surface violates the executable standard at any of four widths, and the class of silent token failure that produced several of these defects can no longer occur.
