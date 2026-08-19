@@ -1,5 +1,28 @@
 # Arapal — Current Stage and Next Milestones
 
+## QA Pass 2 — public release visual QA (in progress)
+
+Brief: `ARAPAL_PUBLIC_RELEASE_VISUAL_QA_PASS_2_SCREENSHOTS/ARAPAL_PUBLIC_RELEASE_VISUAL_QA_PASS_2.md`
+Ledger: `ARAPAL_QA_PASS_2_VERIFICATION_LEDGER.md`
+
+21 of 42 findings PASS, 3 PARTIAL, 18 not reached. Desktop production surface is
+at 0 violations across 1280/1366/1440/1920; behaviour suite 36 passed.
+
+Next, in this order:
+
+1. **Finding 9 — one support-module state architecture.** The largest remaining
+   item, and findings 10, 11, 32, 33 and 35 are its symptoms. Doing them
+   separately would produce five patches over the same missing abstraction.
+   It also owns new-defect #3: Guidance, Lexicography, Phrasing and Key Takeaways
+   still assert segment-specific fixture content in live mode, which is the same
+   untruth finding 12 was about.
+2. **Findings 3, 22, 23, 38 — Research header and ledger as one responsive model.**
+3. **Findings 4, 26, 27, 28, 39 — Source Intake containment, alignment and legibility.**
+4. **Finding 16 — Review & Refine recomposed around inspect → adjust → approve.**
+5. **Finding 2 remainder** — migrate the remaining user-content surfaces onto
+   `getScriptAwareRole`: Projects list, Research ledger, Study segment rail, Exams.
+6. **390×844.** 20 production violations, still unbuilt.
+
 ## 2026-08-18 · Public-release visual refinement pass — desktop
 
 Ran against `ARAPAL_PUBLIC_RELEASE_VISUAL_REFINEMENT_PASS(1).md`. Stage 0

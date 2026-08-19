@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-18T22:03:32.786Z",
+ "generatedAt": "2026-08-19T11:41:51.336Z",
  "base": "http://localhost:5173",
  "routes": [
   "legacy-home",
@@ -25,8 +25,8 @@
   "390x844"
  ],
  "totals": {
-  "blocking": 193,
-  "productionBlocking": 21,
+  "blocking": 191,
+  "productionBlocking": 19,
   "referenceBlocking": 172,
   "advisory": 21,
   "byRule": {
@@ -34,7 +34,7 @@
    "contrast": 48,
    "hit-target": 25,
    "unnamed-control": 19,
-   "overlap": 24,
+   "overlap": 22,
    "container-undersized": 7,
    "viewport-escape": 19,
    "slack-beside-clipped-content": 4,
@@ -54,7 +54,7 @@
    "v2-segmentationLoading": 0,
    "v2-segmentationReview": 1,
    "v2-segmentationSuccess": 0,
-   "v2-studyWorkspace": 9,
+   "v2-studyWorkspace": 7,
    "v2-exams": 2
   }
  },
@@ -2565,18 +2565,6 @@
    "ruleId": "overlap",
    "selector": "span.study-v2__shellProjectText",
    "label": "Al-Hidayah • The Book of Prayer",
-   "otherSelector": "span.study-v2__shellProgressLabel",
-   "otherLabel": "Segment 3 of 8",
-   "overlapPx": "53.2x13"
-  },
-  {
-   "route": "v2-studyWorkspace",
-   "app": "v2",
-   "surface": "production",
-   "frame": "390x844",
-   "ruleId": "overlap",
-   "selector": "span.study-v2__shellProjectText",
-   "label": "Al-Hidayah • The Book of Prayer",
    "otherSelector": "span.study-v2__shellFocusButtonText",
    "otherLabel": "Focus view",
    "overlapPx": "56.3x13"
@@ -2592,18 +2580,6 @@
    "otherSelector": "button.study-v2__shellFocusButton",
    "otherLabel": "Focus view",
    "overlapPx": "90.3x14.8"
-  },
-  {
-   "route": "v2-studyWorkspace",
-   "app": "v2",
-   "surface": "production",
-   "frame": "390x844",
-   "ruleId": "overlap",
-   "selector": "span.study-v2__shellProgressLabel",
-   "label": "Segment 3 of 8",
-   "otherSelector": "button.study-v2__shellFocusButton",
-   "otherLabel": "Focus view",
-   "overlapPx": "18.6x13"
   },
   {
    "route": "v2-studyWorkspace",
