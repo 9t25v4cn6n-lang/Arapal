@@ -42,8 +42,13 @@ export const segmentationFlowChrome = {
   secondaryButtonShadow: 'inset 0 1px 0 rgba(255,255,255,0.9), 0 10px 22px rgba(15,23,42,0.05)',
   bridgeBeam:
     'linear-gradient(90deg, rgba(37, 99, 235, 0.18) 0%, rgba(37, 99, 235, 0.36) 50%, rgba(37, 99, 235, 0.18) 100%)',
+  // OPAQUE. The rim used to land at 16% alpha, so a segment chip travelling
+  // behind the core showed straight through it and a deliberate pass-behind read
+  // as two things sharing the same pixels — the identical failure the
+  // `actionRegionWash` note below already records. A solid base under the
+  // gradient keeps the sheen and makes the occlusion real.
   bridgeCore:
-    'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.96) 0%, rgba(219, 234, 254, 0.92) 24%, rgba(37, 99, 235, 0.16) 100%)',
+    'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.98) 0%, rgba(219, 234, 254, 0.96) 24%, rgba(191, 214, 252, 1) 100%)',
   // Reaches full opacity early and stays there. The first version held 0.84 at
   // 24% and 0.98 at the base, which on an 84px bar left the top third sheer
   // enough for the segment cards passing underneath to show through the tally
@@ -101,11 +106,18 @@ export const segmentationFlowMotionStyles = `
     to { transform: rotate(360deg); }
   }
 
+  /* Travel is bounded by the bridge lane it happens in.
+     It used to reach 128px inside a 144-180px lane holding a ~112px chip, so
+     every chip left its own column and finished on top of the AI proposal
+     panel's own SEGMENT headings — a chip labelled "Segment 2" landing on the
+     card already labelled "Segment 2". The chip is produced AT the core and
+     fades there; the proposal panel is where it has already arrived, so flying
+     one onto the other was duplicating the message and colliding with it. */
   @keyframes arapal-seg-flow-chip-flight {
     0% { opacity: 0; transform: translate3d(0, 0, 0) scale(0.88); }
     18% { opacity: 1; }
-    55% { opacity: 1; transform: translate3d(66px, 0, 0) scale(1); }
-    100% { opacity: 0; transform: translate3d(128px, 0, 0) scale(0.92); }
+    58% { opacity: 1; transform: translate3d(44px, 0, 0) scale(1); }
+    100% { opacity: 0; transform: translate3d(72px, 0, 0) scale(0.94); }
   }
 
   @keyframes arapal-seg-flow-bridge-pulse {

@@ -578,75 +578,125 @@ function FlowPanel({ title, barStart = null, barEnd = null, children, style = {}
   )
 }
 
+/**
+ * The preserved source.
+ *
+ * This used to render the source as three separate cards even in the
+ * "preserved" panel, which said the opposite of what the panel is for: the whole
+ * promise is that the original is untouched and segmentation is a PROPOSAL
+ * derived from it. Showing it pre-split meant the animation demonstrated the
+ * source being transformed before the user had approved anything.
+ *
+ * It is now one continuous block, exactly as pasted. Where the proposal would
+ * cut, a dashed rule and a marker sit ON the text — an annotation over the
+ * original, which is what a proposed cut actually is. Nothing about the source
+ * itself moves.
+ */
 function SourceParagraphs({ withMarkers = false }) {
+  if (!withMarkers) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[16], padding: spacing[24] }}>
+        {sourceBlocks.map((block, index) => (
+          <div
+            key={block}
+            className="arapal-seg-flow__fadeUp"
+            style={{
+              padding: `${spacing[16]} ${spacing[20]}`,
+              borderRadius: radius[16],
+              border: `1px solid ${colors.lineSoft}`,
+              background: flowChrome.insetSurface,
+              minWidth: 0,
+              animationDelay: flowMetrics.segmentRevealDelays[index] ?? flowMetrics.segmentRevealDelays[0],
+            }}
+          >
+            <p dir="rtl" lang="ar" style={sourceParagraphStyle}>{block}</p>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ padding: spacing[24] }}>
+      <div
+        style={{
+          padding: `${spacing[16]} ${spacing[20]}`,
+          borderRadius: radius[16],
+          border: `1px solid ${colors.lineSoft}`,
+          background: flowChrome.insetSurface,
+          minWidth: 0,
+        }}
+      >
+        {sourceBlocks.map((block, index) => (
+          <div key={block} style={{ position: 'relative' }}>
+            {index > 0 ? <ProposedCutRule delayIndex={index - 1} /> : null}
+            <p
+              dir="rtl"
+              lang="ar"
+              className="arapal-seg-flow__fadeUp"
+              style={{
+                ...sourceParagraphStyle,
+                animationDelay: flowMetrics.segmentRevealDelays[index] ?? flowMetrics.segmentRevealDelays[0],
+              }}
+            >
+              {block}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const sourceParagraphStyle = {
+  margin: 0,
+  color: colors.textBody,
+  fontFamily: typography.bodyText.fontFamily,
+  fontSize: typography.bodyText.fontSize,
+  lineHeight: flowTypography.sourceLineHeight,
+  overflowWrap: 'anywhere',
+}
+
+/**
+ * Where the proposal would cut — drawn ON the preserved text as an annotation.
+ *
+ * Dashed, because a proposed boundary is not a boundary yet. The marker sits
+ * inside the panel rather than straddling its edge: at `right: -11px` it was
+ * half-clipped by the panel's own `overflow: hidden`, so the affordance that was
+ * meant to connect source to proposal rendered as a row of cut-off half-circles.
+ */
+function ProposedCutRule({ delayIndex }) {
   return (
     <div
+      aria-hidden="true"
       style={{
         position: 'relative',
         display: 'flex',
-        flexDirection: 'column',
-        gap: spacing[16],
-        padding: spacing[24],
+        alignItems: 'center',
+        gap: spacing[8],
+        margin: `${spacing[12]} 0`,
       }}
     >
-      {sourceBlocks.map((block, index) => (
-        <div
-          key={block}
-          className="arapal-seg-flow__fadeUp"
-          style={{
-            padding: `${spacing[16]} ${spacing[20]}`,
-            borderRadius: radius[16],
-            border: `1px solid ${colors.lineSoft}`,
-            background: flowChrome.insetSurface,
-            minWidth: 0,
-            animationDelay: flowMetrics.segmentRevealDelays[index] ?? flowMetrics.segmentRevealDelays[0],
-          }}
-        >
-          <p
-            dir="rtl"
-            lang="ar"
-            style={{
-              margin: 0,
-              color: colors.textBody,
-              fontFamily: typography.bodyText.fontFamily,
-              fontSize: typography.bodyText.fontSize,
-              lineHeight: flowTypography.sourceLineHeight,
-              overflowWrap: 'anywhere',
-            }}
-          >
-            {block}
-          </p>
-        </div>
-      ))}
-      {withMarkers ? (
-        <>
-          {['20%', '46%', '72%'].map((top, index) => (
-            <span
-              key={top}
-              aria-hidden="true"
-              className="arapal-seg-flow__markerPulse"
-              style={{
-                position: 'absolute',
-                top,
-                right: '-11px',
-                width: '22px',
-                height: '22px',
-                borderRadius: radius.pill,
-                border: `1px solid ${flowChrome.blueLineStrong}`,
-                background: flowChrome.whitePillSurface,
-                color: colors.accentStrong,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: flowChrome.markerShadow,
-                animationDelay: flowMetrics.markerPulseDelays[index] ?? flowMetrics.markerPulseDelays[0],
-              }}
-            >
-              <Sparkles size={12} strokeWidth={1.9} />
-            </span>
-          ))}
-        </>
-      ) : null}
+      <span style={{ flex: 1, borderTop: `1px dashed ${flowChrome.blueLineStrong}`, opacity: 0.7 }} />
+      <span
+        className="arapal-seg-flow__markerPulse"
+        style={{
+          width: '22px',
+          height: '22px',
+          flex: '0 0 auto',
+          borderRadius: radius.pill,
+          border: `1px solid ${flowChrome.blueLineStrong}`,
+          background: flowChrome.whitePillSurface,
+          color: colors.accentStrong,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: flowChrome.markerShadow,
+          animationDelay: flowMetrics.markerPulseDelays[delayIndex] ?? flowMetrics.markerPulseDelays[0],
+        }}
+      >
+        <Sparkles size={12} strokeWidth={1.9} />
+      </span>
     </div>
   )
 }
@@ -689,6 +739,12 @@ function TransitionBridge() {
       <div
         style={{
           position: 'relative',
+          // Above the chips, so a chip crossing the core is OCCLUDED by it.
+          // Chips and core were both centred in a 180px lane with a chip 112px
+          // wide, so at rest all three sat on top of the core and read as a
+          // collision rather than as motion. Passing behind is the same journey,
+          // drawn with depth.
+          zIndex: 2,
           width: '112px',
           height: '112px',
           borderRadius: radius.pill,
@@ -722,19 +778,22 @@ function TransitionBridge() {
         />
         <Sparkles size={26} strokeWidth={1.9} />
       </div>
-      {[
-        ['Segment 01', '28%'],
-        ['Segment 02', '44%'],
-        ['Segment 03', '60%'],
-      ].map(([label, top], index) => (
+      {/* Labelled from the SAME source as the proposal list, so the two can never
+          drift apart again. They previously read "Segment 01" here and
+          "Segment 1" three hundred pixels to the right, both on screen at once. */}
+      {transitionSegments.map((segment, index) => (
         <span
-          key={label}
+          key={segment.id}
           className="arapal-seg-flow__chipFlight"
           style={{
             position: 'absolute',
-            top,
-            left: spacing[20],
-            minWidth: '88px',
+            top: chipFlightTops[index] ?? chipFlightTops[0],
+            // `left` only. A running animation's transform beats an inline one,
+            // so a `translateX(-50%)` here was silently discarded the moment the
+            // flight started — the chip was never centred, it just began at the
+            // lane's midpoint and travelled right from there.
+            left: 0,
+            zIndex: 1,
             padding: `${spacing[8]} ${spacing[12]}`,
             borderRadius: radius.pill,
             border: `1px solid ${flowChrome.blueLineStrong}`,
@@ -746,12 +805,15 @@ function TransitionBridge() {
             ...flowType.meta,
           }}
         >
-          {label}
+          {segment.label}
         </span>
       ))}
     </div>
   )
 }
+
+/** Spread wide enough that the three chips never stack on each other in flight. */
+const chipFlightTops = ['22%', '46%', '70%']
 
 function TransitionSegmentList() {
   return (
@@ -793,16 +855,59 @@ function TransitionSegmentList() {
   )
 }
 
-export function SegmentationTransitionView({ shell }) {
-  const handleAlwaysSkipTransition = () => {
-    const preferences = readSegmentationFlowPreferences()
+/**
+ * "Always skip this animation" is a PREFERENCE, not an action.
+ *
+ * It rendered as a ghost button — uppercase, letter-spaced, no border, no
+ * surface — sitting beside a real Skip pill, so it read as explanatory text
+ * describing the pill rather than as its own control. Nothing about it said it
+ * could be clicked, and nothing said the choice would persist.
+ *
+ * A checkbox says both: it is obviously operable, and a checked box is
+ * obviously a setting that stays checked. Skip remains the one-time action.
+ */
+function AlwaysSkipPreference({ checked, onChange }) {
+  return (
+    <label
+      data-debug-item="always_skip_preference"
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: spacing[8],
+        minHeight: '44px',
+        padding: `0 ${spacing[4]}`,
+        color: colors.textSoft,
+        cursor: 'pointer',
+        ...flowType.operationalMeta,
+      }}
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+        style={{ width: '16px', height: '16px', accentColor: colors.accentBase, cursor: 'pointer' }}
+      />
+      <span>Always skip this animation</span>
+    </label>
+  )
+}
 
+export function SegmentationTransitionView({ shell }) {
+  const [alwaysSkip, setAlwaysSkip] = useState(
+    () => readSegmentationFlowPreferences().showSegmentationTransition === false,
+  )
+
+  const handleAlwaysSkipChange = (nextChecked) => {
+    setAlwaysSkip(nextChecked)
+    const preferences = readSegmentationFlowPreferences()
     saveSegmentationFlowPreferences({
       ...preferences,
-      showSegmentationTransition: false,
+      showSegmentationTransition: !nextChecked,
     })
+  }
 
-    shell.navigate(getPostSegmentationRoute(preferences))
+  const handleSkip = () => {
+    shell.navigate(getPostSegmentationRoute(readSegmentationFlowPreferences()))
   }
 
   return (
@@ -856,11 +961,9 @@ export function SegmentationTransitionView({ shell }) {
               paddingTop: spacing[4],
             }}
           >
-            <FlowSecondaryButton variant="pill" onClick={() => shell.navigate(getPostSegmentationRoute())} debugItem="skip_button">
+            <AlwaysSkipPreference checked={alwaysSkip} onChange={handleAlwaysSkipChange} />
+            <FlowSecondaryButton variant="pill" onClick={handleSkip} debugItem="skip_button">
               Skip
-            </FlowSecondaryButton>
-            <FlowSecondaryButton onClick={handleAlwaysSkipTransition} debugItem="always_skip_button">
-              Always skip this animation
             </FlowSecondaryButton>
           </div>
         </div>
@@ -869,7 +972,9 @@ export function SegmentationTransitionView({ shell }) {
           data-debug-item="transition_visual"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'minmax(0, 1.15fr) minmax(144px, 180px) minmax(320px, 0.95fr)',
+            // The bridge lane must hold a chip plus its whole flight. At 144px it
+            // could not, which is why the flight escaped into the next column.
+            gridTemplateColumns: 'minmax(0, 1.15fr) minmax(176px, 208px) minmax(320px, 0.95fr)',
             gap: spacing[32],
             alignItems: 'stretch',
           }}

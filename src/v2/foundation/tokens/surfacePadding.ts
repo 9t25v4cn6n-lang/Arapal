@@ -1,6 +1,22 @@
 import { spacing } from './spacing'
 
+/**
+ * ROW AND CARD RULE.
+ *
+ * A row's `min-height` is a FLOOR for the single-line case. It is not a
+ * substitute for block padding, and treating it as one is how the Project Home
+ * project row came to be `padding: 0 16px`: fine while the row was one line and
+ * `align-items: center` did the work, and flush against both edges the moment it
+ * stacked a title over metadata over a progress bar.
+ *
+ * So: every row declares block padding. `compactRow` is for a row whose content
+ * is a single line; `compactRowStacked` is for one that stacks. The stacked step
+ * matches the Advanced Options card, which is the composition this family is
+ * meant to resemble.
+ */
 export const surfacePadding = {
+  compactRow: `${spacing[12]} ${spacing[16]}`,
+  compactRowStacked: `${spacing[16]} ${spacing[16]}`,
   minimumReadableInset: spacing[16],
   compact: spacing[16],
   standard: spacing[20],

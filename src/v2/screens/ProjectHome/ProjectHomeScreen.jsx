@@ -1,7 +1,7 @@
 import { ArrowRight, BookOpen, ClipboardPaste, Plus, SplitSquareVertical, Sparkles } from 'lucide-react'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import PrimaryCTA from '../../foundation/primitives/PrimaryCTA'
-import { colors, radius, spacing, typography } from '../../foundation/tokens'
+import { colors, getScriptAwareRole, radius, spacing, surfacePadding, typography } from '../../foundation/tokens'
 import layoutContract from './ProjectHomeScreen.contract'
 import {
   actions, navigation, seedSampleProject, useProjects, useCurrentProject, useArapal, select,
@@ -193,6 +193,7 @@ function FirstRunState({ onAddSource, onUseSample }) {
 
 function ReturningState({ projects, current, progress, completedByProject, onResume, onNewSource }) {
   const next = progress?.nextSegment
+  const continueTitle = next ? `${next.ref} ${next.title}`.trim() : current?.title
   return (
     <div style={{ display: 'grid', gap: spacing[24], alignContent: 'start' }}>
       {current ? (
@@ -200,10 +201,10 @@ function ReturningState({ projects, current, progress, completedByProject, onRes
           <span style={{ ...eyebrow }}>Continue</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: spacing[16], flexWrap: 'wrap' }}>
             <div style={{ display: 'grid', gap: spacing[4], minWidth: 0, flex: '1 1 320px' }}>
-              <strong style={{ ...cardTitle }}>
-                {next ? `${next.ref} ${next.title}`.trim() : current.title}
+              <strong dir="auto" style={getCardTitleStyle(continueTitle)}>
+                {continueTitle}
               </strong>
-              <span style={{ ...meta }}>{current.title}</span>
+              <span dir="auto" style={{ ...meta }}>{current.title}</span>
             </div>
             <PrimaryCTA
               icon={<BookOpen size={16} strokeWidth={1.9} />}
@@ -245,7 +246,7 @@ function ReturningState({ projects, current, progress, completedByProject, onRes
                 style={{ ...row }}
               >
                 <span style={{ display: 'grid', gap: spacing[8], minWidth: 0, textAlign: 'left', flex: '1 1 auto' }}>
-                  <strong style={{ ...rowTitle }}>{project.title}</strong>
+                  <strong dir="auto" style={getRowTitleStyle(project.title)}>{project.title}</strong>
                   {/* What the row is for: telling projects apart. It used to read
                       "N segments", which is the one fact that does not help you
                       choose — every project has some. Progress and recency are
@@ -329,17 +330,26 @@ const meta = {
   color: colors.textSoft,
 }
 
-const cardTitle = {
-  ...typography.cardTitle,
-  color: colors.textStrong,
+/**
+ * A project's title is user content, so its script is not known at design time.
+ * Arabic in the Latin UI role at line-height 1.3 crops its own ascenders and
+ * diacritics — visible in the rendered row, invisible to any overflow check.
+ */
+function getRowTitleStyle(text) {
+  return {
+    ...getScriptAwareRole(text, { latin: typography.sectionTitle, arabic: typography.arabicCompact }),
+    color: colors.textStrong,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  }
 }
 
-const rowTitle = {
-  ...typography.sectionTitle,
-  color: colors.textStrong,
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
+function getCardTitleStyle(text) {
+  return {
+    ...getScriptAwareRole(text, { latin: typography.cardTitle, arabic: typography.arabicCompact }),
+    color: colors.textStrong,
+  }
 }
 
 const card = {
@@ -354,8 +364,11 @@ const row = {
   alignItems: 'center',
   justifyContent: 'space-between',
   gap: spacing[16],
+  // A floor for the single-line case, not the padding. This row stacks a title,
+  // a metadata line and a progress bar, and with `padding: 0 16px` the bar sat
+  // hard on the card's bottom border while the title touched the top.
   minHeight: '56px',
-  padding: `0 ${spacing[16]}`,
+  padding: surfacePadding.compactRowStacked,
   border: `1px solid ${colors.borderSoft}`,
   borderRadius: `${radius[12]}`,
   background: colors.surfacePrimary,
