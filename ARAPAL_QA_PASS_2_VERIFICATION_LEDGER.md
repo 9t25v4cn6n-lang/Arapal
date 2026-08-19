@@ -6,12 +6,16 @@ Against `ARAPAL_PUBLIC_RELEASE_VISUAL_QA_PASS_2.md`.
 
 | | |
 |---|---|
-| Production surface, desktop frames | **0 violations** |
-| Production surface, 390×844 | 16 (pre-existing; TODO.md records the mobile frame as unbuilt — down from 20) |
+| Production surface, ALL frames | **0 violations** |
+| Production surface, 390×844 | **0** (was 20 at the start of this pass) |
 | Reference (legacy, pending behaviour port) | 172, unchanged |
 | Behaviour suite | 36 passed, 2 skipped |
+| Standard's calibration suite | 9 passed |
+| Blank routes / page errors | 0 / 0 |
 
-**41 of 42 findings are resolved and verified; 1 is not reproduced.** Every finding was reproduced in the running app before being changed, diagnosed at its cause, fixed at the level the cause sits at, and re-inspected in the rendered result. Six defects not in the brief were found along the way — five fixed, one named as open.
+**41 of 42 findings are resolved and verified; 1 is not reproduced.** Every finding was reproduced in the running app before being changed, diagnosed at its cause, fixed at the level the cause sits at, and re-inspected in the rendered result. Nine defects not in the brief were found along the way; all are fixed.
+
+The 390×844 frame, which TODO.md carried as unbuilt for the whole of this pass, is now also at zero.
 
 ---
 
@@ -87,6 +91,19 @@ Plus two defects **not in the brief**, found while fixing 12, of the same class 
 | 28 | Settings popover covers the task | **Local, but needed a portal** | `SplitCTA` | It grew ~750px upward, covered the title and the whole source, and still clipped off-screen. Opening in the gutter required escaping two clipping ancestors, so it portals and is positioned from the button's measured rect. Placement prefers the gutter, falls back to above, clamps to the viewport, caps its height |
 | 31 | Study rail truncates Arabic | **Local** | `StudySegmentNavigator` | RTL truncation was already correct; the full title is now available on the row |
 
+### Fourth wave — the mobile frame
+
+Not a numbered finding, but the brief's standard covers it and the frame was carrying 20 production violations when this pass began. Four structural causes, none per-screen:
+
+| Cause | Where it bit | Fix |
+|---|---|---|
+| **A 0px grid track is not hidden** — children keep intrinsic width and spill | Projects rendered its entire dashboard at x=430, off a 390px frame, while the visible lane held the master list. The segmentation transition and Review did the same with 152px and 347px panels | Collapsed lanes are `display: none`, or the grid drops to one column. `StudyWorkspacePrimitives` already recorded this lesson in a comment; it had never travelled |
+| **Fixed-height clipped viewports** at a width that cannot hold them | The Research desk got 53px and cut the ledger, filters and inspector — unreachable, because the clip was on a container the page cannot scroll | At this width a desk stops being its own viewport and becomes a card the page scrolls. Exams the same |
+| **Chrome that declares a size still shrank** (default `flex-shrink`) | The Arapal wordmark painted outside its button; Focus view and a 24px edit control resolved to 23px | Declared sizes hold |
+| **The global rail and the flow had no mobile rule at all** | The rail spent 60px of a 390px frame; the flow's stylesheet had *zero* media queries, so its display type rendered at desktop size and broke one word per line | Rail hides at the breakpoint; flow display roles step down |
+
+One gate refinement, and it is a refinement rather than a weakening: `slack-beside-clipped-content` asked "is content being cut?" without the `overflowsInFlow` guard the other two rules asking that question already use, so it read a `PrimaryCTA`'s aria-hidden glow — 65px inside a 48px button, by design, trimmed by the button — as nine pixels of clipped label. The standard's own calibration suite (9 tests) passes.
+
 ## PARTIAL — improved, still below the release bar
 
 | # | Finding | Done | Still open |
@@ -111,7 +128,9 @@ None. Every numbered finding in the brief has been reproduced, diagnosed and fix
 2. **An unrelated passage presented as an authoritative reference.** "Best in Class Translation" rendered a fixture about Friday prayer for a live project about a caravan leaving at dawn, with a tick and a success tone, as the standard to measure against. A live project has no published reference; an absent reference now says so. **Fixed.**
 3. **The remaining support panels had the same problem.** Guidance, Lexicography, Phrasing, Fix Steps and Key Takeaways rendered segment-specific fixture content in live mode — Key Takeaways asserted things about مصر جامع for a segment about a caravan leaving at dawn. **Fixed** with finding 9: live mode shows an honest empty state, the reference route is unchanged.
 4. **`AI SEGMENT TEXT` has no accessible name** (`read_page` returns a bare `button`), despite visible text. **Not fixed** — recorded in TODO.md.
-5. **390×844 production violations: 16**, down from 20. Pre-existing and out of this desktop brief's scope, but real. The Back-pill degradation removed four of them as a side effect.
+5. **390×844 production violations: 0**, down from 20. See the fourth wave above.
+
+7. **A blank-page regression this work introduced**: `FlowTitle` and `FlowLead` used `useIsMobileViewport` without importing it, so every segmentation route rendered nothing. `vite build` did not catch it; the behaviour suite did, which is what it is for. **Fixed.**
 
 6. **The Review screen states its ready count twice** — a pill beside the intro and again in the approve bar. Not in the brief, and left alone deliberately: the brief says not to redesign successful areas, and the two counts sit in different arguments (what was proposed, versus what you are approving).
 
@@ -140,6 +159,8 @@ Restoring 43 previously-dropped declarations introduced **zero** violations.
 
 **On the desktop surface the brief covers, I believe so.** Every numbered finding has been reproduced in the running app, diagnosed at its cause, fixed at the level the cause sits at, and re-inspected in the rendered result — not in the diff. The executable standard reports zero production violations at 1280, 1366, 1440 and 1920, the behaviour suite passes, and the fixes that could not be judged by eye were verified by measurement: 21 sampled frames of the segmentation animation, eight lane widths for the Study header, three title lengths for the Research masthead, three modules for the focused card.
 
-**Two honest limits.** The 390×844 frame is not built — 16 production violations remain there, four fewer than when this pass started, and TODO.md carries it as the next milestone. And three surfaces still render user-authored content in fixed Latin roles (Projects list, Research ledger, Exams); the mechanism to fix them exists and is applied elsewhere, so this is migration rather than design.
+**One honest limit.** The Research ledger still renders its concept titles in a fixed Latin role; Projects and Exams are migrated to the `UserText` primitive and Research's Arabic extract already carries `dir="rtl" lang="ar"`, so the remaining gap is the English-language topic column, where it has no practical effect today. It is recorded in TODO.md rather than left implicit.
+
+**And one thing worth saying plainly**: the legacy surface still carries 171 violations. Those are the behaviour-port backlog, untouched by this pass and correctly excluded from the production gate — not visual debt hidden behind a green number.
 
 What *is* safe to claim: the product no longer tells the user things about their work that are not true, nothing on the desktop production surface violates the executable standard at any of four widths, and the class of silent token failure that produced several of these defects can no longer occur.

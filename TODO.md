@@ -1,37 +1,38 @@
 # Arapal — Current Stage and Next Milestones
 
-## QA Pass 2 — public release visual QA (complete for desktop)
+## QA Pass 2 — public release visual QA (complete)
 
 Brief: `ARAPAL_PUBLIC_RELEASE_VISUAL_QA_PASS_2_SCREENSHOTS/ARAPAL_PUBLIC_RELEASE_VISUAL_QA_PASS_2.md`
 Ledger: `ARAPAL_QA_PASS_2_VERIFICATION_LEDGER.md`
 
-41 of 42 findings PASS, 1 NOT REPRODUCED. Desktop production surface is at 0
-violations across 1280/1366/1440/1920; behaviour suite 36 passed, 2 skipped.
+41 of 42 findings PASS, 1 NOT REPRODUCED. Production surface is at **0 violations
+on every frame** — 1280, 1366, 1440, 1920 and 390×844. The mobile frame went from
+20 to 0 during this pass. Behaviour 36 passed; the standard's own calibration
+suite 9 passed; no blank routes, no page errors.
 
-Next milestones:
+Remaining, and none of it is release-blocking:
 
-1. **390×844.** 16 production violations, down from 20. The frame is still
-   unbuilt and it is now the largest single gap: Study's shell title and progress
-   overlap, Research's desk clips, Source Intake clips, Projects escapes the
-   viewport, Exams has slack beside clipped content.
-2. **Finish the script-aware migration.** `getScriptAwareRole` and
-   `containsArabic` exist and are applied to Project Home and the Study segment
-   rail. Projects list, Research ledger titles and Exams still render
-   user-authored content in fixed Latin roles.
-3. **`AI SEGMENT TEXT` has no accessible name** despite visible text —
-   `read_page` returns a bare button.
-4. **Legacy routes.** 172 reference violations, unchanged and untouched by this
-   pass; they are the behaviour-port backlog, not visual debt.
+1. **The legacy surface carries 171 violations.** Untouched by this pass and
+   correctly outside the production gate — it is the behaviour-port backlog, not
+   visual debt. This is the largest remaining body of work in the repo.
+2. **Research ledger concept titles** still use a fixed Latin role. Projects and
+   Exams are migrated to the `UserText` primitive and Research's Arabic extract
+   already carries `dir="rtl" lang="ar"`, so the gap is the English topic column
+   and has no practical effect today.
+3. **`AI SEGMENT TEXT` has no accessible name** despite visible text.
 
-Executable gates added this pass, both of which found real defects the moment
-they were written:
+Executable gates added this pass, each of which found real defects the moment it
+was written, and all of which run in the per-edit hook without a browser:
 
 - `scripts/qa/lint-tokens.mjs` — undeclared numeric token keys resolve to
   `undefined` and the browser drops the whole declaration. Caught 43 sites.
 - the same script's `textFaint`-on-text rule — the token's own docstring says
-  decorative and icon-only. Caught 5 sites.
+  decorative and icon-only. Caught 15 sites across two passes, the second after
+  the rule was widened to see ternaries.
 
-Both run in the per-edit QA hook and need no browser.
+One gate was refined rather than tightened: `slack-beside-clipped-content` now
+uses the `overflowsInFlow` guard its two sibling rules already used, so an
+aria-hidden decorative bleed is no longer reported as clipped content.
 
 ## 2026-08-18 · Public-release visual refinement pass — desktop
 
