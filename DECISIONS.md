@@ -405,3 +405,57 @@ Two honest routes, and they cost very different amounts:
 Either is defensible; shipping the current label is not, because it promises
 authoring and delivers review. Not changed, because renaming a product option on
 my own judgement is the kind of quiet scope decision `§5.4` warns against.
+
+## Undeclared token keys fail the build
+
+`spacing[10]` and its siblings were referenced in 43 places on the production
+surface without being declared. Each resolved to `undefined`, and a CSS
+declaration containing `undefined` is invalid — the browser drops the whole
+declaration rather than the one value. `padding: 0 undefined` is therefore not
+`padding: 0`; it is no padding rule at all, which is why status pills had text
+against their borders and several cards had no internal padding.
+
+Nothing errors, nothing logs, and no geometric check can see it: the element does
+not overflow, it is simply not the design. It is unreviewable by eye.
+
+`scripts/qa/lint-tokens.mjs` now fails on any numeric token key not declared in
+its token file, and runs in the per-edit QA hook where it needs no browser. The
+scales were completed to the steps the design was already using rather than the
+usages rewritten to the nearest declared step — the code's intent was correct and
+the token file was the thing that was wrong.
+
+## Hovering the navigation rail overlays; only pinning reserves width
+
+Expanding the rail used to take its width from the grid, so moving the pointer
+across it reflowed the entire workspace — and in Research it took 248px from the
+ledger, which is why a wide viewport still truncated columns.
+
+Width is now reserved only when the user has PINNED the rail, which is the one
+moment they have asked to trade canvas for labels. A hover overlays at the
+expanded width with the layout underneath unmoved.
+
+This is a single rule rather than a per-workspace judgement about how much width
+each screen can spare, and it resolves both the "nav too wide for deep
+workspaces" and "Research consumes too much width" findings together.
+
+Consequence worth remembering: an absolutely positioned grid child takes no
+auto-placement slot, so both body lanes must carry explicit `grid-column`.
+Without it the body field silently slides into the rail's 60px column.
+
+## The product does not state what it has not measured
+
+`data/evaluation.js` returns `score: null` deliberately. The Study support panel
+was ignoring that contract and rendering "Your Grade 8.4", an invented review
+date, a claimed scholar-facing rubric, and three paragraphs of specific praise
+about a translation nothing had read — on the same screen whose banner says
+meaning and accuracy are not evaluated.
+
+Any surface that reports on the user's work must render the evaluation
+contract, not decorate around it. Where there is no measurement there is no
+number; where there is no published reference the absence is stated. This
+extends to content that merely appears to be about the user's work: a fixture
+under a heading reading "Your Translation" is the same failure.
+
+Residual: the remaining support modules (Guidance, Lexicography, Phrasing, Key
+Takeaways) still assert segment-specific fixture content in live mode. Recorded
+in the QA Pass 2 ledger; belongs with the support-module architecture work.

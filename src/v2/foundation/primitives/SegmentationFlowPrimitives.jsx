@@ -18,6 +18,7 @@ import {
   Undo2,
 } from 'lucide-react'
 import BackPill from './BackPill'
+import useIsMobileViewport from './useIsMobileViewport'
 import { navigation } from '../../data'
 import DockableToolbar, {
   DockableToolbarActionGroup,
@@ -37,6 +38,7 @@ import {
   colors,
   elevation,
   motion,
+  compactControl,
   radius,
   segmentationFlowChrome as flowChrome,
   segmentationFlowSteps,
@@ -429,17 +431,47 @@ function FlowPage({ children, centered = false, padded = true }) {
   )
 }
 
+/**
+ * The flow's display type, stepped down at mobile.
+ *
+ * These roles are written inline, so a media query cannot reach them — which is
+ * why "Paste your source text." rendered at its full desktop size in a 390px
+ * frame and broke to one word per line, four lines tall, above a source editor
+ * squeezed to a strip. The flow's stylesheet had no breakpoint at all.
+ *
+ * Width is an input here rather than a competing declaration, the same way
+ * `useIsMobileViewport` is used everywhere else this file computes layout.
+ */
 function FlowTitle({ children, ceremonial = false, style = {} }) {
+  const isMobile = useIsMobileViewport()
+  const role = ceremonial ? flowType.ceremonialTitle : flowType.pageTitle
+
   return (
-    <h1 data-debug-item="flow_title" style={{ ...(ceremonial ? flowType.ceremonialTitle : flowType.pageTitle), ...style }}>
+    <h1
+      data-debug-item="flow_title"
+      style={{
+        ...role,
+        ...(isMobile ? { fontSize: typography.pageTitle.fontSize, lineHeight: 1.15 } : null),
+        ...style,
+      }}
+    >
       {children}
     </h1>
   )
 }
 
 function FlowLead({ children, style = {} }) {
+  const isMobile = useIsMobileViewport()
+
   return (
-    <p data-debug-item="flow_lead" style={{ ...flowType.lead, ...style }}>
+    <p
+      data-debug-item="flow_lead"
+      style={{
+        ...flowType.lead,
+        ...(isMobile ? { fontSize: typography.bodyText.fontSize, lineHeight: 1.5 } : null),
+        ...style,
+      }}
+    >
       {children}
     </p>
   )
@@ -578,75 +610,125 @@ function FlowPanel({ title, barStart = null, barEnd = null, children, style = {}
   )
 }
 
+/**
+ * The preserved source.
+ *
+ * This used to render the source as three separate cards even in the
+ * "preserved" panel, which said the opposite of what the panel is for: the whole
+ * promise is that the original is untouched and segmentation is a PROPOSAL
+ * derived from it. Showing it pre-split meant the animation demonstrated the
+ * source being transformed before the user had approved anything.
+ *
+ * It is now one continuous block, exactly as pasted. Where the proposal would
+ * cut, a dashed rule and a marker sit ON the text — an annotation over the
+ * original, which is what a proposed cut actually is. Nothing about the source
+ * itself moves.
+ */
 function SourceParagraphs({ withMarkers = false }) {
+  if (!withMarkers) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[16], padding: spacing[24] }}>
+        {sourceBlocks.map((block, index) => (
+          <div
+            key={block}
+            className="arapal-seg-flow__fadeUp"
+            style={{
+              padding: `${spacing[16]} ${spacing[20]}`,
+              borderRadius: radius[16],
+              border: `1px solid ${colors.lineSoft}`,
+              background: flowChrome.insetSurface,
+              minWidth: 0,
+              animationDelay: flowMetrics.segmentRevealDelays[index] ?? flowMetrics.segmentRevealDelays[0],
+            }}
+          >
+            <p dir="rtl" lang="ar" style={sourceParagraphStyle}>{block}</p>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ padding: spacing[24] }}>
+      <div
+        style={{
+          padding: `${spacing[16]} ${spacing[20]}`,
+          borderRadius: radius[16],
+          border: `1px solid ${colors.lineSoft}`,
+          background: flowChrome.insetSurface,
+          minWidth: 0,
+        }}
+      >
+        {sourceBlocks.map((block, index) => (
+          <div key={block} style={{ position: 'relative' }}>
+            {index > 0 ? <ProposedCutRule delayIndex={index - 1} /> : null}
+            <p
+              dir="rtl"
+              lang="ar"
+              className="arapal-seg-flow__fadeUp"
+              style={{
+                ...sourceParagraphStyle,
+                animationDelay: flowMetrics.segmentRevealDelays[index] ?? flowMetrics.segmentRevealDelays[0],
+              }}
+            >
+              {block}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const sourceParagraphStyle = {
+  margin: 0,
+  color: colors.textBody,
+  fontFamily: typography.bodyText.fontFamily,
+  fontSize: typography.bodyText.fontSize,
+  lineHeight: flowTypography.sourceLineHeight,
+  overflowWrap: 'anywhere',
+}
+
+/**
+ * Where the proposal would cut — drawn ON the preserved text as an annotation.
+ *
+ * Dashed, because a proposed boundary is not a boundary yet. The marker sits
+ * inside the panel rather than straddling its edge: at `right: -11px` it was
+ * half-clipped by the panel's own `overflow: hidden`, so the affordance that was
+ * meant to connect source to proposal rendered as a row of cut-off half-circles.
+ */
+function ProposedCutRule({ delayIndex }) {
   return (
     <div
+      aria-hidden="true"
       style={{
         position: 'relative',
         display: 'flex',
-        flexDirection: 'column',
-        gap: spacing[16],
-        padding: spacing[24],
+        alignItems: 'center',
+        gap: spacing[8],
+        margin: `${spacing[12]} 0`,
       }}
     >
-      {sourceBlocks.map((block, index) => (
-        <div
-          key={block}
-          className="arapal-seg-flow__fadeUp"
-          style={{
-            padding: `${spacing[16]} ${spacing[20]}`,
-            borderRadius: radius[16],
-            border: `1px solid ${colors.lineSoft}`,
-            background: flowChrome.insetSurface,
-            minWidth: 0,
-            animationDelay: flowMetrics.segmentRevealDelays[index] ?? flowMetrics.segmentRevealDelays[0],
-          }}
-        >
-          <p
-            dir="rtl"
-            lang="ar"
-            style={{
-              margin: 0,
-              color: colors.textBody,
-              fontFamily: typography.bodyText.fontFamily,
-              fontSize: typography.bodyText.fontSize,
-              lineHeight: flowTypography.sourceLineHeight,
-              overflowWrap: 'anywhere',
-            }}
-          >
-            {block}
-          </p>
-        </div>
-      ))}
-      {withMarkers ? (
-        <>
-          {['20%', '46%', '72%'].map((top, index) => (
-            <span
-              key={top}
-              aria-hidden="true"
-              className="arapal-seg-flow__markerPulse"
-              style={{
-                position: 'absolute',
-                top,
-                right: '-11px',
-                width: '22px',
-                height: '22px',
-                borderRadius: radius.pill,
-                border: `1px solid ${flowChrome.blueLineStrong}`,
-                background: flowChrome.whitePillSurface,
-                color: colors.accentStrong,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: flowChrome.markerShadow,
-                animationDelay: flowMetrics.markerPulseDelays[index] ?? flowMetrics.markerPulseDelays[0],
-              }}
-            >
-              <Sparkles size={12} strokeWidth={1.9} />
-            </span>
-          ))}
-        </>
-      ) : null}
+      <span style={{ flex: 1, borderTop: `1px dashed ${flowChrome.blueLineStrong}`, opacity: 0.7 }} />
+      <span
+        className="arapal-seg-flow__markerPulse"
+        style={{
+          width: '22px',
+          height: '22px',
+          flex: '0 0 auto',
+          borderRadius: radius.pill,
+          border: `1px solid ${flowChrome.blueLineStrong}`,
+          background: flowChrome.whitePillSurface,
+          color: colors.accentStrong,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: flowChrome.markerShadow,
+          animationDelay: flowMetrics.markerPulseDelays[delayIndex] ?? flowMetrics.markerPulseDelays[0],
+        }}
+      >
+        <Sparkles size={12} strokeWidth={1.9} />
+      </span>
     </div>
   )
 }
@@ -689,6 +771,12 @@ function TransitionBridge() {
       <div
         style={{
           position: 'relative',
+          // Above the chips, so a chip crossing the core is OCCLUDED by it.
+          // Chips and core were both centred in a 180px lane with a chip 112px
+          // wide, so at rest all three sat on top of the core and read as a
+          // collision rather than as motion. Passing behind is the same journey,
+          // drawn with depth.
+          zIndex: 2,
           width: '112px',
           height: '112px',
           borderRadius: radius.pill,
@@ -722,19 +810,22 @@ function TransitionBridge() {
         />
         <Sparkles size={26} strokeWidth={1.9} />
       </div>
-      {[
-        ['Segment 01', '28%'],
-        ['Segment 02', '44%'],
-        ['Segment 03', '60%'],
-      ].map(([label, top], index) => (
+      {/* Labelled from the SAME source as the proposal list, so the two can never
+          drift apart again. They previously read "Segment 01" here and
+          "Segment 1" three hundred pixels to the right, both on screen at once. */}
+      {transitionSegments.map((segment, index) => (
         <span
-          key={label}
+          key={segment.id}
           className="arapal-seg-flow__chipFlight"
           style={{
             position: 'absolute',
-            top,
-            left: spacing[20],
-            minWidth: '88px',
+            top: chipFlightTops[index] ?? chipFlightTops[0],
+            // `left` only. A running animation's transform beats an inline one,
+            // so a `translateX(-50%)` here was silently discarded the moment the
+            // flight started — the chip was never centred, it just began at the
+            // lane's midpoint and travelled right from there.
+            left: 0,
+            zIndex: 1,
             padding: `${spacing[8]} ${spacing[12]}`,
             borderRadius: radius.pill,
             border: `1px solid ${flowChrome.blueLineStrong}`,
@@ -746,12 +837,15 @@ function TransitionBridge() {
             ...flowType.meta,
           }}
         >
-          {label}
+          {segment.label}
         </span>
       ))}
     </div>
   )
 }
+
+/** Spread wide enough that the three chips never stack on each other in flight. */
+const chipFlightTops = ['22%', '46%', '70%']
 
 function TransitionSegmentList() {
   return (
@@ -793,16 +887,71 @@ function TransitionSegmentList() {
   )
 }
 
-export function SegmentationTransitionView({ shell }) {
-  const handleAlwaysSkipTransition = () => {
-    const preferences = readSegmentationFlowPreferences()
+/**
+ * "Always skip this animation" is a PREFERENCE, not an action.
+ *
+ * It rendered as a ghost button — uppercase, letter-spaced, no border, no
+ * surface — sitting beside a real Skip pill, so it read as explanatory text
+ * describing the pill rather than as its own control. Nothing about it said it
+ * could be clicked, and nothing said the choice would persist.
+ *
+ * A checkbox says both: it is obviously operable, and a checked box is
+ * obviously a setting that stays checked. Skip remains the one-time action.
+ */
+function AlwaysSkipPreference({ checked, onChange }) {
+  return (
+    <label
+      data-debug-item="always_skip_preference"
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: spacing[8],
+        minHeight: '44px',
+        padding: `0 ${spacing[4]}`,
+        color: colors.textSoft,
+        cursor: 'pointer',
+        ...flowType.operationalMeta,
+      }}
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+        // Its own accessible name and its own hit area. Wrapping it in a <label>
+        // gives it neither as far as the visual standard is concerned: the rule
+        // measures the interactive element, and a 16px box inside a 44px label
+        // is still a 16px target.
+        aria-label="Always skip this animation"
+        style={{
+          width: `${compactControl.xs.heightPx}px`,
+          height: `${compactControl.xs.heightPx}px`,
+          flex: '0 0 auto',
+          accentColor: colors.accentBase,
+          cursor: 'pointer',
+        }}
+      />
+      <span>Always skip this animation</span>
+    </label>
+  )
+}
 
+export function SegmentationTransitionView({ shell }) {
+  const isMobile = useIsMobileViewport()
+  const [alwaysSkip, setAlwaysSkip] = useState(
+    () => readSegmentationFlowPreferences().showSegmentationTransition === false,
+  )
+
+  const handleAlwaysSkipChange = (nextChecked) => {
+    setAlwaysSkip(nextChecked)
+    const preferences = readSegmentationFlowPreferences()
     saveSegmentationFlowPreferences({
       ...preferences,
-      showSegmentationTransition: false,
+      showSegmentationTransition: !nextChecked,
     })
+  }
 
-    shell.navigate(getPostSegmentationRoute(preferences))
+  const handleSkip = () => {
+    shell.navigate(getPostSegmentationRoute(readSegmentationFlowPreferences()))
   }
 
   return (
@@ -856,11 +1005,9 @@ export function SegmentationTransitionView({ shell }) {
               paddingTop: spacing[4],
             }}
           >
-            <FlowSecondaryButton variant="pill" onClick={() => shell.navigate(getPostSegmentationRoute())} debugItem="skip_button">
+            <AlwaysSkipPreference checked={alwaysSkip} onChange={handleAlwaysSkipChange} />
+            <FlowSecondaryButton variant="pill" onClick={handleSkip} debugItem="skip_button">
               Skip
-            </FlowSecondaryButton>
-            <FlowSecondaryButton onClick={handleAlwaysSkipTransition} debugItem="always_skip_button">
-              Always skip this animation
             </FlowSecondaryButton>
           </div>
         </div>
@@ -869,7 +1016,17 @@ export function SegmentationTransitionView({ shell }) {
           data-debug-item="transition_visual"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'minmax(0, 1.15fr) minmax(144px, 180px) minmax(320px, 0.95fr)',
+            // The bridge lane must hold a chip plus its whole flight. At 144px it
+            // could not, which is why the flight escaped into the next column.
+            //
+            // At mobile the three lanes cannot coexist at all: 176 + 320 of hard
+            // minimums against a 390px frame squeezed the preserved-source panel
+            // to a 0px track whose content kept its 152px and spilled. Source
+            // over proposal, and the bridge — which only means anything as a
+            // journey ACROSS — steps out.
+            gridTemplateColumns: isMobile
+              ? 'minmax(0, 1fr)'
+              : 'minmax(0, 1.15fr) minmax(176px, 208px) minmax(320px, 0.95fr)',
             gap: spacing[32],
             alignItems: 'stretch',
           }}
@@ -877,7 +1034,7 @@ export function SegmentationTransitionView({ shell }) {
           <FlowPanel title="Preserved source" barStart={<WindowDots />} debugItem="preserved_source_panel">
             <SourceParagraphs withMarkers />
           </FlowPanel>
-          <TransitionBridge />
+          {isMobile ? null : <TransitionBridge />}
           <FlowPanel
             title="AI proposal"
             barEnd={<Sparkles size={16} strokeWidth={1.9} color={colors.accentBase} />}
@@ -1179,6 +1336,12 @@ function GroupTitleInput({ group, stale = false, onChange }) {
               setEditing(true)
             }}
             style={{
+              // A hit target does not shrink. As a flex item with the default
+              // shrink factor this 24px control resolved to 23px in a tight row
+              // — one pixel under the floor, which is the whole difference
+              // between a target and a near miss. Third instance of this in the
+              // pass: the identity wordmark and Focus view both did it too.
+              flex: '0 0 auto',
               width: spacing[24],
               height: spacing[24],
               border: `1px solid ${flowChrome.panelLine}`,
@@ -1495,7 +1658,11 @@ export function SegmentationReviewSelectedToolbar({
     : selectionCount === 1
       ? `Editing ${selectedSegment.label}`
       : `Editing ${selectedDisplayRange} · ${selectionCount} segments`
-  const toolbarOrientation = isFloating ? 'horizontal' : 'vertical'
+  // Horizontal in both states. A vertical rail of nine unlabelled glyphs is the
+  // shape that forced this palette out to the viewport edge in the first place;
+  // laid along the axis the layout actually has spare, it fits above the work
+  // and every action can carry its own name.
+  const toolbarOrientation = 'horizontal'
 
   return (
     <DockableToolbar
@@ -1540,6 +1707,7 @@ export function SegmentationReviewSelectedToolbar({
     >
       <DockableToolbarActionGroup orientation={toolbarOrientation}>
         <DockableToolbarIconButton
+          showLabel
           label="Undo"
           icon={<Undo2 size={15} strokeWidth={1.9} />}
           onClick={onUndo}
@@ -1547,6 +1715,7 @@ export function SegmentationReviewSelectedToolbar({
           debugItem="undo_button"
         />
         <DockableToolbarIconButton
+          showLabel
           label="Redo"
           icon={<Redo2 size={15} strokeWidth={1.9} />}
           onClick={onRedo}
@@ -1557,6 +1726,7 @@ export function SegmentationReviewSelectedToolbar({
       <DockableToolbarDivider orientation={toolbarOrientation} />
       <DockableToolbarActionGroup orientation={toolbarOrientation}>
         <DockableToolbarIconButton
+          showLabel
           label="Split"
           icon={<Scissors size={15} strokeWidth={1.9} />}
           onClick={onSplitSelected}
@@ -1565,6 +1735,7 @@ export function SegmentationReviewSelectedToolbar({
           debugItem="split_segment_button"
         />
         <DockableToolbarIconButton
+          showLabel
           label="Merge selected"
           icon={<Combine size={15} strokeWidth={1.9} />}
           onClick={onMergeSelected}
@@ -1572,6 +1743,7 @@ export function SegmentationReviewSelectedToolbar({
           debugItem="merge_selected_button"
         />
         <DockableToolbarIconButton
+          showLabel
           label="Merge next"
           icon={<Merge size={15} strokeWidth={1.9} />}
           onClick={onMergeSelectedWithNext}
@@ -1582,6 +1754,7 @@ export function SegmentationReviewSelectedToolbar({
       <DockableToolbarDivider orientation={toolbarOrientation} />
       <DockableToolbarActionGroup orientation={toolbarOrientation}>
         <DockableToolbarIconButton
+          showLabel
           label="Adjust boundary"
           icon={<MoveHorizontal size={15} strokeWidth={1.9} />}
           onClick={onAdjustBoundary}
@@ -1590,6 +1763,7 @@ export function SegmentationReviewSelectedToolbar({
           debugItem="boundary_segment_button"
         />
         <DockableToolbarIconButton
+          showLabel
           label="Mark ready"
           icon={<Check size={15} strokeWidth={2} />}
           onClick={onMarkSelectedReady}
@@ -1597,6 +1771,7 @@ export function SegmentationReviewSelectedToolbar({
           debugItem="mark_ready_button"
         />
         <DockableToolbarIconButton
+          showLabel
           label={advancedEditMode ? 'Close editor' : 'Advanced edit'}
           icon={<PencilLine size={15} strokeWidth={1.9} />}
           onClick={onToggleAdvancedEdit}
@@ -1608,6 +1783,7 @@ export function SegmentationReviewSelectedToolbar({
       <DockableToolbarDivider orientation={toolbarOrientation} />
       <DockableToolbarActionGroup orientation={toolbarOrientation}>
         <DockableToolbarMenu
+          showLabel
           label="Remove"
           icon={<Trash2 size={15} strokeWidth={1.9} />}
           open={removeMenuOpen}
@@ -1993,7 +2169,9 @@ export function ReviewOutput({
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: spacing[8],
-                    color: colors.textFaint,
+                    // Carries a label, not just a chevron, so it takes the text
+                    // tone rather than the icon one.
+                    color: colors.textSoft,
                     cursor: 'pointer',
                   }}
                 >
@@ -2161,8 +2339,13 @@ export function SegmentationReviewActionRegion({
         background: flowChrome.actionRegionWash,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: spacing[20],
+        // One statement, not two corners. `space-between` on a full-width bar put
+        // "2 ready · 2 segments · source preserved" and "Approve & continue" some
+        // 830px apart at 1440 — the state and the decision it justifies, filed at
+        // opposite ends of the screen. They belong beside each other, because
+        // reading one is how you decide about the other.
+        justifyContent: 'flex-end',
+        gap: spacing[24],
         flexWrap: 'wrap',
       }}
     >

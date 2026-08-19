@@ -201,9 +201,22 @@ test.describe('core study loop', () => {
     // suite record this state as unreachable for weeks.
     await page.getByRole('button', { name: /discuss this segment/i }).click()
     await page.waitForTimeout(600)
-    expect(await body(page)).toMatch(/study companion/i)
+    // The panel is titled for the SEGMENT it belongs to, not for the tool. It
+    // used to read "Study Companion", which names the feature and never says the
+    // conversation is attached to the segment in front of you — the scope the
+    // narrow "Discuss" toggle has no room to carry.
+    expect(await body(page)).toMatch(/discussion/i)
 
-    await page.getByRole('button', { name: /hide the discussion/i }).click()
+    // One action, one word. The panel offered "Close" while the editor's toggle
+    // offered "Hide", which read as two different capabilities for one state.
+    // Not a count — which composer is mounted varies — but no control may offer
+    // a second verb for the same job.
+    await expect(
+      page.getByRole('button', { name: /close study companion/i }),
+      'dismissing the discussion must not have two different names',
+    ).toHaveCount(0)
+
+    await page.getByRole('button', { name: /hide the discussion/i }).first().click()
     await page.waitForTimeout(600)
     expect(await body(page), 'the companion must be dismissible, not a one-way door')
       .not.toMatch(/start the conversation/i)

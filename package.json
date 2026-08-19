@@ -25,7 +25,8 @@
     "vr:accept": "playwright test tests/visual/visual-regression.spec.js --update-snapshots",
     "test:behaviour": "playwright test tests/behaviour",
     "test:data": "node --test tests/data/*.test.mjs",
-    "qa:lint-css": "node scripts/qa/lint-template-css.mjs"
+    "qa:lint-css": "node scripts/qa/lint-template-css.mjs",
+    "qa:lint-tokens": "node scripts/qa/lint-tokens.mjs"
   },
   "dependencies": {
     "@fontsource/amiri": "^5.3.0",

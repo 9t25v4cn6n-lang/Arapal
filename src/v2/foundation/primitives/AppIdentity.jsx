@@ -116,6 +116,13 @@ export default function AppIdentity({ onClick, wordmark = 'Arapal' }) {
         display: 'inline-flex',
         alignItems: 'center',
         gap: spacing[12],
+        // The product's name does not shrink. As a shrinkable flex item the
+        // button's BOX narrowed while the nowrap wordmark inside it did not, so
+        // at 1100px the text painted 25px outside its own bounds and sat on top
+        // of the screen's Back pill. The deliberate degradation for narrow
+        // frames is the media query below, which drops the wordmark entirely —
+        // not a silently overflowing one.
+        flex: '0 0 auto',
         minWidth: 0,
         // The identity is chrome that happens to be clickable, not a button that
         // happens to be the logo, so it carries no surface of its own.
@@ -134,6 +141,9 @@ export default function AppIdentity({ onClick, wordmark = 'Arapal' }) {
           ...typography.productIdentity,
           color: colors.textStrong,
           whiteSpace: 'nowrap',
+          // Belt and braces: nowrap text can never paint outside its own box,
+          // whatever a future layout does to the button around it.
+          overflow: 'hidden',
         }}
       >
         {wordmark}

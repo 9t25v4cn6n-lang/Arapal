@@ -12,12 +12,13 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  ChevronsLeft,
   PanelLeftClose,
   PanelLeftOpen,
   PanelRightClose,
   PanelRightOpen,
+  PictureInPicture2,
   Copy,
+  GripVertical,
   Info,
   Italic,
   Maximize2,
@@ -26,14 +27,13 @@ import {
   ScrollText,
   Send,
   Sparkles,
-  Pin,
   Plus,
   Tag,
   X,
 } from 'lucide-react'
 import IconActionButton from './IconActionButton'
 import PrimaryCTA from './PrimaryCTA'
-import { colors, elevation, motion, radius, spacing, typography } from '../tokens'
+import { colors, containsArabic, elevation, motion, radius, spacing, typography } from '../tokens'
 
 // Resolved once at module scope, not per render: the submit handler already
 // accepts either modifier, so the label must name the one this machine uses.
@@ -202,9 +202,7 @@ const studyCss = `
      intrinsic widths and spill out of it, which is how the support rail's header
      and body escaped the frame. Six findings that read as separate escapes were
      one missing declaration. */
-  @media (max-width: 560px) {
-    .study-v2__railPanel { display: none; }
-  }
+
 
   .study-v2__supportPanel {
     border-right: 0;
@@ -325,6 +323,12 @@ const studyCss = `
     flex-direction: column;
     gap: var(--study-space-8);
     align-items: stretch;
+    /* The 240px cap on each tile stops three modules becoming three 300px slabs
+       on a tall frame — but it left whatever it saved piled at the BOTTOM, so a
+       deliberate cap read as a dead region under the last tile. Centring gives
+       the leftover back as symmetric margin: the group still occupies the rail,
+       and the slack is composition rather than remainder. */
+    justify-content: center;
   }
 
   .study-v2__collapsedSupportLabel {
@@ -603,7 +607,9 @@ const studyCss = `
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: var(--study-space-8);
+    /* Status and actions are a deliberate pair with deliberate air between
+       them, not two things that happened to end up adjacent. */
+    gap: var(--study-space-16);
   }
 
   .study-v2__shellRightInfo {
@@ -645,20 +651,31 @@ const studyCss = `
     padding: 0 var(--study-space-6, 6px);
   }
 
+  /* Sized by its content and anchored to the actions beside it.
+     It used to be a fixed 320px block that centred its own label inside itself,
+     inside a cluster justified to flex-end — so "Segment 1 of 2" landed wherever
+     160px of empty reserved width happened to put it, which read as an arbitrary
+     position around four-fifths of the bar. And because it could not shrink
+     below its content, at narrower widths it slid under Focus view instead of
+     giving way. Its position is now a stable function of the actions it belongs
+     with, and it is the thing that yields when the lane runs out. */
   .study-v2__shellProgress {
-    width: 320px;
-    max-width: 32vw;
+    flex: 0 1 auto;
+    min-width: 0;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
     gap: var(--study-space-6, 6px);
     padding: 0;
     color: var(--study-text-body);
     white-space: nowrap;
+    overflow: hidden;
   }
 
   .study-v2__shellProgressLabel {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
     color: var(--study-text-body);
     font-size: var(--study-control-size);
     line-height: var(--study-control-line);
@@ -668,6 +685,9 @@ const studyCss = `
   }
 
   .study-v2__shellFocusButton {
+    /* Never the thing that shrinks. The lane's only real action outranks a
+       status readout when width runs out. */
+    flex: 0 0 auto;
     min-height: 36px;
     border: 1px solid color-mix(in srgb, var(--study-line-soft) 74%, transparent);
     border-radius: var(--study-radius-14, 14px);
@@ -1034,15 +1054,35 @@ const studyCss = `
     align-items: center;
     justify-content: space-between;
     gap: var(--study-space-16);
+    /* The title outranks the utilities. The earlier fix widened the header's
+       usable width, but the title and the utility row are still flex siblings
+       and the utilities are three icon buttons that cannot meaningfully shrink —
+       so every further narrowing came out of the title alone, which at 1100
+       reached "SOU…". A card header that has to use two rows is fine; a card
+       whose name is three letters and an ellipsis is not. */
+    flex-wrap: wrap;
+    row-gap: var(--study-space-8);
     border-bottom: 1px solid color-mix(in srgb, var(--card-line, var(--study-line-soft)) 70%, transparent);
     background: var(--card-bg, color-mix(in srgb, var(--study-accent-wash) 36%, var(--study-surface)));
   }
 
   .study-v2__cardTitleRow {
     min-width: 0;
+    /* The header wraps BEFORE the title loses a single character. A fixed basis
+       only moved the threshold — 12ch was enough for "Source text" to survive
+       and not enough for "Best in class translation", so one card read in full
+       and its neighbour still said "BEST IN CL…". Asking for the title's own
+       width makes the rule the intent: these labels are short and known, and a
+       two-row header costs nothing next to a card that cannot say its name. */
+    flex: 1 1 auto;
+    min-width: max-content;
     display: flex;
     align-items: center;
     gap: var(--study-space-12);
+  }
+
+  .study-v2__cardHeader .study-v2__actionRow {
+    flex: 0 0 auto;
   }
 
   .study-v2__badge {
@@ -1437,6 +1477,11 @@ const studyCss = `
   .study-v2__contextDismiss:hover { border-color: ${colors.accentSoft}; color: ${colors.accentStrong}; }
   .study-v2__contextDismiss:focus-visible { outline: 2px solid ${colors.accentBase}; outline-offset: 2px; }
 
+  .study-v2__referenceAbsent {
+    color: var(--study-text-soft);
+    font-style: italic;
+  }
+
   /* The evaluation stub must announce itself wherever its output is shown. */
   .study-v2__sampleNotice {
     margin: 0;
@@ -1586,6 +1631,15 @@ const studyCss = `
   .study-v2__supportCard:hover .study-v2__supportCardActions,
   .study-v2__supportCard:focus-within .study-v2__supportCardActions {
     opacity: 1;
+  }
+
+  /* The header was draggable and nothing said so. A grip is the one glyph that
+     means "this moves" without a tooltip having to explain it. */
+  .study-v2__dragGrip {
+    display: inline-flex;
+    align-items: center;
+    margin-inline-start: calc(-1 * var(--study-space-4));
+    color: var(--study-text-faint);
   }
 
   .study-v2__supportCardHeader.is-draggable {
@@ -1900,6 +1954,15 @@ const studyCss = `
 
   .study-v2__progressText {
     margin: 0;
+    /* Yields by clipping, never by wrapping. At 1100 the middle column narrowed
+       and "SEGMENT 1 OF 2" — uppercase, letter-spaced — stacked into a
+       four-line tower beside a 172px button that cannot shrink, which grew the
+       whole bar. Same rule as the top bar: the status readout is what gives way
+       when the row runs out of width, and it gives way quietly. */
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     color: var(--study-text-soft);
     font-size: var(--study-control-size);
     font-weight: 800;
@@ -1965,9 +2028,15 @@ const studyCss = `
   }
 
   .study-v2__supportFullscreen {
-    width: min(900px, 100%);
-    min-height: min(620px, 100%);
-    max-height: min(760px, 100%);
+    /* Sized by its content, capped — not a fixed frame that content is poured
+       into. A 620px min-height on a 900px-wide card meant Phrasing, which has
+       two short items, opened as a 900x620 white rectangle with two lines at the
+       top. Focusing something should give it room to be worked with; it should
+       not enlarge the container and leave the content where it was.
+       Now the card's size tells you how much there is: a two-item module opens
+       compact, a long lexicography opens tall and scrolls. */
+    width: min(720px, 100%);
+    max-height: min(80vh, 760px);
     border: 1px solid var(--support-border, var(--study-line-soft));
     border-radius: var(--study-radius-24);
     background: var(--support-surface, var(--study-surface));
@@ -2030,6 +2099,14 @@ const studyCss = `
     font-size: calc(var(--study-title-size) + 4px);
     line-height: 1;
     font-weight: 800;
+  }
+
+  /* The review variant. The circle carries an outcome glyph now rather than an
+     invented number, so it needs the review tone as well as the success one. */
+  .study-v2__gradeCircle.is-review {
+    border-color: color-mix(in srgb, var(--study-review) 30%, transparent);
+    background: color-mix(in srgb, var(--study-review) 10%, var(--study-surface));
+    color: var(--study-review-strong);
   }
 
   .study-v2__gradeMeta {
@@ -2220,6 +2297,44 @@ const studyCss = `
       display: none;
     }
   }
+
+  /* MOBILE OVERRIDES LAST.
+     These lived near the top of the sheet and lost to the base rules below them
+     — a media query adds no specificity, so ordering is the whole mechanism.
+     A display:none on the progress readout simply did not apply, and the header
+     kept every element it could not fit. Overrides belong at the end. */
+  @media (max-width: 560px) {
+    .study-v2__railPanel { display: none; }
+
+    /* The header lane holds identity, a segment title, a project name, a
+       progress readout and Focus view. In 390px it cannot, and it did not: the
+       project text overlapped the title twice over and both the lane and Focus
+       view escaped the frame.
+
+       What survives is what only the header can say — which segment you are on.
+       The project name is on Project Home and Projects; the progress readout is
+       already in the bottom bar two feet below; Focus view keeps its glyph and
+       its accessible name. Deliberate subtraction, not shrinking everything
+       until it all fails together. */
+    .study-v2__shellProjectText,
+    .study-v2__shellTitleDivider,
+    .study-v2__shellProgress,
+    .study-v2__shellFocusButtonText {
+      display: none;
+    }
+
+    .study-v2__shellFocusButton {
+      min-width: calc(var(--study-space-40) + var(--study-space-4));
+      padding-inline: var(--study-space-12);
+    }
+
+    .study-v2__shellTitleText {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
 `
 
 const toneMap = {
@@ -2250,14 +2365,22 @@ const toneMap = {
     badgeText: '#7e22ce',
     glow: 'rgba(147, 51, 234, 0.08)',
   },
-  orange: {
+  /* Phrasing's own identity.
+     It used to be `orange`, whose values were within a rounding error of
+     `review` below — same border, same badge background, same badge text. So the
+     product had one amber saying two opposite things: "this needs your
+     attention" on a failed Surface check and a Needs-revision badge, and "this
+     is the Phrasing module" on an ordinary support card. A reader cannot hold
+     both meanings for one colour, so amber now means exactly one thing —
+     corrective — and the identity modules are blue, purple and teal. */
+  teal: {
     surface: '#ffffff',
-    bg: 'rgba(255, 249, 240, 0.96)',
-    border: 'rgba(254, 215, 170, 0.82)',
-    icon: '#f97316',
-    badgeBg: '#ffedd5',
-    badgeText: '#ea580c',
-    glow: 'rgba(249, 115, 22, 0.08)',
+    bg: 'rgba(240, 253, 250, 0.94)',
+    border: 'rgba(153, 231, 220, 0.82)',
+    icon: '#0d9488',
+    badgeBg: '#ccfbf1',
+    badgeText: '#0f766e',
+    glow: 'rgba(13, 148, 136, 0.08)',
   },
   success: {
     surface: '#ffffff',
@@ -2279,14 +2402,18 @@ const toneMap = {
   },
 }
 
+/** The resting presentation: everything docked in the rail. */
+const DOCKED_PRESENTATION = { mode: 'docked' }
+
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value))
 }
 
+/** The resting geometry of a newly floated module. */
 function createFloatingCardState(cardId) {
   if (typeof window === 'undefined') {
     return {
-      id: cardId,
+      cardId,
       left: 24,
       top: 96,
     }
@@ -2298,7 +2425,7 @@ function createFloatingCardState(cardId) {
   const defaultTop = Math.round(window.innerHeight * 0.18)
 
   return {
-    id: cardId,
+    cardId,
     left: clamp(defaultLeft, inset, Math.max(inset, window.innerWidth - cardWidth - inset)),
     top: clamp(defaultTop, inset, Math.max(inset, window.innerHeight - 420)),
   }
@@ -2593,6 +2720,12 @@ export function StudySegmentNavigator({
               type="button"
               className={`study-v2__segmentRow${isActive ? ' is-active' : ''}`}
               onClick={() => onSelectSegment(node.id)}
+              // Finding 31: the rail truncates by design — it is 208px wide and
+              // holds user-authored Arabic titles — but a truncated label with no
+              // way to read it in full is a dead end. The full title is available
+              // on hover and to assistive technology.
+              title={node.label}
+              aria-label={node.label}
               style={{ paddingLeft: `calc(var(--study-space-16) + ${node.depth} * var(--study-space-16))` }}
             >
               <span
@@ -2603,7 +2736,20 @@ export function StudySegmentNavigator({
                   record.submissionState === 'failed' ? 'is-failed' : '',
                 ].filter(Boolean).join(' ')}
               />
-              <span className="study-v2__segmentLabel">{node.label}</span>
+              {/* Script-aware, with dir auto so an RTL title truncates from the
+                  correct end. Arabic rendered in the Latin UI role crops its own
+                  ascenders and diacritics; the product has an Arabic role with
+                  the line-height Arabic needs, and these titles are user
+                  content whose script is not known at design time. */}
+              <span
+                dir="auto"
+                className="study-v2__segmentLabel"
+                style={containsArabic(node.label)
+                  ? { fontFamily: typography.arabicCompact.fontFamily, lineHeight: typography.arabicCompact.lineHeight }
+                  : undefined}
+              >
+                {node.label}
+              </span>
             </button>
           )
         })}
@@ -2948,11 +3094,28 @@ export function StudyTranslationEditor({
   )
 }
 
-export function StudyDiscussionCompanion({ onClose }) {
+/**
+ * The discussion, and what it is about.
+ *
+ * Two things were unclear at once. The panel was titled "Study Companion", which
+ * names the tool but never says the conversation is attached to the segment in
+ * front of you — the scope the legacy build carried in "Discuss This Segment".
+ * The title bar has room for that; a narrow toggle beside a Submit button does
+ * not, which is why the scope had been dropped rather than shortened.
+ *
+ * And it offered "Close" while the editor's toggle offered "Hide" — one action,
+ * two verbs, in two places, which reads as two different capabilities. Nothing
+ * is discarded either way, so both say Hide.
+ */
+export function StudyDiscussionCompanion({ onClose, segmentLabel }) {
   return (
-    <StudyPanel className="study-v2__discussion" tone="review" debugItem="study_discussion_companion">
-      <CardHeader badge={<MessageSquare size={15} />} title="Study Companion" tone="review">
-        <button type="button" className="study-v2__miniPill" onClick={onClose} title="Close study companion">Close</button>
+    <StudyPanel className="study-v2__discussion" tone="slate" debugItem="study_discussion_companion">
+      <CardHeader
+        badge={<MessageSquare size={15} />}
+        title={segmentLabel ? `Discussion · ${segmentLabel}` : 'Discussion'}
+        tone="slate"
+      >
+        <button type="button" className="study-v2__miniPill" onClick={onClose} title="Hide the discussion for this segment">Hide</button>
       </CardHeader>
       <div className="study-v2__cardBody study-v2__discussionBody">
         <div className="study-v2__contextBox">
@@ -2991,15 +3154,28 @@ export function StudySubmittedStack({ bestTranslation, userTranslation, onDiscus
 
   return (
     <div className="study-v2__resultGrid" data-debug-item="study_submitted_stack">
+      {/* A reference translation is only shown when one EXISTS for this segment.
+          It used to render a fixture unconditionally, so a real project about a
+          caravan leaving at dawn was given an authoritative "best in class"
+          rendering of an unrelated passage about Friday prayer — presented, with
+          a tick and a success tone, as the standard the user's work should be
+          measured against. An absent reference has to say it is absent. */}
       <StudyPanel tone="success" className="study-v2__resultPanel" anchor="best">
         <CardHeader badge="✓" title="Best in Class Translation" tone="success">
-          <button type="button" className="study-v2__miniPill" title="Copy best translation">
+          <button type="button" className="study-v2__miniPill" title="Copy best translation" disabled={!bestTranslation}>
             <Copy size={14} />
             Copy
           </button>
         </CardHeader>
         <div className="study-v2__cardBody">
-          <p className="study-v2__bodyText">{bestTranslation}</p>
+          {bestTranslation
+            ? <p className="study-v2__bodyText">{bestTranslation}</p>
+            : (
+              <p className="study-v2__bodyText study-v2__referenceAbsent">
+                No reference translation has been published for this segment yet.
+                Nothing here is being compared against your work.
+              </p>
+            )}
         </div>
       </StudyPanel>
       <StudyPanel tone="slate" className="study-v2__resultPanel" anchor="translation">
@@ -3013,12 +3189,8 @@ export function StudySubmittedStack({ bestTranslation, userTranslation, onDiscus
           <p className="study-v2__bodyText">{userTranslation}</p>
         </div>
       </StudyPanel>
-      <StudyPanel tone="review" className="study-v2__resultPanel study-v2__notesPanel" anchor="notes">
-        <CardHeader badge={<ScrollText size={15} />} title="Discussion Summary & Notes" tone="review">
-          <button type="button" className="study-v2__miniPill is-muted" disabled title="Notes are already attached to this segment">
-            <Pin size={14} />
-            Pin
-          </button>
+      <StudyPanel tone="slate" className="study-v2__resultPanel study-v2__notesPanel" anchor="notes">
+        <CardHeader badge={<ScrollText size={15} />} title="Discussion Summary & Notes" tone="slate">
           <button type="button" className="study-v2__miniPill" onClick={() => setIsAddingNote(true)} title="Add a manual note">
             <Plus size={14} />
             Add manual note
@@ -3154,10 +3326,49 @@ export function StudySubmissionNavigator({ onJumpTo, notesAvailable = false }) {
   )
 }
 
-export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
-  const [expandedCardId, setExpandedCardId] = useState(null)
-  const [fullscreenCardId, setFullscreenCardId] = useState(null)
-  const [floatingCardState, setFloatingCardState] = useState(null)
+/**
+ * A support module that has nothing real to say about this segment.
+ *
+ * Guidance, Lexicography, Phrasing and Key Takeaways are written against the
+ * reference passage. With a live project they were still rendered verbatim, so
+ * a segment about a caravan leaving at dawn came with Key Takeaways asserting
+ * that مصر جامع "sets the legal frame for Friday prayers" — a confident,
+ * specific claim about text that does not contain it.
+ *
+ * This is the same failure as the invented grade, in a quieter voice: the
+ * product stating things about the user's work that it has not established. An
+ * empty support module is honest and costs the user nothing; a wrong one costs
+ * them their trust in every other panel on the screen.
+ */
+function ReferenceOnlyBody() {
+  // No module name in the sentence: the panel header already carries it, and
+  // interpolating it produced "Key takeaways ... has not been prepared" — the
+  // template could not agree with both singular and plural titles.
+  return (
+    <p className="study-v2__supportText study-v2__referenceAbsent">
+      Not prepared for this segment yet, and nothing is standing in for it.
+    </p>
+  )
+}
+
+export function StudySupportRail({ collapsed, onToggleCollapsed, state, isReference = true }) {
+  // ONE presentation, not four booleans kept in step by hand.
+  //
+  // A module is docked, expanded over the panel, fullscreen, or floating — and
+  // it is exactly one of those at a time. That was already true of the product
+  // but not of the code: four independent slots each had to remember to null the
+  // other three, in four separate functions, and every new entry point was
+  // another place to forget. Making the modes one discriminated value means the
+  // exclusivity is structural rather than remembered.
+  //
+  //   { mode: 'docked' }
+  //   { mode: 'expanded',   cardId }
+  //   { mode: 'fullscreen', cardId }
+  //   { mode: 'floating',   cardId, left, top }
+  const [presentation, setPresentation] = useState(DOCKED_PRESENTATION)
+  // Preview is not a presentation. It is a transient hover affordance on the
+  // collapsed rail, so it lives outside the mode and is only ever consulted
+  // while the rail is collapsed and nothing else is open.
   const [previewCardId, setPreviewCardId] = useState(null)
   const [previewTop, setPreviewTop] = useState(null)
   const previewCloseTimerRef = useRef(null)
@@ -3166,25 +3377,29 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
   const isFailed = state === 'failed'
   const cards = isSubmitted
     ? [
-        { id: 'grade', title: 'Your Grade', tone: 'success', icon: <Award size={18} />, body: <GradeBody failed={false} /> },
-        { id: 'takeaways', title: 'Key Takeaways', tone: 'blue', icon: <Sparkles size={18} />, body: <TakeawaysBody /> },
-        { id: 'lexicography', title: 'Lexicography', tone: 'purple', icon: <BookOpen size={18} />, body: <LexicographyBody /> },
+        { id: 'grade', title: 'Surface check', tone: 'success', icon: <Award size={18} />, body: <GradeBody failed={false} /> },
+        { id: 'takeaways', title: 'Key Takeaways', tone: 'blue', icon: <Sparkles size={18} />, body: isReference ? <TakeawaysBody /> : <ReferenceOnlyBody /> },
+        { id: 'lexicography', title: 'Lexicography', tone: 'purple', icon: <BookOpen size={18} />, body: isReference ? <LexicographyBody /> : <ReferenceOnlyBody /> },
       ]
     : isFailed
       ? [
-          { id: 'grade', title: 'Your Grade', tone: 'review', icon: <Award size={18} />, body: <GradeBody failed /> },
-          { id: 'fix', title: 'Fix Steps', tone: 'orange', icon: <Sparkles size={18} />, body: <FixStepsBody /> },
-          { id: 'lexicography', title: 'Lexicography', tone: 'purple', icon: <BookOpen size={18} />, body: <LexicographyBody /> },
+          { id: 'grade', title: 'Surface check', tone: 'review', icon: <Award size={18} />, body: <GradeBody failed /> },
+          { id: 'fix', title: 'Fix Steps', tone: 'review', icon: <Sparkles size={18} />, body: isReference ? <FixStepsBody /> : <ReferenceOnlyBody /> },
+          { id: 'lexicography', title: 'Lexicography', tone: 'purple', icon: <BookOpen size={18} />, body: isReference ? <LexicographyBody /> : <ReferenceOnlyBody /> },
         ]
       : [
-          { id: 'guidance', title: 'Guidance', tone: 'blue', icon: <Info size={18} />, body: <GuidanceBody /> },
-          { id: 'lexicography', title: 'Lexicography', tone: 'purple', icon: <BookOpen size={18} />, body: <LexicographyBody /> },
-          { id: 'phrasing', title: 'Phrasing', tone: 'orange', icon: <ScrollText size={18} />, body: <PhrasingBody /> },
+          { id: 'guidance', title: 'Guidance', tone: 'blue', icon: <Info size={18} />, body: isReference ? <GuidanceBody /> : <ReferenceOnlyBody /> },
+          { id: 'lexicography', title: 'Lexicography', tone: 'purple', icon: <BookOpen size={18} />, body: isReference ? <LexicographyBody /> : <ReferenceOnlyBody /> },
+          { id: 'phrasing', title: 'Phrasing', tone: 'teal', icon: <ScrollText size={18} />, body: isReference ? <PhrasingBody /> : <ReferenceOnlyBody /> },
       ]
 
-  const expandedCard = cards.find((card) => card.id === expandedCardId) ?? null
-  const fullscreenCard = cards.find((card) => card.id === fullscreenCardId) ?? null
-  const floatingCard = cards.find((card) => card.id === floatingCardState?.id) ?? null
+  const cardInMode = (mode) => (
+    presentation.mode === mode ? cards.find((card) => card.id === presentation.cardId) ?? null : null
+  )
+  const expandedCard = cardInMode('expanded')
+  const fullscreenCard = cardInMode('fullscreen')
+  const floatingCard = cardInMode('floating')
+  const floatingCardState = presentation.mode === 'floating' ? presentation : null
   const previewCard = cards.find((card) => card.id === previewCardId) ?? null
 
   useEffect(() => {
@@ -3218,30 +3433,28 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
     }, 90)
   }
 
-  const openExpandedCard = (cardId) => {
-    setExpandedCardId(cardId)
-    setFullscreenCardId(null)
-    setFloatingCardState(null)
-  }
-
-  const openFullscreenCard = (cardId) => {
-    setFullscreenCardId(cardId)
-    setExpandedCardId(null)
-    setFloatingCardState(null)
+  // Every transition goes through here, so a new entry point cannot introduce a
+  // state nobody thought about.
+  const present = (next) => {
+    if (next.mode !== 'floating') {
+      floatingDragCleanupRef.current?.()
+    }
+    setPresentation(next)
     setPreviewCardId(null)
   }
 
+  const openExpandedCard = (cardId) => present({ mode: 'expanded', cardId })
+  const openFullscreenCard = (cardId) => present({ mode: 'fullscreen', cardId })
   const openFloatingCard = (cardId) => {
-    setFloatingCardState((current) => (current?.id === cardId ? current : createFloatingCardState(cardId)))
-    setExpandedCardId(null)
-    setFullscreenCardId(null)
+    setPresentation((current) => (
+      current.mode === 'floating' && current.cardId === cardId
+        ? current
+        : { mode: 'floating', ...createFloatingCardState(cardId) }
+    ))
     setPreviewCardId(null)
   }
-
-  const closeFloatingCard = () => {
-    floatingDragCleanupRef.current?.()
-    setFloatingCardState(null)
-  }
+  const dockCard = () => present(DOCKED_PRESENTATION)
+  const closeFloatingCard = dockCard
 
   const startFloatingDrag = (event) => {
     if (event.button !== 0 || !floatingCardState) {
@@ -3267,8 +3480,8 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
     const viewportInset = 16
 
     const handlePointerMove = (moveEvent) => {
-      setFloatingCardState((current) => {
-        if (!current) {
+      setPresentation((current) => {
+        if (current.mode !== 'floating') {
           return current
         }
 
@@ -3303,7 +3516,6 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
 
   const expandFromCollapsedPreview = (cardId) => {
     openExpandedCard(cardId)
-    setPreviewCardId(null)
     onToggleCollapsed?.()
   }
   const openFullscreenFromCollapsedPreview = (cardId) => openFullscreenCard(cardId)
@@ -3368,7 +3580,7 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
             onFullscreen={() => openFullscreenCard(floatingCard.id)}
           />
         ) : null}
-        {fullscreenCard ? <StudyFullscreenSupportCard card={fullscreenCard} onClose={() => setFullscreenCardId(null)} /> : null}
+        {fullscreenCard ? <StudyFullscreenSupportCard card={fullscreenCard} onClose={dockCard} /> : null}
       </aside>
     )
   }
@@ -3399,7 +3611,7 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
               size="utility-sm"
               label={`Open ${expandedCard.title} fullscreen`}
               title={`Open ${expandedCard.title} fullscreen`}
-              onClick={() => setFullscreenCardId(expandedCard.id)}
+              onClick={() => openFullscreenCard(expandedCard.id)}
               icon={<Maximize2 strokeWidth={1.8} />}
             />
             <IconActionButton
@@ -3407,7 +3619,7 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
               size="utility-sm"
               label={`Close ${expandedCard.title}`}
               title={`Close ${expandedCard.title}`}
-              onClick={() => setExpandedCardId(null)}
+              onClick={dockCard}
               icon={<X strokeWidth={1.8} />}
             />
           </div>
@@ -3428,7 +3640,7 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
           onFullscreen={() => openFullscreenCard(floatingCard.id)}
         />
       ) : null}
-      {fullscreenCard ? <StudyFullscreenSupportCard card={fullscreenCard} onClose={() => setFullscreenCardId(null)} /> : null}
+      {fullscreenCard ? <StudyFullscreenSupportCard card={fullscreenCard} onClose={dockCard} /> : null}
     </aside>
   )
 }
@@ -3445,7 +3657,7 @@ function StudySupportCard({ tone, icon, title, body, onExpand, onFullscreen, onF
             label={`Expand ${title} in support panel`}
             title={`Expand ${title} in support panel`}
             onClick={onExpand}
-            icon={<ChevronsLeft strokeWidth={1.8} />}
+            icon={<PanelRightOpen strokeWidth={1.8} />}
           />
           <IconActionButton
             size="utility-sm"
@@ -3459,7 +3671,7 @@ function StudySupportCard({ tone, icon, title, body, onExpand, onFullscreen, onF
             label={`Float ${title}`}
             title={`Float ${title}`}
             onClick={onFloat}
-            icon={<Pin strokeWidth={1.8} />}
+            icon={<PictureInPicture2 strokeWidth={1.8} />}
           />
         </div>
       </div>
@@ -3495,6 +3707,11 @@ function StudyDetachedSupportCard({
           className={`study-v2__supportCardHeader${draggable ? ' is-draggable' : ''}`}
           onPointerDown={draggable ? onDragStart : undefined}
         >
+          {draggable ? (
+            <span className="study-v2__dragGrip" aria-hidden="true" title="Drag to move">
+              <GripVertical size={14} strokeWidth={1.8} />
+            </span>
+          ) : null}
           <span className="study-v2__supportIcon">{card.icon}</span>
           <h3 className="study-v2__supportTitle">{card.title}</h3>
           {preview && onExpand ? (
@@ -3504,7 +3721,7 @@ function StudyDetachedSupportCard({
               label={`Expand ${card.title} in panel`}
               title={`Expand ${card.title} in panel`}
               onClick={onExpand}
-              icon={<ChevronsLeft strokeWidth={1.8} />}
+              icon={<PanelRightOpen strokeWidth={1.8} />}
             />
           ) : null}
           {preview && onFullscreen ? (
@@ -3522,7 +3739,7 @@ function StudyDetachedSupportCard({
               label={`Float ${card.title}`}
               title={`Float ${card.title}`}
               onClick={onFloat}
-              icon={<Pin strokeWidth={1.8} />}
+              icon={<PictureInPicture2 strokeWidth={1.8} />}
             />
           ) : null}
           {!preview && onFullscreen ? (
@@ -3535,13 +3752,17 @@ function StudyDetachedSupportCard({
               icon={<Maximize2 strokeWidth={1.8} />}
             />
           ) : null}
+          {/* DOCK, not close. Floating had exactly one exit, labelled "Close"
+              with an X, so returning a module to the rail looked like dismissing
+              it — and there was no control at all that said "put this back".
+              The action was always a dock; only its name and icon disagreed. */}
           {!preview && onClose ? (
             <IconActionButton
               size="utility-sm"
-              label={`Close ${card.title}`}
-              title={`Close ${card.title}`}
+              label={`Return ${card.title} to the support panel`}
+              title={`Return ${card.title} to the support panel`}
               onClick={onClose}
-              icon={<X strokeWidth={1.8} />}
+              icon={<PanelRightClose strokeWidth={1.8} />}
             />
           ) : null}
         </div>
@@ -3662,40 +3883,72 @@ function TakeawaysBody() {
   )
 }
 
+/**
+ * The result of a submission, in the REFERENCE path.
+ *
+ * This used to render "Your Grade 8.4", "Reviewed: 15 Mar 2026" and "Model
+ * evaluation with a scholar-facing rubric", followed by three paragraphs of
+ * specific praise and criticism — "Accurate treatment of the core city-condition
+ * terminology" — about a translation nothing had read. A reviewer submitted
+ * `dsfdg` and was told their terminology was accurate.
+ *
+ * It did this on the same screen that says, in its own banner, that meaning and
+ * accuracy are not evaluated. Two claims, opposite, twelve inches apart. That is
+ * not a polish defect; it is the product lying about its own capability, and it
+ * would have shipped attached to a study tool whose entire value is that you can
+ * trust what it tells you about your work.
+ *
+ * `data/evaluation.js` already got this right — it returns `score: null`
+ * deliberately, because "a number here would imply a measurement this stub
+ * cannot make", and every note it emits is something a reader could verify
+ * without knowing Arabic. This is that same contract, rendered. The composition
+ * is unchanged; only the claims are gone.
+ */
 function GradeBody({ failed }) {
   return (
     <div className="study-v2__gradeBody">
-      <div className="study-v2__gradeCircle">{failed ? '4.2' : '8.4'}</div>
+      <div className={`study-v2__gradeCircle${failed ? ' is-review' : ''}`}>
+        {failed
+          ? <AlertTriangle size={40} strokeWidth={1.6} aria-hidden="true" />
+          : <CheckCircle2 size={40} strokeWidth={1.6} aria-hidden="true" />}
+      </div>
       <p className="study-v2__gradeMeta">
-        <strong>Reviewed:</strong> 15 Mar 2026
+        <strong>{failed ? 'Needs another pass' : 'No issues found'}</strong>
         <br />
-        {failed ? 'Model review found structural issues to repair.' : 'Model evaluation with a scholar-facing rubric'}
+        Automated surface check — form and completeness only. Meaning and accuracy
+        are not scored.
       </p>
-      <div className="study-v2__insightBox is-success">
-        <p className="study-v2__insightTitle">
-          <span className="study-v2__insightDot" aria-hidden="true" />
-          Strengths
-        </p>
-        <p className="study-v2__supportText">
-          Accurate treatment of the core city-condition terminology and the prayer-area distinction.
-        </p>
-      </div>
-      <div className="study-v2__insightBox is-review">
-        <p className="study-v2__insightTitle">
-          <span className="study-v2__insightDot" aria-hidden="true" />
-          Areas for improvement
-        </p>
-        <p className="study-v2__supportText">
-          Add a little more context for the attributed opinions so the legal reasoning stays clear.
-        </p>
-      </div>
+      {failed ? (
+        <div className="study-v2__insightBox is-review">
+          <p className="study-v2__insightTitle">
+            <span className="study-v2__insightDot" aria-hidden="true" />
+            What the check found
+          </p>
+          <p className="study-v2__supportText">
+            The translation is much shorter than the source. Check whether a clause
+            has been dropped.
+          </p>
+        </div>
+      ) : (
+        <div className="study-v2__insightBox is-success">
+          <p className="study-v2__insightTitle">
+            <span className="study-v2__insightDot" aria-hidden="true" />
+            What the check found
+          </p>
+          <p className="study-v2__supportText">
+            No structural issues detected: length is proportionate to the source,
+            nothing is left untranslated, and the text is punctuated.
+          </p>
+        </div>
+      )}
       <div className="study-v2__insightBox is-blue">
         <p className="study-v2__insightTitle">
           <span className="study-v2__insightDot" aria-hidden="true" />
-          Suggestion
+          What this does not cover
         </p>
         <p className="study-v2__supportText">
-          Consider a brief explanatory note for the attached outskirts phrase.
+          Whether the meaning is right. Compare your work against the reference
+          translation below, and use Discuss to question anything it asserts.
         </p>
       </div>
     </div>

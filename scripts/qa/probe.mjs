@@ -196,7 +196,14 @@ export function evaluate(config) {
     // correct. Unused room AND cut content at the same time means nothing claimed
     // the slack — the Study source panel was flex: 0 1 auto, so it could shrink
     // and never grow, and sat with 111px empty beneath a clipped passage.
-    if (dy > THRESHOLDS.minSignallableOverflowPx) {
+    // `overflowsInFlow` for the same reason `content-clipped` uses it: an
+    // absolutely positioned, aria-hidden decoration that bleeds past its box is
+    // not clipped CONTENT. A PrimaryCTA's glow layer is 65px inside a 48px
+    // button by design, and the button trims it — which this rule read as nine
+    // pixels of the label being cut off. Two of the three rules asking this
+    // question already guarded for it; the third did not, and a gate that fires
+    // on correct code is a gate people learn to skip.
+    if (dy > THRESHOLDS.minSignallableOverflowPx && overflowsInFlow('y')) {
       const parent = el.parentElement
       if (parent) {
         const pcs = getComputedStyle(parent)

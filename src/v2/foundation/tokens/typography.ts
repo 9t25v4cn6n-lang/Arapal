@@ -290,3 +290,34 @@ export const typography = {
     fontWeight: fontWeights.semibold,
   },
 }
+
+// ── script-aware roles ───────────────────────────────────────────────────────
+
+/**
+ * Arabic block ranges, including the presentation forms fonts substitute into.
+ *
+ * A single Arabic character is enough: a project titled "1.1 في بداية الربيع"
+ * is Arabic content with a Latin prefix, not Latin content.
+ */
+const ARABIC_PATTERN = /[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-﻿]/
+
+export function containsArabic(text: unknown): boolean {
+  return ARABIC_PATTERN.test(String(text ?? ''))
+}
+
+/**
+ * Pick the type role that matches the script the text is actually in.
+ *
+ * The product has Arabic roles with the line-height Arabic needs — 1.75 and 1.85
+ * against Latin's 1.3 — but user-authored strings were being rendered with a
+ * fixed Latin role wherever they appeared. So an Arabic project title rendered
+ * in the Latin UI face at line-height 1.3, and its ascenders and diacritics were
+ * cropped by their own line box. Nothing overflowed a container, so no geometric
+ * check could see it; it simply looked broken.
+ *
+ * Pair this with `dir="auto"` on the element so an RTL string also truncates and
+ * aligns from the correct side.
+ */
+export function getScriptAwareRole<T>(text: unknown, roles: { latin: T, arabic: T }): T {
+  return containsArabic(text) ? roles.arabic : roles.latin
+}

@@ -13,6 +13,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Badge, Chip, GhostButton } from '../../foundation/primitives/CompactControls'
 import PrimaryCTA from '../../foundation/primitives/PrimaryCTA'
+import UserText from '../../foundation/primitives/UserText'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import { colors, radius, spacing, typography } from '../../foundation/tokens'
 import layoutContract from './ExamsScreen.contract'
@@ -332,7 +333,26 @@ export default function ExamsScreen({ route, shell }) {
     ),
   }
 
-  return <V2ScreenFrame contract={layoutContract} route={route} shell={shell} screenSlots={screenSlots} />
+  // At 390 the root is a fixed-height clipped viewport whose second row scrolls
+  // inside it, and a card at the boundary gets cut while the region still holds
+  // slack. Same rule as the Research desk: at this width the screen stops being
+  // a viewport of its own and becomes a page that scrolls.
+  const containerOverrides = shell.isMobileViewport
+    ? {
+      Layer2_Exams_Root: { style: { gridTemplateRows: 'auto auto', overflow: 'visible' } },
+      Layer3_Exams_Body: { style: { minHeight: 0, overflow: 'visible' } },
+    }
+    : {}
+
+  return (
+    <V2ScreenFrame
+      contract={layoutContract}
+      route={route}
+      shell={shell}
+      screenSlots={screenSlots}
+      containerOverrides={containerOverrides}
+    />
+  )
 }
 
 // ── 1. take the next assessment · 2. manage the library ──────────────────────
@@ -624,12 +644,14 @@ function TakeView({
                 cursor: 'pointer',
               }}
             >
-              <span style={{ ...typography.eyebrowLabel, color: answered ? colors.successStrong : colors.textFaint }}>
+              <span style={{ ...typography.eyebrowLabel, color: answered ? colors.successStrong : colors.textSoft }}>
                 {answered ? 'Answered' : `Question ${index + 1}`}
               </span>
-              <span style={{ ...typography.supportSubtext, color: current ? colors.accentStrong : colors.textBody }}>
-                {question.label}
-              </span>
+              <UserText
+                text={question.label}
+                latinRole={typography.supportSubtext}
+                style={{ color: current ? colors.accentStrong : colors.textBody }}
+              />
             </button>
           )
         })}
@@ -651,7 +673,7 @@ function TakeView({
                 {autosaveState}
               </Badge>
               <Badge tone="quiet">{answeredCount} of {exam.questions.length} answered</Badge>
-              <Badge tone="quiet">{elapsedMinutes} min</Badge>
+              <Badge tone="quiet">{elapsedMinutes} min elapsed</Badge>
             </div>
           </div>
 
@@ -709,6 +731,17 @@ function TakeView({
 // ── review ───────────────────────────────────────────────────────────────────
 
 function ResultsView({ result, grouping, onGrouping, groups, onJumpToStudy, onDone }) {
+  // The page's own heading is "Needs attention", and every row's action is
+  // "Open in study" — yet the one dominant blue control was "Back to
+  // assessments", which is the action that ABANDONS the remediation the page
+  // exists to start. The primary action now matches what the page is for, and
+  // falls back to leaving only when there is genuinely nothing to remediate.
+  //
+  // That also settles the duplicated return: the header already offers
+  // "Assessment library", so a second, louder copy of the same destination was
+  // spending the page's most valuable control on its least valuable outcome.
+  const remediationCount = groups.reduce((total, group) => total + group.items.length, 0)
+  const firstRemediation = groups[0]?.items?.[0] ?? null
   return (
     <>
       <section style={{ ...surface, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: spacing[24], flexWrap: 'wrap', padding: spacing[24] }}>
@@ -723,14 +756,32 @@ function ResultsView({ result, grouping, onGrouping, groups, onJumpToStudy, onDo
             {result.missCount ? <Badge tone="critical">{result.missCount} misses</Badge> : null}
           </div>
         </div>
-        <PrimaryCTA icon={<CheckCircle2 size={16} strokeWidth={1.9} />} minWidth={220} height={48} onClick={onDone}>
-          Back to assessments
-        </PrimaryCTA>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[12], flexWrap: 'wrap' }}>
+          {firstRemediation ? (
+            <>
+              <PrimaryCTA
+                icon={<BookOpen size={16} strokeWidth={1.9} />}
+                minWidth={220}
+                height={48}
+                onClick={() => onJumpToStudy(firstRemediation)}
+              >
+                Study what needs attention
+              </PrimaryCTA>
+              <GhostButton size="md" onClick={onDone}>Assessment library</GhostButton>
+            </>
+          ) : (
+            <PrimaryCTA icon={<CheckCircle2 size={16} strokeWidth={1.9} />} minWidth={220} height={48} onClick={onDone}>
+              Back to assessments
+            </PrimaryCTA>
+          )}
+        </div>
       </section>
 
       <section style={{ display: 'grid', gap: spacing[12] }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: spacing[12], flexWrap: 'wrap' }}>
-          <h2 style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textMuted }}>Needs attention</h2>
+          <h2 style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textMuted }}>
+            Needs attention{remediationCount ? ` · ${remediationCount}` : ''}
+          </h2>
           <div style={{ display: 'inline-flex', gap: spacing[8] }}>
             <Chip active={grouping === 'concept'} onClick={() => onGrouping('concept')}>By concept</Chip>
             <Chip active={grouping === 'segment'} onClick={() => onGrouping('segment')}>By segment</Chip>
@@ -750,7 +801,7 @@ function ResultsView({ result, grouping, onGrouping, groups, onJumpToStudy, onDo
                     <Badge tone={item.outcome === 'miss' ? 'critical' : 'review'}>
                       {item.outcome === 'miss' ? 'Needs review' : 'Worth revisiting'}
                     </Badge>
-                    <span style={{ ...typography.metaText, color: colors.textSoft }}>{item.segmentLabel}</span>
+                    <UserText text={item.segmentLabel} latinRole={typography.metaText} style={{ color: colors.textSoft }} />
                   </div>
                   <p style={{ ...typography.supportSubtext, margin: 0, color: colors.textBody }}>{item.remediationNote}</p>
                 </div>

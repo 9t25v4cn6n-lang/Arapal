@@ -3,6 +3,7 @@ import { defaultRouteId, getPrimaryRailRoutes, routeRegistry } from './app/route
 import { shellSizing } from './foundation/layout/shellSizing'
 import { useAppIntro } from './foundation/primitives/AppIntro'
 import useNavigationRailState from './foundation/primitives/useNavigationRailState'
+import useIsMobileViewport from './foundation/primitives/useIsMobileViewport'
 
 export default function AppV2({ routeId = defaultRouteId }) {
   // A registry entry is only routable if it can actually render. Rail entries
@@ -18,11 +19,25 @@ export default function AppV2({ routeId = defaultRouteId }) {
   const railItems = getPrimaryRailRoutes()
   const { isNavPinned, isNavHovered, isNavExpanded } = navigationRailState
   const activeRailGroupId = activeRoute.shell?.rail?.groupId ?? activeRoute.id
-  const showRail = activeRoute.shell?.showRail !== false
+  // The rail needs BOTH: which family you are in, and which destination you are
+  // actually on. Projects and Project Research deliberately share a group, so
+  // group alone lit two rows identically and the rail could not say where you
+  // were. The route id is the difference between context and current.
+  const activeRailRouteId = activeRoute.shell?.rail?.routeId ?? activeRoute.id
+  // The rail is chrome, and at 390px chrome that costs 60px of a 390px frame is
+  // the difference between a workspace and a strip. Study already hid its own
+  // rails at this breakpoint via a stylesheet; the GLOBAL rail could not be
+  // hidden the same way because the shell writes its geometry as inline styles
+  // from the contract, and an inline style beats a media query. So width is an
+  // input here, the same way `useIsMobileViewport` was built for.
+  const isMobileViewport = useIsMobileViewport()
+  const showRail = activeRoute.shell?.showRail !== false && !isMobileViewport
 
   const shell = {
     activeRoute,
+    isMobileViewport,
     activeRailGroupId,
+    activeRailRouteId,
     showRail,
     railItems,
     isNavPinned,

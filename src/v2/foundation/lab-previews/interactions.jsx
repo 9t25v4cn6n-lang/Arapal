@@ -58,7 +58,7 @@ export function OutsideClickDismissPreview() {
 
   const dismissedState = (
     <div style={{ minHeight: 180, borderRadius: radius[16], border: `1px dashed ${colors.lineSoft}`, background: 'rgba(255,255,255,0.42)', padding: spacing[16], display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <p style={{ ...typography.bodyText, margin: 0, color: colors.textFaint }}>Closed after clicking the stage.</p>
+      <p style={{ ...typography.bodyText, margin: 0, color: colors.textSoft }}>Closed after clicking the stage.</p>
     </div>
   )
 
@@ -81,7 +81,7 @@ export function EscapeDismissPreview() {
 
   const dismissedState = (
     <div style={{ borderRadius: radius[16], border: `1px dashed ${colors.lineSoft}`, background: 'rgba(255,255,255,0.7)', padding: spacing[16], minHeight: 104, display: 'grid', alignContent: 'center' }}>
-      <p style={{ ...typography.bodyText, margin: 0, color: colors.textFaint }}>Closed via Escape.</p>
+      <p style={{ ...typography.bodyText, margin: 0, color: colors.textSoft }}>Closed via Escape.</p>
     </div>
   )
 

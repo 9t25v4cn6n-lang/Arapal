@@ -118,7 +118,13 @@ export default function EditorSurface({
 }) {
   const [isFocused, setIsFocused] = useState(false)
   const frameInset = Number.parseInt(surfacePadding.editorFrame, 10)
-  const cornerInset = Math.max(Number.parseInt(spacing[4], 10), Math.round(frameInset * 0.25))
+  // The corner accents are measured from the CARD they accent, not from the
+  // outer frame. At a quarter of the frame inset they sat 18px off the editor —
+  // far enough that four marks read as floating in the page rather than as a
+  // frame belonging to the box. The gap is now the thing that is chosen, and the
+  // inset is derived from it.
+  const cornerGapPx = Number.parseInt(spacing[10], 10)
+  const cornerInset = Math.max(Number.parseInt(spacing[4], 10), frameInset - cornerGapPx)
   const frameRadius = 28
   const headerInset = surfacePadding.editorHeaderX
   const footerInset = surfacePadding.editorFooterX

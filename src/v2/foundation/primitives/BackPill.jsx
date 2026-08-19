@@ -2,6 +2,7 @@ import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
 import { colors, motion, radius, spacing, typography } from '../tokens'
 
+
 const backPillMetrics = {
   minHeight: '42px',
   minWidth: '104px',
@@ -11,6 +12,26 @@ const backPillMetrics = {
   iconShiftIdle: '0px',
   iconShiftElevated: '-2px',
 }
+
+const backPillStyles = `
+  /* Below the mobile breakpoint the header lane holds the identity mark, this
+     control and a three-step indicator in 375px. The arrow still says "go back";
+     the word is the part that can go. Same deliberate degradation the Arapal
+     wordmark uses, and the same reason it is declared in a stylesheet: an inline
+     style beats a media query.
+
+     Without it the pill kept its 104px floor and its label, the start lane
+     stopped yielding once the identity was made non-shrinking, and Back sat on
+     top of the step bar's "2". */
+  .back-pill {
+    min-width: ${backPillMetrics.minWidth};
+  }
+
+  @media (max-width: 560px) {
+    .back-pill__label { display: none; }
+    .back-pill { min-width: 0; padding-inline: ${spacing[12]}; }
+  }
+`
 
 const backPillChrome = {
   idleSurface: 'linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 251, 255, 0.92) 100%)',
@@ -48,8 +69,12 @@ export default function BackPill({
   const showElevatedChrome = isHovered || isFocused
 
   return (
+    <>
+    <style>{backPillStyles}</style>
     <button
       type="button"
+      className="back-pill"
+      aria-label={typeof children === 'string' ? children : undefined}
       data-debug-item={debugItem}
       onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
@@ -65,7 +90,6 @@ export default function BackPill({
         background: showElevatedChrome ? backPillChrome.elevatedSurface : backPillChrome.idleSurface,
         color: showElevatedChrome ? backPillChrome.elevatedTone : backPillChrome.idleTone,
         minHeight: backPillMetrics.minHeight,
-        minWidth: backPillMetrics.minWidth,
         padding: backPillMetrics.inlineInset,
         display: 'inline-flex',
         alignItems: 'center',
@@ -121,8 +145,9 @@ export default function BackPill({
         >
           {icon}
         </span>
-        <span>{children}</span>
+        <span className="back-pill__label">{children}</span>
       </span>
     </button>
+    </>
   )
 }

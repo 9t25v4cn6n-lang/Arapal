@@ -58,15 +58,21 @@ function ProjectResearchHeader({ stats, onOpenStudy }) {
         </p>
       </div>
 
-      <div className="project-research__headerAside" aria-label="Project research summary">
-        <div className="project-research__metricStrip">
-          {metrics.map((metric) => (
-            <div key={metric.label} className="project-research__metricPill">
-              <strong>{metric.value}</strong>
-              <span>{metric.label}</span>
-            </div>
-          ))}
-        </div>
+      {/* The metrics describe the project the title names, so they sit WITH the
+          title. They used to be bundled with the Study mode action into a single
+          right-hand cluster, which is why three facts about this project and one
+          way to leave it were reading as the same kind of thing, jammed together
+          against the right edge and disconnected from what they counted. */}
+      <div className="project-research__metricStrip" aria-label="Project research summary">
+        {metrics.map((metric) => (
+          <div key={metric.label} className="project-research__metricPill">
+            <strong>{metric.value}</strong>
+            <span>{metric.label}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="project-research__headerAside">
         <button type="button" className="project-research__studyLink" onClick={onOpenStudy}>
           <BookOpen size={15} strokeWidth={2} />
           Study mode
@@ -225,6 +231,38 @@ export default function ProjectResearchScreen({ route, shell }) {
       />
     </>
   )
+}
+
+/**
+ * The ledger's column model, in ONE place.
+ *
+ * There were NINE grid-template-columns declarations for
+ * `.project-research__resultRow` in this file, in three generations: two
+ * four-column families that were fully overridden and never rendered, and the
+ * five-column one that actually wins. The header, meanwhile, described the pane
+ * with a run-on caption — "Arabic extract · Translation signal · Status" — that
+ * named three things over five columns and aligned with none of them.
+ *
+ * A grid duplicated nine times is a grid that has already drifted. Both the rows
+ * and the header column labels interpolate these, so they cannot disagree, and
+ * the dead declarations are gone.
+ */
+const ledgerColumns = {
+  /* id | arabic | translation | meta | status */
+  base: `
+      44px
+      minmax(168px, 1.05fr)
+      minmax(128px, 0.72fr)
+      minmax(132px, 0.7fr)
+      minmax(84px, auto)`,
+  mid: `
+        44px
+        minmax(152px, 1fr)
+        minmax(112px, 0.62fr)
+        minmax(124px, 0.62fr)
+        minmax(78px, auto)`,
+  /* The row stacks here: id | (arabic over meta) | status. */
+  narrow: '44px minmax(0, 1fr) minmax(78px, auto)',
 }
 
 const researchStyles = `
@@ -507,17 +545,28 @@ const researchStyles = `
     background: rgba(219, 234, 254, 0.72);
   }
 
+  /* A navigation label, declared as one.
+     It declared no type at all, so it inherited the body role and rendered at
+     15px/400 — two pixels larger and two hundred weight lighter than the global
+     rail sitting directly beside it. Same family throughout, which is why this
+     read as "a different typography system" without anyone being able to say
+     which font it was: it was the body role wearing a navigation list's job. */
   .project-research__filterLabel {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-family: ${typography.controlLabel.fontFamily};
+    font-size: ${typography.controlLabel.fontSize};
+    font-weight: ${typography.controlLabel.fontWeight};
+    line-height: ${typography.controlLabel.lineHeight};
+    letter-spacing: ${typography.controlLabel.letterSpacing};
   }
 
   .project-research__filterButton strong {
     justify-self: end;
     font-size: ${typography.eyebrowLabel.fontSize};
-    color: ${colors.textFaint};
+    color: ${colors.textSoft};
   }
 
   .project-research__revisionStack {
@@ -542,13 +591,22 @@ const researchStyles = `
     gap: ${spacing[4]};
   }
 
+  /* One role, not parts of two. This took studyControlLabel's family and
+     metaText's size, which is how a third navigation treatment appeared on a
+     screen that already had two. The revision queue is navigation; it uses the
+     navigation role and expresses its own hierarchy through surface and colour. */
   .project-research__revisionButton strong {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-family: ${typography.studyControlLabel.fontFamily};
-    font-size: ${typography.metaText.fontSize};
-    line-height: 1.2;
+    /* Wraps rather than truncates. At the navigation role "Translation
+       comparison" needs 147px and the lane offers 141 — six pixels, for which
+       the alternative was showing a destination as "Translation compari...".
+       A navigation label that cannot be read in full is not doing its job, and
+       this panel has vertical room to spare. */
+    overflow-wrap: anywhere;
+    font-family: ${typography.controlLabel.fontFamily};
+    font-size: ${typography.controlLabel.fontSize};
+    font-weight: ${typography.controlLabel.fontWeight};
+    line-height: ${typography.controlLabel.lineHeight};
+    letter-spacing: ${typography.controlLabel.letterSpacing};
   }
 
   .project-research__revisionButton small {
@@ -615,7 +673,7 @@ const researchStyles = `
   }
 
   .project-research__searchBox input::placeholder {
-    color: ${colors.textFaint};
+    color: ${colors.textSoft};
   }
 
 
@@ -628,7 +686,7 @@ const researchStyles = `
   }
 
   .project-research__resultCount {
-    color: ${colors.textFaint};
+    color: ${colors.textSoft};
     font-family: ${typography.monoMeta.fontFamily};
     font-size: ${typography.eyebrowLabel.fontSize};
     line-height: 1;
@@ -697,7 +755,6 @@ const researchStyles = `
     width: 100%;
     min-height: 112px;
     display: grid;
-    grid-template-columns: 48px minmax(260px, 1fr) minmax(240px, 0.86fr) minmax(104px, auto);
     align-items: center;
     gap: ${spacing[12]};
     padding: ${spacing[12]};
@@ -1049,7 +1106,7 @@ const researchStyles = `
   }
 
   .project-research__vocabList span {
-    color: ${colors.textFaint};
+    color: ${colors.textSoft};
     font-family: ${typography.monoMeta.fontFamily};
     font-size: ${typography.eyebrowLabel.fontSize};
   }
@@ -1210,7 +1267,6 @@ const researchStyles = `
     }
 
     .project-research__resultRow {
-      grid-template-columns: 48px minmax(224px, 1fr) minmax(168px, 0.72fr) minmax(96px, auto);
     }
   }
 
@@ -1277,7 +1333,6 @@ const researchStyles = `
     }
 
     .project-research__resultRow {
-      grid-template-columns: 48px minmax(0, 1fr) auto;
       min-height: 112px;
     }
 
@@ -1309,16 +1364,43 @@ const researchStyles = `
   /* Bold research-desk redesign overrides. These keep layout ownership on the shell,
      desk, ledger, and dossier containers rather than individual content cells. */
 
+  /* The dark field is the TITLE'S surface, not a percentage of the header.
+     It used to be a gradient stop at 34% of the masthead's width — a number with
+     no relationship to where the title actually ends. A longer project name ran
+     white text past the stop onto a white background; a shorter one trailed dark
+     space after it; and the masthead clipped rather than adapting. Now the panel
+     is sized by the title it contains, so it is correct at every width and for
+     every length of name. */
   .project-research__masthead {
     min-height: 58px;
-    grid-template-columns: minmax(0, 1fr) auto;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: ${spacing[16]};
     padding: ${spacing[12]} ${spacing[16]};
     border-radius: ${radius[20]};
     border-color: rgba(148, 163, 184, 0.28);
-    background:
-      linear-gradient(90deg, rgba(15, 23, 42, 0.96) 0, rgba(30, 41, 59, 0.94) 34%, rgba(255, 255, 255, 0.92) 34.1%, rgba(248, 251, 255, 0.88) 100%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 255, 0.88));
     box-shadow: 0 18px 38px rgba(15, 23, 42, 0.1);
-    overflow: hidden;
+  }
+
+  .project-research__titleGroup {
+    flex: 0 1 auto;
+    padding: ${spacing[10]} ${spacing[20]};
+    border-radius: ${radius[16]};
+    background: linear-gradient(120deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.94));
+  }
+
+  /* Pushed right because it is the one ACTION here; the metrics beside the title
+     are facts about the project and stay with it. */
+  .project-research__headerAside {
+    margin-inline-start: auto;
+    flex: 0 0 auto;
+  }
+
+  .project-research__metricStrip {
+    flex: 0 1 auto;
+    min-width: 0;
   }
 
   .project-research__titleGroup {
@@ -1561,12 +1643,40 @@ const researchStyles = `
     background: rgba(255, 255, 255, 0.72);
   }
 
+  /* The column strip and the rows read ONE definition.
+     The header used to be a run-on caption — "Arabic extract · Translation
+     signal · Status" — floated to the right of the pane, naming three things
+     over four columns and aligned with none of them. Labels now sit on the
+     columns they describe, and both consume --ledger-columns, so the two can
+     never drift the way a duplicated grid always does. */
+  .project-research__ledgerColumns {
+    display: grid;
+    grid-template-columns: ${ledgerColumns.base};
+    gap: ${spacing[12]};
+    align-items: center;
+    min-width: 0;
+    /* Lands on the row's content edge, not near it. A row sits inside the list's
+       12px inset plus its own 16px padding; the header sits inside the header's
+       own 20px. 8px closes the difference exactly, so a label is over its column
+       rather than three pixels beside it. */
+    padding-inline: ${spacing[8]};
+  }
+
+  .project-research__ledgerColumns small {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .project-research__ledgerColumns small:last-child {
+    text-align: right;
+  }
+
   .project-research__ledgerHeader {
     min-width: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: ${spacing[12]};
+    display: grid;
+    gap: ${spacing[8]};
     padding: ${spacing[12]} ${spacing[20]};
     border-bottom: 1px solid rgba(15, 23, 42, 0.07);
     color: ${colors.textSoft};
@@ -1586,7 +1696,7 @@ const researchStyles = `
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: ${colors.textFaint};
+    color: ${colors.textSoft};
     font-size: ${typography.eyebrowLabel.fontSize};
   }
 
@@ -1597,7 +1707,6 @@ const researchStyles = `
 
   .project-research__resultRow {
     min-height: 104px;
-    grid-template-columns: 48px minmax(260px, 1fr) minmax(220px, 0.76fr) minmax(96px, auto);
     gap: ${spacing[12]};
     padding: ${spacing[12]};
     border: 1px solid transparent;
@@ -1788,7 +1897,6 @@ const researchStyles = `
     }
 
     .project-research__resultRow {
-      grid-template-columns: 48px minmax(224px, 1fr) minmax(156px, 0.68fr) minmax(96px, auto);
     }
   }
 
@@ -1864,7 +1972,6 @@ const researchStyles = `
 
     .project-research__resultRow {
       min-height: 104px;
-      grid-template-columns: 48px minmax(0, 1fr) auto;
     }
 
     .project-research__rightHeader,
@@ -1911,12 +2018,7 @@ const researchStyles = `
 
   .project-research__resultRow {
     min-height: 104px;
-    grid-template-columns:
-      44px
-      minmax(168px, 1.05fr)
-      minmax(128px, 0.72fr)
-      minmax(132px, 0.7fr)
-      minmax(84px, auto);
+    grid-template-columns: ${ledgerColumns.base};
     grid-template-areas: "id arabic translation meta status";
     gap: ${spacing[12]};
     align-items: center;
@@ -2187,13 +2289,9 @@ const researchStyles = `
   }
 
   @media (max-width: 1500px) {
-    .project-research__resultRow {
-      grid-template-columns:
-        44px
-        minmax(152px, 1fr)
-        minmax(112px, 0.62fr)
-        minmax(124px, 0.62fr)
-        minmax(78px, auto);
+    .project-research__resultRow,
+    .project-research__ledgerColumns {
+      grid-template-columns: ${ledgerColumns.mid};
     }
   }
 
@@ -2217,9 +2315,20 @@ const researchStyles = `
        140px is that sum, rounded up. Stated here rather than left to intrinsic
        sizing because the ledger's rows must stay uniform — a list you scan is
        one whose rows are the same height. */
+    /* The header collapses with the row it labels. The row drops to three tracks
+       here, so the two labels whose columns no longer exist go with them —
+       otherwise the strip would name columns that are not on screen. */
+    .project-research__ledgerColumns {
+      grid-template-columns: ${ledgerColumns.narrow};
+    }
+
+    .project-research__ledgerColumns small[data-ledger-optional] {
+      display: none;
+    }
+
     .project-research__resultRow {
       min-height: 140px;
-      grid-template-columns: 44px minmax(0, 1fr) minmax(78px, auto);
+      grid-template-columns: ${ledgerColumns.narrow};
       grid-template-areas:
         "id arabic status"
         "id meta status";
@@ -2306,6 +2415,26 @@ const researchStyles = `
     .project-research__deskBody,
     .project-research__deskBody.is-browse {
       grid-template-columns: minmax(0, 1fr);
+    }
+
+    /* The desk is a fixed-height clipped region on desktop — height 100% with
+       overflow hidden, so its two rows scroll INSIDE it. At 390 the lane it sits
+       in gives it 53px, and hidden then cut everything below the toolbar: the
+       ledger, the filters, the inspector, all of it, with no way to reach any of
+       it because the clip is on a container the page cannot scroll.
+
+       At this width the desk stops being a viewport of its own and becomes what
+       it looks like — a card the PAGE scrolls. */
+    .project-research__desk {
+      height: auto;
+      min-height: 0;
+      grid-template-rows: auto auto;
+      overflow: visible;
+    }
+
+    .project-research__deskBody {
+      min-height: 0;
+      overflow: visible;
     }
 
     /* The masthead declares minmax(0, 1fr) auto, but "Study mode" is 182px and

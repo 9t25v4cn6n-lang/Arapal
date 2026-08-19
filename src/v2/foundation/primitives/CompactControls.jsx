@@ -164,7 +164,7 @@ export function Chip({
           aria-hidden="true"
           style={{
             marginInlineStart: spacing[4],
-            color: active ? colors.accentBase : colors.textFaint,
+            color: active ? colors.accentBase : colors.textSoft,
             fontVariantNumeric: 'tabular-nums',
             fontSize: `${Math.max(11, step.type.fontSize ? parseFloat(step.type.fontSize) - 1 : 11)}px`,
           }}
