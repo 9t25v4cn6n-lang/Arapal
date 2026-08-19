@@ -105,17 +105,27 @@ function readInitialDiscussionOpen() {
   return new URLSearchParams(window.location.search).get('studyDiscuss') === '1'
 }
 
+function readInitialSegmentId() {
+  if (typeof window === 'undefined') {
+    return '1.3'
+  }
+
+  const candidate = new URLSearchParams(window.location.search).get('studySegmentId')
+  return candidate || '1.3'
+}
+
 // Stable empty, so an absent project does not churn the reference each render.
 const EMPTY_SEGMENT_RECORDS = {}
 
 function createInitialSegmentRecords() {
   const initialStudyState = readInitialStudyState()
+  const initialSegmentId = readInitialSegmentId()
 
   return {
     ...defaultSegmentRecords,
-    '1.3': {
+    [initialSegmentId]: {
       submissionState: initialStudyState,
-      attempts: initialStudyState === 'draft' ? 0 : 1,
+      attempts: (initialStudyState === 'draft' || initialStudyState === 'failed') ? 0 : 1,
     },
   }
 }
@@ -168,7 +178,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
 
   const [segmentRecords, setSegmentRecords] = useState(createInitialSegmentRecords)
   const [currentSegmentId, setCurrentSegmentId] = useState(
-    () => context?.segmentId ?? context?.segmentRef ?? '1.3',
+    () => context?.segmentId ?? context?.segmentRef ?? readInitialSegmentId(),
   )
   const [segmentRailCollapsed, setSegmentRailCollapsed] = useState(false)
   const [supportRailCollapsed, setSupportRailCollapsed] = useState(false)
