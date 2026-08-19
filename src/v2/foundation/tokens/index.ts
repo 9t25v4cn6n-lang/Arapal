@@ -12,5 +12,6 @@ export {
   segmentationFlowTypography,
 } from './segmentationFlow'
 export { spacing } from './spacing'
+export { compactControl, compactControlShape } from './compactControl'
 export { surfacePadding } from './surfacePadding'
 export { containsArabic, getScriptAwareRole, typography } from './typography'

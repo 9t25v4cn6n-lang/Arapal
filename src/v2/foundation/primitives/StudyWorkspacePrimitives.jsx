@@ -12,11 +12,11 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  ChevronsLeft,
   PanelLeftClose,
   PanelLeftOpen,
   PanelRightClose,
   PanelRightOpen,
+  PictureInPicture2,
   Copy,
   Info,
   Italic,
@@ -26,7 +26,6 @@ import {
   ScrollText,
   Send,
   Sparkles,
-  Pin,
   Plus,
   Tag,
   X,
@@ -1437,6 +1436,11 @@ const studyCss = `
   .study-v2__contextDismiss:hover { border-color: ${colors.accentSoft}; color: ${colors.accentStrong}; }
   .study-v2__contextDismiss:focus-visible { outline: 2px solid ${colors.accentBase}; outline-offset: 2px; }
 
+  .study-v2__referenceAbsent {
+    color: var(--study-text-soft);
+    font-style: italic;
+  }
+
   /* The evaluation stub must announce itself wherever its output is shown. */
   .study-v2__sampleNotice {
     margin: 0;
@@ -2030,6 +2034,14 @@ const studyCss = `
     font-size: calc(var(--study-title-size) + 4px);
     line-height: 1;
     font-weight: 800;
+  }
+
+  /* The review variant. The circle carries an outcome glyph now rather than an
+     invented number, so it needs the review tone as well as the success one. */
+  .study-v2__gradeCircle.is-review {
+    border-color: color-mix(in srgb, var(--study-review) 30%, transparent);
+    background: color-mix(in srgb, var(--study-review) 10%, var(--study-surface));
+    color: var(--study-review-strong);
   }
 
   .study-v2__gradeMeta {
@@ -2991,15 +3003,28 @@ export function StudySubmittedStack({ bestTranslation, userTranslation, onDiscus
 
   return (
     <div className="study-v2__resultGrid" data-debug-item="study_submitted_stack">
+      {/* A reference translation is only shown when one EXISTS for this segment.
+          It used to render a fixture unconditionally, so a real project about a
+          caravan leaving at dawn was given an authoritative "best in class"
+          rendering of an unrelated passage about Friday prayer — presented, with
+          a tick and a success tone, as the standard the user's work should be
+          measured against. An absent reference has to say it is absent. */}
       <StudyPanel tone="success" className="study-v2__resultPanel" anchor="best">
         <CardHeader badge="✓" title="Best in Class Translation" tone="success">
-          <button type="button" className="study-v2__miniPill" title="Copy best translation">
+          <button type="button" className="study-v2__miniPill" title="Copy best translation" disabled={!bestTranslation}>
             <Copy size={14} />
             Copy
           </button>
         </CardHeader>
         <div className="study-v2__cardBody">
-          <p className="study-v2__bodyText">{bestTranslation}</p>
+          {bestTranslation
+            ? <p className="study-v2__bodyText">{bestTranslation}</p>
+            : (
+              <p className="study-v2__bodyText study-v2__referenceAbsent">
+                No reference translation has been published for this segment yet.
+                Nothing here is being compared against your work.
+              </p>
+            )}
         </div>
       </StudyPanel>
       <StudyPanel tone="slate" className="study-v2__resultPanel" anchor="translation">
@@ -3015,10 +3040,6 @@ export function StudySubmittedStack({ bestTranslation, userTranslation, onDiscus
       </StudyPanel>
       <StudyPanel tone="review" className="study-v2__resultPanel study-v2__notesPanel" anchor="notes">
         <CardHeader badge={<ScrollText size={15} />} title="Discussion Summary & Notes" tone="review">
-          <button type="button" className="study-v2__miniPill is-muted" disabled title="Notes are already attached to this segment">
-            <Pin size={14} />
-            Pin
-          </button>
           <button type="button" className="study-v2__miniPill" onClick={() => setIsAddingNote(true)} title="Add a manual note">
             <Plus size={14} />
             Add manual note
@@ -3166,13 +3187,13 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
   const isFailed = state === 'failed'
   const cards = isSubmitted
     ? [
-        { id: 'grade', title: 'Your Grade', tone: 'success', icon: <Award size={18} />, body: <GradeBody failed={false} /> },
+        { id: 'grade', title: 'Surface check', tone: 'success', icon: <Award size={18} />, body: <GradeBody failed={false} /> },
         { id: 'takeaways', title: 'Key Takeaways', tone: 'blue', icon: <Sparkles size={18} />, body: <TakeawaysBody /> },
         { id: 'lexicography', title: 'Lexicography', tone: 'purple', icon: <BookOpen size={18} />, body: <LexicographyBody /> },
       ]
     : isFailed
       ? [
-          { id: 'grade', title: 'Your Grade', tone: 'review', icon: <Award size={18} />, body: <GradeBody failed /> },
+          { id: 'grade', title: 'Surface check', tone: 'review', icon: <Award size={18} />, body: <GradeBody failed /> },
           { id: 'fix', title: 'Fix Steps', tone: 'orange', icon: <Sparkles size={18} />, body: <FixStepsBody /> },
           { id: 'lexicography', title: 'Lexicography', tone: 'purple', icon: <BookOpen size={18} />, body: <LexicographyBody /> },
         ]
@@ -3445,7 +3466,7 @@ function StudySupportCard({ tone, icon, title, body, onExpand, onFullscreen, onF
             label={`Expand ${title} in support panel`}
             title={`Expand ${title} in support panel`}
             onClick={onExpand}
-            icon={<ChevronsLeft strokeWidth={1.8} />}
+            icon={<PanelRightOpen strokeWidth={1.8} />}
           />
           <IconActionButton
             size="utility-sm"
@@ -3459,7 +3480,7 @@ function StudySupportCard({ tone, icon, title, body, onExpand, onFullscreen, onF
             label={`Float ${title}`}
             title={`Float ${title}`}
             onClick={onFloat}
-            icon={<Pin strokeWidth={1.8} />}
+            icon={<PictureInPicture2 strokeWidth={1.8} />}
           />
         </div>
       </div>
@@ -3504,7 +3525,7 @@ function StudyDetachedSupportCard({
               label={`Expand ${card.title} in panel`}
               title={`Expand ${card.title} in panel`}
               onClick={onExpand}
-              icon={<ChevronsLeft strokeWidth={1.8} />}
+              icon={<PanelRightOpen strokeWidth={1.8} />}
             />
           ) : null}
           {preview && onFullscreen ? (
@@ -3522,7 +3543,7 @@ function StudyDetachedSupportCard({
               label={`Float ${card.title}`}
               title={`Float ${card.title}`}
               onClick={onFloat}
-              icon={<Pin strokeWidth={1.8} />}
+              icon={<PictureInPicture2 strokeWidth={1.8} />}
             />
           ) : null}
           {!preview && onFullscreen ? (
@@ -3662,40 +3683,72 @@ function TakeawaysBody() {
   )
 }
 
+/**
+ * The result of a submission, in the REFERENCE path.
+ *
+ * This used to render "Your Grade 8.4", "Reviewed: 15 Mar 2026" and "Model
+ * evaluation with a scholar-facing rubric", followed by three paragraphs of
+ * specific praise and criticism — "Accurate treatment of the core city-condition
+ * terminology" — about a translation nothing had read. A reviewer submitted
+ * `dsfdg` and was told their terminology was accurate.
+ *
+ * It did this on the same screen that says, in its own banner, that meaning and
+ * accuracy are not evaluated. Two claims, opposite, twelve inches apart. That is
+ * not a polish defect; it is the product lying about its own capability, and it
+ * would have shipped attached to a study tool whose entire value is that you can
+ * trust what it tells you about your work.
+ *
+ * `data/evaluation.js` already got this right — it returns `score: null`
+ * deliberately, because "a number here would imply a measurement this stub
+ * cannot make", and every note it emits is something a reader could verify
+ * without knowing Arabic. This is that same contract, rendered. The composition
+ * is unchanged; only the claims are gone.
+ */
 function GradeBody({ failed }) {
   return (
     <div className="study-v2__gradeBody">
-      <div className="study-v2__gradeCircle">{failed ? '4.2' : '8.4'}</div>
+      <div className={`study-v2__gradeCircle${failed ? ' is-review' : ''}`}>
+        {failed
+          ? <AlertTriangle size={40} strokeWidth={1.6} aria-hidden="true" />
+          : <CheckCircle2 size={40} strokeWidth={1.6} aria-hidden="true" />}
+      </div>
       <p className="study-v2__gradeMeta">
-        <strong>Reviewed:</strong> 15 Mar 2026
+        <strong>{failed ? 'Needs another pass' : 'No issues found'}</strong>
         <br />
-        {failed ? 'Model review found structural issues to repair.' : 'Model evaluation with a scholar-facing rubric'}
+        Automated surface check — form and completeness only. Meaning and accuracy
+        are not scored.
       </p>
-      <div className="study-v2__insightBox is-success">
-        <p className="study-v2__insightTitle">
-          <span className="study-v2__insightDot" aria-hidden="true" />
-          Strengths
-        </p>
-        <p className="study-v2__supportText">
-          Accurate treatment of the core city-condition terminology and the prayer-area distinction.
-        </p>
-      </div>
-      <div className="study-v2__insightBox is-review">
-        <p className="study-v2__insightTitle">
-          <span className="study-v2__insightDot" aria-hidden="true" />
-          Areas for improvement
-        </p>
-        <p className="study-v2__supportText">
-          Add a little more context for the attributed opinions so the legal reasoning stays clear.
-        </p>
-      </div>
+      {failed ? (
+        <div className="study-v2__insightBox is-review">
+          <p className="study-v2__insightTitle">
+            <span className="study-v2__insightDot" aria-hidden="true" />
+            What the check found
+          </p>
+          <p className="study-v2__supportText">
+            The translation is much shorter than the source. Check whether a clause
+            has been dropped.
+          </p>
+        </div>
+      ) : (
+        <div className="study-v2__insightBox is-success">
+          <p className="study-v2__insightTitle">
+            <span className="study-v2__insightDot" aria-hidden="true" />
+            What the check found
+          </p>
+          <p className="study-v2__supportText">
+            No structural issues detected: length is proportionate to the source,
+            nothing is left untranslated, and the text is punctuated.
+          </p>
+        </div>
+      )}
       <div className="study-v2__insightBox is-blue">
         <p className="study-v2__insightTitle">
           <span className="study-v2__insightDot" aria-hidden="true" />
-          Suggestion
+          What this does not cover
         </p>
         <p className="study-v2__supportText">
-          Consider a brief explanatory note for the attached outskirts phrase.
+          Whether the meaning is right. Compare your work against the reference
+          translation below, and use Discuss to question anything it asserts.
         </p>
       </div>
     </div>

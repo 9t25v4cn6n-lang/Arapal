@@ -37,6 +37,7 @@ import {
   colors,
   elevation,
   motion,
+  compactControl,
   radius,
   segmentationFlowChrome as flowChrome,
   segmentationFlowSteps,
@@ -885,7 +886,18 @@ function AlwaysSkipPreference({ checked, onChange }) {
         type="checkbox"
         checked={checked}
         onChange={(event) => onChange(event.target.checked)}
-        style={{ width: '16px', height: '16px', accentColor: colors.accentBase, cursor: 'pointer' }}
+        // Its own accessible name and its own hit area. Wrapping it in a <label>
+        // gives it neither as far as the visual standard is concerned: the rule
+        // measures the interactive element, and a 16px box inside a 44px label
+        // is still a 16px target.
+        aria-label="Always skip this animation"
+        style={{
+          width: `${compactControl.xs.heightPx}px`,
+          height: `${compactControl.xs.heightPx}px`,
+          flex: '0 0 auto',
+          accentColor: colors.accentBase,
+          cursor: 'pointer',
+        }}
       />
       <span>Always skip this animation</span>
     </label>

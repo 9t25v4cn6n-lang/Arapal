@@ -263,6 +263,9 @@ export default function StudyWorkspaceScreen({ route, shell }) {
   // shows that segment's own work rather than the previous one's.
   const [localDraft, setLocalDraft] = useState('')
   const draftValue = isLive ? (storeDraft?.text ?? '') : localDraft
+  // What to show back as "your translation" once submitted. The reference route
+  // has no store to read, so it falls back to the fixture — but only there.
+  const submittedTranslation = draftValue.trim() || userTranslation
   const [submitError, setSubmitError] = useState(null)
 
   const activeSourceText = isLive ? (currentSegment?.text ?? '') : arabicSource
@@ -565,8 +568,16 @@ export default function StudyWorkspaceScreen({ route, shell }) {
               onIncreaseFont={() => setSourceFontScale((current) => Math.min(1.44, Number((current + 0.08).toFixed(2))))}
             />
             <StudySubmittedStack
-              bestTranslation={bestInClassTranslation}
-              userTranslation={userTranslation}
+              // Reference content belongs to the reference route. A live project
+              // has no published reference translation, and inventing one is the
+              // same untruth as inventing a grade.
+              bestTranslation={isLive ? null : bestInClassTranslation}
+              // The user's OWN words when there are any. This passed the module
+              // fixture unconditionally, so after submitting a real translation
+              // the panel headed "Your translation" showed a stranger's — the
+              // same class of untruth as the invented grade, and on the one card
+              // whose entire purpose is to reflect the user's work back to them.
+              userTranslation={submittedTranslation}
               onDiscuss={() => {
                 setDiscussionClosing(false)
                 setDiscussionOpen(true)
