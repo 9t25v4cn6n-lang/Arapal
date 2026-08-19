@@ -507,11 +507,22 @@ const researchStyles = `
     background: rgba(219, 234, 254, 0.72);
   }
 
+  /* A navigation label, declared as one.
+     It declared no type at all, so it inherited the body role and rendered at
+     15px/400 — two pixels larger and two hundred weight lighter than the global
+     rail sitting directly beside it. Same family throughout, which is why this
+     read as "a different typography system" without anyone being able to say
+     which font it was: it was the body role wearing a navigation list's job. */
   .project-research__filterLabel {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-family: ${typography.controlLabel.fontFamily};
+    font-size: ${typography.controlLabel.fontSize};
+    font-weight: ${typography.controlLabel.fontWeight};
+    line-height: ${typography.controlLabel.lineHeight};
+    letter-spacing: ${typography.controlLabel.letterSpacing};
   }
 
   .project-research__filterButton strong {
@@ -542,13 +553,22 @@ const researchStyles = `
     gap: ${spacing[4]};
   }
 
+  /* One role, not parts of two. This took studyControlLabel's family and
+     metaText's size, which is how a third navigation treatment appeared on a
+     screen that already had two. The revision queue is navigation; it uses the
+     navigation role and expresses its own hierarchy through surface and colour. */
   .project-research__revisionButton strong {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-family: ${typography.studyControlLabel.fontFamily};
-    font-size: ${typography.metaText.fontSize};
-    line-height: 1.2;
+    /* Wraps rather than truncates. At the navigation role "Translation
+       comparison" needs 147px and the lane offers 141 — six pixels, for which
+       the alternative was showing a destination as "Translation compari...".
+       A navigation label that cannot be read in full is not doing its job, and
+       this panel has vertical room to spare. */
+    overflow-wrap: anywhere;
+    font-family: ${typography.controlLabel.fontFamily};
+    font-size: ${typography.controlLabel.fontSize};
+    font-weight: ${typography.controlLabel.fontWeight};
+    line-height: ${typography.controlLabel.lineHeight};
+    letter-spacing: ${typography.controlLabel.letterSpacing};
   }
 
   .project-research__revisionButton small {
