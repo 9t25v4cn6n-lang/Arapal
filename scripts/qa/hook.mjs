@@ -35,6 +35,18 @@ try {
 // Only source changes that can alter rendering are worth a run.
 if (!filePath || !/\/src\/.*\.(jsx?|tsx?|css)$/.test(filePath)) process.exit(0)
 
+// Undeclared token keys first: it needs no browser, it is instant, and it catches
+// a defect the rendered gate CANNOT see. `spacing[10]` resolves to `undefined`,
+// the browser drops the whole declaration, and the result is a pill with no
+// padding that still passes every geometric check because nothing overflows —
+// it is simply, quietly, not the design.
+const tokens = spawnSync('node', ['scripts/qa/lint-tokens.mjs'], { cwd: REPO, encoding: 'utf8' })
+if (tokens.status !== 0) {
+  console.error(tokens.stdout ?? '')
+  console.error(tokens.stderr ?? '')
+  process.exit(2)
+}
+
 // Requires the dev server. If it is not up, say so once rather than failing loudly.
 const ping = spawnSync('curl', ['-s', '-o', '/dev/null', '-w', '%{http_code}', process.env.QA_BASE_URL ?? 'http://localhost:5173/'], { encoding: 'utf8' })
 if (ping.stdout?.trim() !== '200') {

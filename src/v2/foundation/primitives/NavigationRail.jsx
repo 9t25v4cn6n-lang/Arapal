@@ -1,6 +1,7 @@
 import { BookOpen, ClipboardList, FolderGit2, Home, Layers3, Pin, PinOff, SplitSquareVertical, TextSearch } from 'lucide-react'
 import { useState } from 'react'
 import { colors, motion, radius, spacing, typography } from '../tokens'
+import { RAIL_MIN_GUTTER_PX, shellSafeArea } from '../layout/shellSizing'
 import IconActionButton from './IconActionButton'
 
 const iconMap = {
@@ -31,6 +32,45 @@ const navigationRailChrome = {
 }
 
 /**
+ * Horizontal padding of the rail lane in each state, which is what the active
+ * indicator has to reach back across to land on the rail's own edge.
+ *
+ * These mirror `V2ScreenFrame`'s rail override. Kept as named constants rather
+ * than repeated literals because the indicator's offset is only correct while it
+ * agrees with the padding the lane actually renders.
+ */
+const railLanePaddingPx = {
+  collapsed: RAIL_MIN_GUTTER_PX,
+  expanded: 16,
+}
+
+/**
+ * Where the active marker sits.
+ *
+ * It used to be `left: 3px` — three pixels inside the 36px control — so it read
+ * as a decoration attached to the icon rather than as the rail saying which
+ * destination you are in. It now sits a deliberate 4px off the rail's own left
+ * edge in both states, which means reaching back out of the button by whatever
+ * the lane's padding is. A full pill in both states, too: the half-pill was a
+ * tab shape, and a tab only makes sense flush against an edge it is no longer
+ * flush against.
+ */
+function getActiveIndicatorStyle(isExpanded) {
+  const lanePadding = isExpanded ? railLanePaddingPx.expanded : railLanePaddingPx.collapsed
+
+  return {
+    position: 'absolute',
+    top: '4px',
+    bottom: '4px',
+    left: `${shellSafeArea.railActiveIndicatorInsetPx - lanePadding}px`,
+    width: `${shellSafeArea.railActiveIndicatorWidthPx}px`,
+    borderRadius: radius.pill,
+    background: colors.accentBase,
+    boxShadow: navigationRailChrome.activeIndicatorShadow,
+  }
+}
+
+/**
  * The rail's utility foot. It holds the pin control, and only while the rail is
  * expanded — a pin for a rail you cannot see the labels of has nothing to say.
  * `display: none` rather than a hidden 28px lane, so the destinations above it
@@ -50,8 +90,33 @@ export function getNavigationUtilityAnchorStyle(isExpanded) {
       }
 }
 
-function getNavButtonStyle(isExpanded, isActive, isHovered) {
-  const isHighlighted = isActive || isHovered
+/**
+ * Three states, not two.
+ *
+ * `current` is the destination you are on. `context` is a sibling in the same
+ * family — Project Research while you are in Projects, and the reverse — which
+ * is real information the rail should carry, but it is NOT where you are.
+ *
+ * Both used to resolve from `groupId` alone and render identically, so Research
+ * showed two rows lit blue with two active markers and the rail answered "where
+ * am I?" with two answers. Context now reads as a raised text tone and nothing
+ * else: no surface, no marker, no accent.
+ */
+function getNavState({ isCurrent, isInContext, isHovered }) {
+  if (isCurrent) return 'current'
+  if (isHovered) return 'hovered'
+  if (isInContext) return 'context'
+  return 'inactive'
+}
+
+function getNavButtonStyle(isExpanded, navState) {
+  const hasSurface = navState === 'current' || navState === 'hovered'
+  const color = {
+    current: colors.accentStrong,
+    hovered: colors.accentStrong,
+    context: colors.textSoft,
+    inactive: navigationRailMetrics.inactiveTone,
+  }[navState]
 
   return {
     position: 'relative',
@@ -59,8 +124,8 @@ function getNavButtonStyle(isExpanded, isActive, isHovered) {
     height: navigationRailMetrics.rowHeight,
     border: 'none',
     borderRadius: radius[12],
-    background: isHighlighted ? navigationRailMetrics.highlightedSurface : 'transparent',
-    color: isHighlighted ? colors.accentStrong : navigationRailMetrics.inactiveTone,
+    background: hasSurface ? navigationRailMetrics.highlightedSurface : 'transparent',
+    color,
     display: 'flex',
     alignItems: 'center',
     justifyContent: isExpanded ? 'flex-start' : 'center',
@@ -102,35 +167,27 @@ export function NavigationRailItems({ shell }) {
       {shell.railItems.map((route) => {
         const rail = route.shell?.rail
         const Icon = iconMap[rail?.iconKey] ?? FolderGit2
-        const isActive = shell.activeRailGroupId === rail?.groupId
+        const routeId = rail?.routeId ?? route.id
+        const isCurrent = shell.activeRailRouteId === routeId
+        const isInContext = !isCurrent && shell.activeRailGroupId === rail?.groupId
         const isHovered = hoveredRouteId === route.id
+        const navState = getNavState({ isCurrent, isInContext, isHovered })
 
         return (
           <button
             key={route.id}
             type="button"
             aria-label={rail?.label ?? route.label}
+            aria-current={isCurrent ? 'page' : undefined}
             onClick={() => (rail?.externalHash
               ? shell.navigateExternal(rail.externalHash)
               : shell.navigate(rail?.routeId ?? route.id))}
             onMouseEnter={() => setHoveredRouteId(route.id)}
             onMouseLeave={() => setHoveredRouteId(null)}
-            style={getNavButtonStyle(shell.isNavExpanded, isActive, isHovered)}
+            style={getNavButtonStyle(shell.isNavExpanded, navState)}
           >
-            {isActive ? (
-              <span
-                aria-hidden="true"
-                style={{
-                  position: 'absolute',
-                  top: '4px',
-                  bottom: '4px',
-                  left: shell.isNavExpanded ? '-1px' : '3px',
-                  width: '4px',
-                  borderRadius: shell.isNavExpanded ? '0 999px 999px 0' : '999px',
-                  background: colors.accentBase,
-                  boxShadow: navigationRailChrome.activeIndicatorShadow,
-                }}
-              />
+            {isCurrent ? (
+              <span aria-hidden="true" style={getActiveIndicatorStyle(shell.isNavExpanded)} />
             ) : null}
 
             <Icon size={18} strokeWidth={1.8} />

@@ -1,6 +1,6 @@
 import { colors, spacing } from '../tokens'
 import { controlSizing } from '../tokens/controlSizing'
-import { getDefaultBodySplitColumns, getLayer1BodyColumns, shellSizing } from './shellSizing'
+import { getDefaultBodySplitColumns, getHeaderIdentityInsetPx, getLayer1BodyColumns, shellSizing } from './shellSizing'
 
 export const rootContainerName = 'Layer1_Stage_ScreenShell'
 
@@ -67,7 +67,13 @@ export function getUniversalShellContainers() {
       // icons, so the header and the navigation beneath it read as one edge
       // rather than two things that happen to be on the left. Derived from the
       // rail width and the mark, not chosen to look about right.
-      padding: `0 ${spacing[16]} 0 max(${spacing[8]}, calc((${shellSizing.navigationRail.collapsedPx} - ${IDENTITY_MARK_PX}px) / 2))`,
+      //
+      // The spine is the rail lane's FLOOR, not its nominal proportional width.
+      // `navigationRail.collapsedPx` is 51.429px; the lane can never actually
+      // resolve narrower than 60px, so deriving from the nominal value put the
+      // mark 4.3px left of every icon it was supposed to align with, and left it
+      // 9.7px off the viewport edge — close enough to read as clipped.
+      padding: `0 ${spacing[16]} 0 ${getHeaderIdentityInsetPx(IDENTITY_MARK_PX)}px`,
       gap: spacing[16],
       overflow: 'visible',
       textAlign: 'left',
@@ -154,7 +160,11 @@ export function getUniversalShellContainers() {
       justifyContent: 'flex-start',
       padding: '0',
       gap: spacing[12],
-      overflow: 'hidden',
+      // Visible so the active marker can sit on the RAIL's left edge rather than
+      // inside the control it marks. The rail lane above still clips, so nothing
+      // reaches the viewport edge; this only opens the 12px of lane padding the
+      // marker needs to reach back across.
+      overflow: 'visible',
       textAlign: 'left',
       style: {
         flex: 1,

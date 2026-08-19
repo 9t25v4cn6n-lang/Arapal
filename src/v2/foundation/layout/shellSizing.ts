@@ -26,6 +26,45 @@ import { controlSizing } from '../tokens/controlSizing'
  */
 export const RAIL_MIN_GUTTER_PX = 12
 
+/**
+ * The shell's left safe area, and the single vertical axis the chrome hangs on.
+ *
+ * The rail lane can never be narrower than its control plus both gutters, so the
+ * control's centre is a FIXED distance from the viewport edge regardless of how
+ * the proportional grid resolves. That axis — not the lane's nominal `0.5fr`
+ * width — is what the header's identity must sit on.
+ *
+ * The header used to derive its own inset from `navigationRail.collapsedPx`, a
+ * nominal 51.429px the rail itself overrides with a 60px floor. The identity
+ * mark therefore centred on 25.7px while every rail icon below it centred on
+ * 30px: 4.3px of misalignment, and a 9.7px gap that read as the mark being
+ * clipped against the viewport edge.
+ */
+export const shellSafeArea = {
+  /** Narrowest the rail lane can resolve to: the control plus both gutters. */
+  railLaneFloorPx: controlSizing.navRailControlPx + RAIL_MIN_GUTTER_PX * 2,
+  /** Distance from the viewport edge to the centre of every collapsed rail control. */
+  get railControlCenterPx() {
+    return this.railLaneFloorPx / 2
+  },
+  /**
+   * How far the active indicator sits from the rail's own left edge. Small, but
+   * deliberate: at 3px *inside* the 36px control it read as icon decoration
+   * rather than as a marker belonging to the rail.
+   */
+  railActiveIndicatorInsetPx: 4,
+  railActiveIndicatorWidthPx: 4,
+}
+
+/**
+ * Left inset for a header lane holding a mark of `markPx`, so the mark centres
+ * on the rail's control axis. Floored at the rail's own gutter so a narrow
+ * viewport can tighten the composition but never breach the safe area.
+ */
+export function getHeaderIdentityInsetPx(markPx) {
+  return Math.max(RAIL_MIN_GUTTER_PX, shellSafeArea.railControlCenterPx - markPx / 2)
+}
+
 export const shellSizing = {
   canonicalViewport,
   normalizedFrame,
@@ -69,7 +108,7 @@ export function getLayer1BodyColumns({ isNavExpanded = false } = {}) {
   // clipped every rail icon — by 10px at 1440, 12px at 1366, 15px at 1280. The
   // floor makes the lane derive from its content: it can still grow with the
   // frame, but it can never be narrower than the control plus its gutters.
-  const railFloorPx = controlSizing.navRailControlPx + RAIL_MIN_GUTTER_PX * 2
+  const railFloorPx = shellSafeArea.railLaneFloorPx
 
   return `minmax(${railFloorPx}px, ${railUnits}fr) minmax(0, ${bodyUnits}fr)`
 }

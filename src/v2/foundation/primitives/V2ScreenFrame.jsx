@@ -1,6 +1,6 @@
 import ScreenContractRenderer from '../layout/ScreenContractRenderer'
-import { getDefaultBodySplitColumns, getLayer1BodyColumns } from '../layout/shellSizing'
-import { colors, motion, spacing } from '../tokens'
+import { getDefaultBodySplitColumns, getLayer1BodyColumns, shellSizing } from '../layout/shellSizing'
+import { colors, elevation, motion, spacing } from '../tokens'
 import AppIdentity from './AppIdentity'
 import { HeaderCenter, HeaderMeta } from './HeaderBar'
 import {
@@ -9,26 +9,85 @@ import {
   NavigationRailPinControl,
 } from './NavigationRail'
 
+/**
+ * Navigation depth policy.
+ *
+ * Expanding the rail used to RESERVE its width from the grid, so simply moving
+ * the pointer across the rail reflowed the entire workspace — and in Research it
+ * took 248px away from the ledger, which is why a wide viewport still truncated
+ * columns. Width is now reserved only when the user has PINNED the rail, which
+ * is the one moment they have actually asked to trade canvas for labels.
+ *
+ * A hover therefore overlays: the rail floats above the body at its expanded
+ * width and the layout underneath does not move. That is the same contract every
+ * deep-workspace product uses, and it makes the policy one rule rather than a
+ * per-screen judgement about how much width a workspace can spare.
+ */
+function getNavigationOverlayStyle(shell) {
+  const isOverlaying = shell.showRail && shell.isNavExpanded && !shell.isNavPinned
+
+  if (!isOverlaying) {
+    return { position: 'relative', width: 'auto', boxShadow: 'none', zIndex: 'auto' }
+  }
+
+  return {
+    position: 'absolute',
+    insetBlock: 0,
+    left: 0,
+    width: shellSizing.navigationRail.expandedPx,
+    zIndex: 40,
+    boxShadow: elevation.raised,
+  }
+}
+
+/**
+ * Grid placement for the two body lanes.
+ *
+ * Explicit, because the overlaying rail is out of flow: an absolutely positioned
+ * grid child takes no auto-placement slot, so the body field silently slid into
+ * the rail's 60px column the moment a hover lifted the rail out. The screen did
+ * not error — it rendered its entire workspace inside 60px and clipped it, which
+ * is the kind of failure that only shows up in a screenshot.
+ */
+function getBodyLanePlacement(shell) {
+  return shell.showRail
+    ? { rail: { gridColumn: '1' }, body: { gridColumn: '2' } }
+    : { rail: {}, body: { gridColumn: '1' } }
+}
+
 function getShellContainerOverrides(shell, contract) {
   const contractContainerNames = new Set(contract?.containers?.map((container) => container.name) ?? [])
-  const layer1BodyColumns = shell.showRail ? getLayer1BodyColumns({ isNavExpanded: shell.isNavExpanded }) : 'minmax(0, 1fr)'
-  const defaultSplitColumns = shell.showRail ? getDefaultBodySplitColumns({ isNavExpanded: shell.isNavExpanded }) : 'minmax(0, 1fr)'
+  // Pinned, not expanded: a hover must not resize the workspace behind it.
+  const reservesWidth = shell.showRail && shell.isNavPinned
+  const layer1BodyColumns = shell.showRail ? getLayer1BodyColumns({ isNavExpanded: reservesWidth }) : 'minmax(0, 1fr)'
+  const defaultSplitColumns = shell.showRail ? getDefaultBodySplitColumns({ isNavExpanded: reservesWidth }) : 'minmax(0, 1fr)'
+
+  const lanePlacement = getBodyLanePlacement(shell)
 
   const overrides = {
+    Layer1_Body_ScreenBodyField: {
+      style: { ...lanePlacement.body },
+    },
     Layer1_Body_Row: {
       style: {
         gridTemplateColumns: layer1BodyColumns,
         transition: `grid-template-columns ${motion.panel}`,
+        // Containing block for the overlaying rail.
+        position: 'relative',
       },
     },
     Layer1_Body_NavigationRail: {
       style: shell.showRail
         ? {
             padding: shell.isNavExpanded ? `${spacing[20]} ${spacing[16]}` : `${spacing[20]} ${spacing[12]}`,
+            ...lanePlacement.rail,
+            ...getNavigationOverlayStyle(shell),
             transition: [
               `padding ${motion.panel}`,
+              `width ${motion.panel}`,
               `background-color ${motion.micro}`,
               `border-color ${motion.micro}`,
+              `box-shadow ${motion.panel}`,
             ].join(', '),
           }
         : {
@@ -62,7 +121,7 @@ function getShellContainerOverrides(shell, contract) {
 
   if (contractContainerNames.has('Layer2_Body_ContentStartRail')) {
     overrides.Layer2_Body_ContentStartRail = {
-      style: shell.showRail && shell.isNavExpanded
+      style: shell.showRail && shell.isNavPinned
         ? {
             width: '0px',
             minWidth: '0px',

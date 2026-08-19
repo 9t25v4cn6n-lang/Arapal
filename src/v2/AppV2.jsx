@@ -18,11 +18,17 @@ export default function AppV2({ routeId = defaultRouteId }) {
   const railItems = getPrimaryRailRoutes()
   const { isNavPinned, isNavHovered, isNavExpanded } = navigationRailState
   const activeRailGroupId = activeRoute.shell?.rail?.groupId ?? activeRoute.id
+  // The rail needs BOTH: which family you are in, and which destination you are
+  // actually on. Projects and Project Research deliberately share a group, so
+  // group alone lit two rows identically and the rail could not say where you
+  // were. The route id is the difference between context and current.
+  const activeRailRouteId = activeRoute.shell?.rail?.routeId ?? activeRoute.id
   const showRail = activeRoute.shell?.showRail !== false
 
   const shell = {
     activeRoute,
     activeRailGroupId,
+    activeRailRouteId,
     showRail,
     railItems,
     isNavPinned,
