@@ -602,7 +602,9 @@ const studyCss = `
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: var(--study-space-8);
+    /* Status and actions are a deliberate pair with deliberate air between
+       them, not two things that happened to end up adjacent. */
+    gap: var(--study-space-16);
   }
 
   .study-v2__shellRightInfo {
@@ -644,20 +646,31 @@ const studyCss = `
     padding: 0 var(--study-space-6, 6px);
   }
 
+  /* Sized by its content and anchored to the actions beside it.
+     It used to be a fixed 320px block that centred its own label inside itself,
+     inside a cluster justified to flex-end — so "Segment 1 of 2" landed wherever
+     160px of empty reserved width happened to put it, which read as an arbitrary
+     position around four-fifths of the bar. And because it could not shrink
+     below its content, at narrower widths it slid under Focus view instead of
+     giving way. Its position is now a stable function of the actions it belongs
+     with, and it is the thing that yields when the lane runs out. */
   .study-v2__shellProgress {
-    width: 320px;
-    max-width: 32vw;
+    flex: 0 1 auto;
+    min-width: 0;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
     gap: var(--study-space-6, 6px);
     padding: 0;
     color: var(--study-text-body);
     white-space: nowrap;
+    overflow: hidden;
   }
 
   .study-v2__shellProgressLabel {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
     color: var(--study-text-body);
     font-size: var(--study-control-size);
     line-height: var(--study-control-line);
@@ -667,6 +680,9 @@ const studyCss = `
   }
 
   .study-v2__shellFocusButton {
+    /* Never the thing that shrinks. The lane's only real action outranks a
+       status readout when width runs out. */
+    flex: 0 0 auto;
     min-height: 36px;
     border: 1px solid color-mix(in srgb, var(--study-line-soft) 74%, transparent);
     border-radius: var(--study-radius-14, 14px);

@@ -651,7 +651,7 @@ function TakeView({
                 {autosaveState}
               </Badge>
               <Badge tone="quiet">{answeredCount} of {exam.questions.length} answered</Badge>
-              <Badge tone="quiet">{elapsedMinutes} min</Badge>
+              <Badge tone="quiet">{elapsedMinutes} min elapsed</Badge>
             </div>
           </div>
 
@@ -709,6 +709,17 @@ function TakeView({
 // ── review ───────────────────────────────────────────────────────────────────
 
 function ResultsView({ result, grouping, onGrouping, groups, onJumpToStudy, onDone }) {
+  // The page's own heading is "Needs attention", and every row's action is
+  // "Open in study" — yet the one dominant blue control was "Back to
+  // assessments", which is the action that ABANDONS the remediation the page
+  // exists to start. The primary action now matches what the page is for, and
+  // falls back to leaving only when there is genuinely nothing to remediate.
+  //
+  // That also settles the duplicated return: the header already offers
+  // "Assessment library", so a second, louder copy of the same destination was
+  // spending the page's most valuable control on its least valuable outcome.
+  const remediationCount = groups.reduce((total, group) => total + group.items.length, 0)
+  const firstRemediation = groups[0]?.items?.[0] ?? null
   return (
     <>
       <section style={{ ...surface, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: spacing[24], flexWrap: 'wrap', padding: spacing[24] }}>
@@ -723,14 +734,32 @@ function ResultsView({ result, grouping, onGrouping, groups, onJumpToStudy, onDo
             {result.missCount ? <Badge tone="critical">{result.missCount} misses</Badge> : null}
           </div>
         </div>
-        <PrimaryCTA icon={<CheckCircle2 size={16} strokeWidth={1.9} />} minWidth={220} height={48} onClick={onDone}>
-          Back to assessments
-        </PrimaryCTA>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[12], flexWrap: 'wrap' }}>
+          {firstRemediation ? (
+            <>
+              <PrimaryCTA
+                icon={<BookOpen size={16} strokeWidth={1.9} />}
+                minWidth={220}
+                height={48}
+                onClick={() => onJumpToStudy(firstRemediation)}
+              >
+                Study what needs attention
+              </PrimaryCTA>
+              <GhostButton size="md" onClick={onDone}>Assessment library</GhostButton>
+            </>
+          ) : (
+            <PrimaryCTA icon={<CheckCircle2 size={16} strokeWidth={1.9} />} minWidth={220} height={48} onClick={onDone}>
+              Back to assessments
+            </PrimaryCTA>
+          )}
+        </div>
       </section>
 
       <section style={{ display: 'grid', gap: spacing[12] }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: spacing[12], flexWrap: 'wrap' }}>
-          <h2 style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textMuted }}>Needs attention</h2>
+          <h2 style={{ ...typography.eyebrowLabel, margin: 0, color: colors.textMuted }}>
+            Needs attention{remediationCount ? ` · ${remediationCount}` : ''}
+          </h2>
           <div style={{ display: 'inline-flex', gap: spacing[8] }}>
             <Chip active={grouping === 'concept'} onClick={() => onGrouping('concept')}>By concept</Chip>
             <Chip active={grouping === 'segment'} onClick={() => onGrouping('segment')}>By segment</Chip>
