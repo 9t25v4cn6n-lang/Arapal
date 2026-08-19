@@ -148,40 +148,30 @@ const layoutContract = createScreenLayoutContract({
       semanticRole: 'toolbar',
       display: 'flex',
       layoutMode: 'flex',
-      alignItems: 'flex-start',
-      justifyContent: 'center',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
       padding: '0',
       gap: '0',
       overflow: 'visible',
       textAlign: 'left',
       style: {
-        width: flowMetrics.reviewToolbarRailWidth,
-        // Viewport space, because that is the space this palette actually needs.
+        // IN THE FLOW, above the work it edits.
         //
-        // Two earlier attempts failed for the same underlying reason. As a
-        // zero-height sticky anchor the toolbar overflowed downward from wherever
-        // the anchor landed — 378px into the lane at 1280x800 — running 148px
-        // past the fold with delete and float unpressable and sitting 84px on the
-        // Approve bar. Giving the region a real band did not help either: sticky
-        // lives in the document flow, so at rest the band still begins after the
-        // intro and the source tray, leaving about 314px on a 768-tall frame for
-        // 570px of tools. No height cap can fix a bad starting point.
+        // Two earlier attempts placed a VERTICAL nine-action palette and each
+        // failed on height: as a sticky anchor it overflowed 148px past the fold
+        // with delete unpressable, and as an in-flow band it started after the
+        // intro and the tray with ~314px available for 570px of tools. The third
+        // attempt gave up on proximity and fixed it to the viewport's right
+        // margin — which is the state this pass found: an unexplained column of
+        // nine glyphs, 500px from the segments it acts on, with nothing saying
+        // what it applied to.
         //
-        // Fixed positioning is the right primitive for chrome that must stay
-        // reachable: the band is the viewport, identical whether or not the page
-        // is scrolled, so the arithmetic holds at every frame.
-        position: 'fixed',
-        top: `calc(${flowMetrics.shellHeaderHeight} + ${spacing[16]})`,
-        // The page's own inline inset, which is where the reserved gutter's outer
-        // edge sits. Deliberately NOT re-deriving the content box: that would mean
-        // restating the shell's rail width and centring cap here, and a second
-        // copy of shell arithmetic is what put this toolbar on top of the content
-        // in the first place. Below ~1460px the container is not centred and this
-        // lands exactly where the in-flow version did; above it the toolbar sits
-        // further into the margin than the content — recorded in TODO.md.
-        right: `clamp(${spacing[24]}, 4vw, ${spacing[48]})`,
-        maxHeight: `calc(100vh - ${flowMetrics.reviewToolbarViewportReserve})`,
-        zIndex: 32,
+        // No placement fixes a palette shaped wrong for the space it is in. The
+        // layout has width and not height, so the toolbar is horizontal and
+        // labelled now, and a single 48px row is something the stage can give it
+        // directly above the workboard. Scope stops being a guess because the
+        // controls sit with the thing they change.
+        width: '100%',
         minWidth: 0,
       },
     },

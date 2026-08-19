@@ -49,6 +49,14 @@ export function DockableToolbarDivider({ orientation = 'horizontal' }) {
   )
 }
 
+/**
+ * A toolbar action.
+ *
+ * `showLabel` renders the name beside the glyph instead of hiding it in a
+ * tooltip. Nine of these in an unlabelled vertical rail is a puzzle, not a
+ * toolbar — the labels already existed as `title` and `aria-label`, so the
+ * information was there and simply not shown to anyone using their eyes.
+ */
 export function DockableToolbarIconButton({
   label,
   icon,
@@ -56,6 +64,7 @@ export function DockableToolbarIconButton({
   disabled = false,
   active = false,
   tone = 'default',
+  showLabel = false,
   debugItem,
 }) {
   const danger = tone === 'danger'
@@ -71,8 +80,15 @@ export function DockableToolbarIconButton({
       data-debug-item={debugItem}
       data-active={active ? 'true' : 'false'}
       style={{
-        width: spacing[40],
+        width: showLabel ? 'auto' : spacing[40],
         height: spacing[40],
+        minWidth: spacing[40],
+        paddingInline: showLabel ? spacing[12] : 0,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: showLabel ? spacing[8] : 0,
+        whiteSpace: 'nowrap',
         borderRadius: radius.pill,
         border: `1px solid ${
           activeDanger
@@ -111,6 +127,7 @@ export function DockableToolbarIconButton({
       }}
     >
       {icon}
+      {showLabel ? <span style={{ ...typography.controlLabel }}>{label}</span> : null}
     </button>
   )
 }
@@ -122,6 +139,7 @@ export function DockableToolbarMenu({
   disabled = false,
   tone = 'default',
   placement = 'bottom',
+  showLabel = false,
   onToggle,
   children,
   debugItem,
@@ -144,6 +162,7 @@ export function DockableToolbarMenu({
         disabled={disabled}
         active={open}
         tone={tone}
+        showLabel={showLabel}
         onClick={onToggle}
         debugItem={debugItem}
       />
@@ -363,12 +382,14 @@ export default function DockableToolbar({
                 style={{
                   margin: 0,
                   color: colors.textSoft,
-                  fontFamily: typography.eyebrowLabel.fontFamily,
-                  fontSize: '9.5px',
-                  fontWeight: 650,
+                  // The eyebrow role, not a hand-set 9.5px. It sat a pixel and a
+                  // half below the type floor and the standard never saw it,
+                  // because while this toolbar was fixed to the viewport's right
+                  // margin it was outside the region the checker measures. Moving
+                  // it into the flow is what surfaced it — the defect predates
+                  // that move.
+                  ...typography.eyebrowLabel,
                   lineHeight: 1.2,
-                  letterSpacing: '0.1em',
-                  textTransform: typography.eyebrowLabel.textTransform,
                 }}
               >
                 {title}
@@ -382,10 +403,8 @@ export default function DockableToolbar({
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     color: colors.textBody,
-                    fontFamily: typography.bodyText.fontFamily,
-                    fontSize: '12px',
+                    ...typography.metaText,
                     fontWeight: typography.ctaLabel.fontWeight,
-                    lineHeight: typography.bodyText.lineHeight,
                   }}
                 >
                   {subtitle}

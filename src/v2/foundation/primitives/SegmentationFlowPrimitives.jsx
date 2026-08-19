@@ -1612,7 +1612,11 @@ export function SegmentationReviewSelectedToolbar({
     : selectionCount === 1
       ? `Editing ${selectedSegment.label}`
       : `Editing ${selectedDisplayRange} · ${selectionCount} segments`
-  const toolbarOrientation = isFloating ? 'horizontal' : 'vertical'
+  // Horizontal in both states. A vertical rail of nine unlabelled glyphs is the
+  // shape that forced this palette out to the viewport edge in the first place;
+  // laid along the axis the layout actually has spare, it fits above the work
+  // and every action can carry its own name.
+  const toolbarOrientation = 'horizontal'
 
   return (
     <DockableToolbar
@@ -1657,6 +1661,7 @@ export function SegmentationReviewSelectedToolbar({
     >
       <DockableToolbarActionGroup orientation={toolbarOrientation}>
         <DockableToolbarIconButton
+          showLabel
           label="Undo"
           icon={<Undo2 size={15} strokeWidth={1.9} />}
           onClick={onUndo}
@@ -1664,6 +1669,7 @@ export function SegmentationReviewSelectedToolbar({
           debugItem="undo_button"
         />
         <DockableToolbarIconButton
+          showLabel
           label="Redo"
           icon={<Redo2 size={15} strokeWidth={1.9} />}
           onClick={onRedo}
@@ -1674,6 +1680,7 @@ export function SegmentationReviewSelectedToolbar({
       <DockableToolbarDivider orientation={toolbarOrientation} />
       <DockableToolbarActionGroup orientation={toolbarOrientation}>
         <DockableToolbarIconButton
+          showLabel
           label="Split"
           icon={<Scissors size={15} strokeWidth={1.9} />}
           onClick={onSplitSelected}
@@ -1682,6 +1689,7 @@ export function SegmentationReviewSelectedToolbar({
           debugItem="split_segment_button"
         />
         <DockableToolbarIconButton
+          showLabel
           label="Merge selected"
           icon={<Combine size={15} strokeWidth={1.9} />}
           onClick={onMergeSelected}
@@ -1689,6 +1697,7 @@ export function SegmentationReviewSelectedToolbar({
           debugItem="merge_selected_button"
         />
         <DockableToolbarIconButton
+          showLabel
           label="Merge next"
           icon={<Merge size={15} strokeWidth={1.9} />}
           onClick={onMergeSelectedWithNext}
@@ -1699,6 +1708,7 @@ export function SegmentationReviewSelectedToolbar({
       <DockableToolbarDivider orientation={toolbarOrientation} />
       <DockableToolbarActionGroup orientation={toolbarOrientation}>
         <DockableToolbarIconButton
+          showLabel
           label="Adjust boundary"
           icon={<MoveHorizontal size={15} strokeWidth={1.9} />}
           onClick={onAdjustBoundary}
@@ -1707,6 +1717,7 @@ export function SegmentationReviewSelectedToolbar({
           debugItem="boundary_segment_button"
         />
         <DockableToolbarIconButton
+          showLabel
           label="Mark ready"
           icon={<Check size={15} strokeWidth={2} />}
           onClick={onMarkSelectedReady}
@@ -1714,6 +1725,7 @@ export function SegmentationReviewSelectedToolbar({
           debugItem="mark_ready_button"
         />
         <DockableToolbarIconButton
+          showLabel
           label={advancedEditMode ? 'Close editor' : 'Advanced edit'}
           icon={<PencilLine size={15} strokeWidth={1.9} />}
           onClick={onToggleAdvancedEdit}
@@ -1725,6 +1737,7 @@ export function SegmentationReviewSelectedToolbar({
       <DockableToolbarDivider orientation={toolbarOrientation} />
       <DockableToolbarActionGroup orientation={toolbarOrientation}>
         <DockableToolbarMenu
+          showLabel
           label="Remove"
           icon={<Trash2 size={15} strokeWidth={1.9} />}
           open={removeMenuOpen}
@@ -2280,8 +2293,13 @@ export function SegmentationReviewActionRegion({
         background: flowChrome.actionRegionWash,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: spacing[20],
+        // One statement, not two corners. `space-between` on a full-width bar put
+        // "2 ready · 2 segments · source preserved" and "Approve & continue" some
+        // 830px apart at 1440 — the state and the decision it justifies, filed at
+        // opposite ends of the screen. They belong beside each other, because
+        // reading one is how you decide about the other.
+        justifyContent: 'flex-end',
+        gap: spacing[24],
         flexWrap: 'wrap',
       }}
     >
