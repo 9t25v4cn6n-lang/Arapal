@@ -148,7 +148,17 @@ export function KnowledgeLedger({ rows, selectedSegmentId, onSelectSegment }) {
     <section className="project-research__ledgerPane" aria-label="Saved project knowledge">
       <div className="project-research__ledgerHeader">
         <span>Segment ledger</span>
-        <small>Arabic extract · Translation signal · Status</small>
+        {/* One label per column, sitting on the column it names. The previous
+            caption listed three things beside a four-column grid and lined up
+            with none of them, so the header described the pane in general
+            rather than telling you what you were scanning. */}
+        <div className="project-research__ledgerColumns" aria-hidden="true">
+          <small>Ref</small>
+          <small>Arabic</small>
+          <small data-ledger-optional="">Best translation</small>
+          <small data-ledger-optional="">Concept</small>
+          <small>Status</small>
+        </div>
       </div>
       <div className="project-research__rowList">
         {rows.length ? rows.map((segment) => (

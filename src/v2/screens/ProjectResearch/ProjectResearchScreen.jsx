@@ -233,6 +233,38 @@ export default function ProjectResearchScreen({ route, shell }) {
   )
 }
 
+/**
+ * The ledger's column model, in ONE place.
+ *
+ * There were NINE grid-template-columns declarations for
+ * `.project-research__resultRow` in this file, in three generations: two
+ * four-column families that were fully overridden and never rendered, and the
+ * five-column one that actually wins. The header, meanwhile, described the pane
+ * with a run-on caption — "Arabic extract · Translation signal · Status" — that
+ * named three things over five columns and aligned with none of them.
+ *
+ * A grid duplicated nine times is a grid that has already drifted. Both the rows
+ * and the header column labels interpolate these, so they cannot disagree, and
+ * the dead declarations are gone.
+ */
+const ledgerColumns = {
+  /* id | arabic | translation | meta | status */
+  base: `
+      44px
+      minmax(168px, 1.05fr)
+      minmax(128px, 0.72fr)
+      minmax(132px, 0.7fr)
+      minmax(84px, auto)`,
+  mid: `
+        44px
+        minmax(152px, 1fr)
+        minmax(112px, 0.62fr)
+        minmax(124px, 0.62fr)
+        minmax(78px, auto)`,
+  /* The row stacks here: id | (arabic over meta) | status. */
+  narrow: '44px minmax(0, 1fr) minmax(78px, auto)',
+}
+
 const researchStyles = `
   .project-research,
   .project-research * {
@@ -723,7 +755,6 @@ const researchStyles = `
     width: 100%;
     min-height: 112px;
     display: grid;
-    grid-template-columns: 48px minmax(260px, 1fr) minmax(240px, 0.86fr) minmax(104px, auto);
     align-items: center;
     gap: ${spacing[12]};
     padding: ${spacing[12]};
@@ -1236,7 +1267,6 @@ const researchStyles = `
     }
 
     .project-research__resultRow {
-      grid-template-columns: 48px minmax(224px, 1fr) minmax(168px, 0.72fr) minmax(96px, auto);
     }
   }
 
@@ -1303,7 +1333,6 @@ const researchStyles = `
     }
 
     .project-research__resultRow {
-      grid-template-columns: 48px minmax(0, 1fr) auto;
       min-height: 112px;
     }
 
@@ -1614,12 +1643,40 @@ const researchStyles = `
     background: rgba(255, 255, 255, 0.72);
   }
 
+  /* The column strip and the rows read ONE definition.
+     The header used to be a run-on caption — "Arabic extract · Translation
+     signal · Status" — floated to the right of the pane, naming three things
+     over four columns and aligned with none of them. Labels now sit on the
+     columns they describe, and both consume --ledger-columns, so the two can
+     never drift the way a duplicated grid always does. */
+  .project-research__ledgerColumns {
+    display: grid;
+    grid-template-columns: ${ledgerColumns.base};
+    gap: ${spacing[12]};
+    align-items: center;
+    min-width: 0;
+    /* Lands on the row's content edge, not near it. A row sits inside the list's
+       12px inset plus its own 16px padding; the header sits inside the header's
+       own 20px. 8px closes the difference exactly, so a label is over its column
+       rather than three pixels beside it. */
+    padding-inline: ${spacing[8]};
+  }
+
+  .project-research__ledgerColumns small {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .project-research__ledgerColumns small:last-child {
+    text-align: right;
+  }
+
   .project-research__ledgerHeader {
     min-width: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: ${spacing[12]};
+    display: grid;
+    gap: ${spacing[8]};
     padding: ${spacing[12]} ${spacing[20]};
     border-bottom: 1px solid rgba(15, 23, 42, 0.07);
     color: ${colors.textSoft};
@@ -1650,7 +1707,6 @@ const researchStyles = `
 
   .project-research__resultRow {
     min-height: 104px;
-    grid-template-columns: 48px minmax(260px, 1fr) minmax(220px, 0.76fr) minmax(96px, auto);
     gap: ${spacing[12]};
     padding: ${spacing[12]};
     border: 1px solid transparent;
@@ -1841,7 +1897,6 @@ const researchStyles = `
     }
 
     .project-research__resultRow {
-      grid-template-columns: 48px minmax(224px, 1fr) minmax(156px, 0.68fr) minmax(96px, auto);
     }
   }
 
@@ -1917,7 +1972,6 @@ const researchStyles = `
 
     .project-research__resultRow {
       min-height: 104px;
-      grid-template-columns: 48px minmax(0, 1fr) auto;
     }
 
     .project-research__rightHeader,
@@ -1964,12 +2018,7 @@ const researchStyles = `
 
   .project-research__resultRow {
     min-height: 104px;
-    grid-template-columns:
-      44px
-      minmax(168px, 1.05fr)
-      minmax(128px, 0.72fr)
-      minmax(132px, 0.7fr)
-      minmax(84px, auto);
+    grid-template-columns: ${ledgerColumns.base};
     grid-template-areas: "id arabic translation meta status";
     gap: ${spacing[12]};
     align-items: center;
@@ -2240,13 +2289,9 @@ const researchStyles = `
   }
 
   @media (max-width: 1500px) {
-    .project-research__resultRow {
-      grid-template-columns:
-        44px
-        minmax(152px, 1fr)
-        minmax(112px, 0.62fr)
-        minmax(124px, 0.62fr)
-        minmax(78px, auto);
+    .project-research__resultRow,
+    .project-research__ledgerColumns {
+      grid-template-columns: ${ledgerColumns.mid};
     }
   }
 
@@ -2270,9 +2315,20 @@ const researchStyles = `
        140px is that sum, rounded up. Stated here rather than left to intrinsic
        sizing because the ledger's rows must stay uniform — a list you scan is
        one whose rows are the same height. */
+    /* The header collapses with the row it labels. The row drops to three tracks
+       here, so the two labels whose columns no longer exist go with them —
+       otherwise the strip would name columns that are not on screen. */
+    .project-research__ledgerColumns {
+      grid-template-columns: ${ledgerColumns.narrow};
+    }
+
+    .project-research__ledgerColumns small[data-ledger-optional] {
+      display: none;
+    }
+
     .project-research__resultRow {
       min-height: 140px;
-      grid-template-columns: 44px minmax(0, 1fr) minmax(78px, auto);
+      grid-template-columns: ${ledgerColumns.narrow};
       grid-template-areas:
         "id arabic status"
         "id meta status";
