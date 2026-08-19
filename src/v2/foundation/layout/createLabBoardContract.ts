@@ -30,7 +30,7 @@ export default function createLabBoardContract({ screenId, screenName }) {
         flexDirection: 'column',
         alignItems: 'stretch',
         justifyContent: 'flex-start',
-        padding: `${spacing[16]}px 0`,
+        padding: `${spacing[16]} 0`,
         gap: spacing[20],
         overflow: 'auto',
         textAlign: 'left',

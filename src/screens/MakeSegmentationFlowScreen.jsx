@@ -21,7 +21,6 @@ import {
 import { getLayoutDebugAttrs } from '../components/debug/layoutDebug';
 
 const makeSegmentationStyles = `
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
 
   .make-seg,
   .make-seg * {

@@ -1,9 +1,95 @@
 import createScreenLayoutContract from '../../foundation/layout/createScreenLayoutContract'
+import { measure, spacing } from '../../foundation/tokens'
 
 const layoutContract = createScreenLayoutContract({
   screenId: 'projectHome',
   screenName: 'ProjectHomeScreen',
+  includeDefaultBodySplit: false,
   bodyBackdrop: { preset: 'default' },
+  layer2: [
+    {
+      name: 'Layer2_Home_Backdrop',
+      layer: 'Layer2',
+      parent: 'Layer1_Body_ScreenBodyField',
+      // The role is what makes the renderer fill this lane with the product's
+      // atmosphere. Declaring the lane was never enough.
+      semanticRole: 'body-backdrop',
+      display: 'flex',
+      layoutMode: 'flex',
+      flexDirection: 'column',
+      alignItems: 'stretch',
+      justifyContent: 'stretch',
+      padding: '0',
+      gap: '0',
+      overflow: 'hidden',
+      textAlign: 'left',
+      style: { gridColumn: '1', gridRow: '1', minWidth: 0, minHeight: 0, position: 'relative', pointerEvents: 'none', overflow: 'hidden' },
+    },
+    {
+      name: 'Layer2_Home_Root',
+      layer: 'Layer2',
+      parent: 'Layer1_Body_ScreenBodyField',
+      semanticRole: 'primary-work-pane',
+      display: 'grid',
+      layoutMode: 'grid',
+      // lead · body. Both declared, so an absent body cannot let the lead
+      // stretch and an absent lead cannot push the body off the frame.
+      gridTemplateRows: 'auto minmax(0, 1fr)',
+      gridTemplateColumns: 'minmax(0, 1fr)',
+      alignItems: 'stretch',
+      justifyContent: 'stretch',
+      padding: `${spacing[32]} ${spacing[40]} ${spacing[32]}`,
+      gap: spacing[24],
+      overflow: 'hidden',
+      textAlign: 'left',
+      style: {
+        gridColumn: '1',
+        gridRow: '1',
+        minWidth: 0,
+        minHeight: 0,
+        position: 'relative',
+        zIndex: 1,
+        width: '100%',
+        maxWidth: measure.readable,
+        marginInline: 'auto',
+      },
+    },
+  ],
+  layer3: [
+    {
+      name: 'Layer3_Home_Lead',
+      layer: 'Layer3',
+      parent: 'Layer2_Home_Root',
+      semanticRole: 'header-zone',
+      display: 'flex',
+      layoutMode: 'flex',
+      flexDirection: 'column',
+      alignItems: 'stretch',
+      justifyContent: 'flex-start',
+      padding: '0',
+      gap: spacing[12],
+      overflow: 'visible',
+      textAlign: 'left',
+      style: { gridRow: '1', minWidth: 0, flex: '0 0 auto' },
+    },
+    {
+      name: 'Layer3_Home_Body',
+      layer: 'Layer3',
+      parent: 'Layer2_Home_Root',
+      semanticRole: 'primary-work-pane',
+      allowEmpty: true,
+      display: 'flex',
+      layoutMode: 'flex',
+      flexDirection: 'column',
+      alignItems: 'stretch',
+      justifyContent: 'flex-start',
+      padding: '0',
+      gap: spacing[16],
+      overflow: 'auto',
+      textAlign: 'left',
+      style: { gridRow: '2', minWidth: 0, minHeight: 0 },
+    },
+  ],
 })
 
 export default layoutContract

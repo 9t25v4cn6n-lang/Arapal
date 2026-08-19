@@ -1,3 +1,31 @@
+/* Typeface loading — single source. Every family the product declares must be
+   requested here. Per-screen @import inside runtime <style> blocks left Inter
+   and Amiri declared-but-never-loaded on every route (visual-standard:
+   font-not-loaded, 104 violations).
+
+   Self-hosted, not fetched from fonts.googleapis.com at runtime. The whole type
+   system was a third-party network dependency: on a slow, offline or blocked
+   connection the product rendered in fallback faces, and every user's IP was
+   disclosed to a third party to read a page. It also made the visual suite
+   non-deterministic — a face that arrived after capture reflowed the text and
+   read as a regression on whichever state happened to load first. Bundling the
+   files removes the request, the privacy exposure and the race together. */
+@import '@fontsource/playfair-display/400.css';
+@import '@fontsource/playfair-display/500.css';
+@import '@fontsource/playfair-display/600.css';
+@import '@fontsource/playfair-display/700.css';
+@import '@fontsource/playfair-display/800.css';
+@import '@fontsource/playfair-display/900.css';
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+@import '@fontsource/amiri/400.css';
+@import '@fontsource/amiri/400-italic.css';
+@import '@fontsource/amiri/700.css';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/600.css';
+
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -8,15 +36,40 @@
   --accent-bg: rgba(170, 59, 255, 0.1);
   --accent-border: rgba(170, 59, 255, 0.5);
   --social-bg: rgba(244, 243, 236, 0.5);
+
+  /* Keyboard focus ring. One value for both apps, so the indicator is the same
+     wherever focus lands. accentStrong rather than accentBase: the ring has to
+     read against the accent-washed surfaces the controls themselves sit on. */
+  --focus-ring: #1d4ed8;
+  --focus-ring-wash: rgba(37, 99, 235, 0.24);
+
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  /* The document default, inherited by anything that does not declare a family.
+     These were template leftovers pointing at system-ui, so any element without
+     an explicit font-family rendered outside the product's typefaces — the
+     Research header stats among them. Pointing them at the real stacks makes
+     Inter the default rather than something each component must remember. */
+  --sans: Inter, ui-sans-serif, system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
+  /* The document default IS the body role (typography.bodyText: 15px/1.6 Inter).
+     It used to be the Vite template's 18px/145% with a 0.18px letter-spacing,
+     and that number was doing real damage: 18px is not a step on the product's
+     ramp, so every element that forgot to declare a size rendered LARGER than
+     the product's own body text and outside the system entirely. Measured on the
+     production surface, everything rendering at 18px was inherited, never
+     declared — Exams' back pill, tab buttons, lead paragraph, feature copy,
+     ghost buttons and exam metadata, and Research's filter labels and filter
+     chips. Those are precisely the two areas reviewed as "looks like a different
+     product" and "looks like a control imported from another interface". One
+     wrong default, two screens' worth of symptoms.
+
+     Letter-spacing goes with it: tracking is a decision a type role makes, and a
+     global 0.18px silently applied it to text no role had spaced. */
+  font: 15px/1.6 var(--sans);
   color-scheme: light;
   color: var(--text);
   background: var(--bg);
@@ -24,10 +77,6 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -72,30 +121,41 @@ body {
   box-sizing: border-box;
 }
 
+/* Heading defaults are the product's heading ROLES, for the same reason the
+   document default is the body role: an undeclared heading must land inside the
+   system, not on a template's 56px with 32px of margin above it. The margin is
+   the part that did visible harm — a bare <h1> opening a card arrived with 32px
+   of dead space above its own first line, which the layout doctrine names
+   explicitly as forbidden. Spacing between a heading and what follows it is the
+   parent container's decision, so headings ship with none of their own. */
 h1,
-h2 {
+h2,
+h3 {
   font-family: var(--heading);
-  font-weight: 500;
   color: var(--text-h);
+  margin: 0;
 }
 
+/* typography.heroTitle */
 h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
+  font-size: 34px;
+  line-height: 1.06;
+  font-weight: 500;
+  letter-spacing: -0.018em;
 }
+/* typography.pageTitle */
 h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
+  font-size: 26px;
+  line-height: 1.12;
+  font-weight: 500;
+  letter-spacing: -0.012em;
+}
+/* typography.cardTitle */
+h3 {
+  font-size: 20px;
+  line-height: 1.18;
+  font-weight: 500;
+  letter-spacing: -0.008em;
 }
 p {
   margin: 0;
@@ -114,4 +174,64 @@ code {
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
+}
+
+/* Form controls do not inherit font-family from the document — the user agent
+   sets its own (Arial here). That is why buttons were the only elements
+   rendering outside the product's typefaces, including the Study segment tree.
+   Inheriting the family (not the size or weight) fixes the whole class rather
+   than each control that happens to be noticed. */
+/* box-sizing does not inherit, so declaring it on body did nothing for anything
+   inside body. Thirteen components had each re-declared it on their own subtree,
+   and everything outside those thirteen was content-box — where a declared width
+   is a promise the element does not keep.
+
+   That is not an abstraction worry. The segment toolbar declared width: 64px to
+   match the 64px lane reserved for it, then rendered 82px once its own padding
+   and border were added on top, and spent the difference sitting on the segment
+   cards. Three of the product's overlap findings were that one element.
+
+   Declared once, universally, as the reset it should always have been. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* WCAG 2.5.8 target size. Text-styled buttons ("Edit", "Show source", "Always
+   skip this animation") were rendering 13-14px tall, which is a hit target no
+   one can reliably use. Applied once here rather than per control, because the
+   offenders carry no shared class — they are inline-styled one-offs, which is
+   itself the reason a shared control primitive is still owed. */
+button,
+[role='button'] {
+  min-height: 24px;
+}
+
+/* WCAG 2.4.7 Focus Visible.
+   The product had a focus style on 12 controls and nothing on the other 76 the
+   checker could reach: keyboard users had no idea where they were, and a dozen
+   components had reset `outline` to none without putting anything back.
+
+   Declared once, at the document level, for the same reason as the two rules
+   above — the offenders share no class, so there is nowhere else to put it. The
+   `!important` is deliberate and narrow: it applies only in the focus-visible
+   state, and its whole job is to beat the component-level `outline: none` rules
+   that caused this. A component may still design a *richer* indicator; it just
+   may no longer remove the indicator altogether.
+
+   Drawn with box-shadow as well as outline so the ring follows the control's own
+   border-radius on the pill-shaped controls, where a square outline reads as a
+   rendering fault. */
+:is(a[href], button, input, select, textarea, [tabindex], [role='button'], [contenteditable]):focus-visible {
+  outline: 2px solid var(--focus-ring) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px var(--focus-ring-wash) !important;
 }

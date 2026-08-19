@@ -1,12 +1,10 @@
 import ScreenContractRenderer from '../layout/ScreenContractRenderer'
 import { getDefaultBodySplitColumns, getLayer1BodyColumns } from '../layout/shellSizing'
 import { colors, motion, spacing } from '../tokens'
-import { HeaderBrand, HeaderCenter, HeaderMeta } from './HeaderBar'
+import AppIdentity from './AppIdentity'
+import { HeaderCenter, HeaderMeta } from './HeaderBar'
 import {
-  getNavigationBrandAnchorStyle,
-  getNavigationHeaderBandStyle,
   getNavigationUtilityAnchorStyle,
-  NavigationRailBrand,
   NavigationRailItems,
   NavigationRailPinControl,
 } from './NavigationRail'
@@ -50,16 +48,6 @@ function getShellContainerOverrides(shell, contract) {
         transition: `grid-template-columns ${motion.panel}`,
       },
     },
-    Layer1_Navigation_HeaderBand: {
-      style: {
-        ...getNavigationHeaderBandStyle(shell.isNavExpanded),
-      },
-    },
-    Layer1_Navigation_BrandAnchor: {
-      style: {
-        ...getNavigationBrandAnchorStyle(shell.isNavExpanded),
-      },
-    },
     Layer1_Navigation_UtilityAnchor: {
       style: {
         ...getNavigationUtilityAnchorStyle(shell.isNavExpanded),
@@ -85,7 +73,7 @@ function getShellContainerOverrides(shell, contract) {
             pointerEvents: 'none',
           }
         : {
-            padding: `${spacing[24]}px ${spacing[20]}px`,
+            padding: `${spacing[24]} ${spacing[20]}`,
             gap: spacing[20],
             opacity: 1,
             pointerEvents: 'auto',
@@ -123,11 +111,22 @@ function mergeContainerOverrides(...sources) {
 }
 
 export default function V2ScreenFrame({ contract, route, shell, screenSlots = {}, containerOverrides = {}, debugTools = null }) {
+  // The start lane is COMPOSED, not replaced. Identity belongs to the shell and
+  // appears on every screen; a screen may add a back control beside it but may
+  // not decide whether the product has a name. Screens that used to own this
+  // lane outright were how Study came to put its segment title where the logo
+  // should be and Segmentation came to have no identity at all.
+  const { Layer1_Header_StartLane: screenStartLane, ...remainingScreenSlots } = screenSlots
+
   const sharedSlots = {
-    Layer1_Header_StartLane: shell.showRail ? null : <HeaderBrand />,
+    Layer1_Header_StartLane: (
+      <>
+        <AppIdentity onClick={() => shell.navigate('projectHome')} />
+        {screenStartLane}
+      </>
+    ),
     Layer1_Header_CenterLane: <HeaderCenter route={route} />,
     Layer1_Header_EndLane: <HeaderMeta route={route} />,
-    Layer1_Navigation_BrandAnchor: <NavigationRailBrand isExpanded={shell.isNavExpanded} />,
     Layer1_Navigation_UtilityAnchor: <NavigationRailPinControl shell={shell} />,
     Layer1_Navigation_PrimaryList: <NavigationRailItems shell={shell} />,
   }
@@ -137,7 +136,7 @@ export default function V2ScreenFrame({ contract, route, shell, screenSlots = {}
       contract={contract}
       slotContent={{
         ...sharedSlots,
-        ...screenSlots,
+        ...remainingScreenSlots,
       }}
       containerOverrides={mergeContainerOverrides(getShellContainerOverrides(shell, contract), containerOverrides)}
       debugTools={debugTools}

@@ -1,0 +1,36 @@
+{
+ "generatedAt": "2026-08-18T22:03:32.786Z",
+ "routes": 14,
+ "frames": 5,
+ "blocking": 193,
+ "byRule": {
+  "type-floor": 42,
+  "contrast": 48,
+  "hit-target": 25,
+  "unnamed-control": 19,
+  "overlap": 24,
+  "container-undersized": 7,
+  "viewport-escape": 19,
+  "slack-beside-clipped-content": 4,
+  "content-clipped": 2,
+  "label-truncated": 3
+ },
+ "byRoute": {
+  "legacy-home": 27,
+  "legacy-study": 70,
+  "legacy-segmentation": 74,
+  "legacy-exams": 1,
+  "v2-projectHome": 0,
+  "v2-projects": 3,
+  "v2-projectResearch": 2,
+  "v2-segmentationPasteNext": 3,
+  "v2-segmentationTransition": 1,
+  "v2-segmentationLoading": 0,
+  "v2-segmentationReview": 1,
+  "v2-segmentationSuccess": 0,
+  "v2-studyWorkspace": 9,
+  "v2-exams": 2
+ },
+ "blankRoutes": [],
+ "driftedRoutes": []
+}

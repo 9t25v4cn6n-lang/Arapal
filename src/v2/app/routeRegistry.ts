@@ -1,25 +1,18 @@
-import AppLaunchScreen from '../screens/AppLaunch/AppLaunchScreen'
-import appLaunchLayoutContract from '../screens/AppLaunch/AppLaunchScreen.contract'
-import ControlsLabScreen from '../screens/ControlsLab/ControlsLabScreen'
+import { lazy } from 'react'
 import controlsLabLayoutContract from '../screens/ControlsLab/ControlsLabScreen.contract'
-import EditorPanelsLabScreen from '../screens/EditorPanelsLab/EditorPanelsLabScreen'
 import editorPanelsLabLayoutContract from '../screens/EditorPanelsLab/EditorPanelsLabScreen.contract'
-import FoundationLabScreen from '../screens/FoundationLab/FoundationLabScreen'
 import foundationLabLayoutContract from '../screens/FoundationLab/FoundationLabScreen.contract'
-import MotionInteractionLabScreen from '../screens/MotionInteractionLab/MotionInteractionLabScreen'
 import motionInteractionLabLayoutContract from '../screens/MotionInteractionLab/MotionInteractionLabScreen.contract'
-import PatternLabScreen from '../screens/PatternLab/PatternLabScreen'
 import patternLabLayoutContract from '../screens/PatternLab/PatternLabScreen.contract'
-import QualityDashboardScreen from '../screens/QualityDashboard/QualityDashboardScreen'
 import qualityDashboardLayoutContract from '../screens/QualityDashboard/QualityDashboardScreen.contract'
 import ProjectHomeScreen from '../screens/ProjectHome/ProjectHomeScreen'
 import projectHomeLayoutContract from '../screens/ProjectHome/ProjectHomeScreen.contract'
+import ExamsScreen from '../screens/Exams/ExamsScreen'
+import examsLayoutContract from '../screens/Exams/ExamsScreen.contract'
 import ProjectsScreen from '../screens/Projects/ProjectsScreen'
 import projectsLayoutContract from '../screens/Projects/ProjectsScreen.contract'
 import ProjectResearchScreen from '../screens/ProjectResearch/ProjectResearchScreen'
 import projectResearchLayoutContract from '../screens/ProjectResearch/ProjectResearchScreen.contract'
-import SegmentationPasteScreen from '../screens/SegmentationPaste/SegmentationPasteScreen'
-import segmentationPasteLayoutContract from '../screens/SegmentationPaste/SegmentationPasteScreen.contract'
 import SegmentationPasteNextScreen from '../screens/SegmentationPasteNext/SegmentationPasteNextScreen'
 import segmentationPasteNextLayoutContract from '../screens/SegmentationPasteNext/SegmentationPasteNextScreen.contract'
 import SegmentationTransitionScreen from '../screens/SegmentationTransition/SegmentationTransitionScreen'
@@ -32,33 +25,23 @@ import SegmentationSuccessScreen from '../screens/SegmentationSuccess/Segmentati
 import segmentationSuccessLayoutContract from '../screens/SegmentationSuccess/SegmentationSuccessScreen.contract'
 import StudyWorkspaceScreen from '../screens/StudyWorkspace/StudyWorkspaceScreen'
 import studyWorkspaceLayoutContract from '../screens/StudyWorkspace/StudyWorkspaceScreen.contract'
-import TypographyTokensLabScreen from '../screens/TypographyTokensLab/TypographyTokensLabScreen'
 import typographyTokensLabLayoutContract from '../screens/TypographyTokensLab/TypographyTokensLabScreen.contract'
-import ExamsScreen from '../screens/Exams/ExamsScreen'
-import examsLayoutContract from '../screens/Exams/ExamsScreen.contract'
+
+const ControlsLabScreen = lazy(() => import('../screens/ControlsLab/ControlsLabScreen'))
+
+const EditorPanelsLabScreen = lazy(() => import('../screens/EditorPanelsLab/EditorPanelsLabScreen'))
+
+const FoundationLabScreen = lazy(() => import('../screens/FoundationLab/FoundationLabScreen'))
+
+const MotionInteractionLabScreen = lazy(() => import('../screens/MotionInteractionLab/MotionInteractionLabScreen'))
+
+const PatternLabScreen = lazy(() => import('../screens/PatternLab/PatternLabScreen'))
+
+const TypographyTokensLabScreen = lazy(() => import('../screens/TypographyTokensLab/TypographyTokensLabScreen'))
+
+const QualityDashboardScreen = lazy(() => import('../screens/QualityDashboard/QualityDashboardScreen'))
 
 export const routeRegistry = {
-  appLaunch: {
-    id: 'appLaunch',
-    label: 'App Launch',
-    component: AppLaunchScreen,
-    layoutContract: appLaunchLayoutContract,
-    shell: {
-      showRail: false,
-      header: {
-        modeLabel: 'App Launch',
-        description: 'Fresh contract-driven build',
-      },
-      rail: {
-        visible: false,
-        groupId: 'appLaunch',
-        label: 'App Launch',
-        shortLabel: 'AL',
-        order: 0,
-        routeId: 'appLaunch',
-      },
-    },
-  },
   foundationLab: {
     id: 'foundationLab',
     label: 'Foundation Lab',
@@ -215,19 +198,20 @@ export const routeRegistry = {
       showRail: true,
       header: {
         modeLabel: 'Project Home',
-        description: 'Command centre for active work',
+        description: 'Your work and one clear next action',
       },
       rail: {
         visible: true,
         groupId: 'projectHome',
         label: 'Project Home',
         shortLabel: 'PH',
-        iconKey: 'home',
+        iconKey: 'projectHome',
         order: 10,
         routeId: 'projectHome',
       },
     },
   },
+
   projects: {
     id: 'projects',
     label: 'Projects',
@@ -262,35 +246,16 @@ export const routeRegistry = {
         description: 'Search and inspect project knowledge',
       },
       rail: {
-        visible: false,
+        visible: true,
         groupId: 'projects',
         label: 'Project Research',
         shortLabel: 'RX',
-        iconKey: 'projects',
+        // Its own glyph, not Projects'. The rail is icon-only by default, so two
+        // adjacent destinations sharing Layers3 were indistinguishable — you could
+        // not tell Projects from Project Research without expanding the rail.
+        iconKey: 'projectResearch',
         order: 21,
         routeId: 'projectResearch',
-      },
-    },
-  },
-  segmentationPaste: {
-    id: 'segmentationPaste',
-    label: 'Segmentation Paste',
-    component: SegmentationPasteScreen,
-    layoutContract: segmentationPasteLayoutContract,
-    shell: {
-      showRail: true,
-      header: {
-        modeLabel: 'Source + Segmentation',
-        description: 'Preserve source and start proposal work',
-      },
-      rail: {
-        visible: true,
-        groupId: 'segmentation',
-        label: 'Source + Segmentation',
-        shortLabel: 'SG',
-        iconKey: 'segmentation',
-        order: 40,
-        routeId: 'segmentationPaste',
       },
     },
   },
@@ -306,7 +271,7 @@ export const routeRegistry = {
         description: 'Parallel rebuild review route',
       },
       rail: {
-        visible: false,
+        visible: true,
         groupId: 'segmentation',
         label: 'Source + Segmentation',
         shortLabel: 'SG',
@@ -426,6 +391,7 @@ export const routeRegistry = {
       },
     },
   },
+
   exams: {
     id: 'exams',
     label: 'Exams',
@@ -435,7 +401,7 @@ export const routeRegistry = {
       showRail: true,
       header: {
         modeLabel: 'Exams',
-        description: 'Focused assessment and remediation',
+        description: 'Scoped assessment and remediation',
       },
       rail: {
         visible: true,
@@ -450,7 +416,7 @@ export const routeRegistry = {
   },
 }
 
-export const defaultRouteId = 'appLaunch'
+export const defaultRouteId = 'projectHome'
 
 export function getPrimaryRailRoutes() {
   return Object.values(routeRegistry)

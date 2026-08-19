@@ -14,9 +14,13 @@ import {
   StudyTranslationEditor,
   StudyWorkspaceStyles,
 } from '../../foundation/primitives/StudyWorkspacePrimitives'
+import useIsMobileViewport from '../../foundation/primitives/useIsMobileViewport'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import { motion } from '../../foundation/tokens'
 import layoutContract from './StudyWorkspaceScreen.contract'
+import {
+  actions, select, useArapal, navigation, SAMPLE_EVALUATION_NOTICE,
+} from '../../data'
 
 const segmentNodes = [
   { id: '1', label: 'Chapter 1: Purity', type: 'folder', depth: 0, isOpenByDefault: true },
@@ -101,6 +105,9 @@ function readInitialDiscussionOpen() {
   return new URLSearchParams(window.location.search).get('studyDiscuss') === '1'
 }
 
+// Stable empty, so an absent project does not churn the reference each render.
+const EMPTY_SEGMENT_RECORDS = {}
+
 function createInitialSegmentRecords() {
   const initialStudyState = readInitialStudyState()
 
@@ -113,7 +120,23 @@ function createInitialSegmentRecords() {
   }
 }
 
-function getWorkspaceColumns({ focusMode, segmentRailCollapsed, supportRailCollapsed, discussionMode = false }) {
+function getWorkspaceColumns({ focusMode, segmentRailCollapsed, supportRailCollapsed, discussionMode = false, isMobile = false }) {
+  // One column at mobile. The three-column workspace is 208px of segments plus
+  // 308px of support before the work itself gets a pixel, which on a 390px frame
+  // put the support rail's right edge at 576 — 186px outside the window, with no
+  // way to scroll to it because the rail is chrome. Width is an input to this
+  // function rather than a media query because these columns are written inline,
+  // and inline styles beat stylesheets.
+  if (isMobile) {
+    // Zero-width rails, not one column. The three regions carry explicit
+    // gridColumn assignments, so collapsing the track list to a single column
+    // landed all three in column 1 and the lexicography row overlapped the
+    // editor by 80px. Giving the rails 0px keeps every region in its own track
+    // and lets the work column take the frame — the same shape focus mode uses,
+    // which is what mobile wants anyway.
+    return '0px minmax(0, 1fr) 0px'
+  }
+
   if (focusMode) {
     return '0px minmax(0, 1fr) 0px'
   }
@@ -131,8 +154,22 @@ function getHeaderColumns() {
 const DISCUSSION_TRANSITION_MS = 220
 
 export default function StudyWorkspaceScreen({ route, shell }) {
+  // The screen works in two modes. With a real project it reads segments,
+  // drafts and results from the store, so work persists and belongs to
+  // something. With no project it falls back to the built-in reference content
+  // so the route stays inspectable on its own — which is how the golden
+  // baseline and the labs use it.
+  const project = useArapal(select.getCurrentProject)
+  const storeSegments = useArapal((s) => (project ? select.listSegments(project.id, s) : []))
+  const isLive = Boolean(project && storeSegments.length)
+
+  const [context] = useState(() => navigation.readContext())
+  const [contextDismissed, setContextDismissed] = useState(false)
+
   const [segmentRecords, setSegmentRecords] = useState(createInitialSegmentRecords)
-  const [currentSegmentId, setCurrentSegmentId] = useState('1.3')
+  const [currentSegmentId, setCurrentSegmentId] = useState(
+    () => context?.segmentId ?? context?.segmentRef ?? '1.3',
+  )
   const [segmentRailCollapsed, setSegmentRailCollapsed] = useState(false)
   const [supportRailCollapsed, setSupportRailCollapsed] = useState(false)
   const [focusMode, setFocusMode] = useState(readInitialFocusMode)
@@ -141,14 +178,93 @@ export default function StudyWorkspaceScreen({ route, shell }) {
   const [discussionClosing, setDiscussionClosing] = useState(false)
   const [manualNotesBySegment, setManualNotesBySegment] = useState({})
   const showSandboxControls = readSandboxControlsEnabled()
+  const isMobile = useIsMobileViewport()
 
-  const currentSegmentIndex = fileSegments.findIndex((segment) => segment.id === currentSegmentId)
-  const currentSegment = fileSegments[currentSegmentIndex] ?? fileSegments[0]
-  const currentRecord = segmentRecords[currentSegment.id] ?? defaultSegmentRecords[currentSegment.id]
+  // One list, whichever mode we are in, so everything below is written once.
+  const activeSegments = isLive
+    ? storeSegments.map((segment) => ({
+        id: segment.id,
+        label: `${segment.ref} ${segment.title}`.trim(),
+        ref: segment.ref,
+        text: segment.text,
+        chapterLabel: segment.chapterLabel || 'Segments',
+        type: 'file',
+        depth: 1,
+      }))
+    : fileSegments
+
+  // Group the active segments into the chapter/file tree the navigator wants.
+  const activeNodes = isLive
+    ? (() => {
+        const nodes = []
+        let lastChapter = null
+        activeSegments.forEach((segment) => {
+          if (segment.chapterLabel !== lastChapter) {
+            lastChapter = segment.chapterLabel
+            nodes.push({ id: `ch_${nodes.length}`, label: segment.chapterLabel, type: 'folder', depth: 0, isOpenByDefault: true })
+          }
+          nodes.push({ ...segment, type: 'file', depth: 1 })
+        })
+        return nodes
+      })()
+    : segmentNodes
+
+  const currentSegmentIndex = Math.max(
+    0, activeSegments.findIndex((segment) => segment.id === currentSegmentId))
+  const currentSegment = activeSegments[currentSegmentIndex] ?? activeSegments[0]
+
+  const storeRecord = useArapal((s) =>
+    isLive && currentSegment ? select.getStudyRecord(project.id, currentSegment.id, s) : null)
+
+  /**
+   * Every segment's record, for the rail's markers and the STUDIED counter.
+   *
+   * These read `segmentRecords` below, which is local state seeded from the
+   * reference fixture and keyed '1.1'/'1.3'. In live mode those keys cannot match
+   * a real segment id, and nothing ever wrote the store's records into it — so a
+   * user could submit every segment and the rail would show three empty circles
+   * and STUDIED 0 / 3 forever. The current segment looked right only because
+   * `currentRecord` reads the store directly, which is what hid it.
+   *
+   * The wrapper object is rebuilt per call and that is fine: the record values
+   * inside it are the store's own stable references, so useArapal's shallowEqual
+   * sees no change until a record actually changes.
+   */
+  const liveSegmentRecords = useArapal((s) => {
+    if (!isLive || !project) return EMPTY_SEGMENT_RECORDS
+    const out = {}
+    for (const segment of activeSegments) {
+      const record = select.getStudyRecord(project.id, segment.id, s)
+      if (record) out[segment.id] = record
+    }
+    return out
+  })
+  const storeDraft = useArapal((s) =>
+    isLive && currentSegment ? select.getDraft(project.id, currentSegment.id, s) : null)
+  const lastResult = useArapal((s) =>
+    storeRecord?.lastResultId ? select.getResult(storeRecord.lastResultId, s) : null)
+
+  const currentRecord = isLive
+    ? (storeRecord ?? { submissionState: 'draft', attempts: 0 })
+    : (segmentRecords[currentSegment.id] ?? defaultSegmentRecords[currentSegment.id])
   const currentState = currentRecord.submissionState
+
+  // The draft belongs to (project, segment). Switching segments therefore
+  // shows that segment's own work rather than the previous one's.
+  const [localDraft, setLocalDraft] = useState('')
+  const draftValue = isLive ? (storeDraft?.text ?? '') : localDraft
+  const [submitError, setSubmitError] = useState(null)
+
+  const activeSourceText = isLive ? (currentSegment?.text ?? '') : arabicSource
+
+  const handleDraftChange = (text) => {
+    setSubmitError(null)
+    if (isLive) actions.saveDraft({ projectId: project.id, segmentId: currentSegment.id, text })
+    else setLocalDraft(text)
+  }
   const currentManualNotes = manualNotesBySegment[currentSegment.id] ?? []
   const canGoPrevious = currentSegmentIndex > 0
-  const canGoNext = currentSegmentIndex < fileSegments.length - 1
+  const canGoNext = currentSegmentIndex < activeSegments.length - 1
   const discussionVisible = discussionOpen || discussionClosing
   const discussionMode = discussionVisible && currentState !== 'submitted'
 
@@ -164,23 +280,18 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     return () => window.clearTimeout(timer)
   }, [discussionClosing])
 
-  useEffect(() => {
-    if (!readInitialDiscussionOpen()) {
-      return
-    }
-
-    setDiscussionClosing(false)
-    setDiscussionOpen(true)
-  }, [])
+  // The mount effect that used to sit here re-set the exact values the two
+  // useState initialisers above already produce, costing a second render pass
+  // on every load of the screen for no change in state.
 
   const segmentMeta = useMemo(
     () => ({
       chapterLabel: currentSegment.chapterLabel,
-      progressText: `Segment ${currentSegmentIndex + 1} of ${fileSegments.length}`,
+      progressText: `Segment ${currentSegmentIndex + 1} of ${activeSegments.length}`,
       progressStep: currentSegmentIndex,
-      progressTotal: fileSegments.length,
+      progressTotal: activeSegments.length,
     }),
-    [currentSegment, currentSegmentIndex],
+    [currentSegment, currentSegmentIndex, activeSegments.length],
   )
 
   const setCurrentSegmentSubmissionState = (submissionState, attempts) => {
@@ -197,6 +308,29 @@ export default function StudyWorkspaceScreen({ route, shell }) {
   }
 
   const handleSubmit = () => {
+    // The refusal is a property of submitting a translation, not a property of
+    // the live store. Guarding only the live branch meant the fixture route —
+    // the one the demo and every visual state actually run — still accepted an
+    // empty box and marked the segment submitted.
+    if (!draftValue.trim()) {
+      setSubmitError('Write a translation before submitting.')
+      return
+    }
+
+    if (isLive) {
+      const outcome = actions.submitSegment({ projectId: project.id, segmentId: currentSegment.id })
+      if (!outcome.ok) {
+        // Refused rather than graded. The previous build accepted an empty box
+        // and returned a grade and a review date for work it never read.
+        setSubmitError(outcome.message)
+        return
+      }
+      setSubmitError(null)
+      setDiscussionOpen(false)
+      setDiscussionClosing(false)
+      return
+    }
+
     setDiscussionOpen(false)
     setDiscussionClosing(false)
     setSegmentRecords((current) => {
@@ -245,14 +379,14 @@ export default function StudyWorkspaceScreen({ route, shell }) {
   const goToPreviousSegment = () => {
     if (canGoPrevious) {
       closeDiscussionImmediately()
-      setCurrentSegmentId(fileSegments[currentSegmentIndex - 1].id)
+      setCurrentSegmentId(activeSegments[currentSegmentIndex - 1].id)
     }
   }
 
   const goToNextSegment = () => {
     if (canGoNext) {
       closeDiscussionImmediately()
-      setCurrentSegmentId(fileSegments[currentSegmentIndex + 1].id)
+      setCurrentSegmentId(activeSegments[currentSegmentIndex + 1].id)
     }
   }
 
@@ -280,7 +414,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     },
     Layer2_Study_WorkspaceRoot: {
       style: {
-        gridTemplateColumns: getWorkspaceColumns({ focusMode, segmentRailCollapsed, supportRailCollapsed, discussionMode }),
+        gridTemplateColumns: getWorkspaceColumns({ focusMode, segmentRailCollapsed, supportRailCollapsed, discussionMode, isMobile }),
         transition: `grid-template-columns ${motion.panel}`,
       },
     },
@@ -291,10 +425,20 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     },
     Layer4_Study_PrimaryScroll: {
       style: {
+        // A percentage inset cannot be capped into behaving at mobile.
+        //
+        // 20% takes a fifth of the frame from each side at EVERY width, so on a
+        // 390px phone it spent 132px of a 330px body on margin and left the work
+        // column at 198px. min() does not help — 20% of 330 is 66, already below
+        // any sensible cap — because the problem is not that the value gets too
+        // large but that it stays proportional when it should stop. That is a
+        // breakpoint, so it uses the breakpoint.
         padding:
-          discussionMode
-            ? '16px clamp(16px, 3vw, 40px) 24px'
-            : '16px 20% 24px',
+          isMobile
+            ? '16px 16px 24px'
+            : discussionMode
+              ? '16px clamp(16px, 3vw, 40px) 24px'
+              : '16px 20% 24px',
         transition: `padding ${motion.panel}`,
       },
     },
@@ -346,22 +490,27 @@ export default function StudyWorkspaceScreen({ route, shell }) {
 
   const screenSlots = {
     Layer2_Study_WorkspaceRoot: <StudyWorkspaceStyles />,
-    Layer1_Header_StartLane: (
+    // The centre lane is "where you are", so the segment under work belongs
+    // there. It used to sit in the start lane, where the application identity
+    // goes — which is why Study was the one screen in the product with no
+    // Arapal mark on it. The progress counter moves to the end lane beside
+    // Focus view, where the screen's own controls live.
+    Layer1_Header_CenterLane: (
       <StudyShellTitleBar
         chapterLabel={segmentMeta.chapterLabel}
         segmentLabel={currentSegment.label}
       />
     ),
-    Layer1_Header_CenterLane: (
-      <StudyShellProgress
-        routeLabel={route?.label ?? 'Study Workspace'}
-        progressText={segmentMeta.progressText}
-        progressStep={segmentMeta.progressStep}
-        progressTotal={segmentMeta.progressTotal}
-      />
-    ),
     Layer1_Header_EndLane: (
       <StudyShellMeta
+        progress={(
+          <StudyShellProgress
+            routeLabel={route?.label ?? 'Study Workspace'}
+            progressText={segmentMeta.progressText}
+            progressStep={segmentMeta.progressStep}
+            progressTotal={segmentMeta.progressTotal}
+          />
+        )}
         focusMode={focusMode}
         onToggleFocus={() => setFocusMode((current) => !current)}
         showSandboxControls={showSandboxControls}
@@ -372,9 +521,9 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     ),
     Layer3_Study_SegmentNavigator: (
       <StudySegmentNavigator
-        nodes={segmentNodes}
+        nodes={activeNodes}
         currentSegmentId={currentSegment.id}
-        segmentRecords={segmentRecords}
+        segmentRecords={isLive ? liveSegmentRecords : segmentRecords}
         collapsed={segmentRailCollapsed}
         onToggleCollapsed={() => setSegmentRailCollapsed((current) => !current)}
         onSelectSegment={selectSegment}
@@ -395,7 +544,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
         {currentState === 'submitted' ? (
           <div className="study-v2__studyStack">
             <StudySourceCard
-              sourceText={arabicSource}
+              sourceText={activeSourceText}
               onPrevious={goToPreviousSegment}
               onNext={goToNextSegment}
               canPrevious={canGoPrevious}
@@ -429,7 +578,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
           >
             <div className="study-v2__composerSource">
               <StudySourceCard
-                sourceText={arabicSource}
+                sourceText={activeSourceText}
                 onPrevious={goToPreviousSegment}
                 onNext={goToNextSegment}
                 canPrevious={canGoPrevious}
@@ -445,13 +594,19 @@ export default function StudyWorkspaceScreen({ route, shell }) {
             </div>
             <div className="study-v2__composerEditor">
               <StudyTranslationEditor
+                value={draftValue}
+                onChange={handleDraftChange}
+                error={submitError ?? undefined}
                 failed={currentState === 'failed'}
                 onSubmit={handleSubmit}
                 onDiscuss={toggleDiscussion}
                 discussionOpen={discussionVisible}
                 focusMode={focusMode}
                 docked
-                fillHeight={discussionMode}
+                // The editor's row now carries the workspace's leftover height
+                // (capped), so the textarea fills the panel it is given rather
+                // than opening at two lines inside a taller box.
+                fillHeight
               />
             </div>
             <div className="study-v2__composerCompanion">
@@ -461,6 +616,35 @@ export default function StudyWorkspaceScreen({ route, shell }) {
         )}
       </div>
     ),
+    // Provenance does not depend on having a live project. The banner says "you
+    // arrived here from an exam miss", which is equally true in reference mode —
+    // and gating it on isLive meant redirecting Exams to the V2 Study silently
+    // dropped the handoff for anyone without a project, which is exactly the
+    // audience most likely to be exploring from Exams.
+    Layer4_Study_ContextRegion: (context && !contextDismissed) || (isLive && lastResult?.isSample) ? (
+      <div className="study-v2__contextStrip">
+        {context && !contextDismissed ? (
+          <div className="study-v2__contextBanner" role="status">
+            <span className="study-v2__contextLabel">
+              {navigation.describeContext(context)?.label}
+            </span>
+            <span className="study-v2__contextDetail">
+              {navigation.describeContext(context)?.detail}
+            </span>
+            <button
+              type="button"
+              className="study-v2__contextDismiss"
+              onClick={() => { setContextDismissed(true); navigation.clearContext() }}
+            >
+              Dismiss
+            </button>
+          </div>
+        ) : null}
+        {isLive && lastResult?.isSample ? (
+          <p className="study-v2__sampleNotice" role="note">{SAMPLE_EVALUATION_NOTICE}</p>
+        ) : null}
+      </div>
+    ) : null,
     Layer4_Study_ActionRegion: currentState === 'submitted' ? (
       <StudyBottomBar
         progressText={segmentMeta.progressText}

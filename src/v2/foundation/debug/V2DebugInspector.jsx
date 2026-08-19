@@ -116,7 +116,7 @@ export default function V2DebugInspector({
     bottom: '18px',
     zIndex: 99998,
     minHeight: '42px',
-    padding: `0 ${spacing[16]}px`,
+    padding: `0 ${spacing[16]}`,
     border: `1px solid ${colors.accentMist}`,
     borderRadius: radius.pill,
     background: 'rgba(255, 255, 255, 0.96)',
@@ -154,7 +154,7 @@ export default function V2DebugInspector({
   }
 
   const toolbarStyle = {
-    padding: `${spacing[12]}px ${spacing[16]}px`,
+    padding: `${spacing[12]} ${spacing[16]}`,
     borderBottom: `1px solid ${colors.lineSoft}`,
     display: 'flex',
     alignItems: 'center',
@@ -164,7 +164,7 @@ export default function V2DebugInspector({
 
   const moveHandleStyle = {
     minHeight: '32px',
-    padding: `0 ${spacing[12]}px`,
+    padding: `0 ${spacing[12]}`,
     border: `1px solid ${colors.lineSoft}`,
     borderRadius: radius.pill,
     background: colors.surfaceSoft,
@@ -197,7 +197,7 @@ export default function V2DebugInspector({
     border: `1px solid ${colors.lineSoft}`,
     borderRadius: radius[12],
     background: colors.surfacePrimary,
-    padding: `${spacing[12]}px ${spacing[12]}px`,
+    padding: `${spacing[12]} ${spacing[12]}`,
     textAlign: 'left',
     transition: `background-color ${motion.micro}, border-color ${motion.micro}, box-shadow ${motion.micro}`,
     cursor: 'pointer',
@@ -344,7 +344,7 @@ export default function V2DebugInspector({
                       onClick={() => onSelectItem(item.name)}
                       style={{
                         ...itemButtonBase,
-                        padding: `${spacing[8]}px ${spacing[12]}px`,
+                        padding: `${spacing[8]} ${spacing[12]}`,
                         display: 'grid',
                         gap: spacing[4],
                         borderColor: activeItemName === item.name ? colors.accentSoft : colors.lineSoft,
@@ -368,7 +368,7 @@ export default function V2DebugInspector({
                       border: `1px solid ${colors.lineSoft}`,
                       borderRadius: radius[12],
                       background: colors.surfacePrimary,
-                      padding: `${spacing[10]}px ${spacing[12]}px`,
+                      padding: `${spacing[10]} ${spacing[12]}`,
                       display: 'grid',
                       gap: spacing[4],
                     }}
@@ -448,7 +448,7 @@ export default function V2DebugInspector({
                         fontSize: '13px',
                         lineHeight: 1.45,
                         color: '#b45309',
-                        padding: `${spacing[8]}px ${spacing[10]}px`,
+                        padding: `${spacing[8]} ${spacing[10]}`,
                         borderRadius: radius[12],
                         border: '1px solid rgba(253, 230, 138, 0.96)',
                         background: 'rgba(255, 251, 235, 0.96)',
@@ -465,7 +465,7 @@ export default function V2DebugInspector({
                     fontSize: '13px',
                     lineHeight: 1.45,
                     color: '#047857',
-                    padding: `${spacing[8]}px ${spacing[10]}px`,
+                    padding: `${spacing[8]} ${spacing[10]}`,
                     borderRadius: radius[12],
                     border: '1px solid rgba(167, 243, 208, 0.96)',
                     background: 'rgba(236, 253, 245, 0.96)',
@@ -485,7 +485,7 @@ export default function V2DebugInspector({
                         fontSize: '13px',
                         lineHeight: 1.45,
                         color: colors.textBody,
-                        padding: `${spacing[8]}px ${spacing[10]}px`,
+                        padding: `${spacing[8]} ${spacing[10]}`,
                         borderRadius: radius[12],
                         border: `1px solid ${colors.lineSoft}`,
                         background: colors.surfacePrimary,

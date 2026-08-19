@@ -1,12 +1,14 @@
 export { colors } from './colors'
 export { controlSizing } from './controlSizing'
 export { elevation } from './elevation'
+export { measure } from './measure'
 export { motion } from './motion'
 export { radius } from './radius'
 export {
   segmentationFlowChrome,
   segmentationFlowMetrics,
   segmentationFlowMotionStyles,
+  segmentationFlowSteps,
   segmentationFlowTypography,
 } from './segmentationFlow'
 export { spacing } from './spacing'

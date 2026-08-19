@@ -18,6 +18,7 @@ import {
   Undo2,
 } from 'lucide-react'
 import BackPill from './BackPill'
+import { navigation } from '../../data'
 import DockableToolbar, {
   DockableToolbarActionGroup,
   DockableToolbarDivider,
@@ -31,7 +32,6 @@ import {
   readSegmentationFlowPreferences,
   saveSegmentationFlowPreferences,
 } from './segmentationFlowState'
-import SourceIntakeBrand from './SourceIntakeBrand'
 import StepBar, { StepNumberBadge } from './StepBar'
 import {
   colors,
@@ -39,6 +39,7 @@ import {
   motion,
   radius,
   segmentationFlowChrome as flowChrome,
+  segmentationFlowSteps,
   segmentationFlowMetrics as flowMetrics,
   segmentationFlowMotionStyles,
   segmentationFlowTypography as flowTypography,
@@ -46,11 +47,6 @@ import {
   typography,
 } from '../tokens'
 
-const segmentationFlowSteps = [
-  { id: 'source', label: 'Source' },
-  { id: 'segment', label: 'Segment' },
-  { id: 'review', label: 'Review' },
-]
 
 const segmentationSourceText = `في بداية الربيع خرجت القافلة من المدينة قبل شروق الشمس.
 وكانت السماء صافية والهواء بارداً على نحوٍ خفيف.
@@ -125,7 +121,20 @@ const reviewSegments = [
   },
 ]
 
-export function createSegmentationReviewSegments() {
+/**
+ * Seed the review list. Prefers the segments the user actually just published;
+ * falls back to the built-in proposal so the route stays inspectable on its own.
+ */
+export function createSegmentationReviewSegments(published) {
+  if (published?.length) {
+    return published.map((segment, index) => ({
+      id: segment.id,
+      label: segment.title || `Segment ${index + 1}`,
+      text: segment.text,
+      groupLabel: segment.chapterLabel || 'Proposed segments',
+      reviewState: 'ready',
+    }))
+  }
   return reviewSegments.map((segment) => ({ ...segment }))
 }
 
@@ -187,7 +196,9 @@ function getReviewStateChrome(reviewState, selected = false) {
       border: flowChrome.amberLine,
       background: flowChrome.amberTintSurface,
       headerBackground: flowChrome.amberTintStrong,
-      badgeBackground: colors.review,
+      // reviewStrong, not review: white on #D97706 measures 3.2:1, which is
+      // below AA for an 11px badge number. On #B45309 it clears it.
+      badgeBackground: colors.reviewStrong,
       badgeColor: colors.surfacePrimary,
       shadow: flowChrome.amberShadow,
     }
@@ -313,6 +324,11 @@ const flowType = {
     lineHeight: 1.2,
     letterSpacing: '0.1em',
     fontWeight: 650,
+    // textMuted, and carried by the style rather than left to each call site.
+    // Seven sites paired this style with textSoft, which clears 4.5:1 on white
+    // and does not on the amber, blue and slate tinted panels these labels
+    // actually sit on. Owning the colour here means the pairing is decided once.
+    color: colors.textMuted,
   },
   toolbarSelection: {
     margin: 0,
@@ -324,14 +340,26 @@ const flowType = {
   },
   meta: {
     ...typography.eyebrowLabel,
-    color: colors.textSoft,
+    // textMuted for the same reason as operationalMeta: these labels sit on the
+    // flow's tinted panels, where textSoft's 4.5:1-on-white becomes 4.4:1.
+    color: colors.textMuted,
   },
 }
 
+/**
+ * The flow's header: identity (from the shell) + Back, the step bar, nothing on
+ * the end.
+ *
+ * The end lane used to carry a two-line "SOURCE INTAKE / SEGMENTATION NEXT"
+ * badge. Two lines of tracked uppercase do not fit a 50px bar — the block ran
+ * from 5px to 44px inside it, which is what reads as text colliding with the
+ * lower boundary — and it was the fourth thing on the screen saying which mode
+ * you were in, after the rail's highlighted destination, the step bar directly
+ * beside it, and the page's own title. It said nothing and it did not fit.
+ */
 export function getSegmentationFlowHeaderSlots({
   shell,
   stepIndex,
-  brandSubtitle,
   backRoute = 'segmentationPasteNext',
 }) {
   return {
@@ -342,14 +370,6 @@ export function getSegmentationFlowHeaderSlots({
     ),
     Layer1_Header_CenterLane: (
       <StepBar debugItem="step_bar" steps={segmentationFlowSteps} currentIndex={stepIndex} />
-    ),
-    Layer1_Header_EndLane: (
-      <SourceIntakeBrand
-        title="Source Intake"
-        subtitle={brandSubtitle}
-        icon={<Scissors size={16} strokeWidth={1.9} />}
-        debugItem="source_intake_brand"
-      />
     ),
   }
 }
@@ -425,14 +445,6 @@ function FlowLead({ children, style = {} }) {
   )
 }
 
-function FlowActionSummary({ children, style = {} }) {
-  return (
-    <p data-debug-item="flow_action_summary" style={{ ...flowType.actionSummary, ...style }}>
-      {children}
-    </p>
-  )
-}
-
 function FlowSecondaryButton({ children, icon = null, onClick, variant = 'ghost', debugItem }) {
   const isPill = variant === 'pill'
 
@@ -446,7 +458,13 @@ function FlowSecondaryButton({ children, icon = null, onClick, variant = 'ghost'
         borderRadius: isPill ? radius.pill : 0,
         background: isPill ? flowChrome.whitePillSurface : 'transparent',
         color: colors.textSoft,
-        minHeight: isPill ? '48px' : 'auto',
+        // The ghost variant used to declare minHeight: 'auto', which rendered a
+        // 13px-tall hit target — and because it was an inline style it also beat
+        // the document-level 24px floor in index.css, so the one place that was
+        // supposed to catch exactly this could not. 44px is the comfortable
+        // target [DECISION]; the background is transparent, so the extra height
+        // costs nothing visually and buys a target a person can actually hit.
+        minHeight: isPill ? '48px' : '44px',
         minWidth: isPill ? '136px' : 0,
         padding: isPill ? `0 ${spacing[24]}` : '0',
         display: 'inline-flex',
@@ -466,9 +484,12 @@ function FlowSecondaryButton({ children, icon = null, onClick, variant = 'ghost'
 }
 
 function StatusPill({ children, value = null, tone = 'soft', size = 'default', debugItem }) {
+  // successStrong/reviewStrong, not success/review: the token file records the
+  // plain pair as "fills and icons only — both fail 4.5:1 as text", and this
+  // pill's tone IS its text colour. "Needs review" was one of them.
   const toneColor = {
-    success: colors.success,
-    review: colors.review,
+    success: colors.successStrong,
+    review: colors.reviewStrong,
     accent: colors.accentStrong,
     soft: colors.textSoft,
   }[tone] ?? colors.textSoft
@@ -748,7 +769,10 @@ function TransitionSegmentList() {
             animationDelay: flowMetrics.segmentRevealDelays[index] ?? flowMetrics.segmentRevealDelays[0],
           }}
         >
-          <p style={{ margin: `0 0 ${spacing[8]}`, color: colors.accentStrong, ...flowType.meta }}>{segment.label}</p>
+          {/* flowType.meta last would overwrite the colour, which is what had
+              been happening: the chip title was meant to read as accent and
+              rendered in the meta grey instead. */}
+          <p style={{ margin: `0 0 ${spacing[8]}`, ...flowType.meta, color: colors.accentStrong }}>{segment.label}</p>
           <p
             dir="rtl"
             lang="ar"
@@ -792,7 +816,13 @@ export function SegmentationTransitionView({ shell }) {
           borderRadius: radius[32],
           background: flowChrome.translucentShell,
           boxShadow: elevation.rest,
-          overflow: 'hidden',
+          // The page is the scroll owner; this shell must not be a second one.
+          // `hidden` here meant that at 1366x768 and 1280x800 the shell cut 119px
+          // off its own two panels while the page beneath it had room to scroll —
+          // content hidden by a container that was only ever clipping to keep a
+          // corner radius tidy. The radius still clips the shell's own gradient;
+          // it no longer clips the panels inside it.
+          overflow: 'visible',
           padding: flowMetrics.transitionShellPadding,
         }}
       >
@@ -1047,7 +1077,10 @@ function GroupTitleWarning() {
   )
 }
 
-function GroupTitleInput({ group, compact = false, stale = false, onChange }) {
+// `compact` used to pick between a 150px and a 220px hardcoded width. Both are
+// gone: the field and the label now take the width their row actually has, so
+// there is nothing left for the caller to choose.
+function GroupTitleInput({ group, stale = false, onChange }) {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(group.title)
 
@@ -1070,9 +1103,9 @@ function GroupTitleInput({ group, compact = false, stale = false, onChange }) {
   return (
     <span
       data-debug-item="group_title_editor"
-      style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[8], minWidth: 0 }}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[8], minWidth: 0, flex: '1 1 auto' }}
     >
-      <span style={{ ...flowType.operationalMeta, color: colors.textSoft, whiteSpace: 'nowrap' }}>
+      <span style={{ ...flowType.operationalMeta, whiteSpace: 'nowrap' }}>
         {group.number}.
       </span>
       {editing ? (
@@ -1080,6 +1113,9 @@ function GroupTitleInput({ group, compact = false, stale = false, onChange }) {
           type="text"
           autoFocus
           value={draft}
+          // The field had no accessible name and measured 200x21.4 — nameless to
+          // a screen reader and under the 24px target floor.
+          aria-label={`Rename meaning group ${group.number}`}
           data-debug-item="group_title_input"
           onClick={(event) => event.stopPropagation()}
           onFocus={(event) => event.target.select()}
@@ -1098,7 +1134,12 @@ function GroupTitleInput({ group, compact = false, stale = false, onChange }) {
           }}
           style={{
             minWidth: 0,
-            width: compact ? '150px' : '220px',
+            // Was a fixed 150/220px. The field now takes the width the row
+            // actually has, so editing a title cannot be narrower than reading
+            // it, and neither is decided independently of the container.
+            flex: '1 1 auto',
+            width: 'auto',
+            minHeight: spacing[24],
             border: `1px solid ${flowChrome.blueLine}`,
             borderRadius: radius[10],
             background: colors.surfacePrimary,
@@ -1112,9 +1153,12 @@ function GroupTitleInput({ group, compact = false, stale = false, onChange }) {
         <>
           <span
             data-debug-item="group_title_text"
+            // The title is the user's own text, so an ellipsis is the design
+            // once the row genuinely runs out — declared, not inferred.
+            data-truncates=""
             style={{
               minWidth: 0,
-              maxWidth: compact ? '150px' : '220px',
+              flex: '1 1 auto',
               color: colors.textBody,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -1171,7 +1215,7 @@ export function SegmentationReviewIntro({ summary }) {
             Check AraPal’s proposed meaning groups, fix only the segments that need attention, then approve the structure for study.
           </FlowLead>
         </div>
-        <span style={{ ...flowType.operationalMeta, color: colors.textSoft }}>
+        <span style={{ ...flowType.operationalMeta }}>
           Source preserved · {segmentCount} proposed segments · {checkLabel}
         </span>
       </div>
@@ -1186,11 +1230,15 @@ export function SegmentationReviewIntro({ summary }) {
           justifyContent: 'flex-end',
         }}
       >
+        {/* Only states that actually occurred. A "0 NEEDS REVIEW" pill in review
+            amber and a "0 SUGGESTED CHECK" pill in accent blue put two coloured
+            markers on the screen for two things that are not happening — the eye
+            goes to them and finds nothing. Same rule as the exam result summary. */}
         {[
           ['Ready', summary.ready, 'success'],
           ['Needs review', summary.needsReview, 'review'],
           ['Suggested check', summary.secondLook, 'accent'],
-        ].map(([label, value, tone]) => (
+        ].filter(([, value]) => Number(value) > 0).map(([label, value, tone]) => (
           <StatusPill key={label} value={value} tone={tone}>
             {label}
           </StatusPill>
@@ -1206,7 +1254,7 @@ export function SegmentationReviewSourceTray({ sourceMode, onSourceModeChange, o
       title={null}
       barStart={
         <span style={flowType.panelHeaderTitle}>
-          Source text <span style={{ color: colors.textFaint }}>· 24 words</span>
+          Source text <span style={{ color: colors.textSoft }}>· 24 words</span>
         </span>
       }
       barEnd={
@@ -1265,7 +1313,7 @@ export function ReviewMarkerPanel({
   return (
     <FlowPanel
       title="Segment outline"
-      barEnd={<span style={{ ...flowType.operationalMeta, color: colors.textSoft }}>{markers.length} segments</span>}
+      barEnd={<span style={{ ...flowType.operationalMeta }}>{markers.length} segments</span>}
       bodyStyle={{ padding: `${spacing[16]} ${spacing[16]} ${spacing[20]}` }}
       style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}
       debugItem="marker_panel"
@@ -1300,7 +1348,6 @@ export function ReviewMarkerPanel({
               >
                 <GroupTitleInput
                   group={group}
-                  compact
                   stale={staleGroupIds.includes(group.id)}
                   onChange={onGroupTitleChange}
                 />
@@ -1313,6 +1360,12 @@ export function ReviewMarkerPanel({
                     background: flowChrome.transparent,
                     padding: spacing[4],
                     display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    // A 14px icon in 4px of padding measured 22x24 — two pixels
+                    // under the WCAG 2.5.8 floor on all four chapter rows.
+                    minWidth: spacing[24],
+                    minHeight: spacing[24],
                     color: colors.textFaint,
                     cursor: 'pointer',
                   }}
@@ -1377,8 +1430,12 @@ export function ReviewMarkerPanel({
                           type="text"
                           value={marker.label}
                           onChange={(event) => onLabelChange(marker.id, event.target.value)}
+                          // Nameless to a screen reader, and 21.4px tall against
+                          // the 24px target floor.
+                          aria-label={`Rename segment ${marker.displayNumber ?? marker.id}`}
                           style={{
                             minWidth: 0,
+                            minHeight: spacing[24],
                             border: 'none',
                             background: 'transparent',
                             color: colors.textBody,
@@ -1452,7 +1509,8 @@ export function SegmentationReviewSelectedToolbar({
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: hasSelection ? colors.accentBase : colors.textFaint,
+            // textFaint is icon-only; this span renders the selected range.
+            color: hasSelection ? colors.accentBase : colors.textSoft,
             ...flowType.toolbarSelection,
           }}
         >
@@ -1464,8 +1522,20 @@ export function SegmentationReviewSelectedToolbar({
       onToggleFloating={onToggleFloating}
       debugItem="selected_segment_toolbar"
       style={isFloating ? undefined : {
-        transform: `translateX(clamp(0px, calc((100vw - 1400px) / 2 - ${flowMetrics.reviewToolbarRailWidth} - ${flowMetrics.reviewToolbarGutterGap}), calc(${flowMetrics.reviewToolbarRailWidth} + ${flowMetrics.reviewToolbarGutterGap})))`,
-        zIndex: 32,
+        // Placement is the region's job now — it is fixed in the reserved gutter,
+        // so there is no translateX here. The old transform existed to shunt a
+        // sticky toolbar sideways into that gutter; keeping it would shift a
+        // fixed element a second time.
+        //
+        // Height stays this element's concern: the tool list grows with what is
+        // selected, so it fills the band the region grants and scrolls past it,
+        // with the fade the standard requires so a cut list still says there is
+        // more.
+        height: '100%',
+        overflowY: 'auto',
+        scrollbarWidth: 'none',
+        maskImage: 'linear-gradient(to bottom, #000 calc(100% - 20px), transparent 100%)',
+        WebkitMaskImage: 'linear-gradient(to bottom, #000 calc(100% - 20px), transparent 100%)',
       }}
     >
       <DockableToolbarActionGroup orientation={toolbarOrientation}>
@@ -1783,7 +1853,7 @@ function BoundaryAdjustPreview({ segment, nextSegment, onMoveBoundary, onCancelB
               minWidth: 0,
             }}
           >
-            <span style={{ ...flowType.operationalMeta, color: colors.textSoft }}>
+            <span style={{ ...flowType.operationalMeta }}>
               {index === 0 ? 'Selected segment' : 'Next segment'}
             </span>
             <p
@@ -1829,6 +1899,7 @@ function SegmentAdvancedEditor({ segment, onTextChange, onClose }) {
         dir="rtl"
         lang="ar"
         value={segment.text}
+        aria-label={`Edit the Arabic text of segment ${segment.displayNumber ?? segment.id}`}
         onChange={(event) => onTextChange?.(segment.id, event.target.value)}
         style={{
           width: '100%',
@@ -1879,7 +1950,7 @@ export function ReviewOutput({
       title="Segment proposal"
       barEnd={
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[12], flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-          <span style={{ ...flowType.operationalMeta, color: colors.textSoft }}>{segments.length} segments</span>
+          <span style={{ ...flowType.operationalMeta }}>{segments.length} segments</span>
           <ProposalViewToggle value={viewMode} onChange={onViewModeChange} />
         </div>
       }
@@ -1926,7 +1997,7 @@ export function ReviewOutput({
                     cursor: 'pointer',
                   }}
                 >
-                  <span style={{ ...flowType.operationalMeta, color: colors.textSoft }}>{group.segments.length} segments</span>
+                  <span style={{ ...flowType.operationalMeta }}>{group.segments.length} segments</span>
                   {collapsed ? <ChevronDown size={14} strokeWidth={1.9} /> : <ChevronUp size={14} strokeWidth={1.9} />}
                 </button>
               </div>
@@ -1989,7 +2060,7 @@ export function ReviewOutput({
                           >
                             {segment.displayNumber}
                           </StepNumberBadge>
-                          <span style={{ ...flowType.operationalMeta, color: colors.textSoft, minWidth: 0, flex: '1 1 auto' }}>
+                          <span style={{ ...flowType.operationalMeta, minWidth: 0, flex: '1 1 auto' }}>
                             {segment.label}
                           </span>
                           {boundaryActive ? (
@@ -2052,42 +2123,92 @@ export function ReviewOutput({
   )
 }
 
+/**
+ * The commit bar for Review, and it sticks to the bottom of the workspace.
+ *
+ * It used to be a centred block appended below the proposal list, which put
+ * "Approve & Continue" at y=1575 on the canonical 900px-tall frame — 675px
+ * below the fold, inside an inner scroll region, with nothing on screen saying
+ * it existed. The screen's whole purpose is to approve a structure and the
+ * approve action was invisible on arrival.
+ *
+ * R3 states this better and the design system was already waiting for it:
+ * flowChrome.actionRegionWash has existed unused since the tokens were written,
+ * which is a fade for exactly this kind of docked action region. Imported as a
+ * decision, not as pixels — the tally reads from the live summary rather than
+ * R3's fixture numbers, and the copy stays the codebase's own.
+ */
 export function SegmentationReviewActionRegion({
   segmentCount,
   reviewCount,
+  readyCount,
   onApprove,
+  onResegment,
 }) {
   return (
     <div
       data-debug-item="review_action_panel"
+      // Declares to the visual standard that this bar passes over the scroll
+      // region on purpose. The trailing space that keeps the last card readable
+      // is reserved by the workboard region, not by this bar.
+      data-docked-chrome=""
       style={{
         width: '100%',
-        maxWidth: flowMetrics.reviewCommandBarMaxWidth,
-        margin: flowMetrics.centeredMargin,
-        padding: `${spacing[20]} 0 0`,
-        display: 'grid',
-        justifyItems: 'center',
-        gap: spacing[12],
+        marginTop: spacing[20],
+        padding: `${spacing[16]} 0`,
+        // The wash keeps the list legible as it passes under the bar instead of
+        // ending at a hard line.
+        background: flowChrome.actionRegionWash,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: spacing[20],
+        flexWrap: 'wrap',
       }}
     >
-      <span style={{ ...flowType.operationalMeta, color: reviewCount > 0 ? colors.review : colors.success }}>
-        {reviewCount > 0 ? `${reviewCount} suggested checks remain` : 'Ready to continue'} · {segmentCount} segments prepared
-      </span>
-      <PrimaryCTA
-        icon={<Check size={16} strokeWidth={1.9} />}
-        minWidth={280}
-        height={52}
-        onClick={onApprove}
-        debugItem="approve_continue_cta"
-      >
-        Approve & Continue
-      </PrimaryCTA>
+      <div style={{ display: 'grid', gap: spacing[4], minWidth: 0 }}>
+        <span style={{ ...flowType.operationalMeta }}>
+          {/* successStrong / reviewStrong, not success / review: the token file
+              records the plain pair as fills and icons only. The checker never
+              caught these two because it cannot see an element scrolled out of
+              its own region — which is exactly what this bar being below the
+              fold did. */}
+          <span style={{ color: colors.successStrong }}>{readyCount} ready</span>
+          {reviewCount > 0 && (
+            <>
+              {' · '}
+              <span style={{ color: colors.reviewStrong }}>{reviewCount} to check</span>
+            </>
+          )}
+        </span>
+        <span style={{ ...flowType.operationalMeta }}>
+          {segmentCount} segments · source preserved
+        </span>
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: spacing[16] }}>
+        {onResegment && (
+          <FlowSecondaryButton onClick={onResegment} debugItem="resegment_button">
+            Re-segment
+          </FlowSecondaryButton>
+        )}
+        <PrimaryCTA
+          icon={<Check size={16} strokeWidth={1.9} />}
+          minWidth={260}
+          height={52}
+          onClick={onApprove}
+          debugItem="approve_continue_cta"
+        >
+          Approve &amp; Continue
+        </PrimaryCTA>
+      </div>
     </div>
   )
 }
 
-export function SegmentationSuccessView({ shell }) {
-  const segmentCount = reviewSegments.length
+export function SegmentationSuccessView({ shell, publishedSegments }) {
+  // Report what was actually produced, not the fixture's length.
+  const segmentCount = publishedSegments?.length ?? reviewSegments.length
 
   return (
     <FlowPage centered>
@@ -2162,7 +2283,21 @@ export function SegmentationSuccessView({ shell }) {
           <PrimaryCTA
             icon={<Play size={16} strokeWidth={1.9} />}
             minWidth={260}
-            onClick={() => shell.navigate('studyWorkspace')}
+            onClick={() => {
+              // Tell Study why it was opened and which segment to start on,
+              // instead of a bare route change that drops the context.
+              const first = publishedSegments?.[0]
+              if (first) {
+                navigation.openPublishedSegmentation({
+                  projectId: first.projectId,
+                  segmentId: first.id,
+                  segmentRef: first.ref,
+                  count: publishedSegments.length,
+                })
+                return
+              }
+              shell.navigate('studyWorkspace')
+            }}
             debugItem="start_studying_cta"
           >
             Start Studying

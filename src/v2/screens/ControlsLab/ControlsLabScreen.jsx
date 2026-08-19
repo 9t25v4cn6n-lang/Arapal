@@ -4,10 +4,7 @@ import BackPill from '../../foundation/primitives/BackPill'
 import PrimaryCTA from '../../foundation/primitives/PrimaryCTA'
 import StepBar from '../../foundation/primitives/StepBar'
 import {
-  getNavigationBrandAnchorStyle,
-  getNavigationHeaderBandStyle,
   getNavigationUtilityAnchorStyle,
-  NavigationRailBrand,
   NavigationRailItems,
   NavigationRailPinControl,
 } from '../../foundation/primitives/NavigationRail'
@@ -92,20 +89,14 @@ function NavigationRailPreview() {
             boxShadow: isExpanded ? '0 16px 30px rgba(15, 23, 42, 0.06)' : 'none',
           }}
         >
-          <div
-            style={{
-              ...getNavigationHeaderBandStyle(isExpanded),
-            }}
-          >
-            <div style={getNavigationBrandAnchorStyle(isExpanded)}>
-              <NavigationRailBrand isExpanded={isExpanded} />
-            </div>
-            <div style={getNavigationUtilityAnchorStyle(isExpanded)}>
-              <NavigationRailPinControl shell={shell} />
-            </div>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[8] }}>
+          {/* Destinations, then the utility foot. The rail's brand band is gone
+              — application identity lives in the header's start lane now, so
+              this preview shows what the rail actually is. */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[8], flex: 1 }}>
             <NavigationRailItems shell={shell} />
+          </div>
+          <div style={getNavigationUtilityAnchorStyle(isExpanded)}>
+            <NavigationRailPinControl shell={shell} />
           </div>
         </div>
       </div>

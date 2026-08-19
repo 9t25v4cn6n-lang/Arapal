@@ -16,10 +16,17 @@ const editorSurfaceMetrics = {
   headerEyebrowTrack: '0.18em',
   headerTextStackGap: 2,
   footerTextTrack: '0.04em',
-  footerMetaTone: 'rgba(0, 0, 0, 0.2)',
-  shortcutTone: 'rgba(0, 0, 0, 0.25)',
-  eyebrowTone: 'rgba(0, 0, 0, 0.34)',
-  textareaTone: 'rgba(0, 0, 0, 0.8)',
+  // These four were bare rgba blacks at 0.2, 0.25 and 0.34 alpha — 1.6:1, 1.9:1
+  // and 2.5:1 on white. The quiet-chrome intent is right and is kept; the values
+  // were simply below the point at which the text renders. They also bypassed
+  // the token system entirely, which is how a third neutral dialect grew here
+  // after the token file had already been written to stop exactly that.
+  //
+  // textSoft is the lightest value the token file permits for text.
+  footerMetaTone: colors.textSoft,
+  shortcutTone: colors.textSoft,
+  eyebrowTone: colors.textSoft,
+  textareaTone: colors.textStrong,
   watermarkLead: 1,
 }
 
@@ -40,7 +47,9 @@ const editorSurfaceChrome = {
   headerDivider: '1px solid rgba(0, 0, 0, 0.05)',
   headerBadgeOutline: '1px solid rgba(37, 99, 235, 0.14)',
   headerBadgeSurface: 'rgba(239, 246, 255, 0.9)',
-  headerBadgeTone: 'rgba(37, 99, 235, 0.72)',
+  // 72% accent over the badge's own near-white wash did not reach AA. The badge
+  // reads as accent either way; accentStrong is the value that also renders.
+  headerBadgeTone: colors.accentStrong,
   headerBadgeHighlight: 'inset 0 1px 0 rgba(255, 255, 255, 0.72)',
   watermarkTone: 'rgba(37, 99, 235, 0.085)',
   watermarkShadow: '0 0 24px rgba(37, 99, 235, 0.06)',
@@ -66,37 +75,6 @@ function Corner({ style }) {
         ...style,
       }}
     />
-  )
-}
-
-function WindowButtons() {
-  return (
-    <div aria-hidden="true" style={{ display: 'inline-flex', gap: editorSurfaceMetrics.windowButtonGap }}>
-      <span
-        style={{
-          width: editorSurfaceMetrics.windowDotSize,
-          height: editorSurfaceMetrics.windowDotSize,
-          borderRadius: radius.pill,
-          background: editorSurfaceChrome.windowButtonFill,
-        }}
-      />
-      <span
-        style={{
-          width: editorSurfaceMetrics.windowDotSize,
-          height: editorSurfaceMetrics.windowDotSize,
-          borderRadius: radius.pill,
-          background: editorSurfaceChrome.windowButtonFill,
-        }}
-      />
-      <span
-        style={{
-          width: editorSurfaceMetrics.windowWideDotWidth,
-          height: editorSurfaceMetrics.windowDotSize,
-          borderRadius: radius.pill,
-          background: editorSurfaceChrome.windowButtonFill,
-        }}
-      />
-    </div>
   )
 }
 
@@ -126,6 +104,7 @@ export default function EditorSurface({
   value,
   onChange,
   placeholder,
+  ariaLabel,
   eyebrow = 'Arapal intake',
   seal = 'Preserved source',
   watermark = 'Arapal',
@@ -274,7 +253,6 @@ export default function EditorSurface({
               data-debug-item="editor_header_left_slot"
               style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[12], minWidth: 0 }}
             >
-              <WindowButtons />
               <div
                 style={{
                   minWidth: 0,
@@ -359,6 +337,13 @@ export default function EditorSurface({
               value={value}
               onChange={(event) => onChange?.(event.target.value, event)}
               placeholder={placeholder}
+              // A placeholder is not an accessible name: it disappears the moment
+              // the field has content, which is exactly when a screen-reader user
+              // is most likely to come back to it.
+              aria-label={ariaLabel ?? placeholder}
+              // Arabic pasted into an LTR field renders its punctuation on the
+              // wrong side without this.
+              dir="auto"
               readOnly={readOnly}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
@@ -374,9 +359,26 @@ export default function EditorSurface({
                 padding: bodyInset,
                 background: colors.surfacePrimary,
                 color: editorSurfaceMetrics.textareaTone,
-                fontFamily: typography.bodyText.fontFamily,
-                fontSize: typography.bodyText.fontSize,
-                lineHeight: typography.bodyText.lineHeight,
+                // The source is the principal object on this screen, so it is
+                // typed as SOURCE text, not as English body copy.
+                //
+                // It was `bodyText` — an Inter stack. Inter has no Arabic, so
+                // every pasted Arabic source fell back to whatever the system
+                // happened to offer, at the body size, while the same passage in
+                // Study renders in Amiri two ramp steps larger. That is the
+                // whole of "the source text is dramatically smaller than
+                // comparable reading content elsewhere": the field was never
+                // told it holds a source.
+                //
+                // Inter FIRST and Amiri behind it, deliberately: font fallback
+                // is per glyph, so Latin resolves to Inter and Arabic to Amiri,
+                // which is what a field that must accept either one wants. The
+                // size is the compact Arabic role rather than the full study
+                // reading size — a long paste field legitimately runs denser
+                // than a card holding one segment.
+                fontFamily: `Inter, ${typography.arabicCompact.fontFamily}`,
+                fontSize: typography.arabicCompact.fontSize,
+                lineHeight: typography.arabicCompact.lineHeight,
                 boxSizing: 'border-box',
               }}
             />

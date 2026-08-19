@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import {
+  AlertCircle,
   AlertTriangle,
   AlignCenter,
   AlignLeft,
@@ -12,7 +13,10 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
-  ChevronsRight,
+  PanelLeftClose,
+  PanelLeftOpen,
+  PanelRightClose,
+  PanelRightOpen,
   Copy,
   Info,
   Italic,
@@ -30,6 +34,60 @@ import {
 import IconActionButton from './IconActionButton'
 import PrimaryCTA from './PrimaryCTA'
 import { colors, elevation, motion, radius, spacing, typography } from '../tokens'
+
+// Resolved once at module scope, not per render: the submit handler already
+// accepts either modifier, so the label must name the one this machine uses.
+// A constant also keeps the rendered width stable for screenshot comparison.
+const IS_APPLE = typeof navigator !== 'undefined'
+  && /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent || '')
+const SUBMIT_SHORTCUT = IS_APPLE ? '⌘ ↵' : 'Ctrl ↵'
+const SUBMIT_SHORTCUT_LABEL = IS_APPLE ? 'Command + Enter' : 'Ctrl + Enter'
+
+/**
+ * Scroll affordance for a region whose content is cut by its own edge.
+ *
+ * Both scroll regions in Study hid their scrollbars, so a half-sliced line of
+ * Arabic and a half-visible lexicography chip read as clipping — a defect —
+ * rather than as "there is more this way". This reports which edges still have
+ * content beyond them so the caller can fade exactly those, and nothing when
+ * everything already fits. One hook rather than two copies, because the defect
+ * is a class: any hidden-scrollbar region has it.
+ *
+ * Children are observed as well as the region: a late-arriving webfont changes
+ * scrollHeight without changing the region's own box.
+ */
+function useScrollAffordance(axis) {
+  const ref = useRef(null)
+  const [edges, setEdges] = useState({ start: false, end: false })
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return undefined
+
+    const measure = () => {
+      const size = axis === 'x' ? el.clientWidth : el.clientHeight
+      const total = axis === 'x' ? el.scrollWidth : el.scrollHeight
+      const position = axis === 'x' ? el.scrollLeft : el.scrollTop
+      const next = { start: position > 1, end: total - size - position > 1 }
+      // Same object when nothing changed, so a scroll event cannot spin renders.
+      setEdges((previous) => (
+        previous.start === next.start && previous.end === next.end ? previous : next
+      ))
+    }
+
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(el)
+    for (const child of el.children) observer.observe(child)
+    el.addEventListener('scroll', measure, { passive: true })
+    return () => {
+      observer.disconnect()
+      el.removeEventListener('scroll', measure)
+    }
+  }, [axis])
+
+  return [ref, { 'data-more-start': edges.start || undefined, 'data-more-end': edges.end || undefined }]
+}
 
 const studyCss = `
   .study-v2,
@@ -55,6 +113,7 @@ const studyCss = `
     --study-line-strong: ${colors.lineStrong};
     --study-success: ${colors.success};
     --study-review: ${colors.review};
+    --study-review-strong: ${colors.reviewStrong};
     --study-radius-12: ${radius[12]};
     --study-radius-16: ${radius[16]};
     --study-radius-24: ${radius[24]};
@@ -103,6 +162,12 @@ const studyCss = `
     height: auto;
     min-width: 0;
     min-height: 0;
+    /* A card is a fixed header plus a body that gives way. Without this the
+       panel kept its natural height, and when a parent compressed it the
+       overflow:hidden below cut the content off instead of letting the body
+       scroll. */
+    display: flex;
+    flex-direction: column;
     border: 1px solid var(--study-line-soft);
     border-radius: var(--study-radius-24);
     background: color-mix(in srgb, var(--study-surface) 96%, transparent);
@@ -127,6 +192,18 @@ const studyCss = `
     background: color-mix(in srgb, var(--study-surface) 92%, transparent);
     backdrop-filter: blur(18px);
     overflow: hidden;
+  }
+
+  /* After the base rule, not before it. At equal specificity the later
+     declaration wins, so the first version of this sat above .study-v2__railPanel
+     and was overridden by the very rule it meant to override.
+
+     A 0px grid track is not the same as hidden: the panel's children keep their
+     intrinsic widths and spill out of it, which is how the support rail's header
+     and body escaped the frame. Six findings that read as separate escapes were
+     one missing declaration. */
+  @media (max-width: 560px) {
+    .study-v2__railPanel { display: none; }
   }
 
   .study-v2__supportPanel {
@@ -167,6 +244,58 @@ const studyCss = `
     scrollbar-gutter: stable;
   }
 
+  /* R3 import: the tree now says how much is left, per chapter and overall.
+     The live tree showed plain markers with no sense of progress at all. */
+  .study-v2__chapterCount {
+    justify-self: end;
+    font-size: var(--study-control-size);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--study-text-soft);
+  }
+
+  .study-v2__srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .study-v2__railFooter {
+    flex: 0 0 auto;
+    display: grid;
+    gap: var(--study-space-8);
+    padding: var(--study-space-12) var(--study-space-16);
+    border-top: 1px solid var(--study-line-soft);
+  }
+
+  .study-v2__railFooterLabel {
+    font-size: var(--study-control-size);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--study-text-soft);
+  }
+
+  .study-v2__railProgress {
+    display: block;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--study-accent-mist, rgba(219, 234, 254, 0.9));
+    overflow: hidden;
+  }
+
+  .study-v2__railProgress > span {
+    display: block;
+    height: 100%;
+    background: var(--study-accent);
+  }
+
   .study-v2__railBody {
     padding: var(--study-space-12) 0 var(--study-space-20);
   }
@@ -178,12 +307,39 @@ const studyCss = `
     gap: var(--study-space-16);
   }
 
+  /* The collapsed support rail is a DOCK, not a leftover.
+     ───────────────────────────────────────────────────
+     It used to be three 40px icon buttons stacked against the top edge of an
+     840px rail: the functionality survived collapsing and the architecture did
+     not, so the strongest support panel in the product became three specks in a
+     corner. The tiles now share the rail's height between them — each is
+     flex: 1 with a floor and a ceiling, so three modules give three tall tiles
+     and six give six shorter ones without the rule changing — and each carries
+     its own name down its spine, so a module is identifiable without hovering
+     it first. */
   .study-v2__collapsedRailBody {
-    padding: var(--study-space-12) var(--study-space-8);
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: var(--study-space-12) var(--study-space-8) var(--study-space-16);
     display: flex;
     flex-direction: column;
-    gap: var(--study-space-12);
-    align-items: center;
+    gap: var(--study-space-8);
+    align-items: stretch;
+  }
+
+  .study-v2__collapsedSupportLabel {
+    writing-mode: vertical-rl;
+    font-size: ${typography.eyebrowLabel.fontSize};
+    line-height: 1;
+    font-weight: ${typography.eyebrowLabel.fontWeight};
+    letter-spacing: ${typography.eyebrowLabel.letterSpacing};
+    text-transform: uppercase;
+    color: var(--study-text-soft);
+    /* The tile is 56px of usable height at worst; a long module name must clip
+       rather than push the icon out of the tile. */
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
   }
 
   .study-v2__segmentRow,
@@ -205,6 +361,9 @@ const studyCss = `
   }
 
   .study-v2__folderRow {
+    /* chevron · label · remaining count. Declared here rather than on the
+       shared row rule so a segment row cannot grow a third column. */
+    grid-template-columns: auto minmax(0, 1fr) auto;
     margin-top: var(--study-space-4);
     color: var(--study-text-strong);
     font-weight: 700;
@@ -373,7 +532,7 @@ const studyCss = `
     flex: 0 0 auto;
     color: var(--study-text-strong);
     font-family: var(--study-body-font);
-    font-size: 19px;
+    font-size: ${typography.sectionTitle.fontSize};
     line-height: 1.08;
     font-weight: 845;
     letter-spacing: -0.024em;
@@ -396,7 +555,7 @@ const studyCss = `
     text-overflow: ellipsis;
     color: color-mix(in srgb, var(--study-text-body) 82%, var(--study-text-soft));
     font-family: var(--study-body-font);
-    font-size: 14px;
+    font-size: ${typography.supportSubtext.fontSize};
     line-height: 1.14;
     font-weight: 635;
     letter-spacing: 0.01em;
@@ -506,26 +665,6 @@ const studyCss = `
     font-weight: 800;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-  }
-
-  .study-v2__shellProgressBars {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
-
-  .study-v2__shellProgressBar {
-    width: clamp(46px, 3.6vw, 54px);
-    height: 6px;
-    border-radius: var(--study-pill);
-    background: color-mix(in srgb, var(--study-accent-mist) 38%, var(--study-line-soft));
-    transition: background-color var(--study-motion-panel), transform var(--study-motion-panel), opacity var(--study-motion-panel);
-  }
-
-  .study-v2__shellProgressBar.is-active {
-    background: linear-gradient(90deg, var(--study-accent), var(--study-accent-strong));
-    transform: scaleY(1.06);
   }
 
   .study-v2__shellFocusButton {
@@ -648,11 +787,52 @@ const studyCss = `
     display: grid;
     min-height: 100%;
     grid-template-columns: minmax(0, 1fr) 0px;
-    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    /* The source and lexicography rows were auto-sized, so a long Arabic
+       passage — which wraps to more lines as the centre column narrows — grew
+       past the frame and pushed into its neighbours instead of the card
+       scrolling. Both rows now have a floor of zero so they yield; the source
+       card scrolls internally, which is what its scroll affordance is for. */
+    /* The slack belongs to the source, not to a void.
+
+       There used to be a fourth row here whose area was "." — an empty 1fr
+       spacer that swallowed every spare pixel and pushed the editor to the
+       bottom of the lane. On the 1440x900 frame that put roughly 150px of blank
+       background between the passage being read and the box it is typed into:
+       dead space to look at, and a wasted eye journey on the one screen where
+       source and translation should sit close together.
+
+       The source row takes the slack instead and scrolls internally, which is
+       what its scroll affordance already existed for, so a long Arabic passage
+       gets MORE room rather than the void getting bigger. The editor sits
+       directly under the lexicography and grows with what is typed into it. */
+    /* Read at the top, write at the bottom.
+       ─────────────────────────────────────
+       Four arrangements have now been tried in this rule, and the argument each
+       time was about where the leftover height should go.
+
+         1. an empty 1fr spacer row  — a ~150px hole between the passage and the
+            box it is typed into.
+         2. the slack to the source  — the same hole, moved INSIDE the source
+            card: 111px of white under a short passage.
+         3. every row content-sized  — no hole, but the composer then floats
+            directly under the lexicography with ~180px of unused canvas beneath
+            it, which is what review saw as a top-heavy, underused workspace.
+
+       The mistake common to all three was treating the leftover as something to
+       park. It is not: this is a writing surface, and the one component that can
+       spend extra height USEFULLY is the box you write the translation into.
+
+       So the editor row takes the slack, the editor grows into it up to a cap,
+       and it sits at the bottom of its row — which anchors the lower canvas
+       without hard-coding where the bottom is. Any residue at very tall
+       viewports lands above the editor as breathing room between reading and
+       writing, and the cap is what keeps a tall frame from turning the writing
+       area into an intimidating empty field. */
+    grid-template-rows: auto auto minmax(var(--study-editor-min, 200px), 1fr);
+    align-content: stretch;
     grid-template-areas:
       "source companion"
       "lex companion"
-      ". companion"
       "editor companion";
     align-items: stretch;
     column-gap: 0;
@@ -663,20 +843,63 @@ const studyCss = `
       row-gap var(--study-motion-panel);
   }
 
+  /* Discussion mode reveals a column. It does not rearrange the screen.
+
+     It used to re-flow into "source source / editor companion": the source went
+     full width, and the editor and companion split the lower half. That produced
+     the two things R3 avoids — a ~340px empty translation box, because the editor
+     was stretched to match a half-height row, and a stubby companion card that
+     had to be tall enough to hold a conversation. R3 keeps one composition and
+     runs the companion full height beside both the passage and the editor, which
+     is why its source can stay compact and its writing area still looks
+     deliberate.
+
+     So the areas here are the SAME three rows as the default state, with the
+     companion spanning all of them. The forced min-height goes too: nothing needs
+     to be stretched to a floor once no row is fighting for the leftover. */
   .study-v2__composer.is-discussing {
-    grid-template-columns: minmax(0, 1.18fr) minmax(340px, 0.82fr);
-    grid-template-rows: auto minmax(360px, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 0.82fr);
+    /* The SAME row model as the default state. Restating it as three auto rows
+       here dropped the editor's floor, so on a 768px frame the companion,
+       the retry banner and the source between them squeezed the writing area to
+       about 180px and the third line of the user's own translation was cut at a
+       hard edge. The floor is the point: whatever else is on this screen, there
+       is always a usable box to write in, and the source card above it scrolls
+       instead — which is what its scroll affordance is for. */
+    grid-template-rows: auto auto minmax(240px, 1fr);
     grid-template-areas:
-      "source source"
+      "source companion"
+      "lex companion"
       "editor companion";
-    min-height: clamp(690px, calc(100vh - 190px), 860px);
     column-gap: var(--study-space-20);
     align-items: stretch;
+  }
+
+  /* The passage yields to the writing area in this mode, not the other way
+     round. Discussion is where the centre column is narrowest and the retry
+     banner is most likely to be present; with the source card free to take its
+     full content height the editor was left about 90px and cut the user's own
+     second line at a hard edge. The card scrolls — that is what its scroll
+     affordance is for — and the full passage is one scroll away. */
+  .study-v2__composer.is-discussing .study-v2__composerSource {
+    max-height: 240px;
   }
 
   .study-v2__composerSource {
     grid-area: source;
     min-width: 0;
+    min-height: 0;
+    /* Clipping the wrapper only moved the problem: the card was cut instead of
+       overflowing. The wrapper is a column so the card fits the row exactly and
+       its own body does the scrolling. */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .study-v2__composerSource > * {
+    min-height: 0;
+    flex: 1 1 auto;
     transition: transform var(--study-motion-panel), opacity var(--study-motion-panel);
   }
 
@@ -693,19 +916,25 @@ const studyCss = `
       transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
+  /* Lexicography stays. It was hidden to buy vertical room for the old
+     two-row discussion layout; the layout no longer needs that room, and the
+     glossary is most useful precisely when you are discussing wording. R3 keeps
+     it visible in this state too. */
   .study-v2__composer.is-discussing .study-v2__composerLex {
-    display: none;
-    max-height: 0;
-    opacity: 0;
-    transform: translateY(-10px);
-    pointer-events: none;
+    display: block;
   }
 
   .study-v2__composerEditor {
     grid-area: editor;
     min-width: 0;
     min-height: 0;
+    /* end + height: 100% + a cap. The height claims the row so the writing area
+       actually grows; the cap stops a 1080px-tall frame producing a 600px empty
+       field; end-alignment puts whatever is left over above the editor rather than
+       below it, so the composer is the last thing in the canvas. */
     align-self: end;
+    height: 100%;
+    max-height: 420px;
     transition:
       transform var(--study-motion-panel),
       opacity var(--study-motion-panel);
@@ -749,6 +978,19 @@ const studyCss = `
     display: flex;
     flex-direction: column;
     gap: var(--study-space-4);
+    min-height: 0;
+  }
+
+  /* The passage panel takes the height the group is given.
+     It defaulted to flex: 0 1 auto — able to shrink, never to grow — so the card
+     held 111px of unused white at the bottom WHILE its scroller clipped the
+     Arabic inside it. Spare room and cut text in the same card, for the same
+     reason: nothing claimed the slack. min-height: 0 is what lets a flex child
+     with its own scroll region actually shrink to the space rather than
+     insisting on its content height. */
+  .study-v2__sourceGroup > .study-v2__panel {
+    flex: 1 1 auto;
+    min-height: 0;
   }
 
   .study-v2__navRow {
@@ -780,8 +1022,14 @@ const studyCss = `
   }
 
   .study-v2__cardHeader {
+    /* The header keeps its size; the body is what yields. */
+    flex: 0 0 auto;
     min-height: calc(var(--study-space-32) + var(--study-space-24));
-    padding: 0 var(--study-space-24);
+    /* 16, not 24: the body's inset is a reading measure, the header's is a
+       control gutter. At the docked width 48px of a 382px header went to air
+       while the title and the utility row fought over the remaining 334 and
+       both lost — the title ellipsised to "SOURCE T…". */
+    padding: 0 var(--study-space-16);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -822,14 +1070,20 @@ const studyCss = `
     letter-spacing: 0.12em;
     text-transform: uppercase;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
+  /* A card header's controls are one row. Wrapping let "Copy" drop below "A-/A+"
+     and doubled the header height, which read as a broken header rather than as
+     a reflow. The title is what yields instead — it ellipsises. */
   .study-v2__actionRow {
     display: inline-flex;
     align-items: center;
     justify-content: flex-end;
     gap: var(--study-space-8);
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    flex: 0 0 auto;
   }
 
   .study-v2__miniPill {
@@ -866,8 +1120,13 @@ const studyCss = `
   }
 
   .study-v2__sourceBody {
+    flex: 1 1 auto;
     min-height: 0;
-    max-height: 294px;
+    /* A fixed 294px cap ignored how much room the row actually had, so at
+       shorter frames the Arabic passage escaped the card and printed over the
+       lexicography row beneath it. Capping against the viewport as well lets
+       the card give way and scroll, which is what its scroll edge is for. */
+    max-height: min(294px, 34vh);
     overflow: auto;
     overscroll-behavior: contain;
   }
@@ -913,6 +1172,45 @@ const studyCss = `
 
   .study-v2__lexStrip::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Scroll affordance. A cut edge with no scrollbar reads as clipping, so fade
+     whichever edge still has content beyond it — and only that edge, so nothing
+     is faded when everything already fits. Driven by useScrollAffordance. */
+  .study-v2__lexStrip[data-more-end] {
+    mask-image: linear-gradient(to right, #000 calc(100% - var(--study-space-32)), transparent 100%);
+  }
+
+  .study-v2__lexStrip[data-more-start] {
+    mask-image: linear-gradient(to right, transparent 0, #000 var(--study-space-32));
+  }
+
+  .study-v2__lexStrip[data-more-start][data-more-end] {
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--study-space-32),
+      #000 calc(100% - var(--study-space-32)),
+      transparent 100%
+    );
+  }
+
+  .study-v2__sourceBody[data-more-end] {
+    mask-image: linear-gradient(to bottom, #000 calc(100% - var(--study-space-24)), transparent 100%);
+  }
+
+  .study-v2__sourceBody[data-more-start] {
+    mask-image: linear-gradient(to bottom, transparent 0, #000 var(--study-space-24));
+  }
+
+  .study-v2__sourceBody[data-more-start][data-more-end] {
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      #000 var(--study-space-24),
+      #000 calc(100% - var(--study-space-24)),
+      transparent 100%
+    );
   }
 
   .study-v2__lexTerm {
@@ -1057,8 +1355,12 @@ const studyCss = `
 
   .study-v2__textarea {
     width: 100%;
-    min-height: 106px;
-    max-height: min(18vh, 152px);
+    /* Starts at roughly two lines and grows with what is typed. It used to open
+       at 106px — four lines of empty box on a screen where most translations
+       begin as one sentence, which read as an unfilled form rather than an
+       invitation. The growth is what makes a small starting size honest. */
+    min-height: 64px;
+    max-height: min(26vh, 220px);
     border: 0;
     outline: none;
     resize: none;
@@ -1080,10 +1382,101 @@ const studyCss = `
     overflow: auto;
   }
 
+  /* Provenance and honesty strip. Sits in its own contract lane above the
+     workspace so it can never overlay content. */
+  .study-v2__contextStrip {
+    display: flex;
+    flex-direction: column;
+    gap: ${spacing[8]};
+    padding: 0 0 ${spacing[12]};
+  }
+
+  .study-v2__contextBanner {
+    display: flex;
+    align-items: center;
+    gap: ${spacing[12]};
+    min-height: 44px;
+    padding: 0 ${spacing[16]};
+    border: 1px solid ${colors.accentSoft};
+    border-radius: ${radius[12]};
+    background: ${colors.accentWash};
+  }
+
+  .study-v2__contextLabel {
+    flex: 0 0 auto;
+    font-size: ${typography.eyebrowLabel.fontSize};
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: ${colors.accentStrong};
+  }
+
+  .study-v2__contextDetail {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: ${typography.bodyText.fontSize};
+    color: ${colors.textBody};
+  }
+
+  .study-v2__contextDismiss {
+    flex: 0 0 auto;
+    min-height: 32px;
+    padding: 0 ${spacing[12]};
+    border: 1px solid ${colors.lineSoft};
+    border-radius: 999px;
+    background: ${colors.surfacePrimary};
+    color: ${colors.textBody};
+    font-size: ${typography.bodyText.fontSize};
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .study-v2__contextDismiss:hover { border-color: ${colors.accentSoft}; color: ${colors.accentStrong}; }
+  .study-v2__contextDismiss:focus-visible { outline: 2px solid ${colors.accentBase}; outline-offset: 2px; }
+
+  /* The evaluation stub must announce itself wherever its output is shown. */
+  .study-v2__sampleNotice {
+    margin: 0;
+    padding: ${spacing[8]} ${spacing[12]};
+    border-left: 3px solid ${colors.review};
+    background: ${colors.surfaceSoft};
+    border-radius: ${radius[8]};
+    font-size: ${typography.bodyText.fontSize};
+    line-height: 1.5;
+    color: ${colors.textSoft};
+  }
+
+  /* Two rows, because the footer carries two different kinds of thing and they
+     have opposite needs. A submit error must be read in full, so it gets its
+     own full-width row and is allowed to wrap. The shortcut affordance must
+     never steal width from the actions, so it is a fixed-width keycap rather
+     than a sentence that shrinks. The previous single row made the error
+     shrinkable and the shortcut ellipsised to "⌘ Ente…" at the docked width. */
   .study-v2__editorFooter {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
-    align-items: end;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--study-space-8);
+  }
+
+  .study-v2__editorError {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--study-space-8);
+    min-width: 0;
+    color: var(--study-review-strong);
+    font-size: var(--study-control-size);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .study-v2__editorActions {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
     gap: var(--study-space-12);
   }
 
@@ -1099,13 +1492,21 @@ const studyCss = `
     justify-content: center;
   }
 
-  .study-v2__hint {
-    color: var(--study-text-faint);
+  .study-v2__shortcut {
+    margin-right: auto;
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--study-space-24);
+    padding: 0 var(--study-space-8);
+    border: 1px solid var(--study-line-soft);
+    border-radius: var(--study-radius-12);
+    background: var(--study-surface-soft);
+    color: var(--study-text-soft);
+    font-family: inherit;
     font-size: var(--study-control-size);
     font-weight: 600;
-    align-self: end;
-    justify-self: start;
-    padding-bottom: 2px;
+    white-space: nowrap;
   }
 
   .study-v2__secondaryAction {
@@ -1120,6 +1521,10 @@ const studyCss = `
     padding: 0 var(--study-space-16);
     font-size: var(--study-body-size);
     font-weight: 700;
+    /* A control's label is one line. Left to wrap, this one broke into three
+       lines inside the pill at the docked width and squashed its own icon. */
+    white-space: nowrap;
+    flex: 0 0 auto;
     cursor: pointer;
   }
 
@@ -1716,13 +2121,21 @@ const studyCss = `
 
   .study-v2__collapsedSupportButton {
     width: 100%;
-    min-height: calc(var(--study-space-64) + var(--study-space-16));
+    /* An equal share of the rail, floored so it stays a comfortable target and
+       capped so three modules on a 1080px frame do not become three 300px
+       slabs. The distribution is the rule; the number of modules is an input. */
+    flex: 1 1 0;
+    min-height: calc(var(--study-space-64) + var(--study-space-24));
+    max-height: 240px;
     border: 1px solid var(--support-border, var(--study-line-soft));
     border-radius: var(--study-radius-16);
     background: var(--support-bg, var(--study-surface));
-    display: inline-flex;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: var(--study-space-12);
+    padding: var(--study-space-12) var(--study-space-4);
     color: var(--support-icon, var(--study-accent));
     cursor: pointer;
     transition:
@@ -1732,13 +2145,19 @@ const studyCss = `
       box-shadow var(--study-motion-micro);
   }
 
-  .study-v2__collapsedSupportButton:hover {
+  .study-v2__collapsedSupportButton:hover,
+  .study-v2__collapsedSupportButton:focus-visible {
     border-color: var(--support-icon, var(--study-accent));
     background: color-mix(in srgb, var(--support-bg, var(--study-accent-wash)) 90%, var(--study-surface));
     box-shadow:
       0 var(--study-space-12) 26px color-mix(in srgb, var(--support-icon, var(--study-accent)) 16%, transparent),
       inset 0 0 0 1px color-mix(in srgb, var(--support-icon, var(--study-accent)) 24%, transparent);
     transform: translateX(-3px);
+  }
+
+  .study-v2__collapsedSupportButton:hover .study-v2__collapsedSupportLabel,
+  .study-v2__collapsedSupportButton:focus-visible .study-v2__collapsedSupportLabel {
+    color: var(--support-icon, var(--study-accent));
   }
 
   .study-v2__collapsedSupportButton:focus-visible {
@@ -1921,7 +2340,9 @@ export function StudyShellTitleBar({
           <div className="study-v2__shellTitleLine" aria-label={`${segmentLabel}, ${title}, ${chapterLabel}`}>
             <span className="study-v2__shellTitleText">{segmentLabel}</span>
             <span className="study-v2__shellTitleDivider" aria-hidden="true" />
-            <span className="study-v2__shellProjectText">{title}</span>
+            {/* The project and book name: the user's content. An ellipsis is
+                the design for a fixed shell header, so it is declared. */}
+            <span className="study-v2__shellProjectText" data-truncates="">{title}</span>
           </div>
         </div>
       </div>
@@ -1936,11 +2357,6 @@ export function StudyShellProgress({
   progressTotal = 1,
 }) {
   const progressCurrent = Math.min(progressTotal, progressStep + 1)
-  const visibleBarCount = Math.min(progressTotal, 5)
-  const activeBarIndex =
-    visibleBarCount > 1 && progressTotal > 1
-      ? Math.round((progressStep / Math.max(progressTotal - 1, 1)) * (visibleBarCount - 1))
-      : 0
 
   return (
     <span
@@ -1951,11 +2367,13 @@ export function StudyShellProgress({
         <span className="study-v2__shellProgressLabelText">Segment </span>
         {progressCurrent} of {progressTotal}
       </span>
-      <span className="study-v2__shellProgressBars" aria-hidden="true">
-        {Array.from({ length: visibleBarCount }, (_, index) => (
-          <span key={index} className={`study-v2__shellProgressBar${index === activeBarIndex ? ' is-active' : ''}`} />
-        ))}
-      </span>
+      {/* The dot row is gone.
+          It was capped at five and mapped position proportionally, so on an
+          eight-segment project it lit the second of five dots directly beside the
+          words "Segment 3 of 8". Two readings of the same fact, side by side,
+          disagreeing — and the dots were aria-hidden, so they carried nothing for
+          assistive technology either. R3 states the count and shows nothing else,
+          which is the better decision and removes the contradiction. */}
     </span>
   )
 }
@@ -1967,9 +2385,11 @@ export function StudyShellMeta({
   onDraft,
   onFail,
   onPass,
+  progress = null,
 }) {
   return (
     <div className="study-v2 study-v2__shellMetaCluster" data-debug-item="study_shell_meta_cluster">
+      {progress}
       {showSandboxControls ? (
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[4] }}>
           {[['Draft', onDraft], ['Fail', onFail], ['Pass', onPass]].map(([label, onClick]) => (
@@ -1979,7 +2399,7 @@ export function StudyShellMeta({
               onClick={onClick}
               style={{
                 minHeight: '28px',
-                padding: `0 ${spacing[10]}px`,
+                padding: `0 ${spacing[10]}`,
                 borderRadius: radius[12],
                 border: `1px solid ${colors.lineSoft}`,
                 background: 'rgba(255,255,255,0.86)',
@@ -2050,14 +2470,29 @@ export function StudyStatusChip({ state, compact = false }) {
   )
 }
 
+/**
+ * The pane toggle.
+ *
+ * It was a double chevron pointing in a direction, which tells you which way
+ * something will move but not WHAT — the review note was that a user cannot
+ * predict what the control does before pressing it. A panel glyph says it: a
+ * frame with one edge filled, opening or closing on the side the pane is on.
+ * The accessible name and the tooltip now name the panel too ("Expand support
+ * panel"), so the affordance reads the same by sight, by hover and by
+ * screen reader, without adding any explanatory UI to the rail.
+ */
 export function StudyPaneToggle({ collapsed, label, onClick, side = 'left' }) {
+  const Icon = side === 'left'
+    ? (collapsed ? PanelLeftOpen : PanelLeftClose)
+    : (collapsed ? PanelRightOpen : PanelRightClose)
+
   return (
     <IconActionButton
       size="utility-sm"
       label={label}
       title={label}
       onClick={onClick}
-      icon={collapsed === (side === 'left') ? <ChevronsRight strokeWidth={1.8} /> : <ChevronsLeft strokeWidth={1.8} />}
+      icon={<Icon strokeWidth={1.8} />}
     />
   )
 }
@@ -2075,6 +2510,16 @@ export function StudySegmentNavigator({
   )
 
   const visibleFiles = nodes.filter((node) => node.type === 'file')
+  const isDone = (id) => (segmentRecords[id] ?? {}).submissionState === 'submitted'
+  const studiedCount = visibleFiles.filter((node) => isDone(node.id)).length
+
+  // Segments belonging to each chapter, so a folder can show how much is left.
+  const chapterCounts = {}
+  let currentChapter = null
+  for (const node of nodes) {
+    if (node.type === 'folder') { currentChapter = node.id; chapterCounts[currentChapter] = 0; continue }
+    if (currentChapter && !isDone(node.id)) chapterCounts[currentChapter] += 1
+  }
 
   if (collapsed) {
     return (
@@ -2127,6 +2572,14 @@ export function StudySegmentNavigator({
               >
                 {isOpen ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
                 <span className="study-v2__segmentLabel">{node.label}</span>
+                {/* A finished chapter shows nothing: its segments already carry
+                    green markers, so "0" would be noise, not information. */}
+                {chapterCounts[node.id] ? (
+                  <span className="study-v2__chapterCount">
+                    {chapterCounts[node.id]}
+                    <span className="study-v2__srOnly"> segments left</span>
+                  </span>
+                ) : null}
               </button>
             )
           }
@@ -2155,6 +2608,23 @@ export function StudySegmentNavigator({
           )
         })}
       </div>
+      {visibleFiles.length ? (
+        <div className="study-v2__railFooter" data-debug-item="study_segment_progress">
+          <span className="study-v2__railFooterLabel">
+            Studied {studiedCount} / {visibleFiles.length}
+          </span>
+          <span
+            className="study-v2__railProgress"
+            role="progressbar"
+            aria-valuenow={studiedCount}
+            aria-valuemin={0}
+            aria-valuemax={visibleFiles.length}
+            aria-label="Segments studied"
+          >
+            <span style={{ width: `${visibleFiles.length ? (studiedCount / visibleFiles.length) * 100 : 0}%` }} />
+          </span>
+        </div>
+      ) : null}
     </aside>
   )
 }
@@ -2243,6 +2713,8 @@ export function StudySourceCard({
   onDecreaseFont,
   onIncreaseFont,
 }) {
+  const [bodyRef, bodyEdges] = useScrollAffordance('y')
+
   return (
     <section className="study-v2__sourceGroup">
       {showSegmentNavigation ? (
@@ -2265,17 +2737,20 @@ export function StudySourceCard({
           <button type="button" className="study-v2__miniPill" onClick={onIncreaseFont} disabled={fontScale >= 1.44} title="Increase source text size">
             A+
           </button>
-          <button type="button" className="study-v2__miniPill" title="Copy source text">
-            <Copy size={14} />
-            Copy
-          </button>
+          {/* Icon-only, like every other control in a card-header utility row.
+              The written label was the one text item in that row and cost ~46px
+              of a header that had none to spare. */}
+          <IconActionButton size="utility-sm" label="Copy source text" title="Copy source text" icon={<Copy strokeWidth={1.8} />} />
         </CardHeader>
-        <div className="study-v2__cardBody study-v2__sourceBody">
+        <div ref={bodyRef} className="study-v2__cardBody study-v2__sourceBody" {...bodyEdges}>
           <p
             className="study-v2__arabicSource"
             dir="rtl"
             style={{
-              fontSize: `calc((var(--study-arabic-size) - 2px) * ${fontScale})`,
+              // The ramp step, scaled by the reader's own A-/A+ control. The
+              // -2px was an untraceable adjustment that put the product's
+              // primary reading size one point off its own ramp at rest.
+              fontSize: `calc(var(--study-arabic-size) * ${fontScale})`,
             }}
           >
             {sourceText}
@@ -2287,13 +2762,15 @@ export function StudySourceCard({
 }
 
 export function StudyQuickLexicography({ terms }) {
+  const [stripRef, stripEdges] = useScrollAffordance('x')
+
   return (
     <section className="study-v2__studyStack" style={{ gap: 'var(--study-space-12)' }} data-debug-item="study_quick_lexicography">
       <div className="study-v2__lexHeader">
         <BookOpen size={13} strokeWidth={1.9} />
         Quick Lexicography
       </div>
-      <div className="study-v2__lexStrip">
+      <div ref={stripRef} className="study-v2__lexStrip" {...stripEdges}>
         {terms.map((term) => (
           <div key={term.transliteration} className="study-v2__lexTerm" title={term.description}>
             <span className="study-v2__arabicInline" dir="rtl">{term.arabic}</span>
@@ -2319,22 +2796,71 @@ export function StudyRetryBanner() {
   )
 }
 
-export function StudyTranslationEditor({ failed, onSubmit, onDiscuss, discussionOpen = false, focusMode = false, docked = false, fillHeight = false }) {
-  const [draft, setDraft] = useState('')
+/**
+ * Controlled translation editor.
+ *
+ * 'value'/'onChange' are required for the draft to belong to anything. This
+ * component previously owned the draft in local state, which meant nothing read
+ * what the user typed, the text was never persisted, and switching segments
+ * left the previous segment's translation on screen — the caller could not fix
+ * any of that from outside. An uncontrolled fallback is kept only so the
+ * component still renders standalone in the labs.
+ */
+export function StudyTranslationEditor({
+  value,
+  onChange,
+  onSubmit,
+  failed,
+  onDiscuss,
+  discussionOpen = false,
+  focusMode = false,
+  docked = false,
+  fillHeight = false,
+  disabled = false,
+  error = null,
+}) {
+  const isControlled = typeof value === 'string'
+  const [uncontrolledDraft, setUncontrolledDraft] = useState('')
+  const draft = isControlled ? value : uncontrolledDraft
+  const setDraft = (next) => (isControlled ? onChange?.(next) : setUncontrolledDraft(next))
   const [isExpanded, setIsExpanded] = useState(false)
   const textareaRef = useRef(null)
 
-  useEffect(() => {
+  // useLayoutEffect, not useEffect: the height is measured from scrollHeight and
+  // written back, so running it after paint made the editor visibly resize on
+  // first render and made its captured height depend on when a screenshot
+  // fired. Measuring before paint removes both the flicker and the flake.
+  useLayoutEffect(() => {
     const textarea = textareaRef.current
     if (!textarea || fillHeight || isExpanded) {
-      return
+      return undefined
     }
 
-    textarea.style.height = 'auto'
-    const maxHeight = Number.parseFloat(window.getComputedStyle(textarea).maxHeight)
-    const nextHeight = Number.isFinite(maxHeight) ? Math.min(textarea.scrollHeight, maxHeight) : textarea.scrollHeight
-    textarea.style.height = `${nextHeight}px`
-    textarea.style.overflowY = Number.isFinite(maxHeight) && textarea.scrollHeight > maxHeight ? 'auto' : 'hidden'
+    const fit = () => {
+      textarea.style.height = 'auto'
+      const maxHeight = Number.parseFloat(window.getComputedStyle(textarea).maxHeight)
+      const capped = Number.isFinite(maxHeight)
+      const nextHeight = capped ? Math.min(textarea.scrollHeight, maxHeight) : textarea.scrollHeight
+      textarea.style.height = `${nextHeight}px`
+      // Once the box stops growing the text must still be reachable. Leaving
+      // this hidden meant the last lines of a long translation existed, were
+      // saved, and could not be read back.
+      textarea.style.overflowY = capped && textarea.scrollHeight > maxHeight ? 'auto' : 'hidden'
+    }
+
+    fit()
+
+    // Re-fit when the metrics change rather than only when the text does.
+    //
+    // Measuring once on mount under-sized the box: the first pass ran before the
+    // webfont applied, the text then reflowed taller, and nothing re-ran because
+    // `draft` had not changed. The result was 19px of the user's own translation
+    // hidden inside a control with overflow:hidden, on the screen whose whole
+    // purpose is writing translations.
+    document.fonts?.ready?.then(fit).catch(() => {})
+    const observer = new ResizeObserver(fit)
+    observer.observe(textarea)
+    return () => observer.disconnect()
   }, [draft, fillHeight, isExpanded])
 
   return (
@@ -2369,23 +2895,51 @@ export function StudyTranslationEditor({ failed, onSubmit, onDiscuss, discussion
               ref={textareaRef}
               className="study-v2__textarea"
               placeholder="Write your translation here..."
+              aria-label="Translation"
+              disabled={disabled}
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
+              // The footer has advertised this shortcut all along without
+              // implementing it. Honour the affordance rather than remove it.
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+                  event.preventDefault()
+                  onSubmit?.()
+                }
+              }}
             />
             <div className="study-v2__editorFooter">
-              <span className="study-v2__hint">⌘ Enter to submit</span>
-              <button
-                type="button"
-                className="study-v2__secondaryAction"
-                onClick={onDiscuss}
-                title={discussionOpen ? 'Hide study companion' : 'Discuss this segment'}
-              >
-                <MessageSquare size={15} strokeWidth={1.9} />
-                {discussionOpen ? 'Hide discussion' : 'Discuss this segment'}
-              </button>
-              <PrimaryCTA minWidth={132} height={44} icon={<Send size={15} strokeWidth={1.9} />} onClick={onSubmit} title={failed ? 'Submit again' : 'Submit translation'}>
-                {failed ? 'Submit again' : 'Submit'}
-              </PrimaryCTA>
+              {error ? (
+                <p className="study-v2__editorError" role="alert">
+                  <AlertCircle size={15} strokeWidth={2} style={{ flex: '0 0 auto', marginTop: '1px' }} />
+                  {error}
+                </p>
+              ) : null}
+              <div className="study-v2__editorActions">
+                <kbd className="study-v2__shortcut" aria-hidden="true">{SUBMIT_SHORTCUT}</kbd>
+                <button
+                  type="button"
+                  className="study-v2__secondaryAction"
+                  onClick={onDiscuss}
+                  // The visible label is what the docked width affords; the
+                  // accessible name stays the full phrase so the control is not
+                  // ambiguous to a screen reader or in a tooltip.
+                  aria-label={discussionOpen ? 'Hide the discussion for this segment' : 'Discuss this segment'}
+                  title={discussionOpen ? 'Hide the discussion for this segment' : 'Discuss this segment'}
+                >
+                  <MessageSquare size={15} strokeWidth={1.9} />
+                  {discussionOpen ? 'Hide' : 'Discuss'}
+                </button>
+                <PrimaryCTA
+                  minWidth={132}
+                  height={44}
+                  icon={<Send size={15} strokeWidth={1.9} />}
+                  onClick={onSubmit}
+                  title={`${failed ? 'Submit again' : 'Submit translation'} (${SUBMIT_SHORTCUT_LABEL})`}
+                >
+                  {failed ? 'Submit again' : 'Submit'}
+                </PrimaryCTA>
+              </div>
             </div>
           </div>
         </StudyPanel>
@@ -2759,7 +3313,7 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
     return (
       <aside className="study-v2 study-v2__railPanel study-v2__supportPanel is-collapsed" data-debug-item="study_support_collapsed">
         <div className="study-v2__supportHeader" style={{ justifyContent: 'center', padding: 0 }}>
-          <StudyPaneToggle collapsed={collapsed} side="right" label="Expand support" onClick={onToggleCollapsed} />
+          <StudyPaneToggle collapsed={collapsed} side="right" label="Expand support panel" onClick={onToggleCollapsed} />
         </div>
         <div className="study-v2__collapsedRailBody">
           {cards.map((card) => (
@@ -2774,9 +3328,16 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
               onMouseLeave={closePreview}
               onFocus={(event) => openPreview(card.id, Math.max(12, event.currentTarget.offsetTop - 8))}
               onBlur={closePreview}
-              onClick={() => openFloatingCard(card.id)}
+              // Expands the panel with this module open. It used to detach the
+              // card into a floating window, which is a power feature reached
+              // by an ordinary click on the most obvious control in the rail —
+              // and it left the rail still collapsed, so the relationship
+              // between the tile and the panel it belongs to was never shown.
+              // Floating is still one click away, from the hover preview.
+              onClick={() => expandFromCollapsedPreview(card.id)}
             >
               <span className="study-v2__supportIcon">{card.icon}</span>
+              <span className="study-v2__collapsedSupportLabel">{card.title}</span>
             </button>
           ))}
         </div>
@@ -2816,7 +3377,7 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
     <aside className="study-v2 study-v2__railPanel study-v2__supportPanel" data-debug-item="study_support_rail">
       <div className="study-v2__supportHeader">
         <span>Support</span>
-        <StudyPaneToggle collapsed={collapsed} side="right" label="Collapse support" onClick={onToggleCollapsed} />
+        <StudyPaneToggle collapsed={collapsed} side="right" label="Collapse support panel" onClick={onToggleCollapsed} />
       </div>
       <div className="study-v2__supportBody">
         {cards.map((card) => (

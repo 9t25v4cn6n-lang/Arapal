@@ -227,6 +227,8 @@ export default function LeftPanel({
                     )}
 
                     <span
+                      // Segment label — the user's own content; ellipsis by design.
+                      data-truncates=""
                       className="fg-left__label"
                       style={{
                         fontWeight: isFolder ? 600 : isActive ? 500 : 400,

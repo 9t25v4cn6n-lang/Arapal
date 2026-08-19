@@ -28,7 +28,6 @@ export default function SegmentationTransitionScreen({ route, shell }) {
     ...getSegmentationFlowHeaderSlots({
       shell,
       stepIndex: 1,
-      brandSubtitle: 'Segmenting',
       backRoute: 'segmentationPasteNext',
     }),
     Layer3_SegmentationFlow_Page: <SegmentationTransitionView shell={shell} />,

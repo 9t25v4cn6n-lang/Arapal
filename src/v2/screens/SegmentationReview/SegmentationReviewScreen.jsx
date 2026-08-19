@@ -13,6 +13,7 @@ import {
 } from '../../foundation/primitives/SegmentationFlowPrimitives'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import layoutContract from './SegmentationReviewScreen.contract'
+import { select, getSnapshot } from '../../data'
 
 const reviewSectionSize = 3
 
@@ -145,7 +146,13 @@ function cloneSegments(segments) {
 
 export default function SegmentationReviewScreen({ route, shell }) {
   const nextSegmentIdRef = useRef(11)
-  const [segments, setSegments] = useState(createSegmentationReviewSegments)
+  // Seed from what was actually published, so Review edits the user's own
+  // proposal rather than a fixture that happens to look similar.
+  const [segments, setSegments] = useState(() => {
+    const snapshot = getSnapshot()
+    const project = select.getCurrentProject(snapshot)
+    return createSegmentationReviewSegments(project ? select.listSegments(project.id, snapshot) : null)
+  })
   const [groupTitles, setGroupTitles] = useState(createSegmentationReviewGroupTitles)
   const [staleGroupIds, setStaleGroupIds] = useState([])
   const [history, setHistory] = useState({ past: [], future: [] })
@@ -569,8 +576,8 @@ export default function SegmentationReviewScreen({ route, shell }) {
   const slots = {
     ...getSegmentationFlowHeaderSlots({
       shell,
-      stepIndex: 2,
-      brandSubtitle: 'Review',
+      // Review is the middle step now, not the last one.
+      stepIndex: 1,
       backRoute: 'segmentationSuccess',
     }),
     Layer4_Review_IntroRegion: <SegmentationReviewIntro summary={summary} />,
@@ -657,7 +664,12 @@ export default function SegmentationReviewScreen({ route, shell }) {
       <SegmentationReviewActionRegion
         segmentCount={segments.length}
         reviewCount={summary.totalReview}
+        readyCount={summary.ready}
         onApprove={() => shell.navigate('segmentationSuccess')}
+        // Re-segmenting means going back to the source and splitting again,
+        // which is the same destination "Edit source" already uses — a real
+        // action, not a button added to match a picture.
+        onResegment={() => shell.navigate('segmentationPasteNext')}
       />
     ),
   }

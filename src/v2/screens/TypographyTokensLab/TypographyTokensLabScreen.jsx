@@ -273,7 +273,7 @@ export default function TypographyTokensLabScreen({ route, shell }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[12], padding: surfacePadding.standard }}>
             <div style={{ display: 'flex', gap: spacing[12], flexWrap: 'wrap' }}>
               {[radius[12], radius[16], radius[24], radius[32], radius.pill].map((item) => (
-                <div key={item} style={{ padding: `${spacing[12]}px ${spacing[16]}px`, borderRadius: item, background: colors.surfacePrimary, border: `1px solid ${colors.lineSoft}` }}>
+                <div key={item} style={{ padding: `${spacing[12]} ${spacing[16]}`, borderRadius: item, background: colors.surfacePrimary, border: `1px solid ${colors.lineSoft}` }}>
                   {item}
                 </div>
               ))}
@@ -283,7 +283,7 @@ export default function TypographyTokensLabScreen({ route, shell }) {
                 <div
                   key={key}
                   style={{
-                    padding: `${spacing[12]}px ${spacing[16]}px`,
+                    padding: `${spacing[12]} ${spacing[16]}`,
                     borderRadius: radius[16],
                     background: colors.surfacePrimary,
                     border: `1px solid ${colors.lineSoft}`,

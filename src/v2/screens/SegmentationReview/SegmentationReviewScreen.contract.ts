@@ -98,7 +98,9 @@ const layoutContract = createScreenLayoutContract({
         minHeight: '100%',
         flex: '0 0 auto',
         margin: flowMetrics.centeredMargin,
-        paddingBottom: spacing[64],
+        // paddingBottom removed: reviewPagePadding already sets the same 64px as
+        // its bottom value, and declaring both made React warn about mixing a
+        // shorthand with its own longhand on every rerender of this screen.
       },
     },
   ],
@@ -153,14 +155,34 @@ const layoutContract = createScreenLayoutContract({
       overflow: 'visible',
       textAlign: 'left',
       style: {
-        alignSelf: 'flex-end',
         width: flowMetrics.reviewToolbarRailWidth,
-        height: 0,
-        position: 'sticky',
-        top: flowMetrics.reviewWorkspaceStickyTop,
-        zIndex: 12,
+        // Viewport space, because that is the space this palette actually needs.
+        //
+        // Two earlier attempts failed for the same underlying reason. As a
+        // zero-height sticky anchor the toolbar overflowed downward from wherever
+        // the anchor landed — 378px into the lane at 1280x800 — running 148px
+        // past the fold with delete and float unpressable and sitting 84px on the
+        // Approve bar. Giving the region a real band did not help either: sticky
+        // lives in the document flow, so at rest the band still begins after the
+        // intro and the source tray, leaving about 314px on a 768-tall frame for
+        // 570px of tools. No height cap can fix a bad starting point.
+        //
+        // Fixed positioning is the right primitive for chrome that must stay
+        // reachable: the band is the viewport, identical whether or not the page
+        // is scrolled, so the arithmetic holds at every frame.
+        position: 'fixed',
+        top: `calc(${flowMetrics.shellHeaderHeight} + ${spacing[16]})`,
+        // The page's own inline inset, which is where the reserved gutter's outer
+        // edge sits. Deliberately NOT re-deriving the content box: that would mean
+        // restating the shell's rail width and centring cap here, and a second
+        // copy of shell arithmetic is what put this toolbar on top of the content
+        // in the first place. Below ~1460px the container is not centred and this
+        // lands exactly where the in-flow version did; above it the toolbar sits
+        // further into the margin than the content — recorded in TODO.md.
+        right: `clamp(${spacing[24]}, 4vw, ${spacing[48]})`,
+        maxHeight: `calc(100vh - ${flowMetrics.reviewToolbarViewportReserve})`,
+        zIndex: 32,
         minWidth: 0,
-        marginBottom: `calc(${spacing[20]} * -1)`,
       },
     },
     {
@@ -182,6 +204,12 @@ const layoutContract = createScreenLayoutContract({
         flex: '0 0 auto',
         alignContent: 'start',
         gridAutoRows: 'max-content',
+        // Clearance for the docked action bar. Without it the final segment card
+        // scrolls to the bottom and stops underneath the bar, so the one card the
+        // user scrolled all that way to reach is the one they cannot read.
+        // Docking chrome over content is only honest if the content can get out
+        // from under it.
+        paddingBottom: flowMetrics.reviewActionBarClearance,
       },
     },
     {
@@ -237,6 +265,17 @@ const layoutContract = createScreenLayoutContract({
       style: {
         flex: '0 0 auto',
         zIndex: 14,
+        // Docked, so the approve action is on screen the moment the screen is.
+        //
+        // Sticky resolves against the nearest scrollport but can only travel
+        // within its own parent's box, which is why declaring it on the bar
+        // itself did nothing: the bar's own wrapper is 104px tall and sits at
+        // the very end of 1648px of scroll, so it only "stuck" once you had
+        // already scrolled to the bottom. Declared here instead, on the region
+        // that IS a direct child of the full-height stage stack, so the travel
+        // range is the whole scroll.
+        position: 'sticky',
+        bottom: 0,
       },
     },
   ],

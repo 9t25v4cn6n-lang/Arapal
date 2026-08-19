@@ -14,9 +14,11 @@ import {
   Search,
   SlidersHorizontal,
 } from 'lucide-react'
+import useIsMobileViewport from '../../foundation/primitives/useIsMobileViewport'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import PrimaryCTA from '../../foundation/primitives/PrimaryCTA'
 import { colors, elevation, motion, radius, spacing, typography } from '../../foundation/tokens'
+import { compactControl } from '../../foundation/tokens/compactControl'
 import layoutContract from './ProjectsScreen.contract'
 import { fetchLessons, fetchStudyHistory } from './studyDashboardData'
 import { prefetchServerQuery, useServerQuery } from './useServerQuery'
@@ -60,7 +62,7 @@ const dashboardStyles = `
     font-family: ${typography.eyebrowLabel.fontFamily};
     letter-spacing: ${typography.eyebrowLabel.letterSpacing};
     text-transform: ${typography.eyebrowLabel.textTransform};
-    font-weight: 900;
+    font-weight: ${typography.eyebrowLabel.fontWeight};
   }
 
   .study-dashboard__eyebrow {
@@ -73,14 +75,14 @@ const dashboardStyles = `
   .study-dashboard__panelTitle,
   .study-dashboard__sectionTitle {
     margin: 0;
-    font-family: ${typography.studySectionTitle.fontFamily};
-    font-weight: 800;
+    font-family: ${typography.sectionTitle.fontFamily};
+    font-weight: ${typography.sectionTitle.fontWeight};
     color: ${colors.textStrong};
   }
 
   .study-dashboard__railTitle {
-    font-size: 16px;
-    line-height: 1.25;
+    font-size: ${typography.sectionTitle.fontSize};
+    line-height: ${typography.sectionTitle.lineHeight};
   }
 
   .study-dashboard__supportText,
@@ -96,8 +98,8 @@ const dashboardStyles = `
   }
 
   .study-dashboard__bodyText {
-    font-size: 14px;
-    line-height: 1.62;
+    font-size: ${typography.supportSubtext.fontSize};
+    line-height: ${typography.supportSubtext.lineHeight};
   }
 
   .study-dashboard__search {
@@ -114,12 +116,19 @@ const dashboardStyles = `
   .study-dashboard__search input {
     width: 100%;
     min-width: 0;
+    /* The whole 44px pill is the target, so the input has to BE the pill's
+       height rather than a 23px line sitting inside it. Its height used to come
+       from the inherited line-height, which meant the real hit area of the only
+       search field in the product was a function of the document's default font
+       size — it changed when that did. */
+    align-self: stretch;
+    height: auto;
     border: 0;
     outline: 0;
     background: transparent;
     color: ${colors.textBody};
-    font: inherit;
-    font-size: 13px;
+    font-family: ${typography.bodyText.fontFamily};
+    font-size: ${typography.supportSubtext.fontSize};
   }
 
   .study-dashboard__search input::placeholder {
@@ -170,10 +179,10 @@ const dashboardStyles = `
   .study-dashboard__lessonName {
     display: block;
     margin: 0 0 ${spacing[4]};
-    font-family: ${typography.studySectionTitle.fontFamily};
-    font-size: 14px;
-    line-height: 1.3;
-    font-weight: 800;
+    font-family: ${typography.sectionTitle.fontFamily};
+    font-size: ${typography.sectionTitle.fontSize};
+    line-height: ${typography.sectionTitle.lineHeight};
+    font-weight: ${typography.sectionTitle.fontWeight};
   }
 
   .study-dashboard__lessonSource,
@@ -231,13 +240,17 @@ const dashboardStyles = `
     padding-top: ${spacing[8]};
   }
 
+  /* The detail pane's own heading, at the shared page-title role. It was a
+     clamp resolving to 58px at the canonical frame: larger than the display
+     size of any other screen in the product, for a line that said the same
+     thing on every lesson. */
   .study-dashboard__title {
     margin: 0;
-    font-family: ${typography.displayTitle.fontFamily};
-    font-size: clamp(36px, 4.4vw, 58px);
-    line-height: 0.96;
-    font-weight: 700;
-    letter-spacing: -0.035em;
+    font-family: ${typography.pageTitle.fontFamily};
+    font-size: ${typography.pageTitle.fontSize};
+    line-height: ${typography.pageTitle.lineHeight};
+    font-weight: ${typography.pageTitle.fontWeight};
+    letter-spacing: ${typography.pageTitle.letterSpacing};
     color: ${colors.textStrong};
   }
 
@@ -260,13 +273,30 @@ const dashboardStyles = `
     overflow: hidden;
   }
 
+  /* After the base rule, because the base rule sets overflow: hidden and at equal
+     specificity the later declaration wins. I placed this above it first and it
+     did nothing — the same source-order mistake as the Study rail, made twice.
+
+     The card is a grid item with overflow: hidden, so once its row is sized it
+     cannot grow: at 390px it held 122px for 749px of in-flow content — the hero
+     and the footer, including the resume action the card exists to offer — and
+     hid 629px. Both children are static, so that is real content, not a
+     decorative layer bleeding past its box. The clip keeps the gradient inside
+     the rounded corners, which on a phone is worth less than the content. */
+  @media (max-width: 560px) {
+    .study-dashboard__resumeCard { overflow: visible; }
+  }
+
+  /* No min-height. It was 244px, chosen when the resume title rendered at 50px;
+     once the title moved to the shared card-title role the floor stopped being
+     a floor and became a void — 60px of empty card between the description and
+     the stat row. A card's height is its content plus its padding. */
   .study-dashboard__resumeHero {
-    min-height: 244px;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     gap: ${spacing[32]};
-    padding: ${spacing[32]};
+    padding: ${spacing[32]} ${spacing[32]} ${spacing[40]};
   }
 
   .study-dashboard__resumeCopy {
@@ -283,33 +313,40 @@ const dashboardStyles = `
     gap: ${spacing[8]};
     border-radius: ${radius.pill};
     font-family: ${typography.eyebrowLabel.fontFamily};
-    font-weight: 900;
-    letter-spacing: 0.12em;
+    font-weight: ${typography.eyebrowLabel.fontWeight};
+    letter-spacing: ${typography.eyebrowLabel.letterSpacing};
     text-transform: uppercase;
   }
 
+  /* The compact-control sm step. It was a 36px pill — a height nothing else in
+     the product uses — carrying an 11px label with 900 weight. */
   .study-dashboard__readyPill {
-    min-height: 36px;
-    padding: 0 ${spacing[16]};
+    min-height: ${compactControl.sm.heightPx}px;
+    padding: 0 ${compactControl.sm.paddingXPx}px;
     background: ${colors.accentWash};
     color: ${colors.accentStrong};
-    font-size: 10px;
+    font-size: ${typography.eyebrowLabel.fontSize};
   }
 
+  /* Subordinate to the pane title now that the pane has one. A 50px card title
+     under a 58px page title was two display sizes competing inside one column;
+     the card leads through its action and its accent, not through being large. */
   .study-dashboard__resumeTitle {
     margin: 0;
     font-family: ${typography.cardTitle.fontFamily};
-    font-size: clamp(34px, 3.5vw, 50px);
-    line-height: 1;
+    font-size: ${typography.cardTitle.fontSize};
+    line-height: ${typography.cardTitle.lineHeight};
+    font-weight: ${typography.cardTitle.fontWeight};
+    letter-spacing: ${typography.cardTitle.letterSpacing};
     color: ${colors.textStrong};
   }
 
   .study-dashboard__resumeDetail {
     max-width: 640px;
     margin: 0;
-    font-family: ${typography.studyBody.fontFamily};
-    font-size: 15px;
-    line-height: 1.64;
+    font-family: ${typography.bodyText.fontFamily};
+    font-size: ${typography.bodyText.fontSize};
+    line-height: ${typography.bodyText.lineHeight};
     color: ${colors.textBody};
   }
 
@@ -332,10 +369,13 @@ const dashboardStyles = `
     border-radius: ${radius.pill};
     background: rgba(255, 255, 255, 0.88);
     color: ${colors.textSoft};
-    font-family: ${typography.studyControlLabel.fontFamily};
-    font-size: 12px;
-    line-height: 1;
-    font-weight: 800;
+    font-family: ${typography.controlLabel.fontFamily};
+    font-size: ${typography.controlLabel.fontSize};
+    line-height: ${typography.controlLabel.lineHeight};
+    font-weight: ${typography.controlLabel.fontWeight};
+    /* A control's own label is an authored, finite string. "Show advanced" was
+       breaking onto two lines inside its own pill. */
+    white-space: nowrap;
     cursor: pointer;
     transition:
       border-color ${motion.micro},
@@ -352,9 +392,11 @@ const dashboardStyles = `
     box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
   }
 
+  /* Three cells, not four. The fourth was "Lesson · <lesson title>" — the same
+     string the pane is now headed by, restated inside the card beneath it. */
   .study-dashboard__resumeFooter {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     border-top: 1px solid ${colors.lineSoft};
   }
 
@@ -371,16 +413,17 @@ const dashboardStyles = `
   }
 
   .study-dashboard__metaLabel {
-    font-size: 9.5px;
+    font-size: ${typography.eyebrowLabel.fontSize};
     line-height: 1.2;
-    color: ${colors.textFaint};
+    color: ${colors.textSoft};
   }
 
   .study-dashboard__statValue {
     margin: 0;
-    font-family: ${typography.studyControlLabel.fontFamily};
-    font-size: 14px;
+    font-family: ${typography.supportSubtext.fontFamily};
+    font-size: ${typography.supportSubtext.fontSize};
     line-height: 1.35;
+    font-weight: 600;
     color: ${colors.textBody};
   }
 
@@ -421,7 +464,7 @@ const dashboardStyles = `
   }
 
   .study-dashboard__panelTitle {
-    font-size: 14px;
+    font-size: ${typography.supportSubtext.fontSize};
     line-height: 1.3;
   }
 
@@ -442,6 +485,15 @@ const dashboardStyles = `
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  /* The history rail is a vertical tab pinned to the right edge. At 390px there
+     is no edge to spare — it and its button pushed 36-50px outside the frame,
+     and being chrome there was no scrolling to it. The history it opens is
+     reachable from the dashboard itself, so on mobile the tab goes rather than
+     the capability. */
+  @media (max-width: 560px) {
+    .study-dashboard__historyRail { display: none; }
   }
 
   .study-dashboard__historyRailButton {
@@ -477,7 +529,7 @@ const dashboardStyles = `
     writing-mode: vertical-rl;
     transform: rotate(180deg);
     font-family: ${typography.eyebrowLabel.fontFamily};
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     font-weight: 900;
@@ -502,15 +554,29 @@ const dashboardStyles = `
     transform: translateX(calc(100% + 32px));
     opacity: 0;
     pointer-events: none;
+    /* The closed drawer was invisible but still laid out, still in the tab order
+       and still in the accessibility tree — parked off-canvas by the transform.
+       Tabbing past "Study history" walked a keyboard user into a drawer they
+       could not see, with a Close button and a whole virtual list inside it. It
+       was also the largest single block of viewport-escape findings in the
+       product, 18 elements per frame, none of which were a layout fault.
+
+       visibility, not display: it transitions discretely — flipping to visible
+       at the start of the open and to hidden at the end of the close — so the
+       panel animates exactly as before while genuinely leaving the page when
+       shut. The inert attribute in the JSX states the same intent. */
+    visibility: hidden;
     transition:
       transform ${motion.panel},
-      opacity ${motion.panel};
+      opacity ${motion.panel},
+      visibility ${motion.panel};
   }
 
   .study-dashboard__historyPanel.is-open {
     transform: translateX(0);
     opacity: 1;
     pointer-events: auto;
+    visibility: visible;
   }
 
   .study-dashboard__historyHeader {
@@ -584,7 +650,7 @@ const dashboardStyles = `
 
   .study-dashboard__historyStat span {
     font-family: ${typography.eyebrowLabel.fontFamily};
-    font-size: 8.5px;
+    font-size: 11px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: ${colors.textFaint};
@@ -673,7 +739,7 @@ const dashboardStyles = `
     border: 1px solid ${colors.lineSoft};
     background: rgba(255, 255, 255, 0.82);
     color: ${colors.textSoft};
-    font-size: 8.5px;
+    font-size: 11px;
   }
 
   .study-dashboard__saveButton {
@@ -849,11 +915,9 @@ const ResumeStage = memo(function ResumeStage({ lesson, onResume, onBrowse }) {
         </div>
       </div>
 
+      {/* The "Lesson · <title>" cell is gone: the pane is headed by the lesson
+          title now, so the card was restating it forty pixels below. */}
       <div className="study-dashboard__resumeFooter" aria-label="Lesson status">
-        <div className="study-dashboard__stat">
-          <p className="study-dashboard__metaLabel">Lesson</p>
-          <p className="study-dashboard__statValue">{lesson.title}</p>
-        </div>
         <div className="study-dashboard__stat">
           <p className="study-dashboard__metaLabel">Progress</p>
           <p className="study-dashboard__statValue">{lesson.progressLabel}</p>
@@ -921,13 +985,17 @@ function StudyDashboardWorkspace({ lesson, shell }) {
 
   return (
     <main className="study-dashboard study-dashboard__stage" data-debug-item="study_dashboard_workspace">
+      {/* The detail pane is headed by the LESSON, not by a slogan.
+          It used to open with "YOUR STUDY TODAY / One clear next step." and
+          three lines explaining the dashboard's own design philosophy — the
+          same words whichever lesson was selected on the left. Two panes that
+          never mention each other do not read as master and detail no matter
+          how they are proportioned, which is why the split looked arbitrary:
+          selecting a different lesson visibly changed nothing at the top of the
+          pane that is supposed to be showing it. */}
       <section className="study-dashboard__intro">
-        <p className="study-dashboard__eyebrow">Your study today</p>
-        <h1 className="study-dashboard__title">One clear next step.</h1>
-        <p className="study-dashboard__lead">
-          AraPal keeps setup and history available, but the dashboard leads with the thing that matters most: getting
-          back into the current lesson.
-        </p>
+        <p className="study-dashboard__eyebrow">{lesson.sourceTitle}</p>
+        <h1 className="study-dashboard__title">{lesson.title}</h1>
       </section>
 
       <ResumeStage lesson={lesson} onResume={handleResume} onBrowse={handleBrowse} />
@@ -1065,7 +1133,13 @@ function StudyHistoryPanelContainer({ lesson }) {
         <PanelRightOpen size={16} strokeWidth={2} />
       </button>
 
-      <section className={`study-dashboard__historyPanel${isOpen ? ' is-open' : ''}`} aria-label="Study history panel">
+      <section
+        className={`study-dashboard__historyPanel${isOpen ? ' is-open' : ''}`}
+        aria-label="Study history panel"
+        // Nothing inside a closed drawer is reachable — by keyboard, by screen
+        // reader or by pointer. The CSS says the same thing; this says why.
+        inert={!isOpen}
+      >
         <header className="study-dashboard__historyHeader">
           <div className="study-dashboard__historyHeading">
             <span className="study-dashboard__historyIcon" aria-hidden="true">
@@ -1147,6 +1221,7 @@ export default function ProjectsScreen({ route, shell }) {
   const [selectedLessonId, setSelectedLessonId] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   const selectedLesson = lessons.find((lesson) => lesson.id === selectedLessonId) ?? lessons[0] ?? null
+  const isMobile = useIsMobileViewport()
 
   const screenSlots = {
     Layer2_Body_ContentStartRail: lessons.length ? (
@@ -1168,8 +1243,24 @@ export default function ProjectsScreen({ route, shell }) {
 
   const containerOverrides = {
     Layer2_Body_DefaultSplit: {
+      // Master · detail · history.
+      //
+      // The master was minmax(300px, 3.2fr) against 8.2fr of detail — a ratio
+      // of about 1:2.6, which is a sidebar next to a canvas, not two halves of
+      // one relationship. The lesson index is the thing you navigate FROM and
+      // it has to be scannable, so it gets a real floor (360px) and a bigger
+      // share; the detail keeps the dominant share because it holds the primary
+      // action, but no longer by so much that it reads as unrelated.
+      //
+      // A 360px master floor plus a 78px history rail does not fit a 390px
+      // frame — the detail pane and the history rail were simply pushed off the
+      // right edge, with no way to scroll to chrome. Below the mobile
+      // breakpoint the master takes the frame and the other two collapse to
+      // zero-width tracks, which is the same shape Study's mobile columns use.
       style: {
-        gridTemplateColumns: 'minmax(300px, 3.2fr) minmax(0, 8.2fr) minmax(78px, 0.7fr)',
+        gridTemplateColumns: isMobile
+          ? 'minmax(0, 1fr) 0px 0px'
+          : 'minmax(360px, 3.9fr) minmax(0, 7.4fr) minmax(78px, 0.7fr)',
       },
     },
     Layer2_Body_ContentStartRail: {

@@ -81,7 +81,9 @@ const layoutContract = createScreenLayoutContract({
       semanticRole: 'primary-work-pane',
       display: 'grid',
       layoutMode: 'grid',
-      gridTemplateRows: 'auto minmax(0, 1fr) auto',
+      // header · context · body · actions. The context lane is declared even
+      // when empty so adding it can never steal height from the body row.
+      gridTemplateRows: 'auto auto minmax(0, 1fr) auto',
       alignItems: 'stretch',
       justifyContent: 'stretch',
       padding: '0',
@@ -129,6 +131,7 @@ const layoutContract = createScreenLayoutContract({
       overflow: 'visible',
       textAlign: 'left',
       style: {
+        gridRow: '1',
         minWidth: 0,
         flex: '0 0 auto',
       },
@@ -148,8 +151,33 @@ const layoutContract = createScreenLayoutContract({
       overflow: 'auto',
       textAlign: 'left',
       style: {
+        gridRow: '3',
         minWidth: 0,
         minHeight: 0,
+      },
+    },
+    {
+      // Provenance ("opened from research/exam/segmentation") and the sample
+      // notice. Declared as its own lane so it can never overlay the workspace
+      // — the contract's partition rule is what prevents that.
+      name: 'Layer4_Study_ContextRegion',
+      layer: 'Layer4',
+      parent: 'Layer3_Study_CenterWorkspace',
+      semanticRole: 'context-region',
+      allowEmpty: true,
+      display: 'flex',
+      layoutMode: 'flex',
+      flexDirection: 'column',
+      alignItems: 'stretch',
+      justifyContent: 'flex-start',
+      padding: '0',
+      gap: '0',
+      overflow: 'visible',
+      textAlign: 'left',
+      style: {
+        gridRow: '2',
+        minWidth: 0,
+        flex: '0 0 auto',
       },
     },
     {
@@ -167,6 +195,7 @@ const layoutContract = createScreenLayoutContract({
       overflow: 'visible',
       textAlign: 'left',
       style: {
+        gridRow: '4',
         minWidth: 0,
         flex: '0 0 auto',
       },

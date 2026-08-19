@@ -215,7 +215,22 @@ function readExamContext() {
   }
 }
 
+/**
+ * DRAFT / FAIL / PASS force a submission outcome for development. They were
+ * rendered unconditionally, so they shipped on the product surface and sat in
+ * the keyboard tab order ahead of Submit. Gated behind the same flag V2 Study
+ * already used, so the two screens behave the same way.
+ */
+function readSandboxControlsEnabled() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return new URLSearchParams(window.location.search).get("studyDebug") === "1";
+}
+
 export default function FigmaScreen() {
+  const showSandboxControls = readSandboxControlsEnabled();
   const persistedState = readPersistedState();
   const examContext = readExamContext();
   const [segmentRecords, setSegmentRecords] = useState(() => ({
@@ -470,11 +485,11 @@ export default function FigmaScreen() {
             canGoPrevious={canGoPrevious}
             canGoNext={canGoNext}
             segmentMeta={segmentMeta}
-            debugActions={{
+            debugActions={showSandboxControls ? {
               onReset: resetCurrentSegment,
               onFail: failCurrentSegment,
               onPass: passCurrentSegment,
-            }}
+            } : null}
           />
           </div>
         </div>

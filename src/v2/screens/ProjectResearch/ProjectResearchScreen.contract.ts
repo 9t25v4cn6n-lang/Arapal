@@ -80,6 +80,14 @@ const layoutContract = createScreenLayoutContract({
       layoutMode: 'grid',
       gridTemplateColumns: 'minmax(188px, 216px) minmax(0, 1fr)',
       gridTemplateRows: 'minmax(0, 1fr)',
+      // At 390px a 216px lens rail beside the workspace left both cut — the
+      // title clipped inside its own block and the ledger pushed off the frame.
+      // The lenses are a filter over the ledger, so on mobile the ledger gets the
+      // width and the rail stacks above it rather than competing for it.
+      mobile: {
+        gridTemplateColumns: 'minmax(0, 1fr)',
+        gridTemplateRows: 'auto minmax(0, 1fr)',
+      },
       alignItems: 'stretch',
       justifyContent: 'stretch',
       padding: '0',

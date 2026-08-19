@@ -44,28 +44,45 @@ export const segmentationFlowChrome = {
     'linear-gradient(90deg, rgba(37, 99, 235, 0.18) 0%, rgba(37, 99, 235, 0.36) 50%, rgba(37, 99, 235, 0.18) 100%)',
   bridgeCore:
     'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.96) 0%, rgba(219, 234, 254, 0.92) 24%, rgba(37, 99, 235, 0.16) 100%)',
+  // Reaches full opacity early and stays there. The first version held 0.84 at
+  // 24% and 0.98 at the base, which on an 84px bar left the top third sheer
+  // enough for the segment cards passing underneath to show through the tally
+  // and the secondary action — so a deliberate dock read as a collision. A fade
+  // is there to soften the entry, not to let two things share the same pixels.
   actionRegionWash:
-    'linear-gradient(180deg, rgba(238, 244, 250, 0) 0%, rgba(238, 244, 250, 0.84) 24%, rgba(238, 244, 250, 0.98) 100%)',
+    'linear-gradient(180deg, rgba(238, 244, 250, 0) 0%, rgba(238, 244, 250, 0.96) 16%, rgb(238, 244, 250) 38%, rgb(238, 244, 250) 100%)',
 } as const
 
+/**
+ * Every size here is now a type ROLE rather than a viewport formula.
+ *
+ * The three title sizes used to be `clamp()` expressions whose middle terms were
+ * vw units, so the flow's own headings rendered 43.2px, 47.52px and 66px at the
+ * canonical 1440 frame — three sizes, none of them on the ramp, none of them
+ * equal to the heading size of any other screen in the product. A screen title
+ * is a role decision, not a function of window width; where a title genuinely
+ * has to yield, the layout contract's mobile block is where it says so.
+ */
 export const segmentationFlowTypography = {
-  pageTitleFontSize: `clamp(${typography.cardTitle.fontSize}, 3.3vw, ${typography.displayTitle.fontSize})`,
-  ceremonialTitleFontSize: `clamp(${typography.displayTitle.fontSize}, 5vw, calc(${typography.displayTitle.fontSize} + ${spacing[16]}))`,
-  actionTitleFontSize: `clamp(${typography.cardTitle.fontSize}, 3vw, ${typography.displayTitle.fontSize})`,
-  panelHeaderTitleFontSize: '13px',
-  panelHeaderTitleWeight: 650,
-  operationalMetaFontSize: '10px',
-  toolbarSelectionFontSize: '14px',
+  pageTitleFontSize: typography.heroTitle.fontSize,
+  ceremonialTitleFontSize: typography.displayTitle.fontSize,
+  actionTitleFontSize: typography.heroTitle.fontSize,
+  panelHeaderTitleFontSize: typography.subsectionTitle.fontSize,
+  panelHeaderTitleWeight: typography.subsectionTitle.fontWeight,
+  operationalMetaFontSize: typography.eyebrowLabel.fontSize,
+  toolbarSelectionFontSize: typography.supportSubtext.fontSize,
   compactActionWeight: typography.ctaLabel.fontWeight,
-  sourcePreviewFontSize: '17px',
-  segmentCardFontSize: '16px',
-  markerInputFontSize: '12.5px',
+  // The source is the principal object of this flow, so it reads at the Arabic
+  // roles rather than at a size chosen to make a panel fit.
+  sourcePreviewFontSize: typography.arabicCompact.fontSize,
+  segmentCardFontSize: typography.arabicCompact.fontSize,
+  markerInputFontSize: typography.supportSubtext.fontSize,
   leadLineHeight: 1.7,
   sourceLineHeight: 1.75,
-  sourcePreviewLineHeight: 1.8,
+  sourcePreviewLineHeight: typography.arabicCompact.lineHeight,
   segmentCardLineHeight: 1.85,
-  markerInputWeight: 600,
-  successStatValueWeight: 500,
+  markerInputWeight: typography.controlLabel.fontWeight,
+  successStatValueWeight: typography.statValue.fontWeight,
 } as const
 
 export const segmentationFlowMotionStyles = `
@@ -127,10 +144,50 @@ export const segmentationFlowMotionStyles = `
   }
 `
 
+// The docked review toolbar's rail plus the gap between it and the content.
+// Declared once, above the metrics, because two things must agree on it: the page
+// padding that reserves the space, and the toolbar that moves into it. They
+// disagreeing is what put the toolbar on top of the content.
+const REVIEW_TOOLBAR_RAIL_WIDTH = '64px'
+const REVIEW_TOOLBAR_GUTTER_GAP = spacing[16]
+const REVIEW_TOOLBAR_GUTTER = `calc(${REVIEW_TOOLBAR_RAIL_WIDTH} + ${REVIEW_TOOLBAR_GUTTER_GAP})`
+
+// Named so the toolbar's height budget is readable arithmetic instead of a magic
+// number. The action bar is a 52px CTA inside 16px of padding.
+const SHELL_HEADER_HEIGHT = '50px'
+const REVIEW_ACTION_BAR_HEIGHT = `calc(52px + ${spacing[16]} + ${spacing[16]})`
+
+/**
+ * Source -> Review -> Publish. The flow's step model, and the only copy of it.
+ *
+ * It lived in SegmentationFlowPrimitives with a second, drifting copy inside the
+ * paste screen — which is how the first screen of the flow came to say "Segment"
+ * while the other four said "Review". Constants belong with the other flow
+ * constants, not exported from a module of components, which also keeps fast
+ * refresh working.
+ */
+export const segmentationFlowSteps = [
+  { id: 'source', label: 'Source' },
+  { id: 'review', label: 'Review' },
+  { id: 'publish', label: 'Publish' },
+] as const
+
 export const segmentationFlowMetrics = {
   centeredMargin: '0 auto',
   pagePadding: `clamp(${spacing[24]}, 5vh, ${spacing[64]}) clamp(${spacing[24]}, 4vw, ${spacing[48]})`,
-  reviewPagePadding: `${spacing[16]} clamp(${spacing[24]}, 4vw, ${spacing[48]}) ${spacing[64]}`,
+  // Four values, because the inline-end inset is not the inline-start one: the
+  // end reserves the docked toolbar's rail. Without that reservation the rail had
+  // nowhere to be — the toolbar tried to escape into the page margin using a
+  // translateX derived from (100vw - 1400px) / 2, which at the canonical 1440
+  // viewport offers 20px against the 80px the rail needs, so it stayed put, on
+  // top of the segment proposal's group headers and card edges. Reserved in the
+  // layout rather than guessed from the viewport.
+  reviewPagePadding: [
+    spacing[16],
+    `calc(clamp(${spacing[24]}, 4vw, ${spacing[48]}) + ${REVIEW_TOOLBAR_GUTTER})`,
+    spacing[64],
+    `clamp(${spacing[24]}, 4vw, ${spacing[48]})`,
+  ].join(' '),
   transitionShellPadding: `clamp(${spacing[32]}, 4vw, ${spacing[48]})`,
   loadingAdvanceDelayMs: 1200,
   transitionAdvanceDelayMs: 2200,
@@ -148,7 +205,22 @@ export const segmentationFlowMetrics = {
   compactSourcePreviewMaxHeight: `calc(${spacing[32]} + ${spacing[32]})`,
   expandedSourcePreviewMaxHeight: '220px',
   reviewWorkspaceMinHeight: '520px',
-  reviewToolbarGutterGap: spacing[16],
+  reviewToolbarGutterGap: REVIEW_TOOLBAR_GUTTER_GAP,
+  // Vertical chrome the docked toolbar shares its lane with, so its max height
+  // can be derived rather than guessed: the shell header, the review page's top
+  // inset, and the action bar plus the clearance beneath it.
+  // Exported so the review contract can position the fixed toolbar under the
+  // header without restating the number.
+  shellHeaderHeight: SHELL_HEADER_HEIGHT,
+  reviewToolbarViewportReserve: `calc(${SHELL_HEADER_HEIGHT} + ${spacing[16]} + ${REVIEW_ACTION_BAR_HEIGHT} + ${spacing[24]})`,
+  // Trailing space under the review workboard so the last segment card can be
+  // scrolled clear of the docked action bar.
+  //
+  // Only the shortfall, not the bar's full height: the proposal panel already
+  // ends with its own padding, so reserving the whole 84px bar on top of that
+  // left about 145px of dead background between the last card and the bar at
+  // full scroll — clearance is the goal, a void is not.
+  reviewActionBarClearance: spacing[24],
   // Sticky top is relative to the body scrollport, whose top already sits below the shell header.
   reviewWorkspaceStickyTop: spacing[16],
   reviewCommandBarMaxWidth: '920px',
@@ -157,7 +229,9 @@ export const segmentationFlowMetrics = {
   reviewToolButtonMinHeight: '32px',
   reviewMarkerRailMinWidth: '240px',
   reviewMarkerRailMaxWidth: '320px',
-  reviewToolbarRailWidth: '64px',
+  reviewToolbarRailWidth: REVIEW_TOOLBAR_RAIL_WIDTH,
+  // The reserved lane the docked toolbar occupies: rail + gap.
+  reviewToolbarGutter: REVIEW_TOOLBAR_GUTTER,
   reviewMarkerRowMinHeight: '40px',
   reviewSegmentCardMinWidth: '300px',
   bridgePulseDelay: '900ms',

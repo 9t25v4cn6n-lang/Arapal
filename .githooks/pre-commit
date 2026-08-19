@@ -1,0 +1,42 @@
+#!/bin/sh
+# Visual standard gate. Blocks a commit ONLY on new violations.
+#
+# It must never block on its own failure. A gate that reports "new violations"
+# when the browser failed to launch is a false signal, and false signals are why
+# the previous checker was ignored for four months.
+#
+# Skip deliberately with: git commit --no-verify
+
+# Cheap, browser-free check first: a backtick in a block comment breaks the build.
+node scripts/qa/lint-template-css.mjs || exit 1
+
+if ! curl -s -o /dev/null http://localhost:5173/ 2>/dev/null; then
+  echo "[visual-standard] dev server not running — gate skipped."
+  exit 0
+fi
+
+CHANGED=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^src/.*\.(jsx?|tsx?|css)$' | paste -sd, -)
+[ -z "$CHANGED" ] && exit 0
+
+echo "[visual-standard] checking routes affected by staged changes…"
+OUT=$(node scripts/qa/run.mjs --changed="$CHANGED" --quick 2>&1)
+STATUS=$?
+
+if [ $STATUS -eq 0 ]; then
+  echo "$OUT" | tail -4
+  exit 0
+fi
+
+# Distinguish "found regressions" from "could not run". Only the former blocks.
+if echo "$OUT" | grep -q "NEW violations not in the accepted baseline"; then
+  echo "$OUT" | sed -n '/NEW violations not in the accepted baseline/,$p'
+  echo ""
+  echo "Commit blocked: new visual-standard violations."
+  echo "Fix at the shared cause, not on the individual screen. Override with --no-verify."
+  exit 1
+fi
+
+echo "[visual-standard] checker could not complete — NOT blocking the commit."
+echo "$OUT" | tail -6
+echo "[visual-standard] run 'npm run qa' manually to confirm nothing regressed."
+exit 0

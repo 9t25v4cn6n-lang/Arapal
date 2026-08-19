@@ -1,7 +1,11 @@
 import { colors, spacing } from '../tokens'
+import { controlSizing } from '../tokens/controlSizing'
 import { getDefaultBodySplitColumns, getLayer1BodyColumns, shellSizing } from './shellSizing'
 
 export const rootContainerName = 'Layer1_Stage_ScreenShell'
+
+/** Size of the Arapal mark in the header. Must match AppIdentity's `ArapalMark`. */
+export const IDENTITY_MARK_PX = 32
 
 export function getUniversalShellContainers() {
   return [
@@ -59,7 +63,11 @@ export function getUniversalShellContainers() {
       layoutMode: 'flex',
       alignItems: 'center',
       justifyContent: 'flex-start',
-      padding: `0 clamp(${spacing[16]}, 2.2vw, ${spacing[32]})`,
+      // The identity mark centres on the same vertical spine as the rail's
+      // icons, so the header and the navigation beneath it read as one edge
+      // rather than two things that happen to be on the left. Derived from the
+      // rail width and the mark, not chosen to look about right.
+      padding: `0 ${spacing[16]} 0 max(${spacing[8]}, calc((${shellSizing.navigationRail.collapsedPx} - ${IDENTITY_MARK_PX}px) / 2))`,
       gap: spacing[16],
       overflow: 'visible',
       textAlign: 'left',
@@ -116,7 +124,9 @@ export function getUniversalShellContainers() {
       flexDirection: 'column',
       alignItems: 'stretch',
       justifyContent: 'flex-start',
-      padding: `${spacing[20]}px ${spacing[12]}px`,
+      // Horizontal padding is derived from the control it holds, not chosen
+      // alongside it, so the content lane always fits a rail control exactly.
+      padding: `${spacing[20]} max(0px, calc((100% - ${controlSizing.navRailControlPx}px) / 2))`,
       gap: spacing[16],
       overflow: 'hidden',
       textAlign: 'left',
@@ -126,55 +136,11 @@ export function getUniversalShellContainers() {
         backdropFilter: 'blur(18px)',
       },
     },
-    {
-      name: 'Layer1_Navigation_HeaderBand',
-      layer: 'Layer1',
-      parent: 'Layer1_Body_NavigationRail',
-      semanticRole: 'shell-chrome',
-      display: 'grid',
-      layoutMode: 'grid',
-      gridTemplateColumns: 'minmax(0, 1fr) auto',
-      alignItems: 'start',
-      justifyContent: 'stretch',
-      padding: '0',
-      gap: spacing[12],
-      overflow: 'visible',
-      textAlign: 'left',
-      style: {
-        minHeight: '32px',
-      },
-    },
-    {
-      name: 'Layer1_Navigation_BrandAnchor',
-      layer: 'Layer1',
-      parent: 'Layer1_Navigation_HeaderBand',
-      semanticRole: 'shell-chrome',
-      display: 'flex',
-      layoutMode: 'flex',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-      padding: '0',
-      gap: '0',
-      overflow: 'visible',
-      textAlign: 'left',
-    },
-    {
-      name: 'Layer1_Navigation_UtilityAnchor',
-      layer: 'Layer1',
-      parent: 'Layer1_Navigation_HeaderBand',
-      semanticRole: 'shell-chrome',
-      display: 'flex',
-      layoutMode: 'flex',
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-      padding: '0',
-      gap: '0',
-      overflow: 'visible',
-      textAlign: 'right',
-      style: {
-        minWidth: '28px',
-      },
-    },
+    // The rail is destinations, then utilities. It used to open with a brand
+    // band holding the Arapal mark, which made the product's identity look like
+    // the first item in a list of places to go. Identity moved to the header's
+    // start lane, so the rail now begins with its first actual destination and
+    // the pin control sits at the foot, out of the scanning path.
     {
       name: 'Layer1_Navigation_PrimaryList',
       layer: 'Layer1',
@@ -193,6 +159,21 @@ export function getUniversalShellContainers() {
       style: {
         flex: 1,
       },
+    },
+    {
+      name: 'Layer1_Navigation_UtilityAnchor',
+      layer: 'Layer1',
+      parent: 'Layer1_Body_NavigationRail',
+      semanticRole: 'shell-chrome',
+      display: 'flex',
+      layoutMode: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '0',
+      gap: '0',
+      overflow: 'visible',
+      textAlign: 'left',
+      allowEmpty: true,
     },
     {
       name: 'Layer1_Body_ScreenBodyField',
@@ -223,6 +204,7 @@ export function getDefaultBodySplitContainers() {
       name: 'Layer2_Body_Backdrop',
       layer: 'Layer2',
       parent: 'Layer1_Body_ScreenBodyField',
+      semanticRole: 'body-backdrop',
       display: 'flex',
       layoutMode: 'flex',
       flexDirection: 'column',
@@ -278,7 +260,7 @@ export function getDefaultBodySplitContainers() {
       flexDirection: 'column',
       alignItems: 'stretch',
       justifyContent: 'flex-start',
-      padding: `${spacing[24]}px ${spacing[20]}px`,
+      padding: `${spacing[24]} ${spacing[20]}`,
       gap: spacing[20],
       overflow: 'hidden',
       textAlign: 'left',
@@ -297,7 +279,7 @@ export function getDefaultBodySplitContainers() {
       flexDirection: 'column',
       alignItems: 'stretch',
       justifyContent: 'stretch',
-      padding: `${spacing[24]}px ${spacing[24]}px ${spacing[32]}px`,
+      padding: `${spacing[24]} ${spacing[24]} ${spacing[32]}`,
       gap: spacing[24],
       overflow: 'auto',
       textAlign: 'left',
@@ -319,7 +301,7 @@ export function getDefaultBodySplitContainers() {
       flexDirection: 'column',
       alignItems: 'stretch',
       justifyContent: 'flex-start',
-      padding: `${spacing[24]}px ${spacing[20]}px`,
+      padding: `${spacing[24]} ${spacing[20]}`,
       gap: spacing[20],
       overflow: 'hidden',
       textAlign: 'left',

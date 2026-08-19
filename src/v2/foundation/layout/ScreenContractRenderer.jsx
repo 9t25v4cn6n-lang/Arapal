@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import useIsMobileViewport from '../primitives/useIsMobileViewport'
 import { colors, elevation } from '../tokens'
 import { resolveBodyBackdropPreset } from './bodyBackdropPresets'
 
@@ -93,7 +94,20 @@ function buildRuntimeContractMeta(contract, containerOverrides, rootNode) {
   }
 }
 
-function getContainerStyle(container, override, isActive) {
+/**
+ * @param isMobile  Merges the container's `mobile` block last, so a contract can
+ *   restate any property at the mobile breakpoint.
+ *
+ * Contracts write their columns as INLINE styles, which is why this exists: no
+ * stylesheet or media query can reach them, so a screen whose layout comes from
+ * a contract had no way to respond to width at all. Study could collapse because
+ * it computes its columns in a function that could take width as an argument;
+ * Research could not, because its columns come from a static contract object.
+ * A declarative `mobile` block keeps the contract the single description of the
+ * layout rather than splitting it across a contract and a stylesheet that cannot
+ * win.
+ */
+function getContainerStyle(container, override, isActive, isMobile) {
   const style = {
     boxSizing: 'border-box',
     minWidth: 0,
@@ -120,6 +134,12 @@ function getContainerStyle(container, override, isActive) {
 
   Object.assign(style, override?.style)
 
+  // Last, so it beats both the base declaration and any override — the mobile
+  // frame is the most specific statement about the layout, not the least.
+  if (isMobile && container.mobile) {
+    Object.assign(style, container.mobile)
+  }
+
   if (isActive) {
     style.outline = `2px solid ${colors.accentBase}`
     style.outlineOffset = '-2px'
@@ -130,6 +150,7 @@ function getContainerStyle(container, override, isActive) {
 }
 
 export default function ScreenContractRenderer({ contract, slotContent = {}, containerOverrides = {}, debugTools = null }) {
+  const isMobile = useIsMobileViewport()
   const rootRef = useRef(null)
   const [isDebugOpen, setIsDebugOpen] = useState(readDebugInitiallyEnabled)
   const [hoveredContainerName, setHoveredContainerName] = useState(null)
@@ -210,10 +231,17 @@ export default function ScreenContractRenderer({ contract, slotContent = {}, con
 
     const TagName = container.as || 'div'
     const override = containerOverrides[container.name] ?? null
-    const slotNode =
-      container.name === 'Layer2_Body_Backdrop'
-        ? <BodyBackdropPreset />
-        : slotContent[container.name] ?? null
+    // The backdrop is resolved by ROLE, not by one hard-coded container name.
+    // It used to test `name === 'Layer2_Body_Backdrop'`, which is a container
+    // that only exists in contracts using the default body split — so the two
+    // screens that declare their own backdrop lane, Project Home and Exams,
+    // rendered an empty div and no atmosphere at all. That is a large part of
+    // why the product's front door reads as unfinished: every other screen has
+    // the diagonal system and the watermark behind it and those two had a flat
+    // gradient.
+    const isBackdrop =
+      container.semanticRole === 'body-backdrop' || container.name === 'Layer2_Body_Backdrop'
+    const slotNode = isBackdrop ? <BodyBackdropPreset /> : slotContent[container.name] ?? null
     const childNames = childMap.get(container.name) ?? []
     const isActive = debugEnabled && activeContainerName === container.name
     const handleMouseEnter = composeEventHandlers(
@@ -235,7 +263,7 @@ export default function ScreenContractRenderer({ contract, slotContent = {}, con
         data-debug-name={container.name}
         data-debug-allow-empty={container.allowEmpty ? 'true' : undefined}
         data-debug-semantic-role={container.semanticRole ?? undefined}
-        style={getContainerStyle(container, override, isActive)}
+        style={getContainerStyle(container, override, isActive, isMobile)}
         onMouseEnter={shouldAttachMouseEnter ? handleMouseEnter : undefined}
         onMouseLeave={shouldAttachMouseLeave ? handleMouseLeave : undefined}
         onClick={override?.onClick}
