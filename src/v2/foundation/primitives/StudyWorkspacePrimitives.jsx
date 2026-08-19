@@ -33,7 +33,7 @@ import {
 } from 'lucide-react'
 import IconActionButton from './IconActionButton'
 import PrimaryCTA from './PrimaryCTA'
-import { colors, elevation, motion, radius, spacing, typography } from '../tokens'
+import { colors, containsArabic, elevation, motion, radius, spacing, typography } from '../tokens'
 
 // Resolved once at module scope, not per render: the submit handler already
 // accepts either modifier, so the label must name the one this machine uses.
@@ -2684,6 +2684,12 @@ export function StudySegmentNavigator({
               type="button"
               className={`study-v2__segmentRow${isActive ? ' is-active' : ''}`}
               onClick={() => onSelectSegment(node.id)}
+              // Finding 31: the rail truncates by design — it is 208px wide and
+              // holds user-authored Arabic titles — but a truncated label with no
+              // way to read it in full is a dead end. The full title is available
+              // on hover and to assistive technology.
+              title={node.label}
+              aria-label={node.label}
               style={{ paddingLeft: `calc(var(--study-space-16) + ${node.depth} * var(--study-space-16))` }}
             >
               <span
@@ -2694,7 +2700,20 @@ export function StudySegmentNavigator({
                   record.submissionState === 'failed' ? 'is-failed' : '',
                 ].filter(Boolean).join(' ')}
               />
-              <span className="study-v2__segmentLabel">{node.label}</span>
+              {/* Script-aware, with dir auto so an RTL title truncates from the
+                  correct end. Arabic rendered in the Latin UI role crops its own
+                  ascenders and diacritics; the product has an Arabic role with
+                  the line-height Arabic needs, and these titles are user
+                  content whose script is not known at design time. */}
+              <span
+                dir="auto"
+                className="study-v2__segmentLabel"
+                style={containsArabic(node.label)
+                  ? { fontFamily: typography.arabicCompact.fontFamily, lineHeight: typography.arabicCompact.lineHeight }
+                  : undefined}
+              >
+                {node.label}
+              </span>
             </button>
           )
         })}
