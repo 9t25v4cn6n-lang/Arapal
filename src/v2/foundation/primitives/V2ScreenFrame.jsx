@@ -60,7 +60,7 @@ function getShellContainerOverrides(shell, contract) {
   // Pinned, not expanded: a hover must not resize the workspace behind it.
   const reservesWidth = shell.showRail && shell.isNavPinned
   const layer1BodyColumns = shell.showRail ? getLayer1BodyColumns({ isNavExpanded: reservesWidth }) : 'minmax(0, 1fr)'
-  const defaultSplitColumns = shell.showRail ? getDefaultBodySplitColumns({ isNavExpanded: reservesWidth }) : 'minmax(0, 1fr)'
+  const defaultSplitColumns = getDefaultBodySplitColumns({ isNavExpanded: reservesWidth && shell.showRail, isMobile: shell.isMobileViewport })
 
   const lanePlacement = getBodyLanePlacement(shell)
 

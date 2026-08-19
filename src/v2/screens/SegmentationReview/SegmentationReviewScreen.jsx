@@ -680,6 +680,16 @@ export default function SegmentationReviewScreen({ route, shell }) {
       route={route}
       shell={shell}
       screenSlots={slots}
+      // The workboard is a marker rail beside the proposal. At 390 the rail's
+      // hard minimum and the proposal cannot both be satisfied, so the proposal
+      // resolved to a 0px track and its 347px of content spilled out of it —
+      // the same 0px-track-is-not-hidden failure as Projects and Study. One
+      // column at this width: the outline is a navigation aid for a canvas that
+      // no longer exists beside it.
+      containerOverrides={shell.isMobileViewport ? {
+        Layer4_Review_WorkboardRegion: { style: { gridTemplateColumns: 'minmax(0, 1fr)' } },
+        Layer4_Review_MarkerRail: { style: { display: 'none' } },
+      } : {}}
     />
   )
 }

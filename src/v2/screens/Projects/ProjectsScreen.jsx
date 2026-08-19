@@ -1261,17 +1261,26 @@ export default function ProjectsScreen({ route, shell }) {
         overflow: 'hidden',
       },
     },
+    // HIDDEN, not zero-width. A 0px grid track does not hide its children: they
+    // keep their intrinsic widths and spill out of it, which is why the whole
+    // dashboard rendered at x=430 — entirely off a 390px frame — while the
+    // visible 390px lane held the master list. StudyWorkspacePrimitives records
+    // this same lesson at its own mobile breakpoint; the rule did not travel.
     Layer2_Body_ContentCenterField: {
-      style: {
-        padding: `${spacing[32]} ${spacing[40]} ${spacing[40]}`,
-        overflow: 'auto',
-      },
+      style: isMobile
+        ? { display: 'none' }
+        : {
+          padding: `${spacing[32]} ${spacing[40]} ${spacing[40]}`,
+          overflow: 'auto',
+        },
     },
     Layer2_Body_ContentEndRail: {
-      style: {
-        padding: `${spacing[24]} ${spacing[12]}`,
-        overflow: 'visible',
-      },
+      style: isMobile
+        ? { display: 'none' }
+        : {
+          padding: `${spacing[24]} ${spacing[12]}`,
+          overflow: 'visible',
+        },
     },
   }
 

@@ -18,6 +18,7 @@ import {
   Undo2,
 } from 'lucide-react'
 import BackPill from './BackPill'
+import useIsMobileViewport from './useIsMobileViewport'
 import { navigation } from '../../data'
 import DockableToolbar, {
   DockableToolbarActionGroup,
@@ -935,6 +936,7 @@ function AlwaysSkipPreference({ checked, onChange }) {
 }
 
 export function SegmentationTransitionView({ shell }) {
+  const isMobile = useIsMobileViewport()
   const [alwaysSkip, setAlwaysSkip] = useState(
     () => readSegmentationFlowPreferences().showSegmentationTransition === false,
   )
@@ -1016,7 +1018,15 @@ export function SegmentationTransitionView({ shell }) {
             display: 'grid',
             // The bridge lane must hold a chip plus its whole flight. At 144px it
             // could not, which is why the flight escaped into the next column.
-            gridTemplateColumns: 'minmax(0, 1.15fr) minmax(176px, 208px) minmax(320px, 0.95fr)',
+            //
+            // At mobile the three lanes cannot coexist at all: 176 + 320 of hard
+            // minimums against a 390px frame squeezed the preserved-source panel
+            // to a 0px track whose content kept its 152px and spilled. Source
+            // over proposal, and the bridge — which only means anything as a
+            // journey ACROSS — steps out.
+            gridTemplateColumns: isMobile
+              ? 'minmax(0, 1fr)'
+              : 'minmax(0, 1.15fr) minmax(176px, 208px) minmax(320px, 0.95fr)',
             gap: spacing[32],
             alignItems: 'stretch',
           }}
@@ -1024,7 +1034,7 @@ export function SegmentationTransitionView({ shell }) {
           <FlowPanel title="Preserved source" barStart={<WindowDots />} debugItem="preserved_source_panel">
             <SourceParagraphs withMarkers />
           </FlowPanel>
-          <TransitionBridge />
+          {isMobile ? null : <TransitionBridge />}
           <FlowPanel
             title="AI proposal"
             barEnd={<Sparkles size={16} strokeWidth={1.9} color={colors.accentBase} />}
@@ -1326,6 +1336,12 @@ function GroupTitleInput({ group, stale = false, onChange }) {
               setEditing(true)
             }}
             style={{
+              // A hit target does not shrink. As a flex item with the default
+              // shrink factor this 24px control resolved to 23px in a tight row
+              // — one pixel under the floor, which is the whole difference
+              // between a target and a near miss. Third instance of this in the
+              // pass: the identity wordmark and Focus view both did it too.
+              flex: '0 0 auto',
               width: spacing[24],
               height: spacing[24],
               border: `1px solid ${flowChrome.panelLine}`,

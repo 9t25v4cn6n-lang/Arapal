@@ -113,9 +113,19 @@ export function getLayer1BodyColumns({ isNavExpanded = false } = {}) {
   return `minmax(${railFloorPx}px, ${railUnits}fr) minmax(0, ${bodyUnits}fr)`
 }
 
-export function getDefaultBodySplitColumns({ isNavExpanded = false } = {}) {
+export function getDefaultBodySplitColumns({ isNavExpanded = false, isMobile = false } = {}) {
   const { startRailUnits, centerUnits, endRailUnits, expandedStartRailUnits, expandedEndRailUnits } =
     shellSizing.defaultBodySplit
+
+  // ONE lane at mobile. Three proportional lanes in 390px gave the centre track
+  // everything and the rails nothing — and a screen whose workspace mounts in a
+  // side lane got a 0px track, so Projects rendered its entire dashboard at
+  // x=430, wholly off-screen, while an empty lane held the visible 390.
+  // A three-lane split is a desktop composition; at this width the frame holds
+  // one thing at a time.
+  if (isMobile) {
+    return 'minmax(0, 1fr)'
+  }
 
   return isNavExpanded
     ? `minmax(0, ${expandedStartRailUnits}fr) minmax(0, ${centerUnits}fr) minmax(0, ${expandedEndRailUnits}fr)`

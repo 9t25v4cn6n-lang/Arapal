@@ -2417,6 +2417,26 @@ const researchStyles = `
       grid-template-columns: minmax(0, 1fr);
     }
 
+    /* The desk is a fixed-height clipped region on desktop — height 100% with
+       overflow hidden, so its two rows scroll INSIDE it. At 390 the lane it sits
+       in gives it 53px, and hidden then cut everything below the toolbar: the
+       ledger, the filters, the inspector, all of it, with no way to reach any of
+       it because the clip is on a container the page cannot scroll.
+
+       At this width the desk stops being a viewport of its own and becomes what
+       it looks like — a card the PAGE scrolls. */
+    .project-research__desk {
+      height: auto;
+      min-height: 0;
+      grid-template-rows: auto auto;
+      overflow: visible;
+    }
+
+    .project-research__deskBody {
+      min-height: 0;
+      overflow: visible;
+    }
+
     /* The masthead declares minmax(0, 1fr) auto, but "Study mode" is 182px and
        cannot shrink, so on a 306px header the title got the 78px remainder and
        wrapped mid-word — "Al-", "Hidayah", "knowled", "explorer" — clipped by

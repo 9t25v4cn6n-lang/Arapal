@@ -35,6 +35,7 @@ export default function AppV2({ routeId = defaultRouteId }) {
 
   const shell = {
     activeRoute,
+    isMobileViewport,
     activeRailGroupId,
     activeRailRouteId,
     showRail,

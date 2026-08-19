@@ -333,7 +333,26 @@ export default function ExamsScreen({ route, shell }) {
     ),
   }
 
-  return <V2ScreenFrame contract={layoutContract} route={route} shell={shell} screenSlots={screenSlots} />
+  // At 390 the root is a fixed-height clipped viewport whose second row scrolls
+  // inside it, and a card at the boundary gets cut while the region still holds
+  // slack. Same rule as the Research desk: at this width the screen stops being
+  // a viewport of its own and becomes a page that scrolls.
+  const containerOverrides = shell.isMobileViewport
+    ? {
+      Layer2_Exams_Root: { style: { gridTemplateRows: 'auto auto', overflow: 'visible' } },
+      Layer3_Exams_Body: { style: { minHeight: 0, overflow: 'visible' } },
+    }
+    : {}
+
+  return (
+    <V2ScreenFrame
+      contract={layoutContract}
+      route={route}
+      shell={shell}
+      screenSlots={screenSlots}
+      containerOverrides={containerOverrides}
+    />
+  )
 }
 
 // ── 1. take the next assessment · 2. manage the library ──────────────────────
