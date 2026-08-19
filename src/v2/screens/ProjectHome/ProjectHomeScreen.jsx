@@ -80,7 +80,26 @@ export default function ProjectHomeScreen({ route, shell }) {
   // state is a working list and belongs at the top of the frame; the first run
   // has one thing to say and the whole canvas to say it in, so it is centred.
   // Two arrangements of one contract, chosen by state — not two screens.
-  const containerOverrides = hasWork ? {} : {
+  const containerOverrides = hasWork ? {
+    // A short list should be COMPOSED in the frame, not hung from its top edge.
+    // With one project the meaningful content ended at 58% of a 900px viewport
+    // and left 380px of nothing under it, which reads as a page that has not
+    // finished loading rather than as a product with one project in it.
+    //
+    // `safe center` is the whole trick: it centres while the content is shorter
+    // than the frame, and falls back to start the moment it is not — so a long
+    // list still begins at the top and scrolls, instead of having its first rows
+    // cut off above the scroll origin, which is what plain `center` would do.
+    Layer2_Home_Root: {
+      style: {
+        gridTemplateRows: 'auto auto',
+        alignContent: 'safe center',
+        gap: spacing[32],
+      },
+    },
+    Layer3_Home_Lead: { style: { gridRow: 'auto' } },
+    Layer3_Home_Body: { style: { gridRow: 'auto', overflow: 'visible' } },
+  } : {
     Layer2_Home_Root: {
       style: {
         // Both rows sized by content and the pair centred in the frame. The
