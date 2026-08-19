@@ -2110,7 +2110,9 @@ export function ReviewOutput({
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: spacing[8],
-                    color: colors.textFaint,
+                    // Carries a label, not just a chevron, so it takes the text
+                    // tone rather than the icon one.
+                    color: colors.textSoft,
                     cursor: 'pointer',
                   }}
                 >

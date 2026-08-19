@@ -58,6 +58,43 @@ function walk(dir) {
 
 if (fs.existsSync('src')) walk('src')
 
+// `colors.textFaint` carries a rule in its own docstring: DECORATIVE AND ICON
+// USE ONLY, text must be textSoft or darker. A rule that lives only in a comment
+// is a rule that gets broken — it was carrying the segmentation configuration on
+// Source Intake, the faintest text on the screen, directly above the button it
+// describes. Anything that also sets a font property is text.
+const faintTextOffenders = []
+
+function scanFaintText(source, file) {
+  const lines = source.split('\n')
+  lines.forEach((line, index) => {
+    if (!/color:\s*colors\.textFaint/.test(line)) return
+    // Look at the surrounding style object for a type declaration.
+    const context = lines.slice(Math.max(0, index - 6), index + 7).join('\n')
+    if (!/font(Size|Family|Weight)|typography\.|flowType\./.test(context)) return
+    faintTextOffenders.push({ file, line: index + 1 })
+  })
+}
+
+function walkFaint(dir) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name)
+    if (entry.isDirectory()) { walkFaint(full); continue }
+    if (!/\.(jsx?|tsx?)$/.test(entry.name)) continue
+    scanFaintText(fs.readFileSync(full, 'utf8'), full)
+  }
+}
+
+if (fs.existsSync('src')) walkFaint('src')
+
+if (faintTextOffenders.length) {
+  console.error('colors.textFaint used on TEXT — it is declared decorative and')
+  console.error('icon-only; text must be textSoft or darker:\n')
+  for (const o of faintTextOffenders) console.error(`  ${o.file}:${o.line}`)
+  console.error('')
+  process.exit(1)
+}
+
 if (offenders.length) {
   console.error('Undeclared token keys — these resolve to `undefined` and the browser')
   console.error('silently drops the whole declaration they appear in:\n')

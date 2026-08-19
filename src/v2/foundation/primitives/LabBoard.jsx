@@ -197,7 +197,7 @@ export function LabPlaceholderCard({ title, status = 'Not yet extracted', note }
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: colors.textFaint,
+          color: colors.textSoft,
           fontFamily: typography.bodyText.fontFamily,
           fontSize: 14,
         }}

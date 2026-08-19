@@ -180,7 +180,7 @@ function FirstRunState({ onAddSource, onUseSample }) {
           <li key={step.title} style={{ display: 'grid', gap: spacing[8], alignContent: 'start', minWidth: 0 }}>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[8], color: colors.accentBase }}>
               <step.icon size={16} strokeWidth={1.9} />
-              <span style={{ ...typography.eyebrowLabel, color: colors.textFaint }}>Step {index + 1}</span>
+              <span style={{ ...typography.eyebrowLabel, color: colors.textSoft }}>Step {index + 1}</span>
             </span>
             <strong style={{ ...typography.sectionTitle, color: colors.textStrong }}>{step.title}</strong>
             <p style={{ ...typography.supportSubtext, margin: 0, color: colors.textSoft }}>{step.text}</p>

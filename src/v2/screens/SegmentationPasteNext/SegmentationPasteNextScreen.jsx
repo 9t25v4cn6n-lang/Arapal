@@ -157,7 +157,12 @@ export default function SegmentationPasteNextScreen({ route, shell }) {
             gap: spacing[8],
             flexWrap: 'wrap',
             justifyContent: 'center',
-            color: colors.textFaint,
+            // textFaint is declared DECORATIVE AND ICON USE ONLY in the token
+            // file — text must be textSoft or darker. This is the segmentation
+            // configuration: how the source is about to be cut, which is the one
+            // fact a user needs before pressing the button underneath it. It was
+            // the faintest text on the screen.
+            color: colors.textSoft,
             ...typography.eyebrowLabel,
           }}
         >
