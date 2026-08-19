@@ -1,0 +1,89 @@
+name: Arapal Release Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - audit/release-certification
+
+permissions:
+  contents: read
+
+jobs:
+  release-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Prepare audit output
+        run: |
+          mkdir -p artifacts/release-audit/logs
+          printf '{"sha":"%s","ref":"%s","run_id":"%s"}\n' \
+            "$GITHUB_SHA" "$GITHUB_REF_NAME" "$GITHUB_RUN_ID" \
+            > artifacts/release-audit/run-identity.json
+
+      - name: Existing release gates
+        shell: bash
+        run: |
+          set +e
+          run_gate () {
+            name="$1"; shift
+            echo "=== $name ===" | tee "artifacts/release-audit/logs/${name}.log"
+            "$@" 2>&1 | tee -a "artifacts/release-audit/logs/${name}.log"
+            code=${PIPESTATUS[0]}
+            echo "$code" > "artifacts/release-audit/logs/${name}.exit-code"
+            return 0
+          }
+          run_gate build npm run build
+          run_gate lint npm run lint
+          run_gate audit-suite npm run audit:suite
+          run_gate qa npm run qa
+          run_gate visual-regression npm run vr
+          run_gate behaviour npm run test:behaviour
+          run_gate data npm run test:data
+
+      - name: Start app
+        shell: bash
+        run: |
+          npm run dev -- --host 127.0.0.1 > artifacts/release-audit/logs/vite.log 2>&1 &
+          echo $! > /tmp/arapal-vite.pid
+          for i in {1..60}; do
+            if curl -fsS http://127.0.0.1:5173 >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          echo "Vite server did not become ready" >&2
+          exit 1
+
+      - name: Capture exhaustive release evidence
+        env:
+          CI: "true"
+          RELEASE_AUDIT_DIR: artifacts/release-audit/evidence
+        run: npx playwright test tests/release-audit/release-evidence.spec.js --project=chromium
+
+      - name: Build human-readable evidence index
+        if: always()
+        run: node scripts/release-audit/build-report.mjs artifacts/release-audit/evidence || true
+
+      - name: Upload release evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arapal-release-audit-${{ github.sha }}
+          path: artifacts/release-audit
+          if-no-files-found: warn
+          retention-days: 30
