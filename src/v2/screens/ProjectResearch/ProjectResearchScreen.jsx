@@ -58,15 +58,21 @@ function ProjectResearchHeader({ stats, onOpenStudy }) {
         </p>
       </div>
 
-      <div className="project-research__headerAside" aria-label="Project research summary">
-        <div className="project-research__metricStrip">
-          {metrics.map((metric) => (
-            <div key={metric.label} className="project-research__metricPill">
-              <strong>{metric.value}</strong>
-              <span>{metric.label}</span>
-            </div>
-          ))}
-        </div>
+      {/* The metrics describe the project the title names, so they sit WITH the
+          title. They used to be bundled with the Study mode action into a single
+          right-hand cluster, which is why three facts about this project and one
+          way to leave it were reading as the same kind of thing, jammed together
+          against the right edge and disconnected from what they counted. */}
+      <div className="project-research__metricStrip" aria-label="Project research summary">
+        {metrics.map((metric) => (
+          <div key={metric.label} className="project-research__metricPill">
+            <strong>{metric.value}</strong>
+            <span>{metric.label}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="project-research__headerAside">
         <button type="button" className="project-research__studyLink" onClick={onOpenStudy}>
           <BookOpen size={15} strokeWidth={2} />
           Study mode
@@ -1329,16 +1335,43 @@ const researchStyles = `
   /* Bold research-desk redesign overrides. These keep layout ownership on the shell,
      desk, ledger, and dossier containers rather than individual content cells. */
 
+  /* The dark field is the TITLE'S surface, not a percentage of the header.
+     It used to be a gradient stop at 34% of the masthead's width — a number with
+     no relationship to where the title actually ends. A longer project name ran
+     white text past the stop onto a white background; a shorter one trailed dark
+     space after it; and the masthead clipped rather than adapting. Now the panel
+     is sized by the title it contains, so it is correct at every width and for
+     every length of name. */
   .project-research__masthead {
     min-height: 58px;
-    grid-template-columns: minmax(0, 1fr) auto;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: ${spacing[16]};
     padding: ${spacing[12]} ${spacing[16]};
     border-radius: ${radius[20]};
     border-color: rgba(148, 163, 184, 0.28);
-    background:
-      linear-gradient(90deg, rgba(15, 23, 42, 0.96) 0, rgba(30, 41, 59, 0.94) 34%, rgba(255, 255, 255, 0.92) 34.1%, rgba(248, 251, 255, 0.88) 100%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 255, 0.88));
     box-shadow: 0 18px 38px rgba(15, 23, 42, 0.1);
-    overflow: hidden;
+  }
+
+  .project-research__titleGroup {
+    flex: 0 1 auto;
+    padding: ${spacing[10]} ${spacing[20]};
+    border-radius: ${radius[16]};
+    background: linear-gradient(120deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.94));
+  }
+
+  /* Pushed right because it is the one ACTION here; the metrics beside the title
+     are facts about the project and stay with it. */
+  .project-research__headerAside {
+    margin-inline-start: auto;
+    flex: 0 0 auto;
+  }
+
+  .project-research__metricStrip {
+    flex: 0 1 auto;
+    min-width: 0;
   }
 
   .project-research__titleGroup {
