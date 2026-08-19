@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import useIsMobileViewport from '../../foundation/primitives/useIsMobileViewport'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
+import UserText from '../../foundation/primitives/UserText'
 import PrimaryCTA from '../../foundation/primitives/PrimaryCTA'
 import { colors, elevation, motion, radius, spacing, typography } from '../../foundation/tokens'
 import { compactControl } from '../../foundation/tokens/compactControl'
@@ -132,7 +133,7 @@ const dashboardStyles = `
   }
 
   .study-dashboard__search input::placeholder {
-    color: ${colors.textFaint};
+    color: ${colors.textSoft};
   }
 
   .study-dashboard__lessonList {
@@ -176,13 +177,11 @@ const dashboardStyles = `
     gap: ${spacing[12]};
   }
 
+  /* Layout only. The TYPE comes from UserText, because a lesson title is user
+     content and its script is not known here. */
   .study-dashboard__lessonName {
     display: block;
     margin: 0 0 ${spacing[4]};
-    font-family: ${typography.sectionTitle.fontFamily};
-    font-size: ${typography.sectionTitle.fontSize};
-    line-height: ${typography.sectionTitle.lineHeight};
-    font-weight: ${typography.sectionTitle.fontWeight};
   }
 
   .study-dashboard__lessonSource,
@@ -246,11 +245,6 @@ const dashboardStyles = `
      thing on every lesson. */
   .study-dashboard__title {
     margin: 0;
-    font-family: ${typography.pageTitle.fontFamily};
-    font-size: ${typography.pageTitle.fontSize};
-    line-height: ${typography.pageTitle.lineHeight};
-    font-weight: ${typography.pageTitle.fontWeight};
-    letter-spacing: ${typography.pageTitle.letterSpacing};
     color: ${colors.textStrong};
   }
 
@@ -653,7 +647,7 @@ const dashboardStyles = `
     font-size: 11px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: ${colors.textFaint};
+    color: ${colors.textSoft};
     font-weight: 900;
   }
 
@@ -708,14 +702,12 @@ const dashboardStyles = `
     background: rgba(255, 255, 255, 0.96);
   }
 
+  /* Layout and colour only; UserText owns the type. The size was also a
+     hand-set 12.5px, off the ramp. */
   .study-dashboard__historyRowTitle {
     display: block;
     margin: 0 0 ${spacing[4]};
-    font-family: ${typography.studyControlLabel.fontFamily};
-    font-size: 12.5px;
-    line-height: 1.3;
     color: ${colors.textStrong};
-    font-weight: 800;
   }
 
   .study-dashboard__historyRowCopy {
@@ -862,7 +854,7 @@ function LessonRail({ lessons, selectedLessonId, searchQuery, onSearchChange, on
             >
               <span className="study-dashboard__lessonTop">
                 <span>
-                  <span className="study-dashboard__lessonName">{lesson.title}</span>
+                  <UserText className="study-dashboard__lessonName" text={lesson.title} />
                   <span className="study-dashboard__lessonSource">{lesson.sourceTitle}</span>
                 </span>
                 <span className={`study-dashboard__statusDot${lesson.status === 'setup' ? ' is-setup' : ''}`} />
@@ -995,7 +987,7 @@ function StudyDashboardWorkspace({ lesson, shell }) {
           pane that is supposed to be showing it. */}
       <section className="study-dashboard__intro">
         <p className="study-dashboard__eyebrow">{lesson.sourceTitle}</p>
-        <h1 className="study-dashboard__title">{lesson.title}</h1>
+        <UserText as="h1" className="study-dashboard__title" text={lesson.title} latinRole={typography.pageTitle} />
       </section>
 
       <ResumeStage lesson={lesson} onResume={handleResume} onBrowse={handleBrowse} />
@@ -1059,7 +1051,7 @@ function VirtualizedHistoryTable({ rows, onToggleSaved }) {
               aria-rowindex={index + 1}
             >
               <div>
-                <span className="study-dashboard__historyRowTitle">{row.label}</span>
+                <UserText className="study-dashboard__historyRowTitle" text={row.label} latinRole={typography.metaText} />
                 <span className="study-dashboard__historyRowCopy">{row.detail}</span>
               </div>
               <div className="study-dashboard__rowMeta">
@@ -1147,7 +1139,7 @@ function StudyHistoryPanelContainer({ lesson }) {
             </span>
             <div>
               <h2 className="study-dashboard__historyTitle">Study history</h2>
-              <p className="study-dashboard__historySubtitle">{lesson.title}</p>
+              <UserText as="p" className="study-dashboard__historySubtitle" text={lesson.title} latinRole={typography.supportSubtext} />
             </div>
           </div>
           <button type="button" className="study-dashboard__historyButton" onClick={closeHistory}>

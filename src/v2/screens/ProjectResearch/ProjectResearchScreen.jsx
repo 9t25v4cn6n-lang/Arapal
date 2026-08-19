@@ -566,7 +566,7 @@ const researchStyles = `
   .project-research__filterButton strong {
     justify-self: end;
     font-size: ${typography.eyebrowLabel.fontSize};
-    color: ${colors.textFaint};
+    color: ${colors.textSoft};
   }
 
   .project-research__revisionStack {
@@ -673,7 +673,7 @@ const researchStyles = `
   }
 
   .project-research__searchBox input::placeholder {
-    color: ${colors.textFaint};
+    color: ${colors.textSoft};
   }
 
 
@@ -686,7 +686,7 @@ const researchStyles = `
   }
 
   .project-research__resultCount {
-    color: ${colors.textFaint};
+    color: ${colors.textSoft};
     font-family: ${typography.monoMeta.fontFamily};
     font-size: ${typography.eyebrowLabel.fontSize};
     line-height: 1;
@@ -1106,7 +1106,7 @@ const researchStyles = `
   }
 
   .project-research__vocabList span {
-    color: ${colors.textFaint};
+    color: ${colors.textSoft};
     font-family: ${typography.monoMeta.fontFamily};
     font-size: ${typography.eyebrowLabel.fontSize};
   }
@@ -1696,7 +1696,7 @@ const researchStyles = `
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: ${colors.textFaint};
+    color: ${colors.textSoft};
     font-size: ${typography.eyebrowLabel.fontSize};
   }
 

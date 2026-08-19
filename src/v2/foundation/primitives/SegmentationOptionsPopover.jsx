@@ -109,7 +109,7 @@ const segmentationOptionsPopoverStyles = `
     line-height: ${typography.eyebrowLabel.lineHeight};
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: ${colors.textFaint};
+    color: ${colors.textSoft};
   }
 
   .v2-seg-paste__splitMenuOption {

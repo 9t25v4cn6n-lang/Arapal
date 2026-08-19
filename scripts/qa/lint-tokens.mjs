@@ -68,7 +68,12 @@ const faintTextOffenders = []
 function scanFaintText(source, file) {
   const lines = source.split('\n')
   lines.forEach((line, index) => {
-    if (!/color:\s*colors\.textFaint/.test(line)) return
+    // Any colour expression, not just a bare assignment. The first version
+    // matched `color: colors.textFaint` and missed
+    // `color: answered ? colors.successStrong : colors.textFaint` — a ternary is
+    // where a faint tone is MOST likely to be reached for, because it is the
+    // "inactive" arm.
+    if (!/\bcolor:[^;\n]*colors\.textFaint/.test(line)) return
     // Look at the surrounding style object for a type declaration.
     const context = lines.slice(Math.max(0, index - 6), index + 7).join('\n')
     if (!/font(Size|Family|Weight)|typography\.|flowType\./.test(context)) return

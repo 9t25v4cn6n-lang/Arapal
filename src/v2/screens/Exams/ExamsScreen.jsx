@@ -13,6 +13,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Badge, Chip, GhostButton } from '../../foundation/primitives/CompactControls'
 import PrimaryCTA from '../../foundation/primitives/PrimaryCTA'
+import UserText from '../../foundation/primitives/UserText'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import { colors, radius, spacing, typography } from '../../foundation/tokens'
 import layoutContract from './ExamsScreen.contract'
@@ -624,12 +625,14 @@ function TakeView({
                 cursor: 'pointer',
               }}
             >
-              <span style={{ ...typography.eyebrowLabel, color: answered ? colors.successStrong : colors.textFaint }}>
+              <span style={{ ...typography.eyebrowLabel, color: answered ? colors.successStrong : colors.textSoft }}>
                 {answered ? 'Answered' : `Question ${index + 1}`}
               </span>
-              <span style={{ ...typography.supportSubtext, color: current ? colors.accentStrong : colors.textBody }}>
-                {question.label}
-              </span>
+              <UserText
+                text={question.label}
+                latinRole={typography.supportSubtext}
+                style={{ color: current ? colors.accentStrong : colors.textBody }}
+              />
             </button>
           )
         })}
@@ -779,7 +782,7 @@ function ResultsView({ result, grouping, onGrouping, groups, onJumpToStudy, onDo
                     <Badge tone={item.outcome === 'miss' ? 'critical' : 'review'}>
                       {item.outcome === 'miss' ? 'Needs review' : 'Worth revisiting'}
                     </Badge>
-                    <span style={{ ...typography.metaText, color: colors.textSoft }}>{item.segmentLabel}</span>
+                    <UserText text={item.segmentLabel} latinRole={typography.metaText} style={{ color: colors.textSoft }} />
                   </div>
                   <p style={{ ...typography.supportSubtext, margin: 0, color: colors.textBody }}>{item.remediationNote}</p>
                 </div>
