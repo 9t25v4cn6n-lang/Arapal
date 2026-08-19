@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-19T12:49:48.673Z",
+ "generatedAt": "2026-08-19T13:46:19.798Z",
  "base": "http://localhost:5173",
  "routes": [
   "legacy-home",
@@ -25,8 +25,8 @@
   "390x844"
  ],
  "totals": {
-  "blocking": 190,
-  "productionBlocking": 18,
+  "blocking": 188,
+  "productionBlocking": 16,
   "referenceBlocking": 172,
   "advisory": 21,
   "byRule": {
@@ -38,8 +38,7 @@
    "container-undersized": 7,
    "viewport-escape": 19,
    "slack-beside-clipped-content": 4,
-   "content-clipped": 2,
-   "label-truncated": 2
+   "content-clipped": 2
   },
   "byRoute": {
    "legacy-home": 27,
@@ -54,7 +53,7 @@
    "v2-segmentationLoading": 0,
    "v2-segmentationReview": 1,
    "v2-segmentationSuccess": 0,
-   "v2-studyWorkspace": 7,
+   "v2-studyWorkspace": 5,
    "v2-exams": 2
   }
  },
@@ -2594,30 +2593,6 @@
    "left": 278.6,
    "right": 396.9,
    "decorative": false
-  },
-  {
-   "route": "v2-studyWorkspace",
-   "app": "v2",
-   "surface": "production",
-   "frame": "390x844",
-   "ruleId": "label-truncated",
-   "selector": "span.study-v2__sectionLabel",
-   "label": "Source Text",
-   "cutPx": 37,
-   "shownPx": 72,
-   "neededPx": 109
-  },
-  {
-   "route": "v2-studyWorkspace",
-   "app": "v2",
-   "surface": "production",
-   "frame": "390x844",
-   "ruleId": "label-truncated",
-   "selector": "span.study-v2__sectionLabel",
-   "label": "Translation",
-   "cutPx": 81,
-   "shownPx": 30,
-   "neededPx": 111
   },
   {
    "route": "v2-exams",

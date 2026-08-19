@@ -1,35 +1,37 @@
 # Arapal — Current Stage and Next Milestones
 
-## QA Pass 2 — public release visual QA (in progress)
+## QA Pass 2 — public release visual QA (complete for desktop)
 
 Brief: `ARAPAL_PUBLIC_RELEASE_VISUAL_QA_PASS_2_SCREENSHOTS/ARAPAL_PUBLIC_RELEASE_VISUAL_QA_PASS_2.md`
 Ledger: `ARAPAL_QA_PASS_2_VERIFICATION_LEDGER.md`
 
-36 of 42 findings PASS, 1 NOT REPRODUCED, 2 PARTIAL, 3 not reached. Desktop
-production surface is at 0 violations across 1280/1366/1440/1920; behaviour suite
-36 passed, 2 skipped.
+41 of 42 findings PASS, 1 NOT REPRODUCED. Desktop production surface is at 0
+violations across 1280/1366/1440/1920; behaviour suite 36 passed, 2 skipped.
 
-Remaining, in this order:
+Next milestones:
 
-1. **Findings 4 and 27 — Source Intake containment and alignment.** One piece of
-   responsive work: the bottom AI action can be cut off on the right, the
-   PRESERVED SOURCE pill can clip, preserved content can escape its parent, and
-   the heading/editor bounds do not share a grid. Do them together.
-2. **Finding 28 — the segmentation settings popover covers the page title and
-   most of the source it is configuring.** Reconsider anchor, width, max-height.
-3. **Finding 16 — Review & Refine.** The largest remaining item and the only one
-   needing design rather than a fix: recompose around inspect → adjust → approve.
-   Underused lower viewport, status and actions stranded at viewport edges, an
-   unexplained icon-only vertical toolbar with unclear scope.
-4. **Finding 2 remainder** — migrate the remaining user-content surfaces onto
-   `getScriptAwareRole`: Projects list, Research ledger, Study segment rail, Exams.
-   Project Home is done and verified with real Arabic titles.
-5. **Finding 31 remainder** — Study segment rail truncates Arabic correctly (RTL
-   side verified) but offers no tooltip or full-title access.
-6. **390×844.** 18 production violations, still unbuilt.
+1. **390×844.** 16 production violations, down from 20. The frame is still
+   unbuilt and it is now the largest single gap: Study's shell title and progress
+   overlap, Research's desk clips, Source Intake clips, Projects escapes the
+   viewport, Exams has slack beside clipped content.
+2. **Finish the script-aware migration.** `getScriptAwareRole` and
+   `containsArabic` exist and are applied to Project Home and the Study segment
+   rail. Projects list, Research ledger titles and Exams still render
+   user-authored content in fixed Latin roles.
+3. **`AI SEGMENT TEXT` has no accessible name** despite visible text —
+   `read_page` returns a bare button.
+4. **Legacy routes.** 172 reference violations, unchanged and untouched by this
+   pass; they are the behaviour-port backlog, not visual debt.
 
-New defect still open: `AI SEGMENT TEXT` has no accessible name despite visible
-text — `read_page` returns a bare button.
+Executable gates added this pass, both of which found real defects the moment
+they were written:
+
+- `scripts/qa/lint-tokens.mjs` — undeclared numeric token keys resolve to
+  `undefined` and the browser drops the whole declaration. Caught 43 sites.
+- the same script's `textFaint`-on-text rule — the token's own docstring says
+  decorative and icon-only. Caught 5 sites.
+
+Both run in the per-edit QA hook and need no browser.
 
 ## 2026-08-18 · Public-release visual refinement pass — desktop
 

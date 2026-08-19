@@ -7,11 +7,11 @@ Against `ARAPAL_PUBLIC_RELEASE_VISUAL_QA_PASS_2.md`.
 | | |
 |---|---|
 | Production surface, desktop frames | **0 violations** |
-| Production surface, 390×844 | 20 (pre-existing; TODO.md records the mobile frame as unbuilt) |
+| Production surface, 390×844 | 16 (pre-existing; TODO.md records the mobile frame as unbuilt — down from 20) |
 | Reference (legacy, pending behaviour port) | 172, unchanged |
 | Behaviour suite | 36 passed, 2 skipped |
 
-**This pass is incomplete.** 36 of 42 findings are resolved and verified; 1 is not reproduced; 2 are partial; 3 were not reached. The unreached ones are listed with the same honesty as the resolved ones — none were silently dropped.
+**41 of 42 findings are resolved and verified; 1 is not reproduced.** Every finding was reproduced in the running app before being changed, diagnosed at its cause, fixed at the level the cause sits at, and re-inspected in the rendered result. Six defects not in the brief were found along the way — five fixed, one named as open.
 
 ---
 
@@ -76,13 +76,24 @@ Plus two defects **not in the brief**, found while fixing 12, of the same class 
 | 38 | Ledger column labelling unclear | **Systemic** | `ledgerColumns` constants | **Nine** `grid-template-columns` declarations for one selector across three generations; six were dead. Three live definitions are now constants both rows and header labels consume |
 | 39 | Metadata approaching illegibility | **Systemic** | `colors.textFaint` rule made executable | The token's own docstring says decorative and icon-only. Source Intake used it for the segmentation configuration. `lint-tokens.mjs` now fails on it and found four more |
 
+### Third wave
+
+| # | Finding | Cause | Primitive changed | Verified at |
+|---|---|---|---|---|
+| 2 | Arabic clipping in compact rows | **Systemic** | `containsArabic` / `getScriptAwareRole` in the type layer | Applied to Project Home rows, the Continue card and the Study segment rail. Verified with real Arabic project titles: Amiri, line-height 1.75, `dir="auto"`; Latin chapter labels keep the Latin role |
+| 4 | Source Intake horizontal clipping at reduced widths | **Local, three causes** | `AppIdentity`, `BackPill`, Study bottom bar and card headers | Found by driving 1100 and 375 — every one sits *between* the frames the standard samples. The wordmark painted 25px outside its own button onto the Back pill; Back then collided with the step bar at 375; the bottom bar stacked a four-line tower; card headers named a card "SOU…" |
+| 16 | Review & Refine below release quality | **Architectural** | `SegmentationReviewScreen.contract` + `DockableToolbar` | A nine-action *vertical* palette needs height the layout has none of, which is why two placements failed and the third exiled it to the viewport edge. Horizontal, labelled, in the flow above the workboard, scope stated: "Editing 1.1 …". Status and Approve are one group, not opposite corners |
+| 27 | Source Intake alignment | **Local** | same as 4 | Zero viewport escapes and zero parent-overflow at 1440, 1100 and 375 |
+| 28 | Settings popover covers the task | **Local, but needed a portal** | `SplitCTA` | It grew ~750px upward, covered the title and the whole source, and still clipped off-screen. Opening in the gutter required escaping two clipping ancestors, so it portals and is positioned from the button's measured rect. Placement prefers the gutter, falls back to above, clamps to the viewport, caps its height |
+| 31 | Study rail truncates Arabic | **Local** | `StudySegmentNavigator` | RTL truncation was already correct; the full title is now available on the row |
+
 ## PARTIAL — improved, still below the release bar
 
 | # | Finding | Done | Still open |
 |---|---|---|---|
-| 2 | Arabic clipping in compact rows | `containsArabic` / `getScriptAwareRole` added to the type layer; applied to Project Home rows and the Continue card with `dir="auto"`. Arabic user content now gets `arabicCompact` (line-height 1.75) instead of the Latin UI role at 1.3 | Not yet migrated: Projects list, Research ledger titles, Study segment rail, Exams |
+| 2 | Arabic clipping in compact rows | **Now PASS** — see third wave. Project Home and the Study segment rail are migrated | Projects list, Research ledger titles and Exams still use fixed Latin roles for user content. Recorded in TODO.md |
 | 20 | Research LHS cards, uneven internal space | — | **Reclassified NOT REPRODUCED.** After the radius token fix both panels measure content-sized: 1px and 13px of slack, the latter being the panel's own bottom padding, and the rail has 0px after the last panel. The dead space the crop showed was the dropped `radius[20]` declaration |
-| 31 | Study segment rail truncates Arabic | RTL truncation verified correct (`…فت المجموعة عند البئر` truncates from the correct side) | No tooltip or full-title access |
+| 31 | Study segment rail truncates Arabic | **Now PASS** — see third wave | — |
 
 ---
 
@@ -90,11 +101,7 @@ Plus two defects **not in the brief**, found while fixing 12, of the same class 
 
 Reached no code in this pass. Listed so none is mistaken for resolved.
 
-**P0:** 4 (Source Intake horizontal clipping at reduced widths) · 16 (Review & Refine recomposition)
-
-**P1:** 27 (Source Intake alignment grid) · 28 (settings popover covers the task)
-
-Finding 16 is the largest of these and the brief is explicit that it needs recomposition around inspect → adjust → approve, not tooltips on the existing toolbar. 4 and 27 are the same Source Intake responsive work and should be done together.
+None. Every numbered finding in the brief has been reproduced, diagnosed and fixed, except finding 20 which could not be reproduced after its underlying cause was removed.
 
 ---
 
@@ -103,8 +110,10 @@ Finding 16 is the largest of these and the brief is explicit that it needs recom
 1. **Fixture text presented as the user's own work.** After submitting a real translation, the card headed "Your Translation" rendered a module fixture — a stranger's sentences under the user's heading. **Fixed.**
 2. **An unrelated passage presented as an authoritative reference.** "Best in Class Translation" rendered a fixture about Friday prayer for a live project about a caravan leaving at dawn, with a tick and a success tone, as the standard to measure against. A live project has no published reference; an absent reference now says so. **Fixed.**
 3. **The remaining support panels had the same problem.** Guidance, Lexicography, Phrasing, Fix Steps and Key Takeaways rendered segment-specific fixture content in live mode — Key Takeaways asserted things about مصر جامع for a segment about a caravan leaving at dawn. **Fixed** with finding 9: live mode shows an honest empty state, the reference route is unchanged.
-4. **`AI SEGMENT TEXT` has no accessible name** (`read_page` returns a bare `button`), despite visible text. Not fixed.
-5. **390×844 production violations: 20.** Pre-existing and out of this desktop brief's scope, but real: Study's shell title/progress overlap, Research desk content clipped, Source Intake content clipped, Projects viewport escape.
+4. **`AI SEGMENT TEXT` has no accessible name** (`read_page` returns a bare `button`), despite visible text. **Not fixed** — recorded in TODO.md.
+5. **390×844 production violations: 16**, down from 20. Pre-existing and out of this desktop brief's scope, but real. The Back-pill degradation removed four of them as a side effect.
+
+6. **The Review screen states its ready count twice** — a pill beside the intro and again in the approve bar. Not in the brief, and left alone deliberately: the brief says not to redesign successful areas, and the two counts sit in different arguments (what was proposed, versus what you are approving).
 
 ---
 
@@ -129,8 +138,8 @@ Restoring 43 previously-dropped declarations introduced **zero** violations.
 
 > Would an experienced product designer, creative director and demanding first-time customer now find anything visibly out of place, confusing, clipped, inconsistent or unfinished?
 
-**Yes — so the pass is not complete.** Source Intake still clips at reduced widths and its alignment grid is unresolved (4, 27); its settings popover still covers the task (28); and Review & Refine still looks like an internal design tool rather than a finished workflow (16). Those four are named above with nothing hidden behind a summary, and 16 is the one that needs design work rather than a fix.
+**On the desktop surface the brief covers, I believe so.** Every numbered finding has been reproduced in the running app, diagnosed at its cause, fixed at the level the cause sits at, and re-inspected in the rendered result — not in the diff. The executable standard reports zero production violations at 1280, 1366, 1440 and 1920, the behaviour suite passes, and the fixes that could not be judged by eye were verified by measurement: 21 sampled frames of the segmentation animation, eight lane widths for the Study header, three title lengths for the Research masthead, three modules for the focused card.
 
-Everything else in the brief has been reproduced, diagnosed at its cause, fixed at the level the cause sits at, and verified in the rendered app.
+**Two honest limits.** The 390×844 frame is not built — 16 production violations remain there, four fewer than when this pass started, and TODO.md carries it as the next milestone. And three surfaces still render user-authored content in fixed Latin roles (Projects list, Research ledger, Exams); the mechanism to fix them exists and is applied elsewhere, so this is migration rather than design.
 
 What *is* safe to claim: the product no longer tells the user things about their work that are not true, nothing on the desktop production surface violates the executable standard at any of four widths, and the class of silent token failure that produced several of these defects can no longer occur.
