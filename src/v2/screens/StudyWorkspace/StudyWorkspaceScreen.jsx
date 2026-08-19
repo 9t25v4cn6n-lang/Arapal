@@ -680,6 +680,10 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     Layer3_Study_SupportRail: discussionMode ? null : (
       <StudySupportRail
         state={currentState}
+        // The support content is written against the reference passage. With a
+        // real project it does not describe the user's segment, so it must not
+        // be presented as though it does.
+        isReference={!isLive}
         collapsed={supportRailCollapsed}
         onToggleCollapsed={() => setSupportRailCollapsed((current) => !current)}
       />

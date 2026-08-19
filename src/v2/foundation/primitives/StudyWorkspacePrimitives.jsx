@@ -3242,7 +3242,32 @@ export function StudySubmissionNavigator({ onJumpTo, notesAvailable = false }) {
   )
 }
 
-export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
+/**
+ * A support module that has nothing real to say about this segment.
+ *
+ * Guidance, Lexicography, Phrasing and Key Takeaways are written against the
+ * reference passage. With a live project they were still rendered verbatim, so
+ * a segment about a caravan leaving at dawn came with Key Takeaways asserting
+ * that مصر جامع "sets the legal frame for Friday prayers" — a confident,
+ * specific claim about text that does not contain it.
+ *
+ * This is the same failure as the invented grade, in a quieter voice: the
+ * product stating things about the user's work that it has not established. An
+ * empty support module is honest and costs the user nothing; a wrong one costs
+ * them their trust in every other panel on the screen.
+ */
+function ReferenceOnlyBody() {
+  // No module name in the sentence: the panel header already carries it, and
+  // interpolating it produced "Key takeaways ... has not been prepared" — the
+  // template could not agree with both singular and plural titles.
+  return (
+    <p className="study-v2__supportText study-v2__referenceAbsent">
+      Not prepared for this segment yet, and nothing is standing in for it.
+    </p>
+  )
+}
+
+export function StudySupportRail({ collapsed, onToggleCollapsed, state, isReference = true }) {
   // ONE presentation, not four booleans kept in step by hand.
   //
   // A module is docked, expanded over the panel, fullscreen, or floating — and
@@ -3269,19 +3294,19 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
   const cards = isSubmitted
     ? [
         { id: 'grade', title: 'Surface check', tone: 'success', icon: <Award size={18} />, body: <GradeBody failed={false} /> },
-        { id: 'takeaways', title: 'Key Takeaways', tone: 'blue', icon: <Sparkles size={18} />, body: <TakeawaysBody /> },
-        { id: 'lexicography', title: 'Lexicography', tone: 'purple', icon: <BookOpen size={18} />, body: <LexicographyBody /> },
+        { id: 'takeaways', title: 'Key Takeaways', tone: 'blue', icon: <Sparkles size={18} />, body: isReference ? <TakeawaysBody /> : <ReferenceOnlyBody /> },
+        { id: 'lexicography', title: 'Lexicography', tone: 'purple', icon: <BookOpen size={18} />, body: isReference ? <LexicographyBody /> : <ReferenceOnlyBody /> },
       ]
     : isFailed
       ? [
           { id: 'grade', title: 'Surface check', tone: 'review', icon: <Award size={18} />, body: <GradeBody failed /> },
-          { id: 'fix', title: 'Fix Steps', tone: 'review', icon: <Sparkles size={18} />, body: <FixStepsBody /> },
-          { id: 'lexicography', title: 'Lexicography', tone: 'purple', icon: <BookOpen size={18} />, body: <LexicographyBody /> },
+          { id: 'fix', title: 'Fix Steps', tone: 'review', icon: <Sparkles size={18} />, body: isReference ? <FixStepsBody /> : <ReferenceOnlyBody /> },
+          { id: 'lexicography', title: 'Lexicography', tone: 'purple', icon: <BookOpen size={18} />, body: isReference ? <LexicographyBody /> : <ReferenceOnlyBody /> },
         ]
       : [
-          { id: 'guidance', title: 'Guidance', tone: 'blue', icon: <Info size={18} />, body: <GuidanceBody /> },
-          { id: 'lexicography', title: 'Lexicography', tone: 'purple', icon: <BookOpen size={18} />, body: <LexicographyBody /> },
-          { id: 'phrasing', title: 'Phrasing', tone: 'teal', icon: <ScrollText size={18} />, body: <PhrasingBody /> },
+          { id: 'guidance', title: 'Guidance', tone: 'blue', icon: <Info size={18} />, body: isReference ? <GuidanceBody /> : <ReferenceOnlyBody /> },
+          { id: 'lexicography', title: 'Lexicography', tone: 'purple', icon: <BookOpen size={18} />, body: isReference ? <LexicographyBody /> : <ReferenceOnlyBody /> },
+          { id: 'phrasing', title: 'Phrasing', tone: 'teal', icon: <ScrollText size={18} />, body: isReference ? <PhrasingBody /> : <ReferenceOnlyBody /> },
       ]
 
   const cardInMode = (mode) => (
