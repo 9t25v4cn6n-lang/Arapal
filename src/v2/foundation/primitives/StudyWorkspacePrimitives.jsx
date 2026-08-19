@@ -18,6 +18,7 @@ import {
   PanelRightOpen,
   PictureInPicture2,
   Copy,
+  GripVertical,
   Info,
   Italic,
   Maximize2,
@@ -1614,6 +1615,15 @@ const studyCss = `
     opacity: 1;
   }
 
+  /* The header was draggable and nothing said so. A grip is the one glyph that
+     means "this moves" without a tooltip having to explain it. */
+  .study-v2__dragGrip {
+    display: inline-flex;
+    align-items: center;
+    margin-inline-start: calc(-1 * var(--study-space-4));
+    color: var(--study-text-faint);
+  }
+
   .study-v2__supportCardHeader.is-draggable {
     cursor: grab;
     user-select: none;
@@ -1991,9 +2001,15 @@ const studyCss = `
   }
 
   .study-v2__supportFullscreen {
-    width: min(900px, 100%);
-    min-height: min(620px, 100%);
-    max-height: min(760px, 100%);
+    /* Sized by its content, capped — not a fixed frame that content is poured
+       into. A 620px min-height on a 900px-wide card meant Phrasing, which has
+       two short items, opened as a 900x620 white rectangle with two lines at the
+       top. Focusing something should give it room to be worked with; it should
+       not enlarge the container and leave the content where it was.
+       Now the card's size tells you how much there is: a two-item module opens
+       compact, a long lexicography opens tall and scrolls. */
+    width: min(720px, 100%);
+    max-height: min(80vh, 760px);
     border: 1px solid var(--support-border, var(--study-line-soft));
     border-radius: var(--study-radius-24);
     background: var(--support-surface, var(--study-surface));
@@ -2994,11 +3010,28 @@ export function StudyTranslationEditor({
   )
 }
 
-export function StudyDiscussionCompanion({ onClose }) {
+/**
+ * The discussion, and what it is about.
+ *
+ * Two things were unclear at once. The panel was titled "Study Companion", which
+ * names the tool but never says the conversation is attached to the segment in
+ * front of you — the scope the legacy build carried in "Discuss This Segment".
+ * The title bar has room for that; a narrow toggle beside a Submit button does
+ * not, which is why the scope had been dropped rather than shortened.
+ *
+ * And it offered "Close" while the editor's toggle offered "Hide" — one action,
+ * two verbs, in two places, which reads as two different capabilities. Nothing
+ * is discarded either way, so both say Hide.
+ */
+export function StudyDiscussionCompanion({ onClose, segmentLabel }) {
   return (
     <StudyPanel className="study-v2__discussion" tone="slate" debugItem="study_discussion_companion">
-      <CardHeader badge={<MessageSquare size={15} />} title="Study Companion" tone="slate">
-        <button type="button" className="study-v2__miniPill" onClick={onClose} title="Close study companion">Close</button>
+      <CardHeader
+        badge={<MessageSquare size={15} />}
+        title={segmentLabel ? `Discussion · ${segmentLabel}` : 'Discussion'}
+        tone="slate"
+      >
+        <button type="button" className="study-v2__miniPill" onClick={onClose} title="Hide the discussion for this segment">Hide</button>
       </CardHeader>
       <div className="study-v2__cardBody study-v2__discussionBody">
         <div className="study-v2__contextBox">
@@ -3565,6 +3598,11 @@ function StudyDetachedSupportCard({
           className={`study-v2__supportCardHeader${draggable ? ' is-draggable' : ''}`}
           onPointerDown={draggable ? onDragStart : undefined}
         >
+          {draggable ? (
+            <span className="study-v2__dragGrip" aria-hidden="true" title="Drag to move">
+              <GripVertical size={14} strokeWidth={1.8} />
+            </span>
+          ) : null}
           <span className="study-v2__supportIcon">{card.icon}</span>
           <h3 className="study-v2__supportTitle">{card.title}</h3>
           {preview && onExpand ? (
@@ -3605,13 +3643,17 @@ function StudyDetachedSupportCard({
               icon={<Maximize2 strokeWidth={1.8} />}
             />
           ) : null}
+          {/* DOCK, not close. Floating had exactly one exit, labelled "Close"
+              with an X, so returning a module to the rail looked like dismissing
+              it — and there was no control at all that said "put this back".
+              The action was always a dock; only its name and icon disagreed. */}
           {!preview && onClose ? (
             <IconActionButton
               size="utility-sm"
-              label={`Close ${card.title}`}
-              title={`Close ${card.title}`}
+              label={`Return ${card.title} to the support panel`}
+              title={`Return ${card.title} to the support panel`}
               onClick={onClose}
-              icon={<X strokeWidth={1.8} />}
+              icon={<PanelRightClose strokeWidth={1.8} />}
             />
           ) : null}
         </div>

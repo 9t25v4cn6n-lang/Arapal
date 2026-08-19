@@ -586,7 +586,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
               onAddManualNote={addManualNote}
             />
             <StudySubmissionNavigator onJumpTo={jumpToStudyAnchor} notesAvailable={currentManualNotes.length > 0} />
-            {discussionVisible ? <StudyDiscussionCompanion onClose={closeDiscussion} /> : null}
+            {discussionVisible ? <StudyDiscussionCompanion onClose={closeDiscussion} segmentLabel={currentSegment?.label} /> : null}
           </div>
         ) : (
           <div
@@ -631,7 +631,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
               />
             </div>
             <div className="study-v2__composerCompanion">
-              {discussionVisible ? <StudyDiscussionCompanion onClose={closeDiscussion} /> : null}
+              {discussionVisible ? <StudyDiscussionCompanion onClose={closeDiscussion} segmentLabel={currentSegment?.label} /> : null}
             </div>
           </div>
         )}
