@@ -324,6 +324,12 @@ const studyCss = `
     flex-direction: column;
     gap: var(--study-space-8);
     align-items: stretch;
+    /* The 240px cap on each tile stops three modules becoming three 300px slabs
+       on a tall frame — but it left whatever it saved piled at the BOTTOM, so a
+       deliberate cap read as a dead region under the last tile. Centring gives
+       the leftover back as symmetric margin: the group still occupies the rail,
+       and the slack is composition rather than remainder. */
+    justify-content: center;
   }
 
   .study-v2__collapsedSupportLabel {
@@ -2278,14 +2284,22 @@ const toneMap = {
     badgeText: '#7e22ce',
     glow: 'rgba(147, 51, 234, 0.08)',
   },
-  orange: {
+  /* Phrasing's own identity.
+     It used to be `orange`, whose values were within a rounding error of
+     `review` below — same border, same badge background, same badge text. So the
+     product had one amber saying two opposite things: "this needs your
+     attention" on a failed Surface check and a Needs-revision badge, and "this
+     is the Phrasing module" on an ordinary support card. A reader cannot hold
+     both meanings for one colour, so amber now means exactly one thing —
+     corrective — and the identity modules are blue, purple and teal. */
+  teal: {
     surface: '#ffffff',
-    bg: 'rgba(255, 249, 240, 0.96)',
-    border: 'rgba(254, 215, 170, 0.82)',
-    icon: '#f97316',
-    badgeBg: '#ffedd5',
-    badgeText: '#ea580c',
-    glow: 'rgba(249, 115, 22, 0.08)',
+    bg: 'rgba(240, 253, 250, 0.94)',
+    border: 'rgba(153, 231, 220, 0.82)',
+    icon: '#0d9488',
+    badgeBg: '#ccfbf1',
+    badgeText: '#0f766e',
+    glow: 'rgba(13, 148, 136, 0.08)',
   },
   success: {
     surface: '#ffffff',
@@ -2307,14 +2321,18 @@ const toneMap = {
   },
 }
 
+/** The resting presentation: everything docked in the rail. */
+const DOCKED_PRESENTATION = { mode: 'docked' }
+
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value))
 }
 
+/** The resting geometry of a newly floated module. */
 function createFloatingCardState(cardId) {
   if (typeof window === 'undefined') {
     return {
-      id: cardId,
+      cardId,
       left: 24,
       top: 96,
     }
@@ -2326,7 +2344,7 @@ function createFloatingCardState(cardId) {
   const defaultTop = Math.round(window.innerHeight * 0.18)
 
   return {
-    id: cardId,
+    cardId,
     left: clamp(defaultLeft, inset, Math.max(inset, window.innerWidth - cardWidth - inset)),
     top: clamp(defaultTop, inset, Math.max(inset, window.innerHeight - 420)),
   }
@@ -2978,8 +2996,8 @@ export function StudyTranslationEditor({
 
 export function StudyDiscussionCompanion({ onClose }) {
   return (
-    <StudyPanel className="study-v2__discussion" tone="review" debugItem="study_discussion_companion">
-      <CardHeader badge={<MessageSquare size={15} />} title="Study Companion" tone="review">
+    <StudyPanel className="study-v2__discussion" tone="slate" debugItem="study_discussion_companion">
+      <CardHeader badge={<MessageSquare size={15} />} title="Study Companion" tone="slate">
         <button type="button" className="study-v2__miniPill" onClick={onClose} title="Close study companion">Close</button>
       </CardHeader>
       <div className="study-v2__cardBody study-v2__discussionBody">
@@ -3054,8 +3072,8 @@ export function StudySubmittedStack({ bestTranslation, userTranslation, onDiscus
           <p className="study-v2__bodyText">{userTranslation}</p>
         </div>
       </StudyPanel>
-      <StudyPanel tone="review" className="study-v2__resultPanel study-v2__notesPanel" anchor="notes">
-        <CardHeader badge={<ScrollText size={15} />} title="Discussion Summary & Notes" tone="review">
+      <StudyPanel tone="slate" className="study-v2__resultPanel study-v2__notesPanel" anchor="notes">
+        <CardHeader badge={<ScrollText size={15} />} title="Discussion Summary & Notes" tone="slate">
           <button type="button" className="study-v2__miniPill" onClick={() => setIsAddingNote(true)} title="Add a manual note">
             <Plus size={14} />
             Add manual note
@@ -3192,9 +3210,23 @@ export function StudySubmissionNavigator({ onJumpTo, notesAvailable = false }) {
 }
 
 export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
-  const [expandedCardId, setExpandedCardId] = useState(null)
-  const [fullscreenCardId, setFullscreenCardId] = useState(null)
-  const [floatingCardState, setFloatingCardState] = useState(null)
+  // ONE presentation, not four booleans kept in step by hand.
+  //
+  // A module is docked, expanded over the panel, fullscreen, or floating — and
+  // it is exactly one of those at a time. That was already true of the product
+  // but not of the code: four independent slots each had to remember to null the
+  // other three, in four separate functions, and every new entry point was
+  // another place to forget. Making the modes one discriminated value means the
+  // exclusivity is structural rather than remembered.
+  //
+  //   { mode: 'docked' }
+  //   { mode: 'expanded',   cardId }
+  //   { mode: 'fullscreen', cardId }
+  //   { mode: 'floating',   cardId, left, top }
+  const [presentation, setPresentation] = useState(DOCKED_PRESENTATION)
+  // Preview is not a presentation. It is a transient hover affordance on the
+  // collapsed rail, so it lives outside the mode and is only ever consulted
+  // while the rail is collapsed and nothing else is open.
   const [previewCardId, setPreviewCardId] = useState(null)
   const [previewTop, setPreviewTop] = useState(null)
   const previewCloseTimerRef = useRef(null)
@@ -3210,18 +3242,22 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
     : isFailed
       ? [
           { id: 'grade', title: 'Surface check', tone: 'review', icon: <Award size={18} />, body: <GradeBody failed /> },
-          { id: 'fix', title: 'Fix Steps', tone: 'orange', icon: <Sparkles size={18} />, body: <FixStepsBody /> },
+          { id: 'fix', title: 'Fix Steps', tone: 'review', icon: <Sparkles size={18} />, body: <FixStepsBody /> },
           { id: 'lexicography', title: 'Lexicography', tone: 'purple', icon: <BookOpen size={18} />, body: <LexicographyBody /> },
         ]
       : [
           { id: 'guidance', title: 'Guidance', tone: 'blue', icon: <Info size={18} />, body: <GuidanceBody /> },
           { id: 'lexicography', title: 'Lexicography', tone: 'purple', icon: <BookOpen size={18} />, body: <LexicographyBody /> },
-          { id: 'phrasing', title: 'Phrasing', tone: 'orange', icon: <ScrollText size={18} />, body: <PhrasingBody /> },
+          { id: 'phrasing', title: 'Phrasing', tone: 'teal', icon: <ScrollText size={18} />, body: <PhrasingBody /> },
       ]
 
-  const expandedCard = cards.find((card) => card.id === expandedCardId) ?? null
-  const fullscreenCard = cards.find((card) => card.id === fullscreenCardId) ?? null
-  const floatingCard = cards.find((card) => card.id === floatingCardState?.id) ?? null
+  const cardInMode = (mode) => (
+    presentation.mode === mode ? cards.find((card) => card.id === presentation.cardId) ?? null : null
+  )
+  const expandedCard = cardInMode('expanded')
+  const fullscreenCard = cardInMode('fullscreen')
+  const floatingCard = cardInMode('floating')
+  const floatingCardState = presentation.mode === 'floating' ? presentation : null
   const previewCard = cards.find((card) => card.id === previewCardId) ?? null
 
   useEffect(() => {
@@ -3255,30 +3291,28 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
     }, 90)
   }
 
-  const openExpandedCard = (cardId) => {
-    setExpandedCardId(cardId)
-    setFullscreenCardId(null)
-    setFloatingCardState(null)
-  }
-
-  const openFullscreenCard = (cardId) => {
-    setFullscreenCardId(cardId)
-    setExpandedCardId(null)
-    setFloatingCardState(null)
+  // Every transition goes through here, so a new entry point cannot introduce a
+  // state nobody thought about.
+  const present = (next) => {
+    if (next.mode !== 'floating') {
+      floatingDragCleanupRef.current?.()
+    }
+    setPresentation(next)
     setPreviewCardId(null)
   }
 
+  const openExpandedCard = (cardId) => present({ mode: 'expanded', cardId })
+  const openFullscreenCard = (cardId) => present({ mode: 'fullscreen', cardId })
   const openFloatingCard = (cardId) => {
-    setFloatingCardState((current) => (current?.id === cardId ? current : createFloatingCardState(cardId)))
-    setExpandedCardId(null)
-    setFullscreenCardId(null)
+    setPresentation((current) => (
+      current.mode === 'floating' && current.cardId === cardId
+        ? current
+        : { mode: 'floating', ...createFloatingCardState(cardId) }
+    ))
     setPreviewCardId(null)
   }
-
-  const closeFloatingCard = () => {
-    floatingDragCleanupRef.current?.()
-    setFloatingCardState(null)
-  }
+  const dockCard = () => present(DOCKED_PRESENTATION)
+  const closeFloatingCard = dockCard
 
   const startFloatingDrag = (event) => {
     if (event.button !== 0 || !floatingCardState) {
@@ -3304,8 +3338,8 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
     const viewportInset = 16
 
     const handlePointerMove = (moveEvent) => {
-      setFloatingCardState((current) => {
-        if (!current) {
+      setPresentation((current) => {
+        if (current.mode !== 'floating') {
           return current
         }
 
@@ -3340,7 +3374,6 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
 
   const expandFromCollapsedPreview = (cardId) => {
     openExpandedCard(cardId)
-    setPreviewCardId(null)
     onToggleCollapsed?.()
   }
   const openFullscreenFromCollapsedPreview = (cardId) => openFullscreenCard(cardId)
@@ -3405,7 +3438,7 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
             onFullscreen={() => openFullscreenCard(floatingCard.id)}
           />
         ) : null}
-        {fullscreenCard ? <StudyFullscreenSupportCard card={fullscreenCard} onClose={() => setFullscreenCardId(null)} /> : null}
+        {fullscreenCard ? <StudyFullscreenSupportCard card={fullscreenCard} onClose={dockCard} /> : null}
       </aside>
     )
   }
@@ -3436,7 +3469,7 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
               size="utility-sm"
               label={`Open ${expandedCard.title} fullscreen`}
               title={`Open ${expandedCard.title} fullscreen`}
-              onClick={() => setFullscreenCardId(expandedCard.id)}
+              onClick={() => openFullscreenCard(expandedCard.id)}
               icon={<Maximize2 strokeWidth={1.8} />}
             />
             <IconActionButton
@@ -3444,7 +3477,7 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
               size="utility-sm"
               label={`Close ${expandedCard.title}`}
               title={`Close ${expandedCard.title}`}
-              onClick={() => setExpandedCardId(null)}
+              onClick={dockCard}
               icon={<X strokeWidth={1.8} />}
             />
           </div>
@@ -3465,7 +3498,7 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state }) {
           onFullscreen={() => openFullscreenCard(floatingCard.id)}
         />
       ) : null}
-      {fullscreenCard ? <StudyFullscreenSupportCard card={fullscreenCard} onClose={() => setFullscreenCardId(null)} /> : null}
+      {fullscreenCard ? <StudyFullscreenSupportCard card={fullscreenCard} onClose={dockCard} /> : null}
     </aside>
   )
 }
