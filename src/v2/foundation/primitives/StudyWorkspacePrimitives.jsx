@@ -202,9 +202,7 @@ const studyCss = `
      intrinsic widths and spill out of it, which is how the support rail's header
      and body escaped the frame. Six findings that read as separate escapes were
      one missing declaration. */
-  @media (max-width: 560px) {
-    .study-v2__railPanel { display: none; }
-  }
+
 
   .study-v2__supportPanel {
     border-right: 0;
@@ -2297,6 +2295,44 @@ const studyCss = `
   @media (max-width: 1280px) {
     .study-v2__shellProgressLabelText {
       display: none;
+    }
+  }
+
+  /* MOBILE OVERRIDES LAST.
+     These lived near the top of the sheet and lost to the base rules below them
+     — a media query adds no specificity, so ordering is the whole mechanism.
+     A display:none on the progress readout simply did not apply, and the header
+     kept every element it could not fit. Overrides belong at the end. */
+  @media (max-width: 560px) {
+    .study-v2__railPanel { display: none; }
+
+    /* The header lane holds identity, a segment title, a project name, a
+       progress readout and Focus view. In 390px it cannot, and it did not: the
+       project text overlapped the title twice over and both the lane and Focus
+       view escaped the frame.
+
+       What survives is what only the header can say — which segment you are on.
+       The project name is on Project Home and Projects; the progress readout is
+       already in the bottom bar two feet below; Focus view keeps its glyph and
+       its accessible name. Deliberate subtraction, not shrinking everything
+       until it all fails together. */
+    .study-v2__shellProjectText,
+    .study-v2__shellTitleDivider,
+    .study-v2__shellProgress,
+    .study-v2__shellFocusButtonText {
+      display: none;
+    }
+
+    .study-v2__shellFocusButton {
+      min-width: calc(var(--study-space-40) + var(--study-space-4));
+      padding-inline: var(--study-space-12);
+    }
+
+    .study-v2__shellTitleText {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 `

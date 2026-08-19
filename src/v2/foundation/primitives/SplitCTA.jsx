@@ -171,10 +171,16 @@ export default function SplitCTA({
       style={{
         position: 'relative',
         display: 'inline-grid',
-        gridTemplateColumns: `minmax(${minWidth}px, auto) ${splitCtaMetrics.tailWidth}px`,
+        // The lead track asks for `minWidth` but must be allowed to give it back.
+        // At 390 the cluster resolved to 412px — a 340px lead plus a 72px tail —
+        // with `width: max-content` and no ceiling, so the action ran 66px past
+        // the frame and took the meta row above it along. A minimum is a
+        // preference, not a promise the viewport has to keep.
+        gridTemplateColumns: `minmax(0, ${minWidth}px) ${splitCtaMetrics.tailWidth}px`,
         alignItems: 'stretch',
         justifyContent: 'center',
         width: 'max-content',
+        maxWidth: '100%',
         height,
         isolation: 'isolate',
         zIndex: 3,

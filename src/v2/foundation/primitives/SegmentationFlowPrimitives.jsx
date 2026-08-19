@@ -430,17 +430,47 @@ function FlowPage({ children, centered = false, padded = true }) {
   )
 }
 
+/**
+ * The flow's display type, stepped down at mobile.
+ *
+ * These roles are written inline, so a media query cannot reach them — which is
+ * why "Paste your source text." rendered at its full desktop size in a 390px
+ * frame and broke to one word per line, four lines tall, above a source editor
+ * squeezed to a strip. The flow's stylesheet had no breakpoint at all.
+ *
+ * Width is an input here rather than a competing declaration, the same way
+ * `useIsMobileViewport` is used everywhere else this file computes layout.
+ */
 function FlowTitle({ children, ceremonial = false, style = {} }) {
+  const isMobile = useIsMobileViewport()
+  const role = ceremonial ? flowType.ceremonialTitle : flowType.pageTitle
+
   return (
-    <h1 data-debug-item="flow_title" style={{ ...(ceremonial ? flowType.ceremonialTitle : flowType.pageTitle), ...style }}>
+    <h1
+      data-debug-item="flow_title"
+      style={{
+        ...role,
+        ...(isMobile ? { fontSize: typography.pageTitle.fontSize, lineHeight: 1.15 } : null),
+        ...style,
+      }}
+    >
       {children}
     </h1>
   )
 }
 
 function FlowLead({ children, style = {} }) {
+  const isMobile = useIsMobileViewport()
+
   return (
-    <p data-debug-item="flow_lead" style={{ ...flowType.lead, ...style }}>
+    <p
+      data-debug-item="flow_lead"
+      style={{
+        ...flowType.lead,
+        ...(isMobile ? { fontSize: typography.bodyText.fontSize, lineHeight: 1.5 } : null),
+        ...style,
+      }}
+    >
       {children}
     </p>
   )
