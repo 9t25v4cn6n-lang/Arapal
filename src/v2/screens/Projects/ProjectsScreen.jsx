@@ -8,7 +8,6 @@ import {
   FolderOpen,
   History,
   ListChecks,
-  Loader2,
   PanelRightClose,
   PanelRightOpen,
   Search,
@@ -21,9 +20,9 @@ import { colors, elevation, motion, radius, spacing, typography } from '../../fo
 import { compactControl } from '../../foundation/tokens/compactControl'
 import layoutContract from './ProjectsScreen.contract'
 import ArapalCompanion from './ArapalCompanion.jsx'
-import { fetchLessons, fetchStudyHistory } from './studyDashboardData'
-import { prefetchServerQuery, useServerQuery } from './useServerQuery'
+import { useLiveLessons, useLiveStudyHistory } from './liveProjectsData'
 import { useVirtualRows } from './useVirtualRows'
+import { actions, navigation, select } from '../../data'
 
 const AdvancedOptionsPanel = lazy(() => import('./AdvancedOptionsPanel.jsx'))
 
@@ -1129,36 +1128,38 @@ function VirtualizedHistoryTable({ rows, onToggleSaved }) {
 
 function StudyHistoryPanelContainer({ lesson }) {
   const [isOpen, setIsOpen] = useState(false)
-  const historyQueryKey = useMemo(() => ['study-history', lesson.id], [lesson.id])
-  const historyQueryFn = useCallback(() => fetchStudyHistory(lesson.id), [lesson.id])
+  // Real activity from the store — one row per submitted/attempted segment.
+  // Local reads are synchronous, so there is no loading or error state to model
+  // and no fabricated backlog: an empty history is a genuine "not studied yet".
+  const liveRows = useLiveStudyHistory(lesson.id)
 
-  const prefetchHistory = useCallback(() => {
-    prefetchServerQuery(historyQueryKey, historyQueryFn).catch(() => {})
-  }, [historyQueryFn, historyQueryKey])
+  // Bookmarking is session-scoped highlight state, not durable storage; the
+  // store does not persist it, so nothing here claims it was saved to the
+  // project. Reset on reload is the honest behaviour for an ephemeral flag.
+  const [savedIds, setSavedIds] = useState(() => new Set())
+  const rows = useMemo(
+    () => liveRows.map((row) => (savedIds.has(row.id) ? { ...row, saved: true } : row)),
+    [liveRows, savedIds])
 
-  const historyQuery = useServerQuery({ queryKey: historyQueryKey, queryFn: historyQueryFn, enabled: isOpen })
-  const rows = historyQuery.data ?? []
-  const completedCount = rows.filter((row) => row.kind === 'completed-segment').length
+  const completedCount = rows.filter((row) => row.status === 'done').length
   const savedCount = rows.filter((row) => row.saved).length
   const reviewCount = rows.filter((row) => row.status === 'needs-review').length
 
   const toggleSaved = useCallback((rowId) => {
-    historyQuery.updateData((currentRows = []) => currentRows.map((row) => (
-      row.id === rowId ? { ...row, saved: !row.saved } : row
-    )))
-  }, [historyQuery])
+    setSavedIds((current) => {
+      const next = new Set(current)
+      if (next.has(rowId)) next.delete(rowId)
+      else next.add(rowId)
+      return next
+    })
+  }, [])
 
   return (
     <aside className="study-dashboard study-dashboard__historyRail" data-debug-item="study_history_panel_container">
       <button
         type="button"
         className="study-dashboard__historyRailButton"
-        onPointerEnter={prefetchHistory}
-        onFocus={prefetchHistory}
-        onClick={() => {
-          prefetchHistory()
-          setIsOpen(true)
-        }}
+        onClick={() => setIsOpen(true)}
         aria-expanded={isOpen}
       >
         <History size={18} strokeWidth={2} />
@@ -1188,12 +1189,12 @@ function StudyHistoryPanelContainer({ lesson }) {
         </div>
 
         <div className="study-dashboard__historyBody">
-          {historyQuery.status === 'loading' ? (
-            <div className="study-dashboard__historyState"><Loader2 size={22} strokeWidth={2} />Loading study history...</div>
-          ) : historyQuery.status === 'error' ? (
-            <div className="study-dashboard__historyState">History could not load. The dashboard remains usable; try opening this panel again.</div>
-          ) : (
+          {rows.length ? (
             <VirtualizedHistoryTable rows={rows} onToggleSaved={toggleSaved} />
+          ) : (
+            <div className="study-dashboard__historyState">
+              No study activity yet. Submitted and attempted segments appear here as you work through this project.
+            </div>
           )}
         </div>
       </section>
@@ -1201,49 +1202,59 @@ function StudyHistoryPanelContainer({ lesson }) {
   )
 }
 
-function LoadingDashboard() {
-  return (
-    <section className="study-dashboard study-dashboard__loadingCard" data-debug-item="study_dashboard_loading">
-      <Loader2 size={24} strokeWidth={2} style={{ color: colors.accentStrong }} />
-      <div>
-        <p className="study-dashboard__eyebrow">Study dashboard</p>
-        <p className="study-dashboard__supportText">Finding the next useful study action.</p>
-      </div>
-    </section>
-  )
-}
-
 export default function ProjectsScreen({ route, shell }) {
-  const lessonsQueryKey = useMemo(() => ['lessons'], [])
-  const lessonsQueryFn = useCallback(() => fetchLessons(), [])
-  const lessonsQuery = useServerQuery({ queryKey: lessonsQueryKey, queryFn: lessonsQueryFn, enabled: true })
-
-  const lessons = lessonsQuery.data ?? []
+  const lessons = useLiveLessons()
   const [selectedLessonId, setSelectedLessonId] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   const selectedLesson = lessons.find((lesson) => lesson.id === selectedLessonId) ?? lessons[0] ?? null
 
+  // Selecting a project in the library IS choosing the current project, so the
+  // store follows the rail — otherwise Study/Research/Exams would open whatever
+  // was current before, not what the user just picked here.
+  const handleSelectLesson = useCallback((id) => {
+    setSelectedLessonId(id)
+    actions.selectProject(id)
+  }, [])
+
+  // Resume routes through the canonical handoff: select the project, then hand
+  // Study the exact segment to open. A bare navigate (the previous behaviour)
+  // dropped the identity and let Study fall back to segment 1.
   const handleResume = useCallback(() => {
-    if (selectedLesson) shell.navigate(selectedLesson.primaryRoute)
+    if (!selectedLesson) return
+    actions.selectProject(selectedLesson.id)
+    if (selectedLesson.status === 'ready') {
+      const next = select.getProjectProgress(selectedLesson.id).nextSegment
+      if (next) {
+        navigation.resumeProject({ projectId: selectedLesson.id, segmentId: next.id, segmentRef: next.ref })
+        return
+      }
+      shell.navigate('studyWorkspace')
+      return
+    }
+    shell.navigate(selectedLesson.primaryRoute)
   }, [selectedLesson, shell])
-  const handleBrowse = useCallback(() => shell.navigate('projectResearch'), [shell])
+
+  const handleBrowse = useCallback(() => {
+    if (selectedLesson) actions.selectProject(selectedLesson.id)
+    shell.navigate('projectResearch')
+  }, [selectedLesson, shell])
 
   const screenSlots = {
     Layer4_Projects_Hero: <DashboardHero />,
-    Layer4_Projects_Summary: <DashboardSummary lessons={lessons} />,
+    Layer4_Projects_Summary: lessons.length ? <DashboardSummary lessons={lessons} /> : null,
     Layer4_Projects_LessonRail: lessons.length ? (
       <LessonRail
         lessons={lessons}
         selectedLessonId={selectedLesson?.id}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        onSelectLesson={setSelectedLessonId}
+        onSelectLesson={handleSelectLesson}
       />
     ) : null,
     Layer4_Projects_DetailStage: selectedLesson ? (
       <DetailStage lesson={selectedLesson} onResume={handleResume} onBrowse={handleBrowse} />
     ) : (
-      <LoadingDashboard />
+      <EmptyLibrary onAddSource={() => shell.navigate('segmentationPasteNext')} onGoHome={() => shell.navigate('projectHome')} />
     ),
     Layer4_Projects_History: selectedLesson ? <StudyHistoryPanelContainer key={selectedLesson.id} lesson={selectedLesson} /> : null,
   }
@@ -1253,5 +1264,29 @@ export default function ProjectsScreen({ route, shell }) {
       <style>{dashboardStyles}</style>
       <V2ScreenFrame contract={layoutContract} route={route} shell={shell} screenSlots={screenSlots} />
     </>
+  )
+}
+
+/**
+ * A genuinely empty library. The previous build had no such state: with no data
+ * the detail stage showed a perpetual "Finding the next useful study action"
+ * loader. An empty library is a real, common first-run condition and should say
+ * so, with the one action that resolves it.
+ */
+function EmptyLibrary({ onAddSource, onGoHome }) {
+  return (
+    <section className="study-dashboard study-dashboard__loadingCard" data-debug-item="study_dashboard_empty">
+      <FolderOpen size={24} strokeWidth={2} style={{ color: colors.accentStrong }} />
+      <div style={{ display: 'grid', gap: spacing[8] }}>
+        <p className="study-dashboard__eyebrow">No projects yet</p>
+        <p className="study-dashboard__supportText" style={{ maxWidth: '46ch' }}>
+          Add a source to create your first project, or return to Project Home to explore a labelled sample.
+        </p>
+        <div style={{ display: 'flex', gap: spacing[12], flexWrap: 'wrap', marginTop: spacing[8] }}>
+          <PrimaryCTA onClick={onAddSource} minWidth={180}>Add a source</PrimaryCTA>
+          <button type="button" className="study-dashboard__historyButton" onClick={onGoHome}>Project Home</button>
+        </div>
+      </div>
+    </section>
   )
 }
