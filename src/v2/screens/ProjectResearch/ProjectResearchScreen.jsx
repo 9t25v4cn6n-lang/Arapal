@@ -24,10 +24,10 @@ import {
   getFilterCount,
   getResearchStats,
   getRevisionQueue,
-  projectSummary,
   quickRefinements,
-  researchSegments,
 } from './projectResearchData'
+import { useLiveResearch } from './liveResearchData'
+import { navigation, select } from '../../data'
 
 const researchFilters = [
   { id: 'all', label: 'All knowledge', shortLabel: 'All', icon: Layers3 },
@@ -41,7 +41,7 @@ const researchFilters = [
 
 const companionCitations = ['1.3', '2.3']
 
-function ProjectResearchHeader({ stats, onOpenStudy }) {
+function ProjectResearchHeader({ stats, projectSummary, onOpenStudy }) {
   const metrics = [
     { value: stats.totalSegments, label: 'segments' },
     { value: stats.vocabularyNotes, label: 'vocab notes' },
@@ -144,15 +144,19 @@ export default function ProjectResearchScreen({ route, shell }) {
   const [selectedSegmentId, setSelectedSegmentId] = useState(null)
   const [rightMode, setRightMode] = useState('source')
 
-  const stats = useMemo(() => getResearchStats(researchSegments), [])
-  const revisionEntries = useMemo(() => getRevisionQueue(researchSegments), [])
+  // Live current-project research model, not the Al-Hidayah fixture. The pure
+  // stats/filter helpers below are unchanged; only their input is now real.
+  const { hasProject, projectSummary, segments: researchSegments } = useLiveResearch()
+
+  const stats = useMemo(() => getResearchStats(researchSegments), [researchSegments])
+  const revisionEntries = useMemo(() => getRevisionQueue(researchSegments), [researchSegments])
   const rows = useMemo(
     () => getFilteredSegments({ query, filterId: activeFilter, quickId: activeQuick }, researchSegments),
-    [activeFilter, activeQuick, query],
+    [activeFilter, activeQuick, query, researchSegments],
   )
   const selectedSegment = useMemo(
     () => researchSegments.find((segment) => segment.id === selectedSegmentId) ?? null,
-    [selectedSegmentId],
+    [selectedSegmentId, researchSegments],
   )
 
   const selectSegment = (segmentId) => {
@@ -160,7 +164,20 @@ export default function ProjectResearchScreen({ route, shell }) {
     setRightMode('source')
   }
 
+  // Open the selected segment in Study by its STABLE id, so remediation lands on
+  // the exact row the user was inspecting rather than falling back to segment 1
+  // (R-018). With no selection, this is a plain mode switch.
   const openStudyMode = () => {
+    if (selectedSegment?.segmentId) {
+      navigation.openSegmentInStudy({
+        projectId: select.getCurrentProject()?.id,
+        segmentId: selectedSegment.segmentId,
+        segmentRef: selectedSegment.id,
+        from: 'research',
+        title: selectedSegment.heading,
+      })
+      return
+    }
     shell.navigate('studyWorkspace')
   }
 
@@ -177,7 +194,7 @@ export default function ProjectResearchScreen({ route, shell }) {
 
   const screenSlots = {
     Layer3_ProjectResearch_Header: (
-      <ProjectResearchHeader stats={stats} onOpenStudy={openStudyMode} />
+      <ProjectResearchHeader stats={stats} projectSummary={projectSummary} onOpenStudy={openStudyMode} />
     ),
     Layer4_ProjectResearch_FilterRail: (
       <LensSpine

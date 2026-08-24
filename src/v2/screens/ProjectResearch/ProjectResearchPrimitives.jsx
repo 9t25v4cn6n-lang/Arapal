@@ -259,12 +259,16 @@ export function SegmentInspector({ segment, onSelectSegment, onOpenStudy, onClea
           </SegmentInspectorBlock>
 
           <SegmentInspectorBlock label="Best translation" tone="best">
-            <p>{segment.bestTranslation}</p>
+            {segment.bestTranslation
+              ? <p>{segment.bestTranslation}</p>
+              : <p className="project-research__quietText">Available after this segment is studied and graded.</p>}
           </SegmentInspectorBlock>
         </section>
 
         <SegmentInspectorBlock label="AI evaluation" tone="evaluation">
-          <p>{segment.evaluation}</p>
+          {segment.evaluation
+            ? <p>{segment.evaluation}</p>
+            : <p className="project-research__quietText">No evaluation yet. Submit a translation in Study to receive one.</p>}
         </SegmentInspectorBlock>
 
         <SegmentInspectorBlock label="Notes" tone="notes">
@@ -296,14 +300,18 @@ export function SegmentInspector({ segment, onSelectSegment, onOpenStudy, onClea
         </SegmentInspectorBlock>
 
         <SegmentInspectorBlock label="Related segments" tone="related">
-          <div className="project-research__relatedRow">
-            {segment.relatedIds.map((id) => (
-              <button key={id} type="button" onClick={() => onSelectSegment(id)}>
-                Segment {id}
-                <ExternalLink size={13} strokeWidth={2} />
-              </button>
-            ))}
-          </div>
+          {segment.relatedIds.length ? (
+            <div className="project-research__relatedRow">
+              {segment.relatedIds.map((id) => (
+                <button key={id} type="button" onClick={() => onSelectSegment(id)}>
+                  Segment {id}
+                  <ExternalLink size={13} strokeWidth={2} />
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p className="project-research__quietText">No related segments linked yet.</p>
+          )}
         </SegmentInspectorBlock>
       </div>
 
@@ -433,7 +441,7 @@ export function SourceReaderPanel({
                   : 'No segment selected'}
             </h2>
             {mode === 'source' && selectedSegment ? (
-              <p className="project-research__sourceMeta">{selectedSegment.chapter} · {selectedSegment.topic}</p>
+              <p className="project-research__sourceMeta">{[selectedSegment.chapter, selectedSegment.topic].filter(Boolean).join(' · ') || 'Segment'}</p>
             ) : (
               <p className="project-research__sourceMeta">Answers use saved project knowledge and cited segments.</p>
             )}
