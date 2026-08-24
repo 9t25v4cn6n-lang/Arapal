@@ -232,3 +232,18 @@ Do not close a finding from code changes or prose alone. Do not use a composite 
 |---|---|---|---|
 | R-002 | 2026-08-24 running product at 85764fa | Live in-app browser accessibility tree and button inspection | NOT_REPRODUCED; current accessible name is AI SEGMENT TEXT. |
 | R-003–R-009, R-011–R-013 | 2026-08-24 Stage 1 audit | Reconciliation table above | Prior audit/unknown rows were resolved as audit tasks or superseded by current root-cause entries; no product defect was falsely marked fixed. |
+
+---
+
+# Stage 2 convergence progress log
+
+Chronological record of implementation increments against the packages in §C.
+Each entry is a committed, evidence-backed step; findings close only when their
+whole package's acceptance evidence is met.
+
+| Date | Commit | Package | Change | Evidence |
+|---|---|---|---|---|
+| 2026-08-24 | `e9a1359` | Pre-Stage-2 | Clean checkpoint from the reorg tree: docs structure + AI prompts + ledger kept; eslint/gitignore repaired (archive noise → lint back to 21 genuine errors, not hidden); generated evidence excluded; 3 orphan duplicates removed; favicon restored. | build PASS, data tests 34/34, lint 21 genuine errors |
+| 2026-08-24 | `18fcc58` | IP-01 (1/3) | Projects now reads the live project model via a new `liveProjectsData` adapter into the existing `Lesson` shape; fabricated 1,800-row history and Jumu'ah/Purity/Fasting fixtures removed; resume routes through the canonical handoff; honest empty-library and honest zero counts. | build PASS; in-browser: labelled sample project with real 0/4 counts, **zero fixture strings**, empty store shows "No projects yet", no console errors |
+
+**IP-01 remaining:** Project Research and Exams still import fixtures; wire both to the live model, then run the full QA/behaviour regression and assert cross-screen isolation to close R-014.
