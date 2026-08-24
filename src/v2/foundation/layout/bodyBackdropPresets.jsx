@@ -1,4 +1,4 @@
-import BodyBackdropItems from './BodyBackdropItems'
+import BodyBackdropItems, { DualWordmarkBodyBackdropItems } from './BodyBackdropItems'
 
 function EmptyBackdrop() {
   return null
@@ -6,6 +6,7 @@ function EmptyBackdrop() {
 
 const bodyBackdropPresets = {
   default: BodyBackdropItems,
+  dualWordmark: DualWordmarkBodyBackdropItems,
   none: EmptyBackdrop,
 }
 

@@ -14,13 +14,13 @@ import {
   Search,
   SlidersHorizontal,
 } from 'lucide-react'
-import useIsMobileViewport from '../../foundation/primitives/useIsMobileViewport'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import UserText from '../../foundation/primitives/UserText'
 import PrimaryCTA from '../../foundation/primitives/PrimaryCTA'
 import { colors, elevation, motion, radius, spacing, typography } from '../../foundation/tokens'
 import { compactControl } from '../../foundation/tokens/compactControl'
 import layoutContract from './ProjectsScreen.contract'
+import ArapalCompanion from './ArapalCompanion.jsx'
 import { fetchLessons, fetchStudyHistory } from './studyDashboardData'
 import { prefetchServerQuery, useServerQuery } from './useServerQuery'
 import { useVirtualRows } from './useVirtualRows'
@@ -34,73 +34,149 @@ const dashboardStyles = `
   }
 
   .study-dashboard {
-    width: 100%;
     min-width: 0;
-    min-height: 100%;
     color: ${colors.textStrong};
-    font-family: ${typography.studyBody.fontFamily};
+    font-family: ${typography.bodyText.fontFamily};
   }
 
+  .study-dashboard__eyebrow,
+  .study-dashboard__metaLabel {
+    margin: 0;
+    font-family: ${typography.eyebrowLabel.fontFamily};
+    font-size: ${typography.eyebrowLabel.fontSize};
+    line-height: ${typography.eyebrowLabel.lineHeight};
+    font-weight: ${typography.eyebrowLabel.fontWeight};
+    letter-spacing: ${typography.eyebrowLabel.letterSpacing};
+    text-transform: ${typography.eyebrowLabel.textTransform};
+  }
+
+  .study-dashboard__eyebrow {
+    color: ${colors.accentStrong};
+  }
+
+  /* Hero mirrors the Figma composition: one editorial statement and one
+     companion. The illustration owns no layout outside this container. */
+  .study-dashboard__hero {
+    width: 100%;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(200px, 248px);
+    align-items: center;
+    gap: ${spacing[40]};
+  }
+
+  .study-dashboard__heroCopy {
+    min-width: 0;
+    display: grid;
+    align-content: center;
+    gap: ${spacing[8]};
+  }
+
+  .study-dashboard__heroTitle {
+    margin: 0;
+    font-family: ${typography.displayTitle.fontFamily};
+    font-size: ${typography.displayTitle.fontSize};
+    line-height: ${typography.displayTitle.lineHeight};
+    font-weight: ${typography.displayTitle.fontWeight};
+    letter-spacing: ${typography.displayTitle.letterSpacing};
+    color: ${colors.textStrong};
+  }
+
+  .study-dashboard__heroSupport {
+    max-width: 58ch;
+    margin: 0;
+    font-family: ${typography.supportSubtext.fontFamily};
+    font-size: ${typography.supportSubtext.fontSize};
+    line-height: ${typography.supportSubtext.lineHeight};
+    color: ${colors.textSoft};
+  }
+
+  .study-dashboard__companionFrame {
+    width: 100%;
+    max-width: 248px;
+    justify-self: center;
+    transform-origin: center bottom;
+    animation: arapal-companion-float 4.8s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  @keyframes arapal-companion-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(-0.8deg); }
+  }
+
+  .study-dashboard__summaryGrid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: ${spacing[12]};
+  }
+
+  .study-dashboard__summaryMetric {
+    min-height: 58px;
+    display: flex;
+    align-items: baseline;
+    gap: ${spacing[12]};
+    padding: ${spacing[12]} ${spacing[20]};
+    border: 1px solid ${colors.lineSoft};
+    border-radius: ${radius[16]};
+    background: ${colors.surfacePrimary};
+  }
+
+  .study-dashboard__summaryMetric strong {
+    flex: 0 0 auto;
+    font-family: ${typography.statValue.fontFamily};
+    font-size: ${typography.statValue.fontSize};
+    line-height: ${typography.statValue.lineHeight};
+    font-weight: ${typography.statValue.fontWeight};
+    color: ${colors.textStrong};
+  }
+
+  .study-dashboard__summaryMetric span {
+    min-width: 0;
+    font-family: ${typography.metaText.fontFamily};
+    font-size: ${typography.metaText.fontSize};
+    line-height: ${typography.metaText.lineHeight};
+    color: ${colors.textSoft};
+  }
+
+  /* Left rail is one owner, matching the reference instead of cross-linking
+     its rows to the detail column. This keeps content-driven height intact. */
   .study-dashboard__rail {
-    height: 100%;
-    min-height: 0;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     gap: ${spacing[20]};
   }
 
   .study-dashboard__railHeader {
+    min-width: 0;
     display: grid;
-    gap: ${spacing[12]};
-    padding-bottom: ${spacing[16]};
-    border-bottom: 1px solid ${colors.lineSoft};
+    gap: ${spacing[24]};
   }
 
-  .study-dashboard__eyebrow,
-  .study-dashboard__metaLabel,
-  .study-dashboard__smallLabel {
-    margin: 0;
-    font-family: ${typography.eyebrowLabel.fontFamily};
-    letter-spacing: ${typography.eyebrowLabel.letterSpacing};
-    text-transform: ${typography.eyebrowLabel.textTransform};
-    font-weight: ${typography.eyebrowLabel.fontWeight};
-  }
-
-  .study-dashboard__eyebrow {
-    font-size: ${typography.eyebrowLabel.fontSize};
-    line-height: ${typography.eyebrowLabel.lineHeight};
-    color: ${colors.accentBase};
+  .study-dashboard__railIntro {
+    display: grid;
+    gap: ${spacing[8]};
   }
 
   .study-dashboard__railTitle,
-  .study-dashboard__panelTitle,
-  .study-dashboard__sectionTitle {
+  .study-dashboard__panelTitle {
     margin: 0;
     font-family: ${typography.sectionTitle.fontFamily};
+    font-size: ${typography.sectionTitle.fontSize};
+    line-height: ${typography.sectionTitle.lineHeight};
     font-weight: ${typography.sectionTitle.fontWeight};
+    letter-spacing: ${typography.sectionTitle.letterSpacing};
     color: ${colors.textStrong};
   }
 
-  .study-dashboard__railTitle {
-    font-size: ${typography.sectionTitle.fontSize};
-    line-height: ${typography.sectionTitle.lineHeight};
-  }
-
-  .study-dashboard__supportText,
-  .study-dashboard__bodyText {
-    margin: 0;
-    font-family: ${typography.studySupportText.fontFamily};
-    color: ${colors.textSoft};
-  }
-
   .study-dashboard__supportText {
-    font-size: 13px;
-    line-height: 1.58;
-  }
-
-  .study-dashboard__bodyText {
+    margin: 0;
+    font-family: ${typography.supportSubtext.fontFamily};
     font-size: ${typography.supportSubtext.fontSize};
     line-height: ${typography.supportSubtext.lineHeight};
+    color: ${colors.textSoft};
   }
 
   .study-dashboard__search {
@@ -110,20 +186,20 @@ const dashboardStyles = `
     gap: ${spacing[12]};
     padding: 0 ${spacing[16]};
     border: 1px solid ${colors.lineSoft};
-    border-radius: ${radius[24]};
-    background: rgba(255, 255, 255, 0.82);
+    border-radius: ${radius[16]};
+    background: ${colors.surfacePrimary};
+    transition: border-color ${motion.micro}, box-shadow ${motion.micro};
+  }
+
+  .study-dashboard__search:focus-within {
+    border-color: ${colors.lineStrong};
+    box-shadow: 0 0 0 3px ${colors.accentWash};
   }
 
   .study-dashboard__search input {
     width: 100%;
     min-width: 0;
-    /* The whole 44px pill is the target, so the input has to BE the pill's
-       height rather than a 23px line sitting inside it. Its height used to come
-       from the inherited line-height, which meant the real hit area of the only
-       search field in the product was a function of the document's default font
-       size — it changed when that did. */
     align-self: stretch;
-    height: auto;
     border: 0;
     outline: 0;
     background: transparent;
@@ -132,171 +208,158 @@ const dashboardStyles = `
     font-size: ${typography.supportSubtext.fontSize};
   }
 
-  .study-dashboard__search input::placeholder {
-    color: ${colors.textSoft};
-  }
+  .study-dashboard__search input::placeholder { color: ${colors.textSoft}; }
 
   .study-dashboard__lessonList {
-    min-height: 0;
-    overflow: auto;
+    min-width: 0;
     display: grid;
     gap: ${spacing[12]};
-    padding-right: ${spacing[4]};
   }
 
   .study-dashboard__lessonButton {
     width: 100%;
+    min-width: 0;
     display: grid;
     gap: ${spacing[12]};
     padding: ${spacing[16]};
     border: 1px solid transparent;
-    border-radius: ${radius[24]};
-    background: rgba(255, 255, 255, 0.62);
+    border-radius: ${radius[16]};
+    background: rgba(255, 255, 255, 0.48);
     color: ${colors.textStrong};
     text-align: left;
     cursor: pointer;
-    transition:
-      border-color ${motion.panel},
-      box-shadow ${motion.panel},
-      background ${motion.panel},
-      transform ${motion.micro};
+    transition: border-color ${motion.micro}, box-shadow ${motion.panel}, background ${motion.micro}, transform ${motion.micro};
   }
 
-  .study-dashboard__lessonButton:hover,
-  .study-dashboard__lessonButton.is-active {
-    border-color: ${colors.lineStrong};
-    background: rgba(255, 255, 255, 0.96);
-    box-shadow: 0 18px 38px rgba(15, 23, 42, 0.08);
+  .study-dashboard__lessonButton:hover {
+    border-color: ${colors.lineSoft};
+    background: rgba(255, 255, 255, 0.82);
     transform: translateY(-1px);
   }
 
+  .study-dashboard__lessonButton.is-active {
+    border-color: ${colors.lineStrong};
+    background: ${colors.surfacePrimary};
+    box-shadow: ${elevation.rest};
+  }
+
+  .study-dashboard__lessonButton:focus-visible {
+    outline: 2px solid ${colors.accentSoft};
+    outline-offset: 2px;
+  }
+
   .study-dashboard__lessonTop {
+    min-width: 0;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: start;
     gap: ${spacing[12]};
   }
 
-  /* Layout only. The TYPE comes from UserText, because a lesson title is user
-     content and its script is not known here. */
+  .study-dashboard__lessonText { min-width: 0; }
+
   .study-dashboard__lessonName {
     display: block;
     margin: 0 0 ${spacing[4]};
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .study-dashboard__lessonSource,
   .study-dashboard__lessonMeta {
     display: block;
     margin: 0;
-    font-family: ${typography.studySupportText.fontFamily};
-    font-size: 12px;
-    line-height: 1.45;
+    font-family: ${typography.metaText.fontFamily};
+    font-size: ${typography.metaText.fontSize};
+    line-height: ${typography.metaText.lineHeight};
     color: ${colors.textSoft};
   }
 
+  .study-dashboard__lessonSource {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .study-dashboard__statusDot {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
+    margin-top: ${spacing[4]};
     border-radius: ${radius.pill};
-    margin-top: 4px;
     background: ${colors.success};
-    box-shadow: 0 0 0 6px rgba(22, 163, 74, 0.1);
   }
 
-  .study-dashboard__statusDot.is-setup {
-    background: ${colors.review};
-    box-shadow: 0 0 0 6px rgba(217, 119, 6, 0.11);
-  }
+  .study-dashboard__statusDot.is-setup { background: ${colors.review}; }
 
-  .study-dashboard__progressTrack {
+  .study-dashboard__progressTrack,
+  .study-dashboard__progressBar {
     height: 6px;
     overflow: hidden;
     border-radius: ${radius.pill};
     background: ${colors.accentMist};
   }
 
-  .study-dashboard__progressFill {
+  .study-dashboard__progressFill,
+  .study-dashboard__progressBar span {
     display: block;
     height: 100%;
     border-radius: inherit;
-    background: linear-gradient(90deg, ${colors.accentBase}, ${colors.accentStrong});
+    background: ${colors.accentBase};
   }
 
-  .study-dashboard__stage {
-    width: min(1120px, 100%);
-    min-height: 100%;
-    margin: 0 auto;
+  .study-dashboard__emptyResults {
+    margin: 0;
+    padding: ${spacing[20]} 0;
+    color: ${colors.textSoft};
+  }
+
+  /* Detail is one self-contained vertical stack. Spacing mirrors the Figma
+     hierarchy: title group -> 24px -> primary card -> 20px -> advanced. */
+  .study-dashboard__detailStage {
+    min-width: 0;
     display: grid;
-    grid-template-rows: auto minmax(0, auto) auto;
-    align-content: start;
     gap: ${spacing[20]};
   }
 
-  .study-dashboard__intro {
-    max-width: 760px;
+  .study-dashboard__primaryGroup {
+    min-width: 0;
     display: grid;
-    gap: ${spacing[12]};
-    padding-top: ${spacing[8]};
+    gap: ${spacing[24]};
   }
 
-  /* The detail pane's own heading, at the shared page-title role. It was a
-     clamp resolving to 58px at the canonical frame: larger than the display
-     size of any other screen in the product, for a line that said the same
-     thing on every lesson. */
+  .study-dashboard__intro {
+    min-width: 0;
+    display: grid;
+    gap: ${spacing[8]};
+  }
+
   .study-dashboard__title {
     margin: 0;
     color: ${colors.textStrong};
   }
 
-  .study-dashboard__lead {
-    max-width: 650px;
-    margin: 0;
-    font-family: ${typography.studyBody.fontFamily};
-    font-size: 15px;
-    line-height: 1.62;
-    color: ${colors.textSoft};
-  }
-
   .study-dashboard__resumeCard {
-    border: 1px solid ${colors.lineSoft};
-    border-radius: ${radius[32]};
-    background:
-      radial-gradient(circle at 82% 18%, rgba(37, 99, 235, 0.1), transparent 34%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 251, 255, 0.92));
-    box-shadow: ${elevation.rest};
     overflow: hidden;
+    border: 1px solid ${colors.lineSoft};
+    border-radius: ${radius[24]};
+    background: ${colors.surfacePrimary};
+    box-shadow: ${elevation.rest};
   }
 
-  /* After the base rule, because the base rule sets overflow: hidden and at equal
-     specificity the later declaration wins. I placed this above it first and it
-     did nothing — the same source-order mistake as the Study rail, made twice.
-
-     The card is a grid item with overflow: hidden, so once its row is sized it
-     cannot grow: at 390px it held 122px for 749px of in-flow content — the hero
-     and the footer, including the resume action the card exists to offer — and
-     hid 629px. Both children are static, so that is real content, not a
-     decorative layer bleeding past its box. The clip keeps the gradient inside
-     the rounded corners, which on a phone is worth less than the content. */
-  @media (max-width: 560px) {
-    .study-dashboard__resumeCard { overflow: visible; }
-  }
-
-  /* No min-height. It was 244px, chosen when the resume title rendered at 50px;
-     once the title moved to the shared card-title role the floor stopped being
-     a floor and became a void — 60px of empty card between the description and
-     the stat row. A card's height is its content plus its padding. */
   .study-dashboard__resumeHero {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
+    align-items: start;
     gap: ${spacing[32]};
-    padding: ${spacing[32]} ${spacing[32]} ${spacing[40]};
+    padding: ${spacing[28]} ${spacing[28]} ${spacing[32]};
+    background: radial-gradient(circle at 82% 18%, rgba(37, 99, 235, 0.08), transparent 34%);
   }
 
   .study-dashboard__resumeCopy {
+    min-width: 0;
     display: grid;
     gap: ${spacing[16]};
-    min-width: 0;
   }
 
   .study-dashboard__readyPill,
@@ -304,27 +367,30 @@ const dashboardStyles = `
     width: fit-content;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: ${spacing[8]};
     border-radius: ${radius.pill};
     font-family: ${typography.eyebrowLabel.fontFamily};
+    font-size: ${typography.eyebrowLabel.fontSize};
+    line-height: 1;
     font-weight: ${typography.eyebrowLabel.fontWeight};
     letter-spacing: ${typography.eyebrowLabel.letterSpacing};
-    text-transform: uppercase;
+    text-transform: ${typography.eyebrowLabel.textTransform};
+    white-space: nowrap;
   }
 
-  /* The compact-control sm step. It was a 36px pill — a height nothing else in
-     the product uses — carrying an 11px label with 900 weight. */
   .study-dashboard__readyPill {
     min-height: ${compactControl.sm.heightPx}px;
     padding: 0 ${compactControl.sm.paddingXPx}px;
-    background: ${colors.accentWash};
-    color: ${colors.accentStrong};
-    font-size: ${typography.eyebrowLabel.fontSize};
+    background: rgba(22, 163, 74, 0.10);
+    color: ${colors.successStrong};
   }
 
-  /* Subordinate to the pane title now that the pane has one. A 50px card title
-     under a 58px page title was two display sizes competing inside one column;
-     the card leads through its action and its accent, not through being large. */
+  .study-dashboard__readyPill.is-setup {
+    background: rgba(217, 119, 6, 0.10);
+    color: ${colors.reviewStrong};
+  }
+
   .study-dashboard__resumeTitle {
     margin: 0;
     font-family: ${typography.cardTitle.fontFamily};
@@ -336,8 +402,8 @@ const dashboardStyles = `
   }
 
   .study-dashboard__resumeDetail {
-    max-width: 640px;
-    margin: 0;
+    max-width: 48ch;
+    margin: ${spacing[8]} 0 0;
     font-family: ${typography.bodyText.fontFamily};
     font-size: ${typography.bodyText.fontSize};
     line-height: ${typography.bodyText.lineHeight};
@@ -345,6 +411,7 @@ const dashboardStyles = `
   }
 
   .study-dashboard__resumeAction {
+    min-width: 0;
     display: grid;
     justify-items: end;
     gap: ${spacing[12]};
@@ -353,29 +420,29 @@ const dashboardStyles = `
   .study-dashboard__secondaryButton,
   .study-dashboard__ghostButton,
   .study-dashboard__historyButton {
-    min-height: 44px;
+    min-height: 40px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: ${spacing[8]};
-    padding: 0 ${spacing[18]};
+    padding: 0 ${spacing[16]};
     border: 1px solid ${colors.lineSoft};
     border-radius: ${radius.pill};
-    background: rgba(255, 255, 255, 0.88);
+    background: ${colors.surfacePrimary};
     color: ${colors.textSoft};
     font-family: ${typography.controlLabel.fontFamily};
     font-size: ${typography.controlLabel.fontSize};
     line-height: ${typography.controlLabel.lineHeight};
     font-weight: ${typography.controlLabel.fontWeight};
-    /* A control's own label is an authored, finite string. "Show advanced" was
-       breaking onto two lines inside its own pill. */
     white-space: nowrap;
     cursor: pointer;
-    transition:
-      border-color ${motion.micro},
-      color ${motion.micro},
-      box-shadow ${motion.micro},
-      background ${motion.micro};
+  }
+
+  .study-dashboard__secondaryButton {
+    min-height: 32px;
+    padding-inline: ${spacing[8]};
+    border-color: transparent;
+    background: transparent;
   }
 
   .study-dashboard__secondaryButton:hover,
@@ -383,11 +450,8 @@ const dashboardStyles = `
   .study-dashboard__historyButton:hover {
     border-color: ${colors.lineStrong};
     color: ${colors.accentStrong};
-    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
   }
 
-  /* Three cells, not four. The fourth was "Lesson · <lesson title>" — the same
-     string the pane is now headed by, restated inside the card beneath it. */
   .study-dashboard__resumeFooter {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -395,71 +459,85 @@ const dashboardStyles = `
   }
 
   .study-dashboard__stat {
+    min-width: 0;
+    min-height: 96px;
     display: grid;
+    align-content: center;
     gap: ${spacing[8]};
     padding: ${spacing[20]};
     border-right: 1px solid ${colors.lineSoft};
-    background: rgba(255, 255, 255, 0.54);
+    background: rgba(255, 255, 255, 0.62);
   }
 
-  .study-dashboard__stat:last-child {
-    border-right: 0;
+  .study-dashboard__stat:last-child { border-right: 0; }
+
+  .study-dashboard__progressStat {
+    display: grid;
+    grid-template-columns: 54px minmax(0, 1fr);
+    align-items: center;
+    gap: ${spacing[16]};
   }
 
-  .study-dashboard__metaLabel {
-    font-size: ${typography.eyebrowLabel.fontSize};
-    line-height: 1.2;
-    color: ${colors.textSoft};
+  .study-dashboard__progressRing {
+    --progress: 0;
+    position: relative;
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    border-radius: ${radius.pill};
+    background: conic-gradient(${colors.accentBase} calc(var(--progress) * 1%), ${colors.accentMist} 0);
   }
+
+  .study-dashboard__progressRing::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border-radius: inherit;
+    background: ${colors.surfacePrimary};
+  }
+
+  .study-dashboard__progressRing span {
+    position: relative;
+    z-index: 1;
+    font-family: ${typography.metaText.fontFamily};
+    font-size: ${typography.metaText.fontSize};
+    font-weight: 700;
+    color: ${colors.textStrong};
+  }
+
+  .study-dashboard__metaLabel { color: ${colors.textSoft}; }
 
   .study-dashboard__statValue {
     margin: 0;
     font-family: ${typography.supportSubtext.fontFamily};
     font-size: ${typography.supportSubtext.fontSize};
-    line-height: 1.35;
+    line-height: 1.4;
     font-weight: 600;
     color: ${colors.textBody};
   }
 
-  .study-dashboard__progressBar {
-    height: 8px;
-    overflow: hidden;
-    border-radius: ${radius.pill};
-    background: ${colors.accentMist};
-  }
-
-  .study-dashboard__progressBar span {
-    display: block;
-    height: 100%;
-    border-radius: inherit;
-    background: linear-gradient(90deg, ${colors.accentBase}, ${colors.accentStrong});
-  }
-
   .study-dashboard__disclosureCard {
     display: grid;
-    gap: ${spacing[18]};
+    gap: ${spacing[16]};
     padding: ${spacing[24]};
     border: 1px solid ${colors.lineSoft};
     border-radius: ${radius[24]};
-    background: rgba(255, 255, 255, 0.78);
-    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.05);
+    background: rgba(255, 255, 255, 0.72);
   }
 
   .study-dashboard__disclosureHeader {
+    min-width: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: ${spacing[16]};
+    gap: ${spacing[20]};
   }
 
   .study-dashboard__disclosureCopy {
+    min-width: 0;
     display: grid;
     gap: ${spacing[4]};
-  }
-
-  .study-dashboard__panelTitle {
-    font-size: ${typography.supportSubtext.fontSize};
-    line-height: 1.3;
   }
 
   .study-dashboard__advancedFallback {
@@ -469,30 +547,20 @@ const dashboardStyles = `
     border: 1px dashed ${colors.lineSoft};
     border-radius: ${radius[16]};
     color: ${colors.textSoft};
-    font-family: ${typography.studySupportText.fontFamily};
-    font-size: 13px;
   }
 
+  /* History drawer behavior remains the clean Git behavior. */
   .study-dashboard__historyRail {
-    height: 100%;
-    min-height: 0;
+    width: 100%;
+    min-width: 0;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  /* The history rail is a vertical tab pinned to the right edge. At 390px there
-     is no edge to spare — it and its button pushed 36-50px outside the frame,
-     and being chrome there was no scrolling to it. The history it opens is
-     reachable from the dashboard itself, so on mobile the tab goes rather than
-     the capability. */
-  @media (max-width: 560px) {
-    .study-dashboard__historyRail { display: none; }
-  }
-
   .study-dashboard__historyRailButton {
-    width: 58px;
-    min-height: 240px;
+    width: 54px;
+    min-height: 220px;
     display: grid;
     place-items: center;
     gap: ${spacing[12]};
@@ -501,20 +569,15 @@ const dashboardStyles = `
     border-radius: ${radius[32]};
     background: rgba(255, 255, 255, 0.82);
     color: ${colors.textSoft};
-    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
     cursor: pointer;
-    transition:
-      border-color ${motion.micro},
-      color ${motion.micro},
-      box-shadow ${motion.micro},
-      transform ${motion.micro};
+    transition: border-color ${motion.micro}, color ${motion.micro}, box-shadow ${motion.panel}, transform ${motion.micro};
   }
 
   .study-dashboard__historyRailButton:hover,
   .study-dashboard__historyRailButton:focus-visible {
     border-color: ${colors.lineStrong};
     color: ${colors.accentStrong};
-    box-shadow: 0 20px 42px rgba(37, 99, 235, 0.13);
+    box-shadow: ${elevation.rest};
     transform: translateX(-2px);
     outline: none;
   }
@@ -523,10 +586,11 @@ const dashboardStyles = `
     writing-mode: vertical-rl;
     transform: rotate(180deg);
     font-family: ${typography.eyebrowLabel.fontFamily};
-    font-size: 11px;
+    font-size: ${typography.eyebrowLabel.fontSize};
+    line-height: 1;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    font-weight: 900;
+    font-weight: ${typography.eyebrowLabel.fontWeight};
   }
 
   .study-dashboard__historyPanel {
@@ -541,29 +605,13 @@ const dashboardStyles = `
     border: 1px solid ${colors.lineSoft};
     border-radius: ${radius[32]};
     background: rgba(255, 255, 255, 0.96);
-    box-shadow:
-      0 26px 70px rgba(15, 23, 42, 0.15),
-      0 0 0 1px rgba(255, 255, 255, 0.7) inset;
+    box-shadow: ${elevation.floating};
     backdrop-filter: blur(22px);
     transform: translateX(calc(100% + 32px));
     opacity: 0;
     pointer-events: none;
-    /* The closed drawer was invisible but still laid out, still in the tab order
-       and still in the accessibility tree — parked off-canvas by the transform.
-       Tabbing past "Study history" walked a keyboard user into a drawer they
-       could not see, with a Close button and a whole virtual list inside it. It
-       was also the largest single block of viewport-escape findings in the
-       product, 18 elements per frame, none of which were a layout fault.
-
-       visibility, not display: it transitions discretely — flipping to visible
-       at the start of the open and to hidden at the end of the close — so the
-       panel animates exactly as before while genuinely leaving the page when
-       shut. The inert attribute in the JSX states the same intent. */
     visibility: hidden;
-    transition:
-      transform ${motion.panel},
-      opacity ${motion.panel},
-      visibility ${motion.panel};
+    transition: transform ${motion.panel}, opacity ${motion.panel}, visibility ${motion.panel};
   }
 
   .study-dashboard__historyPanel.is-open {
@@ -574,6 +622,7 @@ const dashboardStyles = `
   }
 
   .study-dashboard__historyHeader {
+    min-width: 0;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
@@ -583,38 +632,35 @@ const dashboardStyles = `
   }
 
   .study-dashboard__historyHeading {
+    min-width: 0;
     display: flex;
     align-items: center;
     gap: ${spacing[12]};
-    min-width: 0;
   }
 
   .study-dashboard__historyIcon {
     width: 38px;
     height: 38px;
+    flex: 0 0 38px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border-radius: ${radius.pill};
     background: ${colors.accentWash};
     color: ${colors.accentStrong};
-    flex: 0 0 auto;
   }
 
   .study-dashboard__historyTitle {
     margin: 0;
-    font-family: ${typography.studySectionTitle.fontFamily};
-    font-size: 16px;
-    line-height: 1.25;
+    font-family: ${typography.sectionTitle.fontFamily};
+    font-size: ${typography.sectionTitle.fontSize};
+    line-height: ${typography.sectionTitle.lineHeight};
+    font-weight: ${typography.sectionTitle.fontWeight};
     color: ${colors.textStrong};
-    font-weight: 800;
   }
 
   .study-dashboard__historySubtitle {
-    margin: 2px 0 0;
-    font-family: ${typography.studySupportText.fontFamily};
-    font-size: 12px;
-    line-height: 1.4;
+    margin: ${spacing[4]} 0 0;
     color: ${colors.textSoft};
   }
 
@@ -622,7 +668,7 @@ const dashboardStyles = `
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: ${spacing[8]};
-    padding: ${spacing[14]} ${spacing[20]};
+    padding: ${spacing[16]} ${spacing[20]};
     border-bottom: 1px solid ${colors.lineSoft};
   }
 
@@ -636,19 +682,21 @@ const dashboardStyles = `
   }
 
   .study-dashboard__historyStat strong {
-    font-family: ${typography.studySectionTitle.fontFamily};
-    font-size: 18px;
+    font-family: ${typography.statValue.fontFamily};
+    font-size: ${typography.cardTitle.fontSize};
     line-height: 1;
+    font-weight: ${typography.statValue.fontWeight};
     color: ${colors.textStrong};
   }
 
   .study-dashboard__historyStat span {
     font-family: ${typography.eyebrowLabel.fontFamily};
-    font-size: 11px;
-    letter-spacing: 0.12em;
+    font-size: ${typography.eyebrowLabel.fontSize};
+    line-height: 1.1;
+    letter-spacing: ${typography.eyebrowLabel.letterSpacing};
     text-transform: uppercase;
     color: ${colors.textSoft};
-    font-weight: 900;
+    font-weight: ${typography.eyebrowLabel.fontWeight};
   }
 
   .study-dashboard__historyBody {
@@ -658,14 +706,16 @@ const dashboardStyles = `
 
   .study-dashboard__historyState {
     height: 100%;
+    min-height: 120px;
     display: grid;
     place-items: center;
+    gap: ${spacing[12]};
     padding: ${spacing[24]};
     text-align: center;
     color: ${colors.textSoft};
-    font-family: ${typography.studySupportText.fontFamily};
-    font-size: 13px;
-    line-height: 1.55;
+    font-family: ${typography.supportSubtext.fontFamily};
+    font-size: ${typography.supportSubtext.fontSize};
+    line-height: ${typography.supportSubtext.lineHeight};
   }
 
   .study-dashboard__virtualList {
@@ -676,10 +726,7 @@ const dashboardStyles = `
     position: relative;
   }
 
-  .study-dashboard__virtualCanvas {
-    position: relative;
-    min-width: 0;
-  }
+  .study-dashboard__virtualCanvas { position: relative; min-width: 0; }
 
   .study-dashboard__historyRow {
     position: absolute;
@@ -688,10 +735,10 @@ const dashboardStyles = `
     min-height: 72px;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    gap: ${spacing[10]};
+    gap: ${spacing[12]};
     align-items: center;
     margin: 0 ${spacing[4]};
-    padding: ${spacing[12]} ${spacing[12]};
+    padding: ${spacing[12]};
     border: 1px solid transparent;
     border-radius: ${radius[16]};
     background: rgba(248, 251, 255, 0.72);
@@ -702,80 +749,67 @@ const dashboardStyles = `
     background: rgba(255, 255, 255, 0.96);
   }
 
-  /* Layout and colour only; UserText owns the type. The size was also a
-     hand-set 12.5px, off the ramp. */
-  .study-dashboard__historyRowTitle {
-    display: block;
-    margin: 0 0 ${spacing[4]};
-    color: ${colors.textStrong};
-  }
-
-  .study-dashboard__historyRowCopy {
-    display: block;
-    margin: 0;
-    font-family: ${typography.studySupportText.fontFamily};
-    font-size: 11.5px;
-    line-height: 1.35;
-    color: ${colors.textSoft};
-  }
-
-  .study-dashboard__rowMeta {
-    display: grid;
-    justify-items: end;
-    gap: ${spacing[8]};
-  }
+  .study-dashboard__historyRowTitle { display: block; margin: 0 0 ${spacing[4]}; color: ${colors.textStrong}; }
+  .study-dashboard__historyRowCopy { display: block; margin: 0; color: ${colors.textSoft}; }
+  .study-dashboard__rowMeta { min-width: 72px; display: grid; justify-items: end; gap: ${spacing[8]}; }
 
   .study-dashboard__quietPill {
-    min-height: 26px;
-    padding: 0 ${spacing[10]};
+    min-height: ${compactControl.sm.heightPx}px;
+    padding: 0 ${compactControl.sm.paddingXPx}px;
     border: 1px solid ${colors.lineSoft};
-    background: rgba(255, 255, 255, 0.82);
+    background: ${colors.surfacePrimary};
     color: ${colors.textSoft};
-    font-size: 11px;
   }
 
   .study-dashboard__saveButton {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border: 1px solid ${colors.lineSoft};
     border-radius: ${radius.pill};
-    background: rgba(255, 255, 255, 0.82);
+    background: ${colors.surfacePrimary};
     color: ${colors.textFaint};
     cursor: pointer;
   }
 
-  .study-dashboard__saveButton.is-saved {
-    color: ${colors.accentStrong};
-    background: ${colors.accentWash};
+  .study-dashboard__saveButton.is-saved { color: ${colors.accentStrong}; background: ${colors.accentWash}; }
+
+  .study-dashboard__loadingCard {
+    min-height: 260px;
+    display: grid;
+    place-items: center;
+    gap: ${spacing[12]};
+    padding: ${spacing[32]};
+    border: 1px solid ${colors.lineSoft};
+    border-radius: ${radius[24]};
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: ${elevation.rest};
+    text-align: center;
   }
 
-  @media (max-width: 1080px) {
-    .study-dashboard__resumeHero,
-    .study-dashboard__resumeFooter {
-      grid-template-columns: 1fr;
-    }
+  @media (prefers-reduced-motion: reduce) {
+    .study-dashboard__companionFrame { animation: none; }
+  }
 
-    .study-dashboard__resumeAction {
-      justify-items: start;
-    }
+  @media (max-width: 1180px) {
+    .study-dashboard__resumeHero { grid-template-columns: 1fr; }
+    .study-dashboard__resumeAction { justify-items: start; }
   }
 
   @media (max-width: 760px) {
-    .study-dashboard__stage {
-      width: 100%;
-    }
+    .study-dashboard__hero { grid-template-columns: 1fr; gap: ${spacing[20]}; }
+    .study-dashboard__companionFrame { max-width: 180px; justify-self: start; }
+    .study-dashboard__summaryGrid { grid-template-columns: 1fr; }
+  }
 
-    .study-dashboard__title {
-      font-size: 38px;
-    }
-
-    .study-dashboard__resumeHero {
-      padding: ${spacing[24]};
-    }
-
+  @media (max-width: 560px) {
+    .study-dashboard__resumeHero { padding: ${spacing[24]}; }
+    .study-dashboard__resumeFooter { grid-template-columns: 1fr; }
+    .study-dashboard__stat { border-right: 0; border-bottom: 1px solid ${colors.lineSoft}; }
+    .study-dashboard__stat:last-child { border-bottom: 0; }
+    .study-dashboard__disclosureHeader { align-items: flex-start; flex-direction: column; }
     .study-dashboard__historyPanel {
       top: auto;
       left: 12px;
@@ -783,13 +817,10 @@ const dashboardStyles = `
       bottom: 12px;
       width: auto;
       max-height: 78vh;
-      border-radius: ${radius[24]} ${radius[24]} ${radius[16]} ${radius[16]};
+      border-radius: ${radius[24]};
       transform: translateY(calc(100% + 24px));
     }
-
-    .study-dashboard__historyPanel.is-open {
-      transform: translateY(0);
-    }
+    .study-dashboard__historyPanel.is-open { transform: translateY(0); }
   }
 `
 
@@ -800,13 +831,12 @@ const historyStatusLabels = {
 
 function getFilteredLessons(lessons, query) {
   const normalizedQuery = query.trim().toLowerCase()
-
-  if (!normalizedQuery) {
-    return lessons
-  }
+  if (!normalizedQuery) return lessons
 
   return lessons.filter((lesson) => {
-    const searchable = [lesson.title, lesson.sourceTitle, lesson.resumeLabel, ...lesson.lessonTags].join(' ').toLowerCase()
+    const searchable = [lesson.title, lesson.sourceTitle, lesson.resumeLabel, ...(lesson.lessonTags ?? [])]
+      .join(' ')
+      .toLowerCase()
     return searchable.includes(normalizedQuery)
   })
 }
@@ -817,19 +847,69 @@ function getSupportSummary(lesson) {
   return `${lesson.savedNoteCount} ${noteLabel} / ${lesson.savedVocabCount} ${termLabel}`
 }
 
+function getDaypart() {
+  const hour = new Date().getHours()
+  if (hour < 12) return 'Good morning'
+  if (hour < 18) return 'Good afternoon'
+  return 'Good evening'
+}
+
+function getDashboardSummary(lessons) {
+  return lessons.reduce((summary, lesson) => ({
+    ready: summary.ready + (lesson.status === 'ready' ? 1 : 0),
+    studied: summary.studied + lesson.completedSegments,
+    saved: summary.saved + lesson.savedNoteCount + lesson.savedVocabCount,
+  }), { ready: 0, studied: 0, saved: 0 })
+}
+
+function DashboardHero() {
+  return (
+    <section className="study-dashboard study-dashboard__hero" aria-label="Welcome back" data-debug-item="projects_hero">
+      <div className="study-dashboard__heroCopy">
+        <p className="study-dashboard__eyebrow">{getDaypart()}</p>
+        <h1 className="study-dashboard__heroTitle">Welcome back to your reading.</h1>
+        <p className="study-dashboard__heroSupport">Your place is ready. Pick up from the next useful study action.</p>
+      </div>
+      <div className="study-dashboard__companionFrame" data-debug-item="projects_companion">
+        <ArapalCompanion />
+      </div>
+    </section>
+  )
+}
+
+function DashboardSummary({ lessons }) {
+  const summary = useMemo(() => getDashboardSummary(lessons), [lessons])
+  const metrics = [
+    { value: summary.ready, label: 'ready lessons' },
+    { value: summary.studied, label: 'segments studied' },
+    { value: summary.saved, label: 'saved items' },
+  ]
+
+  return (
+    <section className="study-dashboard study-dashboard__summaryGrid" aria-label="Study summary" data-debug-item="projects_summary">
+      {metrics.map((metric) => (
+        <div key={metric.label} className="study-dashboard__summaryMetric">
+          <strong>{metric.value}</strong>
+          <span>{metric.label}</span>
+        </div>
+      ))}
+    </section>
+  )
+}
+
 function LessonRail({ lessons, selectedLessonId, searchQuery, onSearchChange, onSelectLesson }) {
   const filteredLessons = useMemo(() => getFilteredLessons(lessons, searchQuery), [lessons, searchQuery])
 
   return (
     <aside className="study-dashboard study-dashboard__rail" data-debug-item="study_dashboard_lesson_rail">
       <div className="study-dashboard__railHeader">
-        <div>
-          <p className="study-dashboard__eyebrow">Study dashboard</p>
-          <h2 className="study-dashboard__railTitle">Pick up where you left off.</h2>
+        <div className="study-dashboard__railIntro">
+          <div>
+            <p className="study-dashboard__eyebrow">Study dashboard</p>
+            <h2 className="study-dashboard__railTitle">Pick up where you left off.</h2>
+          </div>
+          <p className="study-dashboard__supportText">Complexity stays out of the way. Choose a lesson, then resume the next useful study action.</p>
         </div>
-        <p className="study-dashboard__supportText">
-          Complexity stays out of the way. Choose a lesson, then resume the next useful study action.
-        </p>
         <label className="study-dashboard__search">
           <Search size={16} strokeWidth={1.9} color={colors.textFaint} />
           <input
@@ -841,23 +921,23 @@ function LessonRail({ lessons, selectedLessonId, searchQuery, onSearchChange, on
         </label>
       </div>
 
-      <div className="study-dashboard__lessonList">
+      <nav className="study-dashboard__lessonList" aria-label="Lessons">
         {filteredLessons.map((lesson) => {
           const isActive = lesson.id === selectedLessonId
-
           return (
             <button
               key={lesson.id}
               type="button"
               className={`study-dashboard__lessonButton${isActive ? ' is-active' : ''}`}
               onClick={() => onSelectLesson(lesson.id)}
+              aria-pressed={isActive}
             >
               <span className="study-dashboard__lessonTop">
-                <span>
+                <span className="study-dashboard__lessonText">
                   <UserText className="study-dashboard__lessonName" text={lesson.title} />
                   <span className="study-dashboard__lessonSource">{lesson.sourceTitle}</span>
                 </span>
-                <span className={`study-dashboard__statusDot${lesson.status === 'setup' ? ' is-setup' : ''}`} />
+                <span className={`study-dashboard__statusDot${lesson.status === 'setup' ? ' is-setup' : ''}`} aria-hidden="true" />
               </span>
               <span className="study-dashboard__lessonMeta">{lesson.resumeLabel}</span>
               <span className="study-dashboard__progressTrack" aria-hidden="true">
@@ -866,21 +946,22 @@ function LessonRail({ lessons, selectedLessonId, searchQuery, onSearchChange, on
             </button>
           )
         })}
-      </div>
+        {!filteredLessons.length ? <p className="study-dashboard__emptyResults">No lessons match “{searchQuery}”.</p> : null}
+      </nav>
     </aside>
   )
 }
 
 const ResumeStage = memo(function ResumeStage({ lesson, onResume, onBrowse }) {
   const primaryIcon = lesson.status === 'ready'
-    ? <BookOpen size={17} strokeWidth={2} />
-    : <ListChecks size={17} strokeWidth={2} />
+    ? <BookOpen size={16} strokeWidth={2} />
+    : <ListChecks size={16} strokeWidth={2} />
 
   return (
     <section className="study-dashboard__resumeCard" data-debug-item="study_dashboard_resume_stage">
       <div className="study-dashboard__resumeHero">
         <div className="study-dashboard__resumeCopy">
-          <span className="study-dashboard__readyPill">
+          <span className={`study-dashboard__readyPill${lesson.status === 'ready' ? '' : ' is-setup'}`}>
             {lesson.status === 'ready' ? <CheckCircle2 size={14} strokeWidth={2} /> : <Clock3 size={14} strokeWidth={2} />}
             {lesson.statusLabel}
           </span>
@@ -889,16 +970,17 @@ const ResumeStage = memo(function ResumeStage({ lesson, onResume, onBrowse }) {
             <p className="study-dashboard__resumeDetail">{lesson.resumeDetail}</p>
           </div>
         </div>
+
         <div className="study-dashboard__resumeAction">
           <PrimaryCTA
-            minWidth={260}
-            height={58}
+            minWidth={250}
+            height={54}
             icon={primaryIcon}
-            endIcon={<ArrowRight size={17} strokeWidth={2.1} />}
+            endIcon={<ArrowRight size={16} strokeWidth={2.1} />}
             onClick={onResume}
             debugItem="study_dashboard_primary_resume"
           >
-            {lesson.status === 'ready' ? 'Resume study' : 'Review setup'}
+            {lesson.resumeLabel}
           </PrimaryCTA>
           <button type="button" className="study-dashboard__secondaryButton" onClick={onBrowse}>
             <FolderOpen size={15} strokeWidth={2} />
@@ -907,21 +989,19 @@ const ResumeStage = memo(function ResumeStage({ lesson, onResume, onBrowse }) {
         </div>
       </div>
 
-      {/* The "Lesson · <title>" cell is gone: the pane is headed by the lesson
-          title now, so the card was restating it forty pixels below. */}
       <div className="study-dashboard__resumeFooter" aria-label="Lesson status">
-        <div className="study-dashboard__stat">
-          <p className="study-dashboard__metaLabel">Progress</p>
-          <p className="study-dashboard__statValue">{lesson.progressLabel}</p>
-          <span className="study-dashboard__progressBar" aria-hidden="true">
-            <span style={{ width: `${lesson.progress}%` }} />
+        <div className="study-dashboard__stat study-dashboard__progressStat">
+          <span className="study-dashboard__progressRing" style={{ '--progress': lesson.progress }} aria-hidden="true">
+            <span>{lesson.progress}%</span>
           </span>
+          <div>
+            <p className="study-dashboard__metaLabel">Progress</p>
+            <p className="study-dashboard__statValue">{lesson.progressLabel}</p>
+          </div>
         </div>
         <div className="study-dashboard__stat">
           <p className="study-dashboard__metaLabel">Attention</p>
-          <p className="study-dashboard__statValue">
-            {lesson.suggestedReviewCount ? `${lesson.suggestedReviewCount} suggested checks` : 'No urgent checks'}
-          </p>
+          <p className="study-dashboard__statValue">{lesson.suggestedReviewCount ? `${lesson.suggestedReviewCount} suggested checks` : 'No urgent checks'}</p>
         </div>
         <div className="study-dashboard__stat">
           <p className="study-dashboard__metaLabel">Saved support</p>
@@ -941,9 +1021,7 @@ function AdvancedDisclosureContainer({ lesson }) {
         <div className="study-dashboard__disclosureCopy">
           <p className="study-dashboard__eyebrow">Advanced options</p>
           <h2 className="study-dashboard__panelTitle">Setup details stay tucked away.</h2>
-          <p className="study-dashboard__supportText">
-            {lesson.title} has source setup, segmentation, and preferences available when needed.
-          </p>
+          <p className="study-dashboard__supportText">{lesson.title} has source setup, segmentation, and preferences available when needed.</p>
         </div>
         <button type="button" className="study-dashboard__ghostButton" onClick={() => setIsOpen((current) => !current)}>
           <SlidersHorizontal size={15} strokeWidth={2} />
@@ -952,13 +1030,7 @@ function AdvancedDisclosureContainer({ lesson }) {
       </div>
 
       {isOpen ? (
-        <Suspense
-          fallback={(
-            <div className="study-dashboard__advancedFallback">
-              Loading advanced options only now...
-            </div>
-          )}
-        >
+        <Suspense fallback={<div className="study-dashboard__advancedFallback">Loading advanced options...</div>}>
           <AdvancedOptionsPanel />
         </Suspense>
       ) : null}
@@ -966,31 +1038,22 @@ function AdvancedDisclosureContainer({ lesson }) {
   )
 }
 
-function StudyDashboardWorkspace({ lesson, shell }) {
-  const handleResume = useCallback(() => {
-    shell.navigate(lesson.primaryRoute)
-  }, [lesson.primaryRoute, shell])
-
-  const handleBrowse = useCallback(() => {
-    shell.navigate('projectResearch')
-  }, [shell])
-
+function DashboardDetailIntro({ lesson }) {
   return (
-    <main className="study-dashboard study-dashboard__stage" data-debug-item="study_dashboard_workspace">
-      {/* The detail pane is headed by the LESSON, not by a slogan.
-          It used to open with "YOUR STUDY TODAY / One clear next step." and
-          three lines explaining the dashboard's own design philosophy — the
-          same words whichever lesson was selected on the left. Two panes that
-          never mention each other do not read as master and detail no matter
-          how they are proportioned, which is why the split looked arbitrary:
-          selecting a different lesson visibly changed nothing at the top of the
-          pane that is supposed to be showing it. */}
-      <section className="study-dashboard__intro">
-        <p className="study-dashboard__eyebrow">{lesson.sourceTitle}</p>
-        <UserText as="h1" className="study-dashboard__title" text={lesson.title} latinRole={typography.pageTitle} />
-      </section>
+    <section className="study-dashboard study-dashboard__intro" data-debug-item="study_dashboard_detail_intro">
+      <p className="study-dashboard__eyebrow">{lesson.sourceTitle}</p>
+      <UserText as="h1" className="study-dashboard__title" text={lesson.title} latinRole={typography.displayTitle} />
+    </section>
+  )
+}
 
-      <ResumeStage lesson={lesson} onResume={handleResume} onBrowse={handleBrowse} />
+function DetailStage({ lesson, onResume, onBrowse }) {
+  return (
+    <main className="study-dashboard study-dashboard__detailStage" data-debug-item="study_dashboard_workspace">
+      <div className="study-dashboard__primaryGroup">
+        <DashboardDetailIntro lesson={lesson} />
+        <ResumeStage lesson={lesson} onResume={onResume} onBrowse={onBrowse} />
+      </div>
       <AdvancedDisclosureContainer lesson={lesson} />
     </main>
   )
@@ -1004,9 +1067,7 @@ function VirtualizedHistoryTable({ rows, onToggleSaved }) {
 
   useEffect(() => {
     const node = listRef.current
-    if (!node) {
-      return undefined
-    }
+    if (!node) return undefined
 
     const updateHeight = () => setViewportHeight(node.clientHeight)
     updateHeight()
@@ -1021,13 +1082,7 @@ function VirtualizedHistoryTable({ rows, onToggleSaved }) {
     return () => observer.disconnect()
   }, [])
 
-  const virtualRows = useVirtualRows({
-    itemCount: rows.length,
-    rowHeight,
-    viewportHeight,
-    scrollTop,
-    overscan: 8,
-  })
+  const virtualRows = useVirtualRows({ itemCount: rows.length, rowHeight, viewportHeight, scrollTop, overscan: 8 })
 
   return (
     <div
@@ -1041,7 +1096,6 @@ function VirtualizedHistoryTable({ rows, onToggleSaved }) {
       <div className="study-dashboard__virtualCanvas" style={{ height: virtualRows.totalHeight }}>
         {virtualRows.items.map(({ index, offsetTop }) => {
           const row = rows[index]
-
           return (
             <article
               key={row.id}
@@ -1050,14 +1104,12 @@ function VirtualizedHistoryTable({ rows, onToggleSaved }) {
               role="row"
               aria-rowindex={index + 1}
             >
-              <div>
+              <div style={{ minWidth: 0 }}>
                 <UserText className="study-dashboard__historyRowTitle" text={row.label} latinRole={typography.metaText} />
                 <span className="study-dashboard__historyRowCopy">{row.detail}</span>
               </div>
               <div className="study-dashboard__rowMeta">
-                <span className="study-dashboard__quietPill">
-                  {historyStatusLabels[row.status]}
-                </span>
+                <span className="study-dashboard__quietPill">{historyStatusLabels[row.status]}</span>
                 <button
                   type="button"
                   className={`study-dashboard__saveButton${row.saved ? ' is-saved' : ''}`}
@@ -1084,25 +1136,11 @@ function StudyHistoryPanelContainer({ lesson }) {
     prefetchServerQuery(historyQueryKey, historyQueryFn).catch(() => {})
   }, [historyQueryFn, historyQueryKey])
 
-  const historyQuery = useServerQuery({
-    queryKey: historyQueryKey,
-    queryFn: historyQueryFn,
-    enabled: isOpen,
-  })
-
+  const historyQuery = useServerQuery({ queryKey: historyQueryKey, queryFn: historyQueryFn, enabled: isOpen })
   const rows = historyQuery.data ?? []
   const completedCount = rows.filter((row) => row.kind === 'completed-segment').length
   const savedCount = rows.filter((row) => row.saved).length
   const reviewCount = rows.filter((row) => row.status === 'needs-review').length
-
-  const openHistory = useCallback(() => {
-    prefetchHistory()
-    setIsOpen(true)
-  }, [prefetchHistory])
-
-  const closeHistory = useCallback(() => {
-    setIsOpen(false)
-  }, [])
 
   const toggleSaved = useCallback((rowId) => {
     historyQuery.updateData((currentRows = []) => currentRows.map((row) => (
@@ -1117,62 +1155,43 @@ function StudyHistoryPanelContainer({ lesson }) {
         className="study-dashboard__historyRailButton"
         onPointerEnter={prefetchHistory}
         onFocus={prefetchHistory}
-        onClick={openHistory}
+        onClick={() => {
+          prefetchHistory()
+          setIsOpen(true)
+        }}
         aria-expanded={isOpen}
       >
-        <History size={19} strokeWidth={2} />
+        <History size={18} strokeWidth={2} />
         <span className="study-dashboard__historyRailText">Study history</span>
         <PanelRightOpen size={16} strokeWidth={2} />
       </button>
 
-      <section
-        className={`study-dashboard__historyPanel${isOpen ? ' is-open' : ''}`}
-        aria-label="Study history panel"
-        // Nothing inside a closed drawer is reachable — by keyboard, by screen
-        // reader or by pointer. The CSS says the same thing; this says why.
-        inert={!isOpen}
-      >
+      <section className={`study-dashboard__historyPanel${isOpen ? ' is-open' : ''}`} aria-label="Study history panel" inert={!isOpen}>
         <header className="study-dashboard__historyHeader">
           <div className="study-dashboard__historyHeading">
-            <span className="study-dashboard__historyIcon" aria-hidden="true">
-              <History size={18} strokeWidth={2} />
-            </span>
-            <div>
+            <span className="study-dashboard__historyIcon" aria-hidden="true"><History size={18} strokeWidth={2} /></span>
+            <div style={{ minWidth: 0 }}>
               <h2 className="study-dashboard__historyTitle">Study history</h2>
               <UserText as="p" className="study-dashboard__historySubtitle" text={lesson.title} latinRole={typography.supportSubtext} />
             </div>
           </div>
-          <button type="button" className="study-dashboard__historyButton" onClick={closeHistory}>
+          <button type="button" className="study-dashboard__historyButton" onClick={() => setIsOpen(false)}>
             <PanelRightClose size={15} strokeWidth={2} />
             Close
           </button>
         </header>
 
         <div className="study-dashboard__historySummary" aria-label="History summary">
-          <div className="study-dashboard__historyStat">
-            <strong>{completedCount}</strong>
-            <span>Segments</span>
-          </div>
-          <div className="study-dashboard__historyStat">
-            <strong>{savedCount}</strong>
-            <span>Saved</span>
-          </div>
-          <div className="study-dashboard__historyStat">
-            <strong>{reviewCount}</strong>
-            <span>Review</span>
-          </div>
+          <div className="study-dashboard__historyStat"><strong>{completedCount}</strong><span>Segments</span></div>
+          <div className="study-dashboard__historyStat"><strong>{savedCount}</strong><span>Saved</span></div>
+          <div className="study-dashboard__historyStat"><strong>{reviewCount}</strong><span>Review</span></div>
         </div>
 
         <div className="study-dashboard__historyBody">
           {historyQuery.status === 'loading' ? (
-            <div className="study-dashboard__historyState">
-              <Loader2 size={22} strokeWidth={2} />
-              Loading study history...
-            </div>
+            <div className="study-dashboard__historyState"><Loader2 size={22} strokeWidth={2} />Loading study history...</div>
           ) : historyQuery.status === 'error' ? (
-            <div className="study-dashboard__historyState">
-              History could not load. The dashboard remains usable; try opening this panel again.
-            </div>
+            <div className="study-dashboard__historyState">History could not load. The dashboard remains usable; try opening this panel again.</div>
           ) : (
             <VirtualizedHistoryTable rows={rows} onToggleSaved={toggleSaved} />
           )}
@@ -1184,39 +1203,35 @@ function StudyHistoryPanelContainer({ lesson }) {
 
 function LoadingDashboard() {
   return (
-    <main className="study-dashboard study-dashboard__stage" data-debug-item="study_dashboard_loading">
-      <section className="study-dashboard__intro">
-        <p className="study-dashboard__eyebrow">Your study today</p>
-        <h1 className="study-dashboard__title">Finding your next step.</h1>
-        <p className="study-dashboard__lead">Loading the lightweight lesson state before any advanced data is requested.</p>
-      </section>
-      <section className="study-dashboard__disclosureCard">
-        <div className="study-dashboard__historyState">
-          <Loader2 size={22} strokeWidth={2} />
-          Preparing dashboard...
-        </div>
-      </section>
-    </main>
+    <section className="study-dashboard study-dashboard__loadingCard" data-debug-item="study_dashboard_loading">
+      <Loader2 size={24} strokeWidth={2} style={{ color: colors.accentStrong }} />
+      <div>
+        <p className="study-dashboard__eyebrow">Study dashboard</p>
+        <p className="study-dashboard__supportText">Finding the next useful study action.</p>
+      </div>
+    </section>
   )
 }
 
 export default function ProjectsScreen({ route, shell }) {
   const lessonsQueryKey = useMemo(() => ['lessons'], [])
   const lessonsQueryFn = useCallback(() => fetchLessons(), [])
-  const lessonsQuery = useServerQuery({
-    queryKey: lessonsQueryKey,
-    queryFn: lessonsQueryFn,
-    enabled: true,
-  })
+  const lessonsQuery = useServerQuery({ queryKey: lessonsQueryKey, queryFn: lessonsQueryFn, enabled: true })
 
   const lessons = lessonsQuery.data ?? []
   const [selectedLessonId, setSelectedLessonId] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   const selectedLesson = lessons.find((lesson) => lesson.id === selectedLessonId) ?? lessons[0] ?? null
-  const isMobile = useIsMobileViewport()
+
+  const handleResume = useCallback(() => {
+    if (selectedLesson) shell.navigate(selectedLesson.primaryRoute)
+  }, [selectedLesson, shell])
+  const handleBrowse = useCallback(() => shell.navigate('projectResearch'), [shell])
 
   const screenSlots = {
-    Layer2_Body_ContentStartRail: lessons.length ? (
+    Layer4_Projects_Hero: <DashboardHero />,
+    Layer4_Projects_Summary: <DashboardSummary lessons={lessons} />,
+    Layer4_Projects_LessonRail: lessons.length ? (
       <LessonRail
         lessons={lessons}
         selectedLessonId={selectedLesson?.id}
@@ -1225,75 +1240,18 @@ export default function ProjectsScreen({ route, shell }) {
         onSelectLesson={setSelectedLessonId}
       />
     ) : null,
-    Layer2_Body_ContentCenterField: selectedLesson ? (
-      <StudyDashboardWorkspace lesson={selectedLesson} shell={shell} />
+    Layer4_Projects_DetailStage: selectedLesson ? (
+      <DetailStage lesson={selectedLesson} onResume={handleResume} onBrowse={handleBrowse} />
     ) : (
       <LoadingDashboard />
     ),
-    Layer2_Body_ContentEndRail: selectedLesson ? <StudyHistoryPanelContainer key={selectedLesson.id} lesson={selectedLesson} /> : null,
-  }
-
-  const containerOverrides = {
-    Layer2_Body_DefaultSplit: {
-      // Master · detail · history.
-      //
-      // The master was minmax(300px, 3.2fr) against 8.2fr of detail — a ratio
-      // of about 1:2.6, which is a sidebar next to a canvas, not two halves of
-      // one relationship. The lesson index is the thing you navigate FROM and
-      // it has to be scannable, so it gets a real floor (360px) and a bigger
-      // share; the detail keeps the dominant share because it holds the primary
-      // action, but no longer by so much that it reads as unrelated.
-      //
-      // A 360px master floor plus a 78px history rail does not fit a 390px
-      // frame — the detail pane and the history rail were simply pushed off the
-      // right edge, with no way to scroll to chrome. Below the mobile
-      // breakpoint the master takes the frame and the other two collapse to
-      // zero-width tracks, which is the same shape Study's mobile columns use.
-      style: {
-        gridTemplateColumns: isMobile
-          ? 'minmax(0, 1fr) 0px 0px'
-          : 'minmax(360px, 3.9fr) minmax(0, 7.4fr) minmax(78px, 0.7fr)',
-      },
-    },
-    Layer2_Body_ContentStartRail: {
-      style: {
-        padding: `${spacing[24]} ${spacing[20]}`,
-        overflow: 'hidden',
-      },
-    },
-    // HIDDEN, not zero-width. A 0px grid track does not hide its children: they
-    // keep their intrinsic widths and spill out of it, which is why the whole
-    // dashboard rendered at x=430 — entirely off a 390px frame — while the
-    // visible 390px lane held the master list. StudyWorkspacePrimitives records
-    // this same lesson at its own mobile breakpoint; the rule did not travel.
-    Layer2_Body_ContentCenterField: {
-      style: isMobile
-        ? { display: 'none' }
-        : {
-          padding: `${spacing[32]} ${spacing[40]} ${spacing[40]}`,
-          overflow: 'auto',
-        },
-    },
-    Layer2_Body_ContentEndRail: {
-      style: isMobile
-        ? { display: 'none' }
-        : {
-          padding: `${spacing[24]} ${spacing[12]}`,
-          overflow: 'visible',
-        },
-    },
+    Layer4_Projects_History: selectedLesson ? <StudyHistoryPanelContainer key={selectedLesson.id} lesson={selectedLesson} /> : null,
   }
 
   return (
     <>
       <style>{dashboardStyles}</style>
-      <V2ScreenFrame
-        contract={layoutContract}
-        route={route}
-        shell={shell}
-        screenSlots={screenSlots}
-        containerOverrides={containerOverrides}
-      />
+      <V2ScreenFrame contract={layoutContract} route={route} shell={shell} screenSlots={screenSlots} />
     </>
   )
 }

@@ -1,30 +1,36 @@
 /**
- * The stage's atmosphere: two structural diagonals and one Arapal wordmark.
+ * Shared V2 body atmosphere.
  *
- * It used to draw TWO wordmarks — one crossing the upper right, one the lower
- * left — at clamp(116px, 14.6vw, 216px), which at the canonical frame is a
- * 210px letterform. The same arrangement on every route, at that size, stops
- * being atmosphere: on Project Home the upper-right mark sat directly behind the
- * first-run composition, and on Source Intake the lower-left one ran under the
- * primary call to action. Identity is not supposed to be the largest object on
- * an operational screen.
- *
- * One mark, smaller, anchored to the corner furthest from where these screens
- * put their primary work, and a step fainter. The diagonals stay untouched:
- * they are 2px lines at low opacity and they read as structure, which is what
- * they are for.
+ * `BodyBackdropItems` preserves the current single-wordmark default used by the
+ * rest of V2. `DualWordmarkBodyBackdropItems` reuses the same atmosphere and
+ * line system but opts into a second, safely inset wordmark. Screens select the
+ * variant explicitly through their layout contract; no route-specific CSS is
+ * required in the screen itself.
  */
 
-function wordStyle(position) {
+const defaultWordmarkStyle = {
+  position: 'absolute',
+  pointerEvents: 'none',
+  fontFamily: '"Playfair Display", Georgia, serif',
+  fontSize: 'clamp(96px, 11vw, 168px)',
+  lineHeight: 0.84,
+  letterSpacing: '-0.08em',
+  color: 'rgba(37, 99, 235, 0.035)',
+  textShadow: '0 0 32px rgba(37, 99, 235, 0.025)',
+  whiteSpace: 'nowrap',
+}
+
+const dualWordmarkStyle = {
+  ...defaultWordmarkStyle,
+  fontSize: 'clamp(88px, 9.5vw, 148px)',
+  lineHeight: 0.9,
+  color: 'rgba(37, 99, 235, 0.032)',
+  textShadow: '0 0 32px rgba(37, 99, 235, 0.022)',
+}
+
+function wordStyle(position, variant = 'default') {
   return {
-    position: 'absolute',
-    pointerEvents: 'none',
-    fontFamily: '"Playfair Display", Georgia, serif',
-    fontSize: 'clamp(96px, 11vw, 168px)',
-    lineHeight: 0.84,
-    letterSpacing: '-0.08em',
-    color: 'rgba(37, 99, 235, 0.035)',
-    textShadow: '0 0 32px rgba(37, 99, 235, 0.025)',
+    ...(variant === 'dual' ? dualWordmarkStyle : defaultWordmarkStyle),
     ...position,
   }
 }
@@ -42,7 +48,7 @@ function lineStyle(position, gradient, rotation) {
   }
 }
 
-export default function BodyBackdropItems() {
+function StructuralLines() {
   return (
     <>
       <div
@@ -61,17 +67,20 @@ export default function BodyBackdropItems() {
           '17deg',
         )}
       />
-      <div aria-hidden="true" style={wordStyle({ left: '-24px', bottom: '2%' })}>
-        Arapal
-      </div>
+    </>
+  )
+}
+
+function SharedAtmosphere() {
+  return (
+    <>
       <div
         aria-hidden="true"
         style={{
           position: 'absolute',
           inset: 0,
           pointerEvents: 'none',
-          background:
-            'radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 54%)',
+          background: 'radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 54%)',
           opacity: 0.8,
         }}
       />
@@ -81,11 +90,36 @@ export default function BodyBackdropItems() {
           position: 'absolute',
           inset: 0,
           pointerEvents: 'none',
-          border: `1px solid rgba(255, 255, 255, 0.12)`,
-          boxShadow: `inset 0 1px 0 rgba(255, 255, 255, 0.22)`,
+          border: '1px solid rgba(255, 255, 255, 0.12)',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.22)',
           opacity: 0.5,
         }}
       />
     </>
   )
+}
+
+function BackdropComposition({ dualWordmark = false }) {
+  return (
+    <>
+      <StructuralLines />
+      {dualWordmark ? (
+        <>
+          <div aria-hidden="true" style={wordStyle({ left: '2%', bottom: '3%' }, 'dual')}>Arapal</div>
+          <div aria-hidden="true" style={wordStyle({ right: '2%', top: '4%', textAlign: 'right' }, 'dual')}>Arapal</div>
+        </>
+      ) : (
+        <div aria-hidden="true" style={wordStyle({ left: '-24px', bottom: '2%' })}>Arapal</div>
+      )}
+      <SharedAtmosphere />
+    </>
+  )
+}
+
+export default function BodyBackdropItems() {
+  return <BackdropComposition />
+}
+
+export function DualWordmarkBodyBackdropItems() {
+  return <BackdropComposition dualWordmark />
 }
