@@ -1,8 +1,10 @@
-# Arapal — Decision Record
+# Arapal — Current Decision Record
 
 Only consequential, durable or likely-to-be-revisited decisions belong here.
 
----
+Pre-V1 Figma reconstruction decisions from 2026-08-07 are preserved in the external
+documentation archive supplied with the cleanup package. They are design history, not
+current release authority unless explicitly revalidated.
 
 ## 2026-08-18 · One type ramp, and the document default is the body role
 
@@ -79,106 +81,6 @@ uses its panes.
 **Why.** The doctrine's single 1400px default is right for Research and Study and
 wrong for a list: at the canonical frame a full-width row puts a title at one end
 and a control at the other with a metre of nothing between them.
-
----
-
-## 2026-08-07 · Home is rebuilt on the V2 shell, not legacy chrome
-
-**Decision.** The three Home frames use the V2 shell — 50 px header, 51.43 px collapsed rail, V2 body backdrop — with legacy `#home` content placed inside the V2 body area.
-
-**Why.** V2 is the construction basis and legacy is the behaviour spec. Keeping legacy chrome on Home would have made it the only screen in the set with a different shell.
-
-**Consequence.** Home's three legacy header buttons (Replay intro / Projects → / Segmentation →) no longer appear in the design. The V2 header carries the `projectHome` mode label instead. This supersedes an earlier decision in the originating session to keep Home's own legacy header.
-
----
-
-## 2026-08-07 · The V2 body backdrop applies to V2 frames only
-
-**Decision.** `V2 / Body Backdrop` is placed on Home 01–03 and Project Research. It is **not** placed on the Study or Segmentation frames.
-
-**Why.** `BodyBackdropItems.jsx` is reached only through `ScreenContractRenderer`, i.e. only on V2 routes. Study and Segmentation are legacy screens and carry their own, different backdrop: four diagonals (two slate, two accent) rather than two, and watermarks at 216 px rather than 210.24 px. Applying the V2 backdrop there would have been an invention.
-
-**Consequence.** "Every V2 frame" in the work order means four frames, not fifteen. Each legacy screen's own backdrop is rebuilt from its own extracted geometry, per screen, because the diagonal geometry is a percentage of a container whose height changes with the screen.
-
----
-
-## 2026-08-07 · Arabic is set in Amiri at ~117 % of the app's CSS size
-
-**Decision.** Arabic text is set in Amiri, sized so the rendered line count matches the running app, rather than at the app's declared pixel size.
-
-**Why.** The app declares Inter for Arabic runs; Inter has no Arabic coverage, so the browser falls back to an OS naskh face that renders materially wider than Amiri. Matching the CSS number produced 3 lines where the app shows 4, leaving visible dead space inside fixed-height cards. The running application is the higher source of truth than the stylesheet.
-
-**Consequence.** Sizes in the Figma file are 18→21 px (Segmentation body), 15.5→18 px (Research ledger), 22→26 px (Research inspector). Recorded so Phase C can set a deliberate Arabic ramp rather than inheriting this compensation.
-
----
-
-## 2026-08-07 · Frames are built from extracted DOM geometry, never from source reading
-
-**Decision.** Every frame is built by extracting exact geometry from the running app at 1440 × 900 via a recursive DOM walker, then diffed against a live screenshot.
-
-**Why.** Every frame previously built by reading source and estimating was wrong. This pass found real errors in frames that had been marked complete: Home card internals off by 8–12 px, Home hero off-centre by 34 px, the Loading and Success frames using the wrong 73 px header instead of the app's 83 px one, the Transition card 66 px too wide and 119 px too short, and a Discuss panel whose entire design was invented (chat bubbles and a dimmed backdrop that do not exist in the app).
-
-**Consequence.** Non-default states must be reached by driving the app — freezing React timers via a `setTimeout` monkey-patch is the reliable way to hold a transient state (`compiling`, `segmenting`, Home `intro`) still enough to measure.
-
----
-
-## 2026-08-07 · The polished type ramp raises the floor to 11 px
-
-**Decision.** The Phase C set uses a single ramp, `P/01`–`P/16`, whose smallest size is 11 px. The app's `eyebrowLabel` (9.5 px) and `bodyText` (11 px) are not carried forward; body moves to 15 px.
-
-**Why.** 9.5 px body text fails any reasonable legibility bar, and the app's palest grey (`text-faint` #94A3B8) is 2.6:1 on white — well under the 4.5:1 required for small text. The two compound: the smallest text in the product was also the palest. This is a WCAG AA failure across every screen, not a preference.
-
-**Consequence.** Each screen carries slightly less content per viewport. `text-faint` is retuned to #8496AE (3.2:1) and **reclassified as decorative and icon use only** — meta text moves to `text-soft` (4.8:1). Any future component that puts text on `text-faint` is a defect.
-
----
-
-## 2026-08-07 · Semantic colours split into fill and text weights
-
-**Decision.** `success` (#16A34A) and `review` (#D97706) remain for icons and fills. New `success-strong` (#15803D) and `review-strong` (#B45309) are the only values allowed for semantic **text**. `critical` is added as a third semantic so "Needs revision" and "Weak area" no longer share one amber.
-
-**Why.** Both original values fail 4.5:1 as text (3.0:1 and 2.7:1). Separately, the app used one amber for two distinct statuses, making them distinguishable only by reading the words — colour-only signalling for anyone scanning.
-
-**Consequence.** Every status chip now carries an icon, a word and a hue. Review is amber, Weak is rose. Any status shown without an icon is a defect.
-
----
-
-## 2026-08-07 · Dev scaffolding is removed from the Polished set
-
-**Decision.** The floating nav pill, the Draft/Fail/Pass debug buttons and the `#v2/<route>` header string appear in the Reconstruction set and **not** in the Polished set.
-
-**Why.** Their inclusion was agreed for parity — they are genuinely on screen in the running app. They are development affordances, not product, and Phase C's brief is a public-ready set.
-
-**Consequence.** The header's end lane carries project context instead of the route string. In the Reconstruction frames the nav pill overlapped the Segmentation step bar (QA-log `G-02`); removing it resolves that collision rather than reproducing it.
-
----
-
-## 2026-08-07 · The Research ledger row is restructured, not restyled
-
-**Decision.** The five-column ledger row (badge · Arabic · English gloss · heading/topic · status) becomes a three-line row: heading + status; chapter · topic + tags; Arabic excerpt. The English rendering moves to the inspector.
-
-**Why.** Every heading in the live app truncates at ~14 characters and the Arabic and English columns touch with no gutter. The cause is not styling — three columns of prose cannot share ~680 px. Widening columns or shrinking type would only move the failure around.
-
-**Consequence.** Roughly six rows are visible instead of eight, and the ledger no longer reads as a table. In exchange nothing truncates and the Arabic gets a full line at 19 px. If density becomes a real requirement, add a compact toggle rather than reinstating the columns.
-
----
-
-## 2026-08-07 · Overflow is always designed, never silent
-
-**Decision.** Wherever content can exceed its container — the Study passage, the Study support rail, the Research ledger, the Segmentation approve footer — the boundary carries a gradient fade, and where the content is genuinely truncated it also carries an explicit disclosure control.
-
-**Why.** The single worst defect class in the reconstruction was silent clipping: Arabic source cut mid-line, support cards running off the frame, the marker card sheared at the bottom edge. A user cannot distinguish "this is all there is" from "this is broken".
-
-**Consequence.** Every scroll region in the spec has a stated fade. In build these are `mask-image` gradients that must fade to zero at scroll end, not static overlays.
-
----
-
-## 2026-08-07 · One shell across every screen
-
-**Decision.** A single 56 px `Header Bar` and a single 56 px `Nav Rail` serve Home, Study, Research and Exams. Segmentation keeps its own 64 px wizard header for every step. Exams adopts the rail, dropping the live screen's back-pill-and-tabs model.
-
-**Why.** The reconstruction carried four header heights (50 / 70 / 73 / 83) and two navigation models. Screens that should feel like one product read as five.
-
-**Consequence.** The header grew 50 → 56 px so the two-line centre label has air; every column screen therefore starts at y 76 with an 844 px body. Exams loses a navigation affordance that exists in the live app — recorded as an accepted change in `FIGMA-QA-LOG.md` (`X-04`), not an oversight.
 
 ---
 
@@ -459,3 +361,143 @@ under a heading reading "Your Translation" is the same failure.
 Residual: the remaining support modules (Guidance, Lexicography, Phrasing, Key
 Takeaways) still assert segment-specific fixture content in live mode. Recorded
 in the QA Pass 2 ledger; belongs with the support-module architecture work.
+
+---
+
+## 2026-08-24 · V1 core learning loop, AI authority and canonical data
+
+### Decision
+
+The primary Arapal V1 product is the segment-by-segment study loop. Other modules support this loop but do not redefine it.
+
+### 1. Study lifecycle
+
+The canonical Study flow is:
+
+`canonical segment → user translation → Submit → AI grading → retry/fail or pass → completion/review → next segment`
+
+`Submit` is an action, not a durable progress state.
+
+`Draft` is not a general Study status.
+
+For Study:
+
+- `Pass` means the user's translation met the existing AI grading contract.
+- `Retry/Fail` means it did not meet that grading contract.
+- The exact score threshold, grading criteria, retry allowance and failure semantics come from the existing proven Study grading prompt. They must not be re-invented or hard-coded from secondary documentation.
+- `Studied` and `Complete` refer to completion of the required Study flow for a segment.
+- Project-level completion is derived from completion of the required segments in that project.
+
+A successful Study result exposes the existing intended review experience:
+
+- user's translation;
+- AI best-in-class translation;
+- AI feedback;
+- relevant vocabulary;
+- relevant guidance;
+- contextual AI discussion;
+- persistent user notes;
+- continue to next segment.
+
+Mechanical/form checks may support the workflow but may not masquerade as semantic grading.
+
+### 2. Exams
+
+V1 Exams are genuinely AI-generated and/or AI-graded according to the existing exam prompts/rubrics.
+
+Exams exist to test retention and understanding after study and may test:
+
+- vocabulary;
+- translation;
+- concepts;
+- knowledge contained in the studied source;
+- other question types defined by the exam prompt.
+
+The application must display and persist the evaluator's actual result.
+
+It must not manufacture scores, misses, percentages or grading outcomes from answer length, fixture indexes or other placeholder heuristics.
+
+The existing Exam prompt/rubric is the behavioural authority for exact grading semantics.
+
+### 3. AI boundary
+
+AI is a real application service in V1, not simulated UI output.
+
+AI-backed capabilities include, where applicable:
+
+- Study semantic grading;
+- best-in-class translation;
+- vocabulary/guidance generation;
+- Study Discussion;
+- Research Companion;
+- Exam generation/grading;
+- segmentation assistance.
+
+Segmentation remains user-controlled: a proposal may be produced automatically or manually edited, but explicit user approval makes it authoritative.
+
+Existing proven prompts are behavioural source material.
+
+Their pedagogical rules, grading criteria, restrictions and generation rules must be preserved.
+
+Legacy chat-specific repetition, extraction markers and machine-readable scaffolding are NOT part of the application contract and should be replaced with structured application responses.
+
+AI access must be implemented behind a provider-neutral service boundary.
+
+Initial V1 development may use Gemini Flash via configuration, but Arapal must not hard-wire product logic to one provider.
+
+A shared provider API secret must not be embedded in a publicly distributed browser bundle.
+
+### 4. V1 user/data model
+
+V1 is local-first and single-user.
+
+V1 does not require:
+
+- accounts;
+- authentication;
+- cloud synchronisation;
+- multi-user tenancy.
+
+Projects, canonical source, segmentation state, Study records, notes, assessments and results persist locally.
+
+The product must be truthful about local persistence.
+
+Local persistence failure must not silently claim that work was saved.
+
+Export/backup and delete/reset capability are appropriate V1 safeguards.
+
+External AI processing is a separate data boundary from local persistence and must be handled explicitly.
+
+The architecture should not prevent future authenticated/cloud persistence, but cloud accounts are not V1 scope.
+
+### 5. Canonical segmentation
+
+The source lifecycle is:
+
+`raw source → segmentation proposal → optional edit/review → explicit approval → canonical segmentation`
+
+Before approval:
+
+- segmentation is a proposal;
+- boundaries and metadata may be edited;
+- Study must not treat it as canonical.
+
+Approval creates the canonical segmentation used by Study and downstream functionality.
+
+After approval:
+
+- canonical segmentation is not edited in place underneath existing Study data;
+- existing Study records remain attached to stable canonical segment identity;
+- changing segmentation requires the controlled Reset/Re-segmentation workflow;
+- replacement segmentation must not silently delete or orphan translations, notes, results, summaries or study history;
+- previous canonical study data must remain recoverable/archived even if V1 does not expose a sophisticated version-history UI.
+
+The exact migration/re-association of old Study data must never be guessed automatically where segment mappings are ambiguous.
+
+### Consequence
+
+The Stage 1 RED decisions RED-01 through RED-05 are resolved by this decision.
+
+Implementation may now proceed against these semantics.
+
+Where exact grading thresholds, rubrics, retry counts or pedagogical rules are required, the existing source prompts are the authority and must be incorporated as implementation inputs rather than reconstructed from memory.

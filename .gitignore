@@ -33,3 +33,15 @@ screenshot-reference.zip
 # reproducible artefacts of a run, not a record of the product.
 test-results/
 playwright-report/
+
+# Regenerated QA / release evidence and audit output. These are reproducible by
+# re-running the gates (npm run qa, audit:suite, the release-evidence harness);
+# they are kept on disk as current evidence but never committed to history.
+artifacts/
+public/v2-audit/
+
+# Release-certification reorganisation staging. `1. Audit/` holds the historical
+# screenshot corpus; `3. archive/` holds prior app history including built
+# `.next/` output. Preserved on disk, excluded from the product repository.
+/1. Audit/
+/3. archive/

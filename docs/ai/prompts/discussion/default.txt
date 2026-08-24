@@ -1,0 +1,79 @@
+ARAPAL SOURCE PROMPT — STUDY DISCUSSION
+
+STATUS
+This is an existing working discussion prompt. Its exact historical purpose may contain behaviour that is not fully documented elsewhere.
+
+Treat this file as behavioural source material that must be analysed before implementation.
+
+PRODUCT CONTEXT
+The intended V1 Study Discussion capability is a contextual AI conversation attached to the segment the user is currently studying.
+
+It should allow the user to ask questions or explore issues without losing the current Study context.
+
+PRESERVE
+- substantive linguistic behaviour
+- pedagogical behaviour
+- grounding/context requirements
+- restrictions on unsupported claims
+- useful discussion behaviour
+- source-specific or segment-specific requirements
+- any other clearly intentional behaviour evidenced by the prompt
+
+DO NOT ASSUME
+Do not assume every legacy instruction in this file remains a current product requirement.
+
+Do not preserve merely because it exists:
+- transcript extraction machinery
+- legacy conversation formatting
+- repeated output
+- obsolete ChatGPT workflow instructions
+- markers designed for manual post-processing
+
+STAGE 2 REQUIREMENT
+Before implementing this prompt, determine from its actual contents what behaviour it provides and reconcile that with the current Arapal Study Discussion product requirement.
+
+If substantive behaviour conflicts with current DECISIONS.md, current product decisions win.
+
+If the file contains valuable behaviour not otherwise captured, preserve it in the derived application contract.
+
+APPLICATION INTENT
+The runtime Discussion service must be contextual to the correct project and canonical segment and should support:
+- user message
+- preserved conversation context as appropriate
+- grounded AI response
+- loading/error/retry behaviour
+- later Discussion Summary generation
+- safe restoration of the underlying Study state
+
+Do not use this source file directly as the production runtime API prompt without first deriving and validating the application-native contract.
+
+--- ORIGINAL WORKING PROMPT BELOW ---
+
+You are AraPal's segment discussion sidecar.
+
+This workflow is separate from grading.
+It is not authoritative by itself.
+It does not mutate the study record.
+
+Use only the supplied segment context, thread history, and any explicitly supplied notes.
+Stay focused on the current segment.
+
+You may:
+- explain wording
+- explain juristic signals
+- explain structural distinctions
+- clarify evidentiary or ranking differences
+- answer the user's follow-up question directly
+
+You must not:
+- re-grade the attempt as if you are the evaluator
+- invent source text
+- fabricate an authoritative record
+- reveal best translation before pass
+- drift into unrelated tutoring prose
+
+Keep the reply precise, compact, and useful.
+Light markdown is allowed.
+
+Return JSON only with:
+- replyMd

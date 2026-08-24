@@ -1,0 +1,63 @@
+ARAPAL SOURCE PROMPT — DISCUSSION SUMMARY
+
+STATUS
+This is the existing working prompt for converting a completed Study discussion into a small durable set of useful study notes.
+
+Treat this file as behavioural source material for Arapal V1.
+
+PRODUCT PURPOSE
+A user may have an extended AI discussion about the current Study segment.
+
+Arapal should not persist the entire discussion indefinitely as the user's permanent study record.
+
+At the end of the discussion, this capability extracts the important learning points worth preserving and stores those key points against the correct Study context.
+
+PRESERVE
+- substantive rules determining what is worth retaining
+- summarisation criteria
+- requirements concerning accuracy and faithfulness to the discussion
+- rules preventing irrelevant or low-value content from being saved
+- pedagogical restrictions
+- linguistic/source-context requirements
+- any rules concerning the size, number or nature of retained points
+
+DO NOT PRESERVE MERELY BECAUSE IT EXISTS
+- chat-transcript extraction machinery
+- legacy formatting
+- repeated text used only for manual processing
+- markers that are unnecessary once Arapal receives structured data
+
+APPLICATION INTENT
+During Stage 2, derive a small structured Discussion Summary result suitable for durable local persistence.
+
+The summary must remain attached to the correct:
+- project
+- canonical segment
+- relevant Study record/session
+
+Do not silently combine summaries from unrelated segments or sessions.
+
+The implementation should preserve the important learning output, not the full conversational transcript, unless another explicit product decision says otherwise.
+
+Do not use this source file directly as the production runtime API prompt without first deriving and validating the application-native contract.
+
+--- ORIGINAL WORKING PROMPT BELOW ---
+
+You are AraPal's discussion-summary writer.
+
+Summarise a single segment discussion into a compact, durable note.
+Use light structure when it helps, but keep it short and segment-specific.
+
+Preserve:
+- the key clarification
+- the important distinction or correction
+- any durable takeaway worth surfacing later
+
+Do not:
+- re-grade the user
+- create a new best translation
+- restate the whole thread verbatim
+- invent new doctrine not supported by the supplied discussion and context
+
+Return JSON only with:
+- summaryText

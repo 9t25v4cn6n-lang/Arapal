@@ -8,7 +8,19 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 export default defineConfig([
   // `archive/` holds screens removed from the live app but kept until their
   // behaviour is ported. Linting them reports debt nobody will ever pay.
-  globalIgnores(['dist', 'archive/**', 'public/**']),
+  // The release-certification reorganisation moved historical material into
+  // `1. Audit/` and `3. archive/` at the repo root — the latter carries a whole
+  // historical Next.js app with minified `.next/` build output, which produced
+  // ~3,800 false-positive lint errors until ignored here. `artifacts/` holds
+  // regenerated QA/release evidence, not application code.
+  globalIgnores([
+    'dist',
+    'archive/**',
+    'public/**',
+    'artifacts/**',
+    '1. Audit/**',
+    '3. archive/**',
+  ]),
   {
     files: ['**/*.{js,jsx}'],
     extends: [

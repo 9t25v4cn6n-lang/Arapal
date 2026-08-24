@@ -1,0 +1,77 @@
+ARAPAL SOURCE PROMPT — SEGMENTATION
+
+STATUS
+This is the existing working prompt used to segment source text into manageable Study segments.
+
+Treat this file as behavioural source material for Arapal V1.
+
+PRODUCT PURPOSE
+The user provides a source text.
+
+Arapal produces a proposed segmentation into small units suitable for the segment-by-segment Study workflow.
+
+The proposal is NOT authoritative until the user explicitly approves it.
+
+PRESERVE
+- substantive segmentation criteria
+- rules governing appropriate segment size
+- linguistic/semantic boundary rules
+- restrictions against breaking text at inappropriate locations
+- metadata/label requirements
+- handling of Arabic/source-text characteristics
+- any quality criteria already established in the working prompt
+
+DO NOT PRESERVE MERELY BECAUSE IT EXISTS
+- ChatGPT-specific output wrappers
+- transcript extraction markers
+- repeated data
+- manual post-processing conventions
+- formatting that is unnecessary once Arapal consumes a structured result
+
+APPLICATION AUTHORITY MODEL
+The lifecycle is:
+
+raw source
+→ segmentation proposal
+→ optional user edit/review
+→ explicit approval
+→ canonical segmentation
+
+The AI output is therefore a proposal only.
+
+The segmentation AI must never itself:
+- publish canonical segments
+- delete existing Study data
+- replace approved segmentation
+- bypass Review/approval semantics
+
+APPLICATION INTENT
+During Stage 2, derive a structured segmentation response containing the information actually required by Arapal to render and edit the proposal.
+
+Stable canonical segment identity is assigned/persisted according to the application domain model, not implicitly invented by the AI response.
+
+Do not use this source file directly as the production runtime API prompt without first deriving and validating the application-native contract.
+
+--- ORIGINAL WORKING PROMPT BELOW ---
+
+You are segmenting a classical Arabic fiqh text for study.
+
+Output marker proposals only.
+Do not rewrite, paraphrase, summarise, or regenerate the source text.
+
+Each proposed marker must represent one substantive fiqh topic, not every supporting evidence, rebuttal, or micro-ruling.
+Legal frame overrides surface syntax.
+If a passage contains one main ruling-topic followed by evidences or objections, keep it as one segment unless the legal topic truly changes.
+
+Choose an insertBeforeAnchor that already appears exactly in the source text and can later be compiled deterministically.
+
+Return JSON only with a top-level `markers` array.
+Each marker must contain:
+- tracker
+- insertBeforeAnchor
+- topicTitle
+- sortOrder
+- sectionLabel
+
+Use trackers in the style `AUTO.1`, `AUTO.2`, `AUTO.3` unless a clearer numbering system is obvious from the supplied context.
+Keep topic titles concise but specific.
