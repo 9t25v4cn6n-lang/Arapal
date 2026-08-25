@@ -5,6 +5,7 @@ import { useAppIntro } from './foundation/primitives/AppIntro'
 import useNavigationRailState from './foundation/primitives/useNavigationRailState'
 import useIsMobileViewport from './foundation/primitives/useIsMobileViewport'
 import MobileNavBar from './foundation/primitives/MobileNavBar'
+import PersistenceBanner from './foundation/primitives/PersistenceBanner'
 
 // Internal design/QA surfaces. They stay reachable in development but must not
 // be routable in a production build — a hand-typed `#v2/patternLab` on the live
@@ -97,6 +98,7 @@ export default function AppV2({ routeId = defaultRouteId }) {
 
   return (
     <>
+      <PersistenceBanner />
       {/* The stage is muted only while the intro is on top of it, and the class
           is applied to a wrapper rather than to the screen so no screen has to
           know the animation exists. */}
