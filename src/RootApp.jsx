@@ -27,6 +27,13 @@ function readHash() {
   return window.location.hash.replace(/^#/, '')
 }
 
+// The legacy app is a REFERENCE surface (surface: 'reference' in
+// scripts/qa/standard.mjs), reachable only at these explicit hashes. Everything
+// else — the empty production root and any unknown route — is the V2 product.
+// Previously any non-`v2` hash, including the bare root, fell through to the
+// legacy app, so the public entry opened an incompatible second home (R-021).
+const LEGACY_REFERENCE_HASHES = new Set(['home', 'study', 'segmentation', 'exams-legacy'])
+
 function readV2RouteFromHash() {
   const hashValue = readHash()
 
@@ -35,12 +42,19 @@ function readV2RouteFromHash() {
     return aliased
   }
 
-  if (!hashValue.startsWith('v2')) {
+  if (hashValue.startsWith('v2')) {
+    const [, routeId] = hashValue.split('/')
+    return routeId || defaultRouteId
+  }
+
+  // Explicit legacy reference surfaces stay on the legacy app.
+  if (LEGACY_REFERENCE_HASHES.has(hashValue)) {
     return null
   }
 
-  const [, routeId] = hashValue.split('/')
-  return routeId || defaultRouteId
+  // The production root and any unknown route resolve to the V2 product home,
+  // never the legacy app. This is what makes V2 the production entry point.
+  return defaultRouteId
 }
 
 export default function RootApp() {

@@ -5,13 +5,22 @@ import { useAppIntro } from './foundation/primitives/AppIntro'
 import useNavigationRailState from './foundation/primitives/useNavigationRailState'
 import useIsMobileViewport from './foundation/primitives/useIsMobileViewport'
 
+// Internal design/QA surfaces. They stay reachable in development but must not
+// be routable in a production build — a hand-typed `#v2/patternLab` on the live
+// site resolved straight to them (R-012 / R-021).
+const DEV_ONLY_ROUTES = new Set([
+  'foundationLab', 'controlsLab', 'editorPanelsLab', 'typographyTokensLab',
+  'motionInteractionLab', 'patternLab', 'qualityDashboard',
+])
+
 export default function AppV2({ routeId = defaultRouteId }) {
   // A registry entry is only routable if it can actually render. Rail entries
   // that point outside V2 — Exams lives on the legacy hash — carry navigation
   // metadata and no component, and `#v2/exams` typed by hand would otherwise
   // resolve to that entry and render undefined.
   const requested = routeRegistry[routeId]
-  const activeRoute = requested?.component ? requested : routeRegistry[defaultRouteId]
+  const routable = requested?.component && !(DEV_ONLY_ROUTES.has(routeId) && import.meta.env.PROD)
+  const activeRoute = routable ? requested : routeRegistry[defaultRouteId]
   const ActiveScreen = activeRoute.component
   const navigationRailState = useNavigationRailState()
   const [introPhase, introOverlay] = useAppIntro()
