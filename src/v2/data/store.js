@@ -12,6 +12,7 @@ import {
   segmentKey,
 } from './schema.js'
 import { evaluateTranslation } from './evaluation.js'
+import { gradeStudyAttempt } from '../services/ai/index.js'
 
 let state = storage.read()
 let lastWriteOk = true
@@ -213,9 +214,13 @@ export function setCurrentSegment({ projectId, segmentId }) {
 }
 
 /**
- * Submit the current draft for evaluation.
- * Refuses empty submissions: the previous build accepted them and returned a
- * grade and a review date for work it had never read.
+ * Submit the current draft. Refuses empty submissions: the previous build
+ * accepted them and returned a grade and a review date for work it never read.
+ *
+ * This records an ATTEMPT and a mechanical surface check only. It never marks a
+ * segment passed: a form-level check may support the workflow but must not
+ * masquerade as semantic grading (DECISIONS §1, R-016). A pass comes only from
+ * gradeSegment() below, which calls the real AI grading contract.
  */
 export function submitSegment({ projectId, segmentId }) {
   const key = segmentKey(projectId, segmentId)
@@ -228,7 +233,7 @@ export function submitSegment({ projectId, segmentId }) {
   }
 
   const record = state.studyRecords[key] ?? createStudyRecord({ projectId, segmentId })
-  const evaluation = evaluateTranslation({
+  const surface = evaluateTranslation({
     source: segment?.text ?? '',
     translation: text,
     attempt: record.attempts,
@@ -236,10 +241,11 @@ export function submitSegment({ projectId, segmentId }) {
   const result = createResult({
     projectId,
     segmentId,
-    outcome: evaluation.outcome,
-    score: evaluation.score,
-    notes: evaluation.notes,
-    isSample: evaluation.isSample,
+    outcome: 'attempted',
+    score: null,
+    notes: surface.notes,
+    isSample: true,
+    mode: 'surface-check',
   })
 
   commit({
@@ -249,14 +255,81 @@ export function submitSegment({ projectId, segmentId }) {
       ...state.studyRecords,
       [key]: {
         ...record,
-        submissionState: evaluation.outcome === 'pass' ? 'submitted' : 'failed',
+        submissionState: 'attempted',
         attempts: record.attempts + 1,
         lastResultId: result.id,
         updatedAt: new Date().toISOString(),
       },
     },
   })
-  return { ok: true, result }
+  return { ok: true, result, graded: false }
+}
+
+/**
+ * Grade the current attempt against the real Study grading contract via the
+ * provider-neutral AI boundary. On a genuine pass the segment becomes
+ * 'submitted' (the only path to completion) and the review outputs are stored;
+ * on a fail it becomes 'failed' with blocking issues; when no provider is
+ * configured (or the call fails) the segment stays 'attempted' and this returns
+ * an honest reason — it never invents a grade.
+ */
+export async function gradeSegment({ projectId, segmentId }) {
+  const key = segmentKey(projectId, segmentId)
+  const draft = state.drafts[key]
+  const segment = state.segments[segmentId]
+  const text = draft?.text?.trim() ?? ''
+  if (!text) return { ok: false, reason: 'empty' }
+
+  const record = state.studyRecords[key] ?? createStudyRecord({ projectId, segmentId })
+  const prior = record.lastResultId ? state.results[record.lastResultId] : null
+  const priorFeedback = record.submissionState === 'failed' && prior?.mode === 'ai'
+    ? prior.feedback || (prior.notes ?? []).map((n) => n.text).filter(Boolean).join('; ')
+    : ''
+
+  const ai = await gradeStudyAttempt({
+    source: segment?.text ?? '',
+    translation: text,
+    attempt: Math.max(record.attempts - 1, 0),
+    priorFeedback,
+  })
+  if (!ai.available) {
+    return { ok: true, graded: false, reason: ai.reason, message: ai.message }
+  }
+
+  const g = ai.result
+  const passed = g.outcome === 'pass'
+  const result = createResult({
+    projectId,
+    segmentId,
+    outcome: g.outcome,
+    score: g.grade,
+    isSample: false,
+    mode: 'ai',
+    notes: passed
+      ? []
+      : (g.blockingIssues ?? []).map((b) => ({ kind: 'blocking', severity: b.severity || 'review', text: b.fix || b.issueType })),
+    feedback: g.feedback,
+    bestTranslation: g.bestTranslation,
+    vocabulary: g.vocabulary,
+    guidance: g.guidance,
+    takeaways: g.takeaways,
+    topics: g.topics,
+  })
+
+  commit({
+    ...state,
+    results: { ...state.results, [result.id]: result },
+    studyRecords: {
+      ...state.studyRecords,
+      [key]: {
+        ...record,
+        submissionState: passed ? 'submitted' : 'failed',
+        lastResultId: result.id,
+        updatedAt: new Date().toISOString(),
+      },
+    },
+  })
+  return { ok: true, graded: true, result }
 }
 
 export function resetSegment({ projectId, segmentId }) {

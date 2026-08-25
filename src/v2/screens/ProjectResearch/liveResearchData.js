@@ -26,6 +26,9 @@ function studyStatus(record) {
   if (record.submissionState === 'submitted') {
     return { status: 'Completed', statusTone: 'ready' }
   }
+  if (record.submissionState === 'attempted') {
+    return { status: 'Attempted', statusTone: 'review' }
+  }
   return { status: 'Needs revision', statusTone: 'weak' }
 }
 

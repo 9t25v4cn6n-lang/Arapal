@@ -26,7 +26,12 @@ export function segmentKey(projectId, segmentId) {
   return `${projectId}::${segmentId}`
 }
 
-export const SUBMISSION_STATES = ['draft', 'submitted', 'failed']
+// 'attempted' is load-bearing: a translation the user submitted and which passed
+// the mechanical surface check but has NOT been semantically graded (no AI
+// provider, or grading is still running/failed). It is deliberately NOT a pass —
+// only a real AI grade meeting the Study contract yields 'submitted'. This is
+// what stops a form-only check from masquerading as completion (R-016).
+export const SUBMISSION_STATES = ['draft', 'attempted', 'submitted', 'failed']
 
 export function createProject({ title, subtitle = '', reference = '' } = {}) {
   const now = new Date().toISOString()
@@ -103,7 +108,14 @@ export function createStudyRecord({ projectId, segmentId }) {
  * surface it. Presenting generated feedback as a real assessment of work the
  * product never read is the defect this flag prevents.
  */
-export function createResult({ projectId, segmentId, outcome, score, notes = [], isSample = true }) {
+export function createResult({
+  projectId, segmentId, outcome, score, notes = [], isSample = true,
+  // Real review outputs from the AI grading contract (source prompt §12/§9/§10/
+  // §13/§18). Present only on a genuine pass; empty/absent otherwise, never
+  // fabricated. mode records which evaluator produced this result.
+  bestTranslation = '', feedback = '', vocabulary = [], guidance = [],
+  takeaways = [], topics = [], mode = 'surface-check',
+}) {
   return {
     id: newId('res'),
     projectId,
@@ -112,6 +124,13 @@ export function createResult({ projectId, segmentId, outcome, score, notes = [],
     score,
     notes,
     isSample,
+    mode,
+    bestTranslation,
+    feedback,
+    vocabulary,
+    guidance,
+    takeaways,
+    topics,
     createdAt: new Date().toISOString(),
   }
 }

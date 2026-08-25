@@ -42,6 +42,7 @@ export const actions = {
   saveDraft: store.saveDraft,
   setCurrentSegment: store.setCurrentSegment,
   submitSegment: store.submitSegment,
+  gradeSegment: store.gradeSegment,
   resetSegment: store.resetSegment,
   addExam: store.addExam,
   startAttempt: store.startAttempt,

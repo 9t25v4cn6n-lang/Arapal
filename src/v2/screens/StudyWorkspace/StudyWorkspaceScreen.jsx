@@ -267,6 +267,10 @@ export default function StudyWorkspaceScreen({ route, shell }) {
   // has no store to read, so it falls back to the fixture — but only there.
   const submittedTranslation = draftValue.trim() || userTranslation
   const [submitError, setSubmitError] = useState(null)
+  const [grading, setGrading] = useState(false)
+  // Honest message when a submission was saved as an attempt but not graded as a
+  // pass (no AI provider, or grading failed). Never a fabricated result.
+  const [gradeNotice, setGradeNotice] = useState(null)
 
   const activeSourceText = isLive ? (currentSegment?.text ?? '') : arabicSource
 
@@ -339,8 +343,22 @@ export default function StudyWorkspaceScreen({ route, shell }) {
         return
       }
       setSubmitError(null)
+      setGradeNotice(null)
       setDiscussionOpen(false)
       setDiscussionClosing(false)
+      // The attempt is saved. Now grade it against the real study contract. A
+      // pass (the only path to completion) or a fail comes back from the AI
+      // boundary; when no provider is configured the segment stays 'attempted'
+      // and we say so honestly — never a fabricated pass.
+      setGrading(true)
+      actions.gradeSegment({ projectId: project.id, segmentId: currentSegment.id })
+        .then((res) => {
+          setGradeNotice(res.graded
+            ? null
+            : (res.message || 'Your translation is saved as an attempt. Semantic grading needs an AI provider, so this is not a pass.'))
+        })
+        .catch(() => setGradeNotice('Grading could not complete. Your translation is saved; you can try again.'))
+        .finally(() => setGrading(false))
       return
     }
 
@@ -642,30 +660,35 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     // and gating it on isLive meant redirecting Exams to the V2 Study silently
     // dropped the handoff for anyone without a project, which is exactly the
     // audience most likely to be exploring from Exams.
-    Layer4_Study_ContextRegion: (context && !contextDismissed) || (isLive && lastResult?.isSample) ? (
-      <div className="study-v2__contextStrip">
-        {context && !contextDismissed ? (
-          <div className="study-v2__contextBanner" role="status">
-            <span className="study-v2__contextLabel">
-              {navigation.describeContext(context)?.label}
-            </span>
-            <span className="study-v2__contextDetail">
-              {navigation.describeContext(context)?.detail}
-            </span>
-            <button
-              type="button"
-              className="study-v2__contextDismiss"
-              onClick={() => { setContextDismissed(true); navigation.clearContext() }}
-            >
-              Dismiss
-            </button>
-          </div>
-        ) : null}
-        {isLive && lastResult?.isSample ? (
-          <p className="study-v2__sampleNotice" role="note">{SAMPLE_EVALUATION_NOTICE}</p>
-        ) : null}
-      </div>
-    ) : null,
+    Layer4_Study_ContextRegion:
+      (context && !contextDismissed) || grading || gradeNotice || (isLive && lastResult?.isSample) ? (
+        <div className="study-v2__contextStrip">
+          {context && !contextDismissed ? (
+            <div className="study-v2__contextBanner" role="status">
+              <span className="study-v2__contextLabel">
+                {navigation.describeContext(context)?.label}
+              </span>
+              <span className="study-v2__contextDetail">
+                {navigation.describeContext(context)?.detail}
+              </span>
+              <button
+                type="button"
+                className="study-v2__contextDismiss"
+                onClick={() => { setContextDismissed(true); navigation.clearContext() }}
+              >
+                Dismiss
+              </button>
+            </div>
+          ) : null}
+          {grading ? (
+            <p className="study-v2__sampleNotice" role="status">Grading your translation against the study rubric…</p>
+          ) : gradeNotice ? (
+            <p className="study-v2__sampleNotice" role="note">{gradeNotice}</p>
+          ) : isLive && lastResult?.isSample ? (
+            <p className="study-v2__sampleNotice" role="note">{SAMPLE_EVALUATION_NOTICE}</p>
+          ) : null}
+        </div>
+      ) : null,
     Layer4_Study_ActionRegion: currentState === 'submitted' ? (
       <StudyBottomBar
         progressText={segmentMeta.progressText}

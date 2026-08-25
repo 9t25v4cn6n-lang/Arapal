@@ -127,15 +127,33 @@ test('every result declares itself a sample and carries no invented score', () =
   assert.equal(result.score, null, 'a stub must not invent a numeric grade')
 })
 
-test('submitting advances attempts and records the outcome', () => {
+test('submitting records an ATTEMPT and never a pass from the surface check', () => {
+  const { project, segments } = seedProject()
+  store.saveDraft({ projectId: project.id, segmentId: segments[0].id, text: 'A full translation of the chunk.' })
+  const out = store.submitSegment({ projectId: project.id, segmentId: segments[0].id })
+
+  const record = store.getStudyRecord(project.id, segments[0].id)
+  assert.equal(record.attempts, 1)
+  // R-016: a form-level check must not masquerade as a semantic pass.
+  assert.equal(record.submissionState, 'attempted')
+  assert.equal(out.graded, false)
+  assert.ok(record.lastResultId)
+  // An attempt does not count toward project completion.
+  assert.equal(store.getProjectProgress(project.id).completed, 0)
+})
+
+test('grading is honestly unavailable when no AI provider is configured', async () => {
   const { project, segments } = seedProject()
   store.saveDraft({ projectId: project.id, segmentId: segments[0].id, text: 'A full translation of the chunk.' })
   store.submitSegment({ projectId: project.id, segmentId: segments[0].id })
 
-  const record = store.getStudyRecord(project.id, segments[0].id)
-  assert.equal(record.attempts, 1)
-  assert.ok(['submitted', 'failed'].includes(record.submissionState))
-  assert.ok(record.lastResultId)
+  const graded = await store.gradeSegment({ projectId: project.id, segmentId: segments[0].id })
+  assert.equal(graded.ok, true)
+  assert.equal(graded.graded, false)
+  assert.equal(graded.reason, 'no-provider')
+  // Still attempted, still not complete — no fabricated pass.
+  assert.equal(store.getStudyRecord(project.id, segments[0].id).submissionState, 'attempted')
+  assert.equal(store.getProjectProgress(project.id).completed, 0)
 })
 
 // ── persistence ──────────────────────────────────────────────────────────────

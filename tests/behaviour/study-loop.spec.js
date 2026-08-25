@@ -107,15 +107,24 @@ test.describe('core study loop', () => {
     expect(text).not.toMatch(/grade\s*8\.4|Reviewed:/i)
   })
 
-  test('a real submission produces a result that declares itself a sample', async ({ page }) => {
+  test('a submission is saved as an honest attempt, never a fabricated pass', async ({ page }) => {
     await openStudy(page)
     await editor(page).fill('The absolute water is purifying and does not lose its purifying quality.')
     await page.waitForTimeout(300)
     await page.getByRole('button', { name: /^submit$/i }).first().click()
     await page.waitForTimeout(900)
 
-    expect(await body(page), 'stub output must be labelled wherever it is shown')
-      .toMatch(/not a scholarly assessment/i)
+    // Without an AI provider the product states that honestly and does not
+    // fabricate a grade (R-016 + DECISIONS §3).
+    expect(await body(page), 'grading unavailability must be stated, not faked')
+      .toMatch(/AI grading is not configured|not a pass/i)
+
+    // The record is an ATTEMPT — a form-level check must not become a pass.
+    const record = await page.evaluate(() => {
+      const s = JSON.parse(localStorage.getItem('arapal.v1.state'))
+      return Object.values(s.studyRecords)[0]
+    })
+    expect(record.submissionState, 'a surface check must not be a semantic pass').toBe('attempted')
   })
 
   test('submission state survives a reload', async ({ page }) => {
@@ -222,12 +231,12 @@ test.describe('core study loop', () => {
       .not.toMatch(/start the conversation/i)
   })
 
-  test('parity: a submitted segment is marked in the rail and counted', async ({ page }) => {
+  test('an attempt is recorded from the store and survives reload, but is not counted as a pass', async ({ page }) => {
     await openStudy(page)
-    // Legacy equivalent: 'segment 1.3 fails on first submission and passes on the
-    // second' — the part that matters for parity is that an outcome is recorded
-    // and shown. This is also the regression test for the defect where the rail
-    // read a fixture, so finished work never appeared anywhere.
+    // The store — not a fixture — drives the rail, so a real attempt persists and
+    // appears after reload (the original defect: the rail read a fixture and
+    // finished work never appeared). But an attempt is NOT a pass: completion may
+    // move only on a real grade (R-016).
     await editor(page).fill('Absolute water is purifying.')
     await page.waitForTimeout(300)
     await page.getByRole('button', { name: /^submit$/i }).click()
@@ -236,18 +245,24 @@ test.describe('core study loop', () => {
     await page.reload({ waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(2400)
 
+    const record = await page.evaluate(() => {
+      const s = JSON.parse(localStorage.getItem('arapal.v1.state'))
+      return Object.values(s.studyRecords)[0]
+    })
+    expect(record?.submissionState, 'the attempt persists across reload from the store').toBe('attempted')
+
     const marked = await page.evaluate(() => {
       const row = [...document.querySelectorAll('.study-v2__segmentRow')]
         .find((r) => /First segment/.test(r.textContent))
       return String(row?.querySelector('.study-v2__segmentState')?.className ?? '')
     })
-    expect(marked, 'the rail must show the segment as submitted').toMatch(/is-submitted/)
+    expect(marked, 'an ungraded attempt must not be shown as a pass').not.toMatch(/is-submitted/)
 
     const progress = await page.evaluate(() => {
       const el = document.querySelector('[data-debug-item="study_segment_progress"]')
       return el ? el.innerText.replace(/\s+/g, ' ') : ''
     })
-    expect(progress, 'the counter must move, not sit at zero').toMatch(/1 \/ 2/)
+    expect(progress, 'completion must not move on an ungraded attempt').not.toMatch(/1 \/ 2/)
   })
 
   test('with no project the route still renders its reference content', async ({ page }) => {
