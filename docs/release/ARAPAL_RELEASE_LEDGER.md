@@ -279,7 +279,9 @@ whole package's acceptance evidence is met.
 | `fe933aa` | IP-04 R-017 | Created exams persist (`design-sandbox.exams.v1`) so a saved assessment + its attempt survive reload — no more disappearing exam / blank attempt shell. | in-browser: created "DURABILITYCHECK exam" survives reload; exam behaviour 3/3 |
 | `17100f4` | IP-07 R-020 | Exam Attempt + Builder collapse to one column at 390 (were pushing the answer panel ~248px off-screen). | in-browser 390: answer textarea on-screen (L49–R341), full attempt stacks; **QA production 0** across all routes |
 
-## Current gate state (HEAD `17100f4`, 2026-08-25)
+| `c4862e8` | IP-06 R-019 | Honest persistence-failure banner. The store already knew whether the last write landed but nothing surfaced it; on a device that can't save (private mode / quota full) work was accepted silently. `PersistenceBanner` now shows a global notice so no "saved" claim can mislead. | in-browser: hidden when healthy → forced `setItem` throw makes it appear → persists across nav → clears after a real write; **QA production 0** |
+
+## Current gate state (HEAD `c4862e8`, 2026-08-25)
 
 - **build** PASS · **data tests** 37/37 · **AI unit tests** 27/27 · **behaviour** 36 passed / 2 skipped.
 - **lint** now **PASSES — 0 errors** (`e27e94c`→`b3a3bf4`): the genuine no-dupe-keys bug fixed, dead code removed, and dev-tooling/legacy-reference debt scoped-exempt with rationale; 6 non-blocking exhaustive-deps warnings remain. Dimension H lint is closed.
