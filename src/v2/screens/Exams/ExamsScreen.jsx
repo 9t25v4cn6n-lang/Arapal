@@ -358,6 +358,7 @@ export default function ExamsScreen({ route, shell }) {
 
         {view === 'generate' ? (
           <GenerateView
+            isMobile={shell.isMobileViewport}
             draftTitle={draftTitle}
             onDraftTitle={setDraftTitle}
             scopeMode={scopeMode}
@@ -376,6 +377,7 @@ export default function ExamsScreen({ route, shell }) {
 
         {view === 'take' && activeExam ? (
           <TakeView
+            isMobile={shell.isMobileViewport}
             exam={activeExam}
             currentIndex={currentQuestionIndex}
             currentQuestion={currentQuestion}
@@ -594,6 +596,7 @@ function Section({ title, count, children, empty, emptyTitle, emptyText, emptyAc
 // ── create ───────────────────────────────────────────────────────────────────
 
 function GenerateView({
+  isMobile = false,
   draftTitle, onDraftTitle, scopeMode, onScopeMode, prefixValue, onPrefixValue,
   rangeStart, rangeEnd, onRangeStart, onRangeEnd, scopePreview, onCancel, onCreate,
 }) {
@@ -601,7 +604,7 @@ function GenerateView({
   const estimatedMinutes = Math.max(8, scopePreview.length * 6)
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(320px, 0.9fr) minmax(0, 1.1fr)', gap: spacing[24], alignItems: 'start' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'minmax(320px, 0.9fr) minmax(0, 1.1fr)', gap: spacing[24], alignItems: 'start' }}>
       <section style={{ ...surface, display: 'grid', gap: spacing[20], padding: spacing[24] }}>
         <Field label="Assessment title">
           <input style={inputStyle} value={draftTitle} onChange={(event) => onDraftTitle(event.target.value)} />
@@ -686,13 +689,14 @@ function Field({ label, children }) {
 // ── take ─────────────────────────────────────────────────────────────────────
 
 function TakeView({
+  isMobile = false,
   exam, currentIndex, currentQuestion, answers, answeredCount,
   autosaveState, elapsedMinutes, onSelectQuestion, onAnswer, onSubmit,
 }) {
   const isLast = currentIndex === exam.questions.length - 1
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(220px, 0.6fr) minmax(0, 2fr)', gap: spacing[24], alignItems: 'start' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'minmax(220px, 0.6fr) minmax(0, 2fr)', gap: spacing[24], alignItems: 'start' }}>
       <nav style={{ ...surface, display: 'grid', gap: spacing[8], padding: spacing[16] }} aria-label="Questions">
         {exam.questions.map((question, index) => {
           const answered = Boolean((answers[question.id] || '').trim())
