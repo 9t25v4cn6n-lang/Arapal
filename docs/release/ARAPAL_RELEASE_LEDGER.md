@@ -283,7 +283,9 @@ whole package's acceptance evidence is met.
 
 | `2c87996` | IP-04 R-017 | Exams are generated from the OPEN project's real canonical segments, not the `studyScopePool` fixture. Fixture pool, fixture seed exams, and the dead length-heuristic grader removed; records project-scoped; empty project shows an honest empty state; miss handoff routes by canonical segment id; grader receives each segment's real source text. | 36/36 behaviour (incl. exam→study handoff), 75/75 data+AI unit, **QA production 0**; live: empty→honest, seeded→builder previews its own 1.1/1.2/1.3 |
 
-## Current gate state (HEAD `2c87996`, 2026-08-25)
+| `51b9438` | IP-08 | Dev/QA lab surfaces compiled OUT of the production bundle. `devRoutes.ts` (buildDevRoutes() fn so top-level `lazy()` isn't a side effect) attached only under `import.meta.env.DEV`; Rollup tree-shakes the whole module + every lab chunk in a prod build. Render-time `DEV_ONLY_ROUTES` gate removed — the module boundary is the gate. | dist **16 → 2 JS chunks**, 0 lab chunks; built-dist smoke: `/`→V2 Home, `#v2/patternLab`→falls through, no console errors; DEV still renders labs; 75/75 unit, 36/36 behaviour, QA production 0 |
+
+## Current gate state (HEAD `51b9438`, 2026-08-25)
 
 - **build** PASS · **data + AI unit tests** 75/75 (data 39 + AI 36) · **behaviour** 36 passed / 2 skipped · **lint** 0 errors.
 - **lint** now **PASSES — 0 errors** (`e27e94c`→`b3a3bf4`): the genuine no-dupe-keys bug fixed, dead code removed, and dev-tooling/legacy-reference debt scoped-exempt with rationale; 6 non-blocking exhaustive-deps warnings remain. Dimension H lint is closed.
@@ -302,7 +304,7 @@ whole package's acceptance evidence is met.
 | `9016d65` | IP-07 R-020 | Projects mobile overlap at 390 fixed: alignContent-start on the stretched grids, flex-column workspace with flexShrink:0 regions, companion hidden at ≤560. | in-browser 390: hero/summary/rail/detail stack, **no overlap** (measured); 1280 editorial layout intact |
 | `9016d65` | QA regression | Full deterministic QA after all Study/Exams/routing/responsive/error-boundary changes. | **productionBlocking 0, 0 blank routes, 0 page errors** across all 14 routes; `artifacts/qa/visual-standard.json` @ 2026-08-25T15:03Z |
 
-**IP-08 remaining:** compile the (now-unreachable, lazy) Lab chunks out of the production bundle, and smoke the built `dist` from `/`.
+**IP-08 — DONE (`51b9438`):** Lab chunks are tree-shaken out of the production build (16 → 2 JS chunks) and the built `dist` was smoked from `/` (V2 entry, dev routes fall through, no console errors).
 | `ffbc28a` | IP-07 R-013 | Study usable at tablet-768: a new compact range (561–1024px) defaults the segment + support rails to collapsed 72px strips so the work lane gets the width; resize-into-range also collapses them. Mobile (≤560) and desktop (>1024) unchanged. | in-browser 768: source reads normally, editor full-width, **Discuss + SUBMIT reachable**; 1280 fresh load shows rails expanded |
 
 | `80048e9` | IP-07 R-020 | Mobile global navigation: a new in-flow bottom `MobileNavBar` (6 primary destinations, `<nav>` landmark, aria-current) shown at ≤560 for rail-bearing routes; the universal shell now fills its stage (`minHeight:100%`) rather than a hard 100vh so nothing renders under the bar. | **QA production 0** (fixed the 24 overlaps the first fixed-position pass caused); behaviour 36/2; in-browser: tabs navigate + track active route, desktop rail intact |
