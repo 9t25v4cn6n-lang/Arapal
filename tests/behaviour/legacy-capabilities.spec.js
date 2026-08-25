@@ -20,6 +20,71 @@ const body = async (page) => (await page.evaluate(() => document.body.innerText)
 const THREE_SENTENCES =
   'AUDITONE first sentence here. AUDITTWO second sentence here. AUDITTHREE third sentence here.'
 
+// Exams are built from a project's own canonical segments now, not a fixture, so
+// a project with segments AND an assessment over them must be seeded before the
+// library has anything to start (R-017). This writes the real persisted shapes
+// and reloads, exercising the genuine read path — the same approach as
+// study-loop.spec.js.
+const EXAM_PROJECT_ID = 'prj_exam'
+function examSeededState() {
+  const now = new Date('2026-08-16T10:00:00.000Z').toISOString()
+  const seg = (id, index, ref, title, text) => ({
+    id, projectId: EXAM_PROJECT_ID, sourceId: 'src_exam', index, ref, title,
+    chapterLabel: 'Chapter 1: Purity', text, createdAt: now,
+  })
+  return {
+    version: 1,
+    projects: {
+      [EXAM_PROJECT_ID]: {
+        id: EXAM_PROJECT_ID, title: 'Exam project', subtitle: 'Test', reference: '',
+        createdAt: now, updatedAt: now, sourceIds: ['src_exam'],
+        segmentIds: ['seg_e1', 'seg_e2', 'seg_e3'], currentSegmentId: 'seg_e1', isSample: false,
+      },
+    },
+    sources: {
+      src_exam: {
+        id: 'src_exam', projectId: EXAM_PROJECT_ID, label: 'Test source',
+        rawText: 'First. Second. Third.', wordCount: 3, createdAt: now,
+      },
+    },
+    segments: {
+      seg_e1: seg('seg_e1', 0, '1.1', 'First segment', 'الماء المطلق طهور لا يخرج عن الطهورية.'),
+      seg_e2: seg('seg_e2', 1, '1.2', 'Second segment', 'والتيمم جائز عند عدم الماء أو العجز.'),
+      seg_e3: seg('seg_e3', 2, '1.3', 'Third segment', 'لا تصح الجمعة إلا في مصر جامع.'),
+    },
+    drafts: {}, studyRecords: {}, results: {}, exams: {}, attempts: {},
+    currentProjectId: EXAM_PROJECT_ID, seededAt: now,
+  }
+}
+
+function seededExams() {
+  const q = (ref, segmentId, index, title, source) => ({
+    id: ref, segmentId, tracker: index + 1, prefix: ref.split('.')[0],
+    label: `${ref} · ${title}`, concept: 'Chapter 1: Purity', source, reviewNote: '', number: index + 1,
+  })
+  return [{
+    id: 'exam-seeded', projectId: EXAM_PROJECT_ID, title: 'Purity checkpoint',
+    createdAt: 'Just now', scopeLabel: 'Prefix 1', status: 'ready', lastScore: null,
+    questions: [
+      q('1.1', 'seg_e1', 0, 'First segment', 'الماء المطلق طهور لا يخرج عن الطهورية.'),
+      q('1.2', 'seg_e2', 1, 'Second segment', 'والتيمم جائز عند عدم الماء أو العجز.'),
+      q('1.3', 'seg_e3', 2, 'Third segment', 'لا تصح الجمعة إلا في مصر جامع.'),
+    ],
+  }]
+}
+
+async function goExams(page) {
+  await page.goto('/?chrome=0#exams', { waitUntil: 'domcontentloaded' })
+  await page.evaluate(({ state, exams }) => {
+    localStorage.setItem('arapal.v1.state', JSON.stringify(state))
+    localStorage.setItem('design-sandbox.exams.v1', JSON.stringify(exams))
+    localStorage.removeItem('design-sandbox.exam-attempt.v1')
+    sessionStorage.clear()
+  }, { state: examSeededState(), exams: seededExams() })
+  await page.reload({ waitUntil: 'domcontentloaded' })
+  await page.waitForTimeout(2400)
+}
+
 // ── Segmentation: the real splitting behaviour ────────────────────────────────
 test.describe('legacy segmentation — splitting and options', () => {
   test('CTA is disabled until source text is present', async ({ page }) => {
@@ -161,7 +226,7 @@ test.describe('legacy study — submission, support and discussion', () => {
 // (DECISIONS §2) and cannot be exercised without a provider.
 test.describe('exams grade honestly', () => {
   async function takeAndSubmitFirstExam(page) {
-    await go(page, 'exams')
+    await goExams(page)
     await page.getByRole('button', { name: /start exam/i }).first().click()
     await page.waitForTimeout(500)
     // Answer each question, advancing until the submit control appears.
@@ -221,10 +286,7 @@ test.describe('known gaps — these SHOULD fail once fixed, update them then', (
   })
 
   test('FIXED: the exam attempt survives a reload, so the AUTOSAVE badge is honest', async ({ page }) => {
-    await go(page, 'exams')
-    await page.evaluate(() => localStorage.removeItem('design-sandbox.exam-attempt.v1'))
-    await page.reload({ waitUntil: 'domcontentloaded' })
-    await page.waitForTimeout(2400)
+    await goExams(page)
 
     // "Start exam" on the promoted next-assessment row, "Open exam"/"Retake" on
     // the rest. Matching the capability rather than one screen's wording.
@@ -240,7 +302,7 @@ test.describe('known gaps — these SHOULD fail once fixed, update them then', (
   })
 
   test('a completed attempt does not resurrect on the next visit', async ({ page }) => {
-    await go(page, 'exams')
+    await goExams(page)
     await page.evaluate(() => localStorage.setItem(
       'design-sandbox.exam-attempt.v1',
       JSON.stringify({ examId: 'nope', answers: { q: 'stale' }, currentQuestionIndex: 0 })))

@@ -21,14 +21,13 @@ import {
   createExamRecord,
   EXAM_CONTEXT_STORAGE_KEY,
   filterScopeItems,
-  hydrateInitialExams,
   readPersistedAttempt,
   readPersistedExams,
   slugifyExamTitle,
-  studyScopePool,
   writePersistedAttempt,
   writePersistedExams,
 } from './examsModel'
+import { useLiveExamScope } from './liveExamScope'
 import { gradeExam } from '../../services/ai'
 
 /**
@@ -51,15 +50,22 @@ import { gradeExam } from '../../services/ai'
  * which is why nothing has to be reconciled by the reader.
  */
 export default function ExamsScreen({ route, shell }) {
+  // Questions come from the OPEN project's own canonical segments, never a
+  // fixture. An empty project therefore has an empty pool, and the builder says
+  // so instead of offering scope that maps to nothing (R-017).
+  const { project, pool } = useLiveExamScope()
   const restoredAttempt = useMemo(() => readPersistedAttempt(), [])
   const [view, setView] = useState(() => (restoredAttempt?.examId ? 'take' : 'library'))
-  // Hydrate from persisted exams so a created assessment survives reload; fall
-  // back to the starter set only when nothing has been saved yet (R-017).
-  const [exams, setExams] = useState(() => readPersistedExams() ?? hydrateInitialExams())
+  // Hydrate from the persisted list so a created assessment survives reload.
+  // There are no fixture seeds: a project's library starts empty and is filled
+  // by building assessments from that project's segments (R-017).
+  const [exams, setExams] = useState(() => readPersistedExams() ?? [])
   const [scopeMode, setScopeMode] = useState('prefix')
-  const [prefixValue, setPrefixValue] = useState('2')
-  const [rangeStart, setRangeStart] = useState(2)
-  const [rangeEnd, setRangeEnd] = useState(6)
+  // Scope defaults track the real pool, so the first preview is never empty on a
+  // project whose segments do not happen to start at the old fixture's "2".
+  const [prefixValue, setPrefixValue] = useState(() => pool[0]?.prefix ?? '1')
+  const [rangeStart, setRangeStart] = useState(1)
+  const [rangeEnd, setRangeEnd] = useState(() => Math.max(1, pool.length))
   const [draftTitle, setDraftTitle] = useState('Focused checkpoint')
   const [activeExamId, setActiveExamId] = useState(restoredAttempt?.examId ?? null)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(restoredAttempt?.currentQuestionIndex ?? 0)
@@ -76,8 +82,16 @@ export default function ExamsScreen({ route, shell }) {
     [activeExamId, exams],
   )
   const scopePreview = useMemo(
-    () => filterScopeItems(scopeMode, prefixValue, rangeStart, rangeEnd),
-    [prefixValue, rangeEnd, rangeStart, scopeMode],
+    () => filterScopeItems(scopeMode, prefixValue, rangeStart, rangeEnd, pool),
+    [prefixValue, rangeEnd, rangeStart, scopeMode, pool],
+  )
+  // Only the open project's assessments are shown. Records built over a
+  // different project's segments stay filed against that project and never
+  // surface here (R-017). Legacy records saved before project-tagging have no
+  // projectId; they are shown so nothing a user built silently disappears.
+  const projectExams = useMemo(
+    () => exams.filter((exam) => !exam.projectId || exam.projectId === project?.id),
+    [exams, project?.id],
   )
   const currentQuestion = activeExam?.questions[currentQuestionIndex] ?? null
   const answeredCount = useMemo(
@@ -129,8 +143,8 @@ export default function ExamsScreen({ route, shell }) {
   )
 
   const library = useMemo(() => {
-    const ready = exams.filter((exam) => exam.status !== 'completed')
-    const completed = exams.filter((exam) => exam.status === 'completed')
+    const ready = projectExams.filter((exam) => exam.status !== 'completed')
+    const completed = projectExams.filter((exam) => exam.status === 'completed')
     const scored = completed.filter((exam) => typeof exam.lastScore === 'number')
 
     return {
@@ -143,10 +157,10 @@ export default function ExamsScreen({ route, shell }) {
         ? Math.round(scored.reduce((total, exam) => total + exam.lastScore, 0) / scored.length)
         : null,
       resumable: restoredAttempt?.examId
-        ? exams.find((exam) => exam.id === restoredAttempt.examId) ?? null
+        ? projectExams.find((exam) => exam.id === restoredAttempt.examId) ?? null
         : null,
     }
-  }, [exams, restoredAttempt])
+  }, [projectExams, restoredAttempt])
 
   const groupedMisses = useMemo(() => {
     if (!activeResult) return []
@@ -161,9 +175,9 @@ export default function ExamsScreen({ route, shell }) {
 
   const resetDraft = () => {
     setScopeMode('prefix')
-    setPrefixValue('2')
-    setRangeStart(2)
-    setRangeEnd(6)
+    setPrefixValue(pool[0]?.prefix ?? '1')
+    setRangeStart(1)
+    setRangeEnd(Math.max(1, pool.length))
     setDraftTitle('Focused checkpoint')
   }
 
@@ -171,12 +185,14 @@ export default function ExamsScreen({ route, shell }) {
     if (!scopePreview.length) return
     const scopeLabel = scopeMode === 'prefix'
       ? `Prefix ${prefixValue.trim()}`
-      : `Trackers ${Math.min(rangeStart, rangeEnd)}–${Math.max(rangeStart, rangeEnd)}`
+      : `Segments ${Math.min(rangeStart, rangeEnd)}–${Math.max(rangeStart, rangeEnd)}`
     const created = createExamRecord({
       id: `exam-${slugifyExamTitle(draftTitle.trim() || 'New exam')}-${Date.now().toString(36)}`,
       title: draftTitle.trim() || 'New exam',
       scopeLabel,
       questionIds: scopePreview.map((item) => item.id),
+      pool,
+      projectId: project?.id ?? null,
     })
     setExams((current) => [created, ...current])
     setActiveExamId(created.id)
@@ -215,9 +231,15 @@ export default function ExamsScreen({ route, shell }) {
     // indexes (the R-016 exam defect).
     const graded = await gradeExam({
       questions: activeExam.questions.map((q) => ({
-        id: q.id, prompt: q.label, concept: q.concept, segmentRef: q.label,
+        // The prompt IS the segment's own source text — the material the learner
+        // is being assessed on — not just its label. Without it the grader has
+        // nothing to grade against.
+        id: q.id, prompt: q.source || q.label, concept: q.concept, segmentRef: q.id,
       })),
       answers,
+      sourceContext: activeExam.questions
+        .map((q) => `${q.id} — ${q.concept}: ${q.source}`)
+        .join('\n'),
     })
 
     let result
@@ -305,8 +327,12 @@ export default function ExamsScreen({ route, shell }) {
 
   const handleJumpToStudy = (question) => {
     if (typeof window === 'undefined') return
+    // Route by the canonical segment id — Study matches the handoff to a real
+    // segment by identity, not by the "1.2" ref (which is not a store id). The
+    // ref rides along as segmentRef for display and as a fallback.
     window.sessionStorage.setItem(EXAM_CONTEXT_STORAGE_KEY, JSON.stringify({
-      segmentId: question.id,
+      segmentId: question.segmentId ?? question.id,
+      segmentRef: question.id,
       examTitle: activeResult?.examTitle || activeExam?.title || 'Exam review',
       concept: question.conceptLabel,
       reason: question.outcome === 'miss' ? 'Exam miss' : 'Worth revisiting',
@@ -359,6 +385,7 @@ export default function ExamsScreen({ route, shell }) {
         {view === 'generate' ? (
           <GenerateView
             isMobile={shell.isMobileViewport}
+            poolSize={pool.length}
             draftTitle={draftTitle}
             onDraftTitle={setDraftTitle}
             scopeMode={scopeMode}
@@ -597,11 +624,28 @@ function Section({ title, count, children, empty, emptyTitle, emptyText, emptyAc
 
 function GenerateView({
   isMobile = false,
+  poolSize = 0,
   draftTitle, onDraftTitle, scopeMode, onScopeMode, prefixValue, onPrefixValue,
   rangeStart, rangeEnd, onRangeStart, onRangeEnd, scopePreview, onCancel, onCreate,
 }) {
   const conceptCount = new Set(scopePreview.map((item) => item.concept)).size
   const estimatedMinutes = Math.max(8, scopePreview.length * 6)
+
+  // An assessment can only cover segments the project actually has. With none
+  // approved yet there is nothing to build from, and the builder says so rather
+  // than presenting scope inputs that can only ever preview zero questions.
+  if (!poolSize) {
+    return (
+      <div style={{ ...surface, display: 'grid', gap: spacing[8], justifyItems: 'start', padding: spacing[24], maxWidth: '60ch' }}>
+        <strong style={{ ...typography.sectionTitle, color: colors.textStrong }}>No segments to assess yet</strong>
+        <p style={{ ...typography.supportSubtext, margin: 0, color: colors.textSoft }}>
+          Assessments are built from this project’s approved segments. Segment a
+          source and approve it, then come back to build a checkpoint over it.
+        </p>
+        <GhostButton icon={<ArrowLeft size={16} strokeWidth={1.9} />} onClick={onCancel}>Back to library</GhostButton>
+      </div>
+    )
+  }
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'minmax(320px, 0.9fr) minmax(0, 1.1fr)', gap: spacing[24], alignItems: 'start' }}>
@@ -633,8 +677,8 @@ function GenerateView({
         ) : (
           <Field label="Tracker range">
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: spacing[12] }}>
-              <input type="number" min="1" max={studyScopePool.length} style={inputStyle} value={rangeStart} aria-label="Range start" onChange={(event) => onRangeStart(Number(event.target.value))} />
-              <input type="number" min="1" max={studyScopePool.length} style={inputStyle} value={rangeEnd} aria-label="Range end" onChange={(event) => onRangeEnd(Number(event.target.value))} />
+              <input type="number" min="1" max={poolSize} style={inputStyle} value={rangeStart} aria-label="Range start" onChange={(event) => onRangeStart(Number(event.target.value))} />
+              <input type="number" min="1" max={poolSize} style={inputStyle} value={rangeEnd} aria-label="Range end" onChange={(event) => onRangeEnd(Number(event.target.value))} />
             </div>
           </Field>
         )}
