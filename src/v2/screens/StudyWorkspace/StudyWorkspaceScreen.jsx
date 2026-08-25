@@ -161,6 +161,17 @@ function getHeaderColumns() {
   return 'minmax(0, 1fr) auto minmax(0, 1fr)'
 }
 
+// Tablet range: above the mobile breakpoint (where rails go to 0px) but too
+// narrow for three full columns. At 768 the expanded rails left ~130px for the
+// work lane, so the Arabic wrapped one word per line and Submit/Discuss were
+// unreachable (R-013). In this range the rails DEFAULT to collapsed (72px
+// each), giving the work lane room; the user can still expand either.
+const COMPACT_QUERY = '(min-width: 561px) and (max-width: 1024px)'
+function isCompactViewport() {
+  if (typeof window === 'undefined' || !window.matchMedia) return false
+  return window.matchMedia(COMPACT_QUERY).matches
+}
+
 const DISCUSSION_TRANSITION_MS = 220
 
 export default function StudyWorkspaceScreen({ route, shell }) {
@@ -180,8 +191,23 @@ export default function StudyWorkspaceScreen({ route, shell }) {
   const [currentSegmentId, setCurrentSegmentId] = useState(
     () => context?.segmentId ?? context?.segmentRef ?? readInitialSegmentId(),
   )
-  const [segmentRailCollapsed, setSegmentRailCollapsed] = useState(false)
-  const [supportRailCollapsed, setSupportRailCollapsed] = useState(false)
+  const [segmentRailCollapsed, setSegmentRailCollapsed] = useState(isCompactViewport)
+  const [supportRailCollapsed, setSupportRailCollapsed] = useState(isCompactViewport)
+
+  // Resizing INTO the tablet range collapses the rails so the work lane stays
+  // usable; the user keeps control after that (this fires only on the transition).
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return undefined
+    const list = window.matchMedia(COMPACT_QUERY)
+    const onChange = (e) => {
+      if (e.matches) {
+        setSegmentRailCollapsed(true)
+        setSupportRailCollapsed(true)
+      }
+    }
+    list.addEventListener('change', onChange)
+    return () => list.removeEventListener('change', onChange)
+  }, [])
   const [focusMode, setFocusMode] = useState(readInitialFocusMode)
   const [sourceFontScale, setSourceFontScale] = useState(1)
   const [discussionOpen, setDiscussionOpen] = useState(readInitialDiscussionOpen)
