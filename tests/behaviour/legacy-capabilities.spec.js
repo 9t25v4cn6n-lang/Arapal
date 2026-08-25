@@ -151,45 +151,54 @@ test.describe('legacy study — submission, support and discussion', () => {
   })
 })
 
-// ── Exam → Study handoff: the one correct cross-screen pattern ────────────────
-test.describe('exam → study contextual handoff', () => {
-  test('jumping to study writes a context payload and lands on the right segment', async ({ page }) => {
+// ── Exams grade honestly: no fabricated placeholder scores (R-016) ────────────
+//
+// The exam→study handoff MECHANISM (context payload → V2 Study lands on the
+// right segment) is characterised in segmentation-handoff.spec.js. These tests
+// now assert the R-016 fix: without an AI grader, an exam attempt is honestly
+// unscored and the app invents no score and no per-miss remediation. Per-miss
+// remediation is a real capability, but it is legitimately gated on a real grade
+// (DECISIONS §2) and cannot be exercised without a provider.
+test.describe('exams grade honestly', () => {
+  async function takeAndSubmitFirstExam(page) {
     await go(page, 'exams')
-    await page.getByRole('button', { name: /review results/i }).first().click()
+    await page.getByRole('button', { name: /start exam/i }).first().click()
+    await page.waitForTimeout(500)
+    // Answer each question, advancing until the submit control appears.
+    for (let i = 0; i < 8; i += 1) {
+      await page.locator('textarea').first().fill(`A real answer number ${i + 1} with enough substance to count as an attempt.`)
+      await page.waitForTimeout(150)
+      const next = page.getByRole('button', { name: /save and next/i })
+      if (await next.count()) {
+        await next.first().click()
+        await page.waitForTimeout(200)
+      } else {
+        break
+      }
+    }
+    await page.getByRole('button', { name: /submit for grading/i }).click()
     await page.waitForTimeout(900)
+  }
 
-    const jump = page.getByRole('button', { name: /open in study|jump to study/i }).first()
-    await expect(jump, 'results offer a per-item route into Study').toBeVisible()
-    await jump.click()
-    await page.waitForTimeout(1600)
-
-    // The destination changed deliberately and this characterisation records the
-    // new intent rather than the old behaviour. Exams is production; legacy
-    // `#study` is classified surface: 'reference'. Sending a user from a shipping
-    // screen into a reference one was the defect, so the handoff now lands on the
-    // V2 Study — carrying the same context, which V2 reads via readContext's
-    // legacy-key fallback.
-    expect(page.url()).toContain('v2/studyWorkspace')
+  test('submitting without a grader is honestly unscored, with no invented misses', async ({ page }) => {
+    await takeAndSubmitFirstExam(page)
     const text = await body(page)
-    expect(text, 'Study announces the exam context it was opened with').toMatch(/Exam miss|Exam context/i)
-    expect(text).toMatch(/Dismiss/i)
+    expect(text, 'no fabricated score is shown').toMatch(/not scored|Not graded/i)
+    expect(text, 'the honest reason is stated').toMatch(/AI grading is not configured/i)
+    // No fabricated per-miss remediation route without a real grade.
+    expect(
+      await page.getByRole('button', { name: /study what needs attention/i }).count(),
+      'there is no invented remediation to jump to',
+    ).toBe(0)
   })
 
-  test('exam context is carried in session storage, not guessed', async ({ page }) => {
-    await go(page, 'exams')
-    await page.getByRole('button', { name: /review results/i }).first().click()
-    await page.waitForTimeout(900)
-    await page.getByRole('button', { name: /open in study|jump to study/i }).first().click()
-    await page.waitForTimeout(1200)
-
-    const ctx = await page.evaluate(() => {
-      const raw = sessionStorage.getItem('design-sandbox.exam-context.v1')
-      return raw ? JSON.parse(raw) : null
-    })
-    expect(ctx, 'handoff payload exists').toBeTruthy()
-    expect(ctx).toHaveProperty('segmentId')
-    expect(ctx).toHaveProperty('examTitle')
-    expect(ctx).toHaveProperty('reason')
+  test('an unscored attempt is not recorded as a graded percentage', async ({ page }) => {
+    await takeAndSubmitFirstExam(page)
+    // Return to the library; the just-attempted exam must not show an invented %.
+    await page.getByRole('button', { name: /back to assessments|assessment library/i }).first().click()
+    await page.waitForTimeout(600)
+    const completedRegion = await body(page)
+    expect(completedRegion, 'no fabricated percentage is displayed').not.toMatch(/\b\d{1,3}%/)
   })
 })
 
