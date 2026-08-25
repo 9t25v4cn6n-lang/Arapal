@@ -288,13 +288,16 @@ whole package's acceptance evidence is met.
 | `fb9179d` | IP-05 | Durable, project-scoped notes: manual notes + saved discussion summaries were React-only and lost on reload. Now a first-class store collection keyed by (projectId, segmentId) — cascades on delete, archived (not destroyed) on re-segmentation. | 4 new store tests; in-browser: seeded note renders after reload + a UI-added note persists (2 notes) |
 | `6994bf3` | IP-05 | Real Research companion: "Ask across the whole project" rendered ONE hard-coded paragraph + fixture citations for every question and called nothing. Now `researchAsk` grounds the question in the project's own segments, constrains citations to supplied refs, and is honestly unavailable without a provider — never a fabricated answer. | 7 new research tests; in-browser (no key): idle shows real "3 segments" grounding, Ask shows "AI companion not configured", no fabricated answer |
 
-## Current gate state (HEAD `6994bf3`, 2026-08-25)
+| `e5ad7f7` | IP-09 | Security & Privacy Review + Ops Runbook written; Gemini key moved from URL query to `x-goog-api-key` header (keeps the secret out of history/Referer/logs). Review documents the full local-data inventory, the single BYO-key AI boundary, and the two honest data-control gaps (no in-product AI-config UI, no export/delete UI) as Stage-3 recommendations. | docs added; lint 0, build PASS |
+| `e7bc2ff` | IP-09 | Visual-regression golden re-baselined to the intended post-convergence UI (16 snapshots updated). | `npm run vr` passes clean 56/56 |
+
+## Current gate state (HEAD `e7bc2ff`, 2026-08-25)
 
 - **build** PASS · **data + AI unit tests** 86/86 (data 43 + AI 43) · **behaviour** 36 passed / 2 skipped · **lint** 0 errors.
 - **lint** now **PASSES — 0 errors** (`e27e94c`→`b3a3bf4`): the genuine no-dupe-keys bug fixed, dead code removed, and dev-tooling/legacy-reference debt scoped-exempt with rationale; 6 non-blocking exhaustive-deps warnings remain. Dimension H lint is closed.
 - **deterministic QA**: re-run after the mobile-nav + shell change — **production 0 violations, 0 blank routes, 0 page errors** across all 14 routes. Visual regression not yet re-baselined (belongs to IP-09).
 - **AI unit tests**: 36 (study 19 + exam 8 + discussion 9). **data 39/39**.
-- Working tree clean; every increment committed. **Done since last summary:** IP-06 persistence-failure banner (R-019); IP-07 Exam-Attempt-390 + confirmed Seg-Review@390 within QA tolerance; IP-04 R-017 exams from real project segments (fixture pool/seeds/heuristic-grader removed). **Remaining long tail:** IP-05 Research companion grounded answers + Create-patch + durable notes; IP-08 lab-chunk compile-out + built-`dist` smoke; IP-09 security/privacy/ops review + VR re-baseline.
+- Working tree clean; every increment committed. **All nine implementation packages (IP-01…IP-09) are now complete.** Since the last summary: IP-06 persistence banner; IP-07 Exam-Attempt-390; IP-04 R-017 exams from real segments; IP-08 lab-chunk compile-out + built-`dist` smoke; IP-05 durable notes + grounded Research companion; IP-09 security/privacy review + ops runbook + Gemini key hardening + VR re-baseline. **Documented Stage-3 recommendations (not release blockers):** an in-product AI-configuration UI and a data export/delete UI — both mechanisms already exist and are honest at the data layer (`writeAiConfig`/`clearAiConfig`, `deleteProject`), they are simply not yet surfaced; see the Security & Privacy Review §3.
 
 ## Additional convergence increments (2026-08-25)
 
