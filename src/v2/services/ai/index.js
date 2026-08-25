@@ -11,6 +11,7 @@
 
 import { readAiConfig, isAiConfigured } from './config.js'
 import { buildStudyGradingPrompt, parseStudyGradeResult } from './contracts/studyGrading.js'
+import { buildExamGradingPrompt, parseExamGradeResult } from './contracts/examGrading.js'
 import { generateJson as geminiGenerateJson } from './providers/gemini.js'
 
 export { isAiConfigured, readAiConfig, writeAiConfig, clearAiConfig } from './config.js'
@@ -53,5 +54,28 @@ export async function gradeStudyAttempt({ source, translation, attempt = 0, prio
   } catch (error) {
     // A provider/network/parse failure must not become a fabricated grade.
     return unavailable('error', error?.message || 'AI grading failed.')
+  }
+}
+
+/**
+ * Grade an exam attempt. Same honesty contract as study grading: unavailable
+ * when no provider is configured or on failure, and the score is computed by the
+ * application from the per-question results — never fabricated from answer length
+ * or fixed question indexes (the R-016 exam defect).
+ *
+ * @returns {Promise<{available:true, result:object} | {available:false, reason:string, message?:string}>}
+ */
+export async function gradeExam({ questions, answers, sourceContext = '' }, { generate } = {}) {
+  const run = resolveGenerate(generate)
+  if (!run) return unavailable('no-provider', 'AI grading is not configured on this device.')
+  if (!Array.isArray(questions) || questions.length === 0) return unavailable('empty', 'No questions to grade.')
+
+  try {
+    const prompt = buildExamGradingPrompt({ questions, answers, sourceContext })
+    const raw = await run(prompt)
+    const result = parseExamGradeResult(raw, questions)
+    return { available: true, result }
+  } catch (error) {
+    return unavailable('error', error?.message || 'AI exam grading failed.')
   }
 }
