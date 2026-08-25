@@ -187,6 +187,17 @@ export default function StudyWorkspaceScreen({ route, shell }) {
   const [discussionOpen, setDiscussionOpen] = useState(readInitialDiscussionOpen)
   const [discussionClosing, setDiscussionClosing] = useState(false)
   const [manualNotesBySegment, setManualNotesBySegment] = useState({})
+
+  // The handoff's project takes precedence: arriving from Research or an Exam
+  // miss for a segment in project A must open project A, not whatever happened to
+  // be current. Without this, a cross-project handoff resolved the segment id
+  // against the wrong project and silently fell back to segment 1 (R-018).
+  useEffect(() => {
+    if (context?.projectId && context.projectId !== select.getCurrentProject()?.id) {
+      actions.selectProject(context.projectId)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   const showSandboxControls = readSandboxControlsEnabled()
   const isMobile = useIsMobileViewport()
 
@@ -219,9 +230,18 @@ export default function StudyWorkspaceScreen({ route, shell }) {
       })()
     : segmentNodes
 
-  const currentSegmentIndex = Math.max(
-    0, activeSegments.findIndex((segment) => segment.id === currentSegmentId))
+  const resolvedIndex = activeSegments.findIndex((segment) => segment.id === currentSegmentId)
+  const currentSegmentIndex = Math.max(0, resolvedIndex)
   const currentSegment = activeSegments[currentSegmentIndex] ?? activeSegments[0]
+
+  // R-018: a handoff that named a segment which does not resolve in this project
+  // must SAY so and land on a real segment, not silently pretend it opened the
+  // requested one. (A normal in-project navigation never sets context.segmentId,
+  // so this only fires for a genuinely stale/cross-context handoff.)
+  const contextSegmentMissing =
+    isLive && !!context?.segmentId && !contextDismissed &&
+    activeSegments.length > 0 && resolvedIndex === -1 &&
+    !activeSegments.some((segment) => segment.id === context.segmentId)
 
   const storeRecord = useArapal((s) =>
     isLive && currentSegment ? select.getStudyRecord(project.id, currentSegment.id, s) : null)
@@ -664,8 +684,13 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     // dropped the handoff for anyone without a project, which is exactly the
     // audience most likely to be exploring from Exams.
     Layer4_Study_ContextRegion:
-      (context && !contextDismissed) || grading || gradeNotice || (isLive && lastResult?.isSample) ? (
+      (context && !contextDismissed) || contextSegmentMissing || grading || gradeNotice || (isLive && lastResult?.isSample) ? (
         <div className="study-v2__contextStrip">
+          {contextSegmentMissing ? (
+            <p className="study-v2__sampleNotice" role="alert">
+              The segment this link pointed to isn’t in the current project — showing the first segment instead.
+            </p>
+          ) : null}
           {context && !contextDismissed ? (
             <div className="study-v2__contextBanner" role="status">
               <span className="study-v2__contextLabel">
