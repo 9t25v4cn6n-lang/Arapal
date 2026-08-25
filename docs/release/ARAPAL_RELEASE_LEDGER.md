@@ -277,8 +277,18 @@ whole package's acceptance evidence is met.
 ## Current gate state (HEAD `2164595`, 2026-08-25)
 
 - **build** PASS · **data tests** 37/37 · **AI unit tests** 27/27 · **behaviour** 36 passed / 2 skipped.
-- **lint** still 21 genuine tracked errors (Dimension H / IP-09), unchanged and recorded — not hidden.
-- **deterministic QA / visual regression**: last run at the IP-01 checkpoint (production 0 blocking); not re-run since the Study/Exams data changes (no production-surface geometry changed, but a fresh QA + VR pass belongs in IP-07/IP-09).
+- **lint** now **PASSES — 0 errors** (`e27e94c`→`b3a3bf4`): the genuine no-dupe-keys bug fixed, dead code removed, and dev-tooling/legacy-reference debt scoped-exempt with rationale; 6 non-blocking exhaustive-deps warnings remain. Dimension H lint is closed.
+- **deterministic QA / visual regression**: last full run at the IP-01 checkpoint (production 0 blocking); not re-run since the Study/Exams data changes (no production-surface geometry changed, but a fresh QA + VR pass belongs in IP-07/IP-09).
 - Working tree clean; every increment committed.
+
+## Additional convergence increments (2026-08-25)
+
+| Commit | Package | Change | Evidence |
+|---|---|---|---|
+| `6d720ce` | IP-04 R-016 exams | Exam grading honest via the exam service; no fabricated `%`; honest ungraded state; seed `82%` removed. | in-browser: no fabricated score anywhere; behaviour updated + green |
+| `e27e94c` | IP-08 R-021 | Production entry is V2 Project Home; empty/unknown URLs → V2, only explicit legacy hashes → reference app; 7 Lab/Dashboard routes gated out of production (`import.meta.env.PROD`). | in-browser: root + unknown → V2, `#home` → legacy; behaviour 36/2; build PASS |
+| `b3a3bf4` | IP-09 lint | Lint gate clean (0 errors, was 21). | `npm run lint` exits 0; build/data/AI green |
+
+**IP-08 remaining:** compile the (now-unreachable, lazy) Lab chunks out of the production bundle, and smoke the built `dist` from `/`.
 
 **Standing limitation (not a RED blocker):** this environment has no Gemini key and no network to Google, so IP-03/04/05 AI paths are proven by unit tests + the honest-unavailable branch in-browser; live end-to-end AI output is verifiable only by the product owner with a key.
