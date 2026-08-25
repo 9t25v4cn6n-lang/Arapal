@@ -42,6 +42,7 @@ export const actions = {
   clearProposal: store.clearProposal,
   publishSegments: store.publishSegments,
   saveDraft: store.saveDraft,
+  addNote: store.addNote,
   setCurrentSegment: store.setCurrentSegment,
   submitSegment: store.submitSegment,
   gradeSegment: store.gradeSegment,
@@ -62,6 +63,7 @@ export const select = {
   getSegment: store.getSegment,
   getDraft: store.getDraft,
   getStudyRecord: store.getStudyRecord,
+  listNotes: store.listNotes,
   getResult: store.getResult,
   listExams: store.listExams,
   getAttempt: store.getAttempt,
@@ -123,6 +125,9 @@ export const useDraft = (projectId, segmentId) =>
 
 export const useStudyRecord = (projectId, segmentId) =>
   useArapal((s) => (projectId && segmentId ? store.getStudyRecord(projectId, segmentId, s) : null))
+
+export const useNotes = (projectId, segmentId) =>
+  useArapal((s) => (projectId && segmentId ? store.listNotes(projectId, segmentId, s) : EMPTY_LIST))
 
 export const useProjectProgress = (projectId) =>
   useArapal((s) => (projectId ? store.getProjectProgress(projectId, s) : EMPTY_PROGRESS))

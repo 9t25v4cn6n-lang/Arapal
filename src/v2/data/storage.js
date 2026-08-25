@@ -21,6 +21,7 @@ export const emptyState = () => ({
   segments: {},
   drafts: {},        // keyed projectId::segmentId
   studyRecords: {},  // keyed projectId::segmentId
+  notes: {},         // keyed projectId::segmentId — array of saved notes per segment
   results: {},
   exams: {},
   attempts: {},
@@ -31,7 +32,7 @@ export const emptyState = () => ({
 })
 
 /** Collections that MUST be plain objects for selectors not to throw. */
-const COLLECTIONS = ['projects', 'sources', 'segments', 'drafts', 'studyRecords', 'results', 'exams', 'attempts', 'proposals', 'archives']
+const COLLECTIONS = ['projects', 'sources', 'segments', 'drafts', 'studyRecords', 'notes', 'results', 'exams', 'attempts', 'proposals', 'archives']
 const QUARANTINE_KEY = `${KEY}.quarantine`
 
 const isPlainObject = (v) => !!v && typeof v === 'object' && !Array.isArray(v)

@@ -9,7 +9,7 @@ import * as storage from './storage.js'
 import {
   createProject, createSource, createSegment, createDraft,
   createStudyRecord, createResult, createExam, createAttempt,
-  createProposal, segmentKey,
+  createProposal, createNote, segmentKey,
 } from './schema.js'
 import { evaluateTranslation } from './evaluation.js'
 import { gradeStudyAttempt } from '../services/ai/index.js'
@@ -17,6 +17,9 @@ import { gradeStudyAttempt } from '../services/ai/index.js'
 let state = storage.read()
 let lastWriteOk = true
 const listeners = new Set()
+// A single frozen empty array so a segment with no notes returns a stable
+// reference — the selector cache treats an unchanged empty list as unchanged.
+const EMPTY_NOTES = Object.freeze([])
 
 function commit(next) {
   state = next
@@ -60,6 +63,9 @@ export const getDraft = (projectId, segmentId, s = state) =>
 
 export const getStudyRecord = (projectId, segmentId, s = state) =>
   s.studyRecords[segmentKey(projectId, segmentId)] ?? null
+
+export const listNotes = (projectId, segmentId, s = state) =>
+  s.notes[segmentKey(projectId, segmentId)] ?? EMPTY_NOTES
 
 export const getResult = (resultId, s = state) => (resultId ? s.results[resultId] ?? null : null)
 
@@ -108,7 +114,7 @@ export function deleteProject(projectId) {
     next[collection] = Object.fromEntries(
       Object.entries(state[collection]).filter(([, v]) => v.projectId !== projectId))
   }
-  for (const collection of ['drafts', 'studyRecords']) {
+  for (const collection of ['drafts', 'studyRecords', 'notes']) {
     next[collection] = Object.fromEntries(
       Object.entries(state[collection]).filter(([k]) => !k.startsWith(`${projectId}::`)))
   }
@@ -203,6 +209,7 @@ export function publishSegments({ projectId, sourceId, chunks }) {
   }
   const draftsPart = partitionKeyed(state.drafts)
   const recordsPart = partitionKeyed(state.studyRecords)
+  const notesPart = partitionKeyed(state.notes)
   const priorResults = Object.fromEntries(
     Object.entries(state.results).filter(([, r]) => r.projectId === projectId && staleIds.has(r.segmentId)))
 
@@ -211,6 +218,7 @@ export function publishSegments({ projectId, sourceId, chunks }) {
     priorSegments.length > 0 &&
     (Object.keys(draftsPart.removed).length ||
       Object.values(recordsPart.removed).some((r) => r.submissionState !== 'draft') ||
+      Object.keys(notesPart.removed).length ||
       Object.keys(priorResults).length)
   const nextArchives = hadPriorWork
     ? {
@@ -222,6 +230,7 @@ export function publishSegments({ projectId, sourceId, chunks }) {
             segments: priorSegments,
             drafts: draftsPart.removed,
             studyRecords: recordsPart.removed,
+            notes: notesPart.removed,
             results: priorResults,
           },
         ],
@@ -233,6 +242,7 @@ export function publishSegments({ projectId, sourceId, chunks }) {
     segments: { ...keptSegments, ...Object.fromEntries(segments.map((s) => [s.id, s])) },
     drafts: draftsPart.kept,
     studyRecords: recordsPart.kept,
+    notes: notesPart.kept,
     archives: nextArchives,
     proposals: (() => { const p = { ...state.proposals }; delete p[projectId]; return p })(),
     projects: {
@@ -261,6 +271,23 @@ export function saveDraft({ projectId, segmentId, text }) {
     ...state,
     drafts: { ...state.drafts, [key]: { ...createDraft({ projectId, segmentId, text }) } },
   })
+}
+
+/**
+ * Save a note against a segment. Notes were React-only state that a reload
+ * discarded, so the companion's "save this summary" produced nothing durable.
+ * Appends to the segment's note list and persists it (IP-05). Returns the note.
+ */
+export function addNote({ projectId, segmentId, text, source = 'manual' }) {
+  const clean = String(text ?? '').trim()
+  if (!projectId || !segmentId || !clean) return null
+  const key = segmentKey(projectId, segmentId)
+  const note = createNote({ projectId, segmentId, text: clean, source })
+  commit({
+    ...state,
+    notes: { ...state.notes, [key]: [...(state.notes[key] ?? []), note] },
+  })
+  return note
 }
 
 export function setCurrentSegment({ projectId, segmentId }) {

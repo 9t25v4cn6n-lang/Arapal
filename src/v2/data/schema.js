@@ -90,6 +90,24 @@ export function createDraft({ projectId, segmentId, text = '' }) {
   }
 }
 
+/**
+ * A saved note attached to one segment — a captured discussion summary or a
+ * point the learner wants to keep. Notes were component-only state and did not
+ * survive a reload; this makes them a durable, project-scoped collection so the
+ * companion's "save this" is truthful (IP-05). `source` distinguishes a manual
+ * note from a discussion-derived one.
+ */
+export function createNote({ projectId, segmentId, text = '', source = 'manual' }) {
+  return {
+    id: newId('note'),
+    projectId,
+    segmentId,
+    text: String(text ?? '').trim(),
+    source,
+    createdAt: new Date().toISOString(),
+  }
+}
+
 /** Study progress for one segment. */
 export function createStudyRecord({ projectId, segmentId }) {
   return {

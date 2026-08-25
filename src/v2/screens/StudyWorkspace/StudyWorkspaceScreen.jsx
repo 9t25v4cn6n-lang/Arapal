@@ -19,7 +19,7 @@ import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import { motion } from '../../foundation/tokens'
 import layoutContract from './StudyWorkspaceScreen.contract'
 import {
-  actions, select, useArapal, navigation, SAMPLE_EVALUATION_NOTICE,
+  actions, select, useArapal, useNotes, navigation, SAMPLE_EVALUATION_NOTICE,
 } from '../../data'
 
 const segmentNodes = [
@@ -325,7 +325,14 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     if (isLive) actions.saveDraft({ projectId: project.id, segmentId: currentSegment.id, text })
     else setLocalDraft(text)
   }
-  const currentManualNotes = manualNotesBySegment[currentSegment.id] ?? []
+  // Notes are durable for a real project (persisted in the store, keyed by
+  // segment) and fall back to local state only for the reference surface, which
+  // has no project to attach them to (IP-05).
+  const liveNotes = useNotes(project?.id, currentSegment?.id)
+  const currentManualNotes = useMemo(
+    () => (isLive ? liveNotes.map((note) => note.text) : (manualNotesBySegment[currentSegment.id] ?? [])),
+    [isLive, liveNotes, manualNotesBySegment, currentSegment.id],
+  )
   const canGoPrevious = currentSegmentIndex > 0
   const canGoNext = currentSegmentIndex < activeSegments.length - 1
   const discussionVisible = discussionOpen || discussionClosing
@@ -425,7 +432,11 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     })
   }
 
-  const addManualNote = (note) => {
+  const addManualNote = (note, source = 'manual') => {
+    if (isLive && project) {
+      actions.addNote({ projectId: project.id, segmentId: currentSegment.id, text: note, source })
+      return
+    }
     setManualNotesBySegment((current) => ({
       ...current,
       [currentSegment.id]: [...(current[currentSegment.id] ?? []), note],
@@ -653,7 +664,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
               onAddManualNote={addManualNote}
             />
             <StudySubmissionNavigator onJumpTo={jumpToStudyAnchor} notesAvailable={currentManualNotes.length > 0} />
-            {discussionVisible ? <StudyDiscussionCompanion onClose={closeDiscussion} segmentLabel={currentSegment?.label} segmentText={currentSegment?.text ?? ""} segmentRef={currentSegment?.ref ?? ""} passed={currentState === "submitted"} onSaveSummary={addManualNote} /> : null}
+            {discussionVisible ? <StudyDiscussionCompanion onClose={closeDiscussion} segmentLabel={currentSegment?.label} segmentText={currentSegment?.text ?? ""} segmentRef={currentSegment?.ref ?? ""} passed={currentState === "submitted"} onSaveSummary={(text) => addManualNote(text, "discussion")} /> : null}
           </div>
         ) : (
           <div
@@ -698,7 +709,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
               />
             </div>
             <div className="study-v2__composerCompanion">
-              {discussionVisible ? <StudyDiscussionCompanion onClose={closeDiscussion} segmentLabel={currentSegment?.label} segmentText={currentSegment?.text ?? ""} segmentRef={currentSegment?.ref ?? ""} passed={currentState === "submitted"} onSaveSummary={addManualNote} /> : null}
+              {discussionVisible ? <StudyDiscussionCompanion onClose={closeDiscussion} segmentLabel={currentSegment?.label} segmentText={currentSegment?.text ?? ""} segmentRef={currentSegment?.ref ?? ""} passed={currentState === "submitted"} onSaveSummary={(text) => addManualNote(text, "discussion")} /> : null}
             </div>
           </div>
         )}

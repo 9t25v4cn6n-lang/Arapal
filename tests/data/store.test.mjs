@@ -81,6 +81,49 @@ test('re-segmentation replaces canonical segments but ARCHIVES prior work, never
   assert.ok(archivedDraft, 'the archived draft text is recoverable')
 })
 
+// ── durable notes (IP-05) ─────────────────────────────────────────────────────
+
+test('a saved note is persisted and survives a reload', () => {
+  const { project, segments } = seedProject()
+  const note = store.addNote({ projectId: project.id, segmentId: segments[0].id, text: 'keep this', source: 'discussion' })
+  assert.ok(note && note.id, 'addNote returns the created note')
+  assert.equal(store.listNotes(project.id, segments[0].id).length, 1)
+  assert.equal(store.listNotes(project.id, segments[0].id)[0].text, 'keep this')
+  assert.equal(store.listNotes(project.id, segments[0].id)[0].source, 'discussion')
+
+  // A reload reads the persisted shape back; the note is still there.
+  const reloaded = storage.read()
+  const key = `${project.id}::${segments[0].id}`
+  assert.ok(Array.isArray(reloaded.notes[key]), 'notes collection persisted for the segment')
+  assert.equal(reloaded.notes[key][0].text, 'keep this')
+})
+
+test('an empty or whitespace-only note is refused, never stored', () => {
+  const { project, segments } = seedProject()
+  assert.equal(store.addNote({ projectId: project.id, segmentId: segments[0].id, text: '   ' }), null)
+  assert.equal(store.listNotes(project.id, segments[0].id).length, 0)
+})
+
+test('re-segmentation archives notes rather than destroying them', () => {
+  const { project, source, segments } = seedProject()
+  store.addNote({ projectId: project.id, segmentId: segments[0].id, text: 'note on old segment' })
+
+  store.publishSegments({ projectId: project.id, sourceId: source.id, chunks: ['Only one now.'] })
+
+  assert.equal(store.listNotes(project.id, segments[0].id).length, 0, 'the old note no longer resolves against a gone segment')
+  const archive = store.getSnapshot().archives[project.id]
+  const archivedNote = Object.values(archive[0].notes).flat().find((n) => n.text === 'note on old segment')
+  assert.ok(archivedNote, 'the note was archived, recoverable, not deleted')
+})
+
+test('deleting a project cascades to its notes', () => {
+  const { project, segments } = seedProject()
+  store.addNote({ projectId: project.id, segmentId: segments[0].id, text: 'note' })
+  store.deleteProject(project.id)
+  const key = `${project.id}::${segments[0].id}`
+  assert.equal(store.getSnapshot().notes[key], undefined, 'no orphaned note key remains')
+})
+
 // ── proposal → approval authority (R-015 / DECISIONS §5) ──────────────────────
 
 test('a proposal is not canonical: saving one publishes no segments', () => {
