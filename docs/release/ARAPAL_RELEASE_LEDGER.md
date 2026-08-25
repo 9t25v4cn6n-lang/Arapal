@@ -295,6 +295,8 @@ whole package's acceptance evidence is met.
 **IP-08 remaining:** compile the (now-unreachable, lazy) Lab chunks out of the production bundle, and smoke the built `dist` from `/`.
 | `ffbc28a` | IP-07 R-013 | Study usable at tablet-768: a new compact range (561–1024px) defaults the segment + support rails to collapsed 72px strips so the work lane gets the width; resize-into-range also collapses them. Mobile (≤560) and desktop (>1024) unchanged. | in-browser 768: source reads normally, editor full-width, **Discuss + SUBMIT reachable**; 1280 fresh load shows rails expanded |
 
-**IP-07 remaining:** Segmentation Review @390, Exam Attempt @390, and a mobile global-navigation replacement (the rail is hidden at ≤560 with no substitute). The two worst responsive P0s (Projects-390 overlap, Study-768 unusable) are now fixed.
+| `80048e9` | IP-07 R-020 | Mobile global navigation: a new in-flow bottom `MobileNavBar` (6 primary destinations, `<nav>` landmark, aria-current) shown at ≤560 for rail-bearing routes; the universal shell now fills its stage (`minHeight:100%`) rather than a hard 100vh so nothing renders under the bar. | **QA production 0** (fixed the 24 overlaps the first fixed-position pass caused); behaviour 36/2; in-browser: tabs navigate + track active route, desktop rail intact |
+
+**IP-07 remaining:** Segmentation Review resegment-toolbar clip @390, Exam Attempt @390. The three worst responsive gaps (Projects-390 overlap, Study-768 unusable, no mobile nav) are now fixed.
 
 **Standing limitation (not a RED blocker):** this environment has no Gemini key and no network to Google, so IP-03/04/05 AI paths are proven by unit tests + the honest-unavailable branch in-browser; live end-to-end AI output is verifiable only by the product owner with a key.
