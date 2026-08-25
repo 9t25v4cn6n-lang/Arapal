@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { defaultRouteId, getPrimaryRailRoutes, routeRegistry } from './app/routeRegistry'
 import { shellSizing } from './foundation/layout/shellSizing'
 import { useAppIntro } from './foundation/primitives/AppIntro'
@@ -6,6 +6,7 @@ import useNavigationRailState from './foundation/primitives/useNavigationRailSta
 import useIsMobileViewport from './foundation/primitives/useIsMobileViewport'
 import MobileNavBar from './foundation/primitives/MobileNavBar'
 import PersistenceBanner from './foundation/primitives/PersistenceBanner'
+import AiConfigDialog from './foundation/primitives/AiConfigDialog'
 
 export default function AppV2({ routeId = defaultRouteId }) {
   // A registry entry is only routable if it can actually render. Rail entries
@@ -24,6 +25,9 @@ export default function AppV2({ routeId = defaultRouteId }) {
   const ActiveScreen = activeRoute.component
   const navigationRailState = useNavigationRailState()
   const [introPhase, introOverlay] = useAppIntro()
+  // The BYO-key AI setup dialog is app-level so any screen (via shell) or the
+  // navigation rail can open the one instance (IP-09).
+  const [aiConfigOpen, setAiConfigOpen] = useState(false)
 
   const railItems = getPrimaryRailRoutes()
   const { isNavPinned, isNavHovered, isNavExpanded } = navigationRailState
@@ -53,6 +57,9 @@ export default function AppV2({ routeId = defaultRouteId }) {
     isNavHovered,
     isNavExpanded,
     navigationRail: shellSizing.navigationRail,
+    openAiConfig() {
+      setAiConfigOpen(true)
+    },
     navigate(nextRouteId) {
       if (!nextRouteId) {
         return
@@ -118,6 +125,7 @@ export default function AppV2({ routeId = defaultRouteId }) {
         <MobileNavBar items={railItems} activeRouteId={activeRailRouteId} onNavigate={shell.navigate} />
       ) : null}
       {introOverlay}
+      <AiConfigDialog key={aiConfigOpen ? 'ai-open' : 'ai-closed'} open={aiConfigOpen} onClose={() => setAiConfigOpen(false)} />
     </>
   )
 }

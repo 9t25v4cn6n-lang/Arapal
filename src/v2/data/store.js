@@ -359,7 +359,7 @@ export function submitSegment({ projectId, segmentId }) {
  * configured (or the call fails) the segment stays 'attempted' and this returns
  * an honest reason — it never invents a grade.
  */
-export async function gradeSegment({ projectId, segmentId }) {
+export async function gradeSegment({ projectId, segmentId }, { grade = gradeStudyAttempt } = {}) {
   const key = segmentKey(projectId, segmentId)
   const draft = state.drafts[key]
   const segment = state.segments[segmentId]
@@ -372,7 +372,10 @@ export async function gradeSegment({ projectId, segmentId }) {
     ? prior.feedback || (prior.notes ?? []).map((n) => n.text).filter(Boolean).join('; ')
     : ''
 
-  const ai = await gradeStudyAttempt({
+  // `grade` defaults to the real provider-backed contract; tests inject a stub to
+  // prove the full application path (submit → grade → completion → result)
+  // deterministically without a live provider.
+  const ai = await grade({
     source: segment?.text ?? '',
     translation: text,
     attempt: Math.max(record.attempts - 1, 0),

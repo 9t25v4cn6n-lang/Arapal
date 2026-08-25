@@ -291,13 +291,39 @@ whole package's acceptance evidence is met.
 | `e5ad7f7` | IP-09 | Security & Privacy Review + Ops Runbook written; Gemini key moved from URL query to `x-goog-api-key` header (keeps the secret out of history/Referer/logs). Review documents the full local-data inventory, the single BYO-key AI boundary, and the two honest data-control gaps (no in-product AI-config UI, no export/delete UI) as Stage-3 recommendations. | docs added; lint 0, build PASS |
 | `e7bc2ff` | IP-09 | Visual-regression golden re-baselined to the intended post-convergence UI (16 snapshots updated). | `npm run vr` passes clean 56/56 |
 
+### P1 finding — no in-product AI configuration (opened + closed 2026-08-26)
+
+**Finding:** every AI capability (Study grading, Discussion, Research, Exam) ran
+through the provider-neutral service, but nothing in the product called
+`writeAiConfig`/`clearAiConfig` — a normal user could only enable AI by hand-
+writing the `arapal.ai.config` localStorage key in dev tools. That is developer
+setup, not a usable product capability, so AI was effectively unreachable.
+
+**Closure evidence:**
+
+| Commit | Change | Evidence |
+|---|---|---|
+| _(this change)_ | `AiConfigDialog` — the smallest professional BYO-key surface, in the existing token language. Drives the existing config layer; states which provider is supported (Google Gemini), whether a key is saved, that Study/Discussion/Research/Exam AI is unavailable without one, and that the key is local-only and never bundled/logged. Save + Remove. Two discoverable entries: a persistent AI-setup control in the nav rail foot, and a contextual "Set up AI" link in the Study "not configured" notice. `gradeSegment` gained a test seam. | build/lint clean; **89/89** unit (incl. 3 new store tests: pass→submitted, fail→failed, no-provider→attempted); 36/2 behaviour; QA production 0; VR 56/56 clean |
+
+**Primary Study path verified from the UI (item 8/9):** with AI unconfigured,
+translate → Submit → honest "not configured" notice + "Set up AI" (no fake pass,
+segment stays `attempted`). Opened the dialog from that link, saved a key →
+status "AI is configured". Re-submitted → the app **crossed the boundary**: a
+real request reached Gemini and returned HTTP 400 for the (deliberately invalid)
+test key, so the segment stayed `attempted` with an honest "couldn't reach the AI
+provider" notice — **never a fabricated pass**. The application-side PASS branch
+(grade → `submitted` + real result) is proven deterministically by the injected-
+seam store test. **Remaining EXTERNAL verification step:** a valid Gemini key +
+network access, which produces a real provider PASS end-to-end — verifiable only
+by the product owner with a key.
+
 ## Current gate state (HEAD `e7bc2ff`, 2026-08-25)
 
 - **build** PASS · **data + AI unit tests** 86/86 (data 43 + AI 43) · **behaviour** 36 passed / 2 skipped · **lint** 0 errors.
 - **lint** now **PASSES — 0 errors** (`e27e94c`→`b3a3bf4`): the genuine no-dupe-keys bug fixed, dead code removed, and dev-tooling/legacy-reference debt scoped-exempt with rationale; 6 non-blocking exhaustive-deps warnings remain. Dimension H lint is closed.
 - **deterministic QA**: re-run after the mobile-nav + shell change — **production 0 violations, 0 blank routes, 0 page errors** across all 14 routes. Visual regression not yet re-baselined (belongs to IP-09).
 - **AI unit tests**: 36 (study 19 + exam 8 + discussion 9). **data 39/39**.
-- Working tree clean; every increment committed. **All nine implementation packages (IP-01…IP-09) are now complete.** Since the last summary: IP-06 persistence banner; IP-07 Exam-Attempt-390; IP-04 R-017 exams from real segments; IP-08 lab-chunk compile-out + built-`dist` smoke; IP-05 durable notes + grounded Research companion; IP-09 security/privacy review + ops runbook + Gemini key hardening + VR re-baseline. **Documented Stage-3 recommendations (not release blockers):** an in-product AI-configuration UI and a data export/delete UI — both mechanisms already exist and are honest at the data layer (`writeAiConfig`/`clearAiConfig`, `deleteProject`), they are simply not yet surfaced; see the Security & Privacy Review §3.
+- Working tree clean; every increment committed. **All nine implementation packages (IP-01…IP-09) are now complete.** Since the last summary: IP-06 persistence banner; IP-07 Exam-Attempt-390; IP-04 R-017 exams from real segments; IP-08 lab-chunk compile-out + built-`dist` smoke; IP-05 durable notes + grounded Research companion; IP-09 security/privacy review + ops runbook + Gemini key hardening + VR re-baseline. **In-product AI configuration is now shipped** (BYO-key `AiConfigDialog`, closing the P1 finding below). **Remaining Stage-3 recommendation (not a release blocker):** a data export / "delete all my data" UI — the mechanism (`deleteProject`) already exists and is honest at the data layer, it is simply not yet surfaced; see the Security & Privacy Review §3. Left for independent Stage-3 judgement.
 
 ## Additional convergence increments (2026-08-25)
 

@@ -63,8 +63,15 @@ CDN at the site root. Requirements:
 ## 4. AI provider configuration (BYO-key)
 
 AI is off by default and honestly unavailable until a user supplies their own
-provider key. There is **no in-product configuration UI yet** (see the Security &
-Privacy Review, §3 gap 1). Until one ships, a key is set in the browser:
+provider key. **In the product**, open **AI provider setup** — from the AI-setup
+control in the navigation rail, or the "Set up AI" link that appears in Study
+when grading is not configured — enter a Google Gemini key, and Save. The key can
+be replaced or removed there at any time. It is stored only in local browser
+storage, is sent only to the provider when an AI feature runs, and is never
+bundled or logged; an invalid key produces an honest error at use, never a fake
+result.
+
+Equivalently, for scripted/owner setup, the same local key can be set directly:
 
 ```js
 // In the app's browser console, on the deployed origin:

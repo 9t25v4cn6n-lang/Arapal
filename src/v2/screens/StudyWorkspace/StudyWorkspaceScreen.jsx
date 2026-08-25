@@ -317,6 +317,9 @@ export default function StudyWorkspaceScreen({ route, shell }) {
   // Honest message when a submission was saved as an attempt but not graded as a
   // pass (no AI provider, or grading failed). Never a fabricated result.
   const [gradeNotice, setGradeNotice] = useState(null)
+  // True when the last submission could not be graded because no AI provider is
+  // configured — the notice then offers a direct way to set one up (IP-09).
+  const [gradeNeedsConfig, setGradeNeedsConfig] = useState(false)
 
   const activeSourceText = isLive ? (currentSegment?.text ?? '') : arabicSource
 
@@ -397,6 +400,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
       }
       setSubmitError(null)
       setGradeNotice(null)
+      setGradeNeedsConfig(false)
       setDiscussionOpen(false)
       setDiscussionClosing(false)
       // The attempt is saved. Now grade it against the real study contract. A
@@ -406,11 +410,24 @@ export default function StudyWorkspaceScreen({ route, shell }) {
       setGrading(true)
       actions.gradeSegment({ projectId: project.id, segmentId: currentSegment.id })
         .then((res) => {
-          setGradeNotice(res.graded
-            ? null
-            : (res.message || 'Your translation is saved as an attempt. Semantic grading needs an AI provider, so this is not a pass.'))
+          if (res.graded) {
+            setGradeNotice(null)
+            setGradeNeedsConfig(false)
+            return
+          }
+          if (res.reason === 'no-provider') {
+            setGradeNotice(res.message || 'Your translation is saved as an attempt. Semantic grading needs an AI provider, so this is not a pass.')
+            setGradeNeedsConfig(true)
+            return
+          }
+          // A configured provider that failed (an invalid key, quota, or a
+          // network problem): honest, saved as an attempt, never a fabricated
+          // pass. The key is the usual fix, so offer setup — without leaking the
+          // raw provider error string to the reader.
+          setGradeNotice('Grading couldn’t reach the AI provider, so your translation is saved as an attempt, not a pass. Check your key in AI setup and try again.')
+          setGradeNeedsConfig(true)
         })
-        .catch(() => setGradeNotice('Grading could not complete. Your translation is saved; you can try again.'))
+        .catch(() => { setGradeNotice('Grading could not complete. Your translation is saved; you can try again.'); setGradeNeedsConfig(false) })
         .finally(() => setGrading(false))
       return
     }
@@ -748,7 +765,25 @@ export default function StudyWorkspaceScreen({ route, shell }) {
           {grading ? (
             <p className="study-v2__sampleNotice" role="status">Grading your translation against the study rubric…</p>
           ) : gradeNotice ? (
-            <p className="study-v2__sampleNotice" role="note">{gradeNotice}</p>
+            <p className="study-v2__sampleNotice" role="note">
+              {gradeNotice}
+              {gradeNeedsConfig ? (
+                <>
+                  {' '}
+                  <button
+                    type="button"
+                    onClick={shell.openAiConfig}
+                    style={{
+                      border: 'none', background: 'transparent', padding: 0,
+                      color: 'inherit', font: 'inherit', fontWeight: 600,
+                      textDecoration: 'underline', cursor: 'pointer',
+                    }}
+                  >
+                    Set up AI
+                  </button>
+                </>
+              ) : null}
+            </p>
           ) : isLive && lastResult?.isSample ? (
             <p className="study-v2__sampleNotice" role="note">{SAMPLE_EVALUATION_NOTICE}</p>
           ) : null}

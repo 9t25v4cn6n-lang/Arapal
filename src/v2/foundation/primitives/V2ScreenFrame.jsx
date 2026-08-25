@@ -5,6 +5,7 @@ import AppIdentity from './AppIdentity'
 import { HeaderCenter, HeaderMeta } from './HeaderBar'
 import {
   getNavigationUtilityAnchorStyle,
+  NavigationRailAiSetupControl,
   NavigationRailItems,
   NavigationRailPinControl,
 } from './NavigationRail'
@@ -186,7 +187,12 @@ export default function V2ScreenFrame({ contract, route, shell, screenSlots = {}
     ),
     Layer1_Header_CenterLane: <HeaderCenter route={route} />,
     Layer1_Header_EndLane: <HeaderMeta route={route} />,
-    Layer1_Navigation_UtilityAnchor: <NavigationRailPinControl shell={shell} />,
+    Layer1_Navigation_UtilityAnchor: (
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[8] }}>
+        <NavigationRailAiSetupControl shell={shell} />
+        <NavigationRailPinControl shell={shell} />
+      </span>
+    ),
     Layer1_Navigation_PrimaryList: <NavigationRailItems shell={shell} />,
   }
 

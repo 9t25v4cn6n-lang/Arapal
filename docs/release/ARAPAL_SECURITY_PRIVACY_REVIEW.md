@@ -92,11 +92,14 @@ sends nothing else — no identifiers, no other projects, no telemetry.
 These are honest gaps, not defects in what exists; they are the top data-control
 items to close before a wide public release:
 
-1. **No in-product AI-configuration UI.** `writeAiConfig()`/`clearAiConfig()`
-   exist and are honest, but no screen calls them, so a user cannot turn AI on or
-   off from within the product today (it can only be set via browser storage).
-   Recommendation: a Settings surface to enter/clear the provider key, showing the
-   exact data-boundary disclosure in §2.
+1. ~~**No in-product AI-configuration UI.**~~ **Resolved 2026-08-26.** An
+   `AiConfigDialog` (opened from a persistent AI-setup control in the navigation
+   rail and from a contextual "Set up AI" link in the Study "not configured"
+   notice) lets a user enter, replace, or remove their own provider key without
+   dev tools. It drives the existing `writeAiConfig()`/`clearAiConfig()` layer,
+   stores the key only in local browser storage (§2), states which provider is
+   supported and that AI is unavailable without a key, and never fakes a working
+   state — an invalid key produces an honest error at use, not a fabricated pass.
 2. **No one-click export or "delete all my data" UI.** `deleteProject()` exists
    at the data layer but is not surfaced, and there is no JSON export. For a
    local-first product, "own your data" should be a first-class, discoverable
@@ -124,8 +127,9 @@ items to close before a wide public release:
 For a local-first, single-user, backend-less V1, the security and privacy posture
 is sound: no data leaves the device by default, the one external boundary is
 explicit, user-controlled, off by default, and never fabricates, and the app is
-honest about persistence success/failure. The two data-control gaps in §3 (AI
-config UI, export/delete UI) are the material items to resolve before a broad
-public release; neither is a data-exposure risk today, because the mechanisms
-they would drive (`writeAiConfig`, `deleteProject`) are already correct at the
+honest about persistence success/failure. The in-product AI-configuration gap in
+§3 has been resolved (a BYO-key setup dialog); the remaining data-control item is
+a user-facing export / "delete all my data" surface, which is the material item
+to resolve before a broad public release. It is not a data-exposure risk today,
+because the mechanism it would drive (`deleteProject`) is already correct at the
 data layer.

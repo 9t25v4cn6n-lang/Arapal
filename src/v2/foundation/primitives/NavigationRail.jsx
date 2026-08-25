@@ -1,4 +1,4 @@
-import { BookOpen, ClipboardList, FolderGit2, Home, Layers3, Pin, PinOff, SplitSquareVertical, TextSearch } from 'lucide-react'
+import { BookOpen, ClipboardList, FolderGit2, Home, Layers3, Pin, PinOff, Sparkles, SplitSquareVertical, TextSearch } from 'lucide-react'
 import { useState } from 'react'
 import { colors, motion, radius, spacing, typography } from '../tokens'
 import { RAIL_MIN_GUTTER_PX, shellSafeArea } from '../layout/shellSizing'
@@ -151,6 +151,28 @@ export function NavigationRailPinControl({ shell }) {
       active={shell.isNavPinned}
       onClick={shell.toggleNavigationRailPin}
       icon={shell.isNavPinned ? <PinOff strokeWidth={1.8} /> : <Pin strokeWidth={1.8} />}
+    />
+  )
+}
+
+/**
+ * Persistent, discoverable entry to BYO-key AI setup. It sits in the rail's
+ * utility foot next to the pin, and like the pin it only shows while the rail is
+ * expanded — a labelled control the user can find without hitting an
+ * unavailable state first (IP-09).
+ */
+export function NavigationRailAiSetupControl({ shell }) {
+  if (!shell?.showRail || !shell.isNavExpanded) {
+    return null
+  }
+
+  return (
+    <IconActionButton
+      size="utility-sm"
+      label="AI provider setup"
+      title="AI provider setup"
+      onClick={shell.openAiConfig}
+      icon={<Sparkles strokeWidth={1.8} />}
     />
   )
 }

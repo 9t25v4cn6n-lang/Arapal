@@ -124,6 +124,68 @@ test('deleting a project cascades to its notes', () => {
   assert.equal(store.getSnapshot().notes[key], undefined, 'no orphaned note key remains')
 })
 
+// ── the real Study grade path (application boundary, provider injected) ────────
+// These prove the full path — attempt → grade → completion/result — WITHOUT a
+// live provider, by injecting the grade seam. The live-provider leg (a valid key
+// producing a real PASS) is the remaining EXTERNAL verification step.
+
+const passResult = {
+  outcome: 'pass', grade: 9.1, feedback: 'Strong, faithful rendering.',
+  bestTranslation: 'The absolute water is purifying.',
+  vocabulary: [], guidance: [], takeaways: [], topics: [],
+}
+
+test('a provider PASS drives the full app path: attempt → grade → submitted + real result', async () => {
+  const { project, segments } = seedProject()
+  const seg = segments[0]
+  store.saveDraft({ projectId: project.id, segmentId: seg.id, text: 'A serious translation of the segment.' })
+  store.submitSegment({ projectId: project.id, segmentId: seg.id })
+  assert.equal(store.getStudyRecord(project.id, seg.id).submissionState, 'attempted', 'surface submit is only an attempt')
+
+  const res = await store.gradeSegment(
+    { projectId: project.id, segmentId: seg.id },
+    { grade: async () => ({ available: true, result: passResult }) },
+  )
+  assert.equal(res.graded, true)
+  const record = store.getStudyRecord(project.id, seg.id)
+  assert.equal(record.submissionState, 'submitted', 'a real pass — and only a real pass — completes the segment')
+  const result = store.getResult(record.lastResultId)
+  assert.equal(result.outcome, 'pass')
+  assert.equal(result.mode, 'ai')
+  assert.equal(result.bestTranslation, 'The absolute water is purifying.')
+})
+
+test('a provider FAIL records failed + blocking issues, never a pass', async () => {
+  const { project, segments } = seedProject()
+  const seg = segments[0]
+  store.saveDraft({ projectId: project.id, segmentId: seg.id, text: 'a weak attempt' })
+  store.submitSegment({ projectId: project.id, segmentId: seg.id })
+  const res = await store.gradeSegment(
+    { projectId: project.id, segmentId: seg.id },
+    { grade: async () => ({ available: true, result: {
+      outcome: 'fail', grade: 4, feedback: 'Needs work.', bestTranslation: '',
+      blockingIssues: [{ severity: 'critical', fix: 'Mistranslated the ruling.' }],
+      vocabulary: [], guidance: [], takeaways: [], topics: [],
+    } }) },
+  )
+  assert.equal(res.graded, true)
+  assert.equal(store.getStudyRecord(project.id, seg.id).submissionState, 'failed')
+})
+
+test('no provider leaves the segment attempted with an honest reason, never a pass', async () => {
+  const { project, segments } = seedProject()
+  const seg = segments[0]
+  store.saveDraft({ projectId: project.id, segmentId: seg.id, text: 'an attempt' })
+  store.submitSegment({ projectId: project.id, segmentId: seg.id })
+  const res = await store.gradeSegment(
+    { projectId: project.id, segmentId: seg.id },
+    { grade: async () => ({ available: false, reason: 'no-provider', message: 'not configured' }) },
+  )
+  assert.equal(res.graded, false)
+  assert.equal(res.reason, 'no-provider')
+  assert.equal(store.getStudyRecord(project.id, seg.id).submissionState, 'attempted', 'unconfigured AI never completes the segment')
+})
+
 // ── proposal → approval authority (R-015 / DECISIONS §5) ──────────────────────
 
 test('a proposal is not canonical: saving one publishes no segments', () => {
