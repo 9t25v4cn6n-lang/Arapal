@@ -12,6 +12,10 @@
 import { readAiConfig } from './config.js'
 import { buildStudyGradingPrompt, parseStudyGradeResult } from './contracts/studyGrading.js'
 import { buildExamGradingPrompt, parseExamGradeResult } from './contracts/examGrading.js'
+import {
+  buildDiscussionPrompt, parseDiscussionReply,
+  buildDiscussionSummaryPrompt, parseDiscussionSummary,
+} from './contracts/discussion.js'
 import { generateJson as geminiGenerateJson } from './providers/gemini.js'
 
 export { isAiConfigured, readAiConfig, writeAiConfig, clearAiConfig } from './config.js'
@@ -77,5 +81,41 @@ export async function gradeExam({ questions, answers, sourceContext = '' }, { ge
     return { available: true, result }
   } catch (error) {
     return unavailable('error', error?.message || 'AI exam grading failed.')
+  }
+}
+
+/**
+ * Contextual Study discussion reply. Same honesty contract: unavailable without
+ * a provider or on failure — never a fabricated reply.
+ */
+export async function discuss({ segmentText, segmentRef, messages, revealBestTranslation }, { generate } = {}) {
+  const run = resolveGenerate(generate)
+  if (!run) return unavailable('no-provider', 'Discussion needs an AI provider, which is not configured on this device.')
+  const last = messages?.[messages.length - 1]
+  if (!last || last.role !== 'user' || !last.text?.trim()) return unavailable('empty', 'Nothing to send.')
+
+  try {
+    const prompt = buildDiscussionPrompt({ segmentText, segmentRef, messages, revealBestTranslation })
+    const raw = await run(prompt)
+    const result = parseDiscussionReply(raw)
+    return { available: true, result }
+  } catch (error) {
+    return unavailable('error', error?.message || 'The discussion reply failed.')
+  }
+}
+
+/** Distil a finished discussion into one durable note. */
+export async function summariseDiscussion({ segmentText, segmentRef, messages }, { generate } = {}) {
+  const run = resolveGenerate(generate)
+  if (!run) return unavailable('no-provider', 'Summaries need an AI provider, which is not configured on this device.')
+  if (!Array.isArray(messages) || messages.length === 0) return unavailable('empty', 'Nothing to summarise.')
+
+  try {
+    const prompt = buildDiscussionSummaryPrompt({ segmentText, segmentRef, messages })
+    const raw = await run(prompt)
+    const result = parseDiscussionSummary(raw)
+    return { available: true, result }
+  } catch (error) {
+    return unavailable('error', error?.message || 'The summary failed.')
   }
 }
