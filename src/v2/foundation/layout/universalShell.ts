@@ -25,7 +25,12 @@ export function getUniversalShellContainers() {
       overflow: 'hidden',
       textAlign: 'left',
       style: {
-        minHeight: '100vh',
+        // Fill the flex parent (the app stage), not the raw viewport. With the
+        // mobile nav bar as an in-flow sibling, a hard 100vh made the shell 60px
+        // taller than its slot, so its bottom content rendered under the nav
+        // (QA overlap). The stage is already a viewport-tall flex column, so 100%
+        // is 100vh on desktop and (100vh − nav) at mobile.
+        minHeight: '100%',
         background: [
           'radial-gradient(circle at 8% 10%, rgba(219, 234, 254, 0.78), transparent 28%)',
           'radial-gradient(circle at 88% 12%, rgba(226, 232, 240, 0.82), transparent 24%)',

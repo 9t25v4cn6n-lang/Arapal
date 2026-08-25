@@ -51,11 +51,12 @@ export default function MobileNavBar({ items, activeRouteId, onNavigate }) {
 
 const styles = {
   bar: {
-    position: 'fixed',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 40,
+    // In-flow flex item at the bottom of the app column (#root is a viewport-tall
+    // flex column), NOT position:fixed. Fixed overlaid each screen's own scroll
+    // container, which the stage padding could not reach, so content collided
+    // with the tab buttons (QA overlap). In flow the bar takes real space and the
+    // screen scrolls above it.
+    flex: '0 0 auto',
     height: `${MOBILE_NAV_HEIGHT_PX}px`,
     display: 'flex',
     alignItems: 'stretch',
@@ -85,8 +86,11 @@ const styles = {
     color: colors.accentStrong,
   },
   label: {
+    // 11px is the smallest step of the type ramp (the QA type floor); anything
+    // below it fails type-floor and reads as un-ramped drift.
     ...typography.eyebrowLabel,
-    fontSize: '9px',
+    fontSize: '11px',
+    lineHeight: 1,
     letterSpacing: '0.02em',
     textTransform: 'none',
     maxWidth: '100%',
