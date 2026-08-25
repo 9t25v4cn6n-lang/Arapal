@@ -804,6 +804,10 @@ const dashboardStyles = `
   }
 
   @media (max-width: 560px) {
+    /* The companion is editorial decoration; at 390 it crowds the hero and has
+       no room, so it steps aside like the history rail does. */
+    .study-dashboard__companionFrame { display: none; }
+    .study-dashboard__hero { gap: 0; }
     .study-dashboard__resumeHero { padding: ${spacing[24]}; }
     .study-dashboard__resumeFooter { grid-template-columns: 1fr; }
     .study-dashboard__stat { border-right: 0; border-bottom: 1px solid ${colors.lineSoft}; }

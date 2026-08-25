@@ -59,6 +59,10 @@ const layoutContract = createScreenLayoutContract({
       mobile: {
         padding: `${spacing[24]} ${spacing[16]} ${spacing[40]}`,
         gap: spacing[24],
+        // Content-size the rows and pack them from the top. Without this the
+        // stretched full-height root split its `auto auto` rows into two equal
+        // tracks, so the hero overflowed its half onto the summary band (R-020).
+        alignContent: 'start',
       },
     },
   ],
@@ -79,7 +83,7 @@ const layoutContract = createScreenLayoutContract({
       overflow: 'visible',
       textAlign: 'left',
       style: { gridRow: '1', minWidth: 0 },
-      mobile: { gap: spacing[24] },
+      mobile: { gap: spacing[24], alignContent: 'start' },
     },
     {
       name: 'Layer3_Projects_Workspace',
@@ -97,7 +101,11 @@ const layoutContract = createScreenLayoutContract({
       textAlign: 'left',
       style: { gridRow: '2', minWidth: 0, minHeight: 0 },
       mobile: {
-        gridTemplateColumns: 'minmax(0, 1fr)',
+        // Flex column, not a single-column grid: a stretched full-height grid
+        // split its implicit rows into equal tracks, so the lesson rail and the
+        // detail stage overlapped. Flex stacks them at content height (R-020).
+        display: 'flex',
+        flexDirection: 'column',
         gap: spacing[24],
       },
     },
@@ -151,7 +159,9 @@ const layoutContract = createScreenLayoutContract({
       overflow: 'visible',
       textAlign: 'left',
       style: { gridColumn: '1', minWidth: 0, minHeight: 0 },
-      mobile: { gridColumn: '1' },
+      // flexShrink 0 in the mobile flex column: the rail must keep its content
+      // height, not collapse and let its list overflow onto the detail stage.
+      mobile: { gridColumn: '1', flexShrink: 0 },
     },
     {
       name: 'Layer4_Projects_DetailStage',
@@ -169,7 +179,7 @@ const layoutContract = createScreenLayoutContract({
       overflow: 'visible',
       textAlign: 'left',
       style: { gridColumn: '2', minWidth: 0, minHeight: 0 },
-      mobile: { gridColumn: '1' },
+      mobile: { gridColumn: '1', flexShrink: 0 },
     },
     {
       name: 'Layer4_Projects_History',
