@@ -274,12 +274,15 @@ whole package's acceptance evidence is met.
 
 | 2026-08-25 | `2164595` | IP-04 exam tests | Exam behaviour tests updated to the honest reality (miss-based remediation legitimately requires a real grade; the handoff mechanism is covered by segmentation-handoff.spec.js). | both pass; **full behaviour suite 36 passed / 2 skipped** after all Exams/Study/segmentation changes |
 
-## Current gate state (HEAD `2164595`, 2026-08-25)
+| `f9d1739`+`337120a` | IP-05 R-022 | Provider-neutral discussion + summary AI service, and the Study discussion companion wired to it: controlled input, message thread, loading/error/**retry**, message preserved on failed send, one summary saved back to the segment; honest-unavailable without a provider. | 36 AI unit tests (incl. 9 discussion); build+lint clean; **in-browser: Send → honest "Discussion needs an AI provider", message preserved, button → Retry** |
+
+## Current gate state (HEAD `337120a`, 2026-08-25)
 
 - **build** PASS · **data tests** 37/37 · **AI unit tests** 27/27 · **behaviour** 36 passed / 2 skipped.
 - **lint** now **PASSES — 0 errors** (`e27e94c`→`b3a3bf4`): the genuine no-dupe-keys bug fixed, dead code removed, and dev-tooling/legacy-reference debt scoped-exempt with rationale; 6 non-blocking exhaustive-deps warnings remain. Dimension H lint is closed.
-- **deterministic QA / visual regression**: last full run at the IP-01 checkpoint (production 0 blocking); not re-run since the Study/Exams data changes (no production-surface geometry changed, but a fresh QA + VR pass belongs in IP-07/IP-09).
-- Working tree clean; every increment committed.
+- **deterministic QA**: re-run after the mobile-nav + shell change — **production 0 violations, 0 blank routes, 0 page errors** across all 14 routes. Visual regression not yet re-baselined (belongs to IP-09).
+- **AI unit tests**: 36 (study 19 + exam 8 + discussion 9). **data 39/39**.
+- Working tree clean; every increment committed. Verified progress now touches all nine packages; the remainder is each package's long tail (IP-04 exam durability store-wiring, IP-05 Research companion/patch, IP-06 persistence-health UI + durable notes, IP-07 Seg-Review toolbar + Exam-Attempt-390, IP-08 bundle compile-out, IP-09 security/privacy/ops + VR baseline).
 
 ## Additional convergence increments (2026-08-25)
 
