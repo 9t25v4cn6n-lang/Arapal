@@ -1,0 +1,57 @@
+// Arapal AI service — the provider-neutral boundary.
+//
+// Every AI-backed capability (study grading now; discussion, summary, exam,
+// segmentation later) goes through here. Screens and the store call these
+// functions and never a provider SDK, so the provider is swappable and the
+// "no provider configured" path is honest and central.
+//
+// Contract (DECISIONS §3): when AI is unavailable, return a structured
+// { available:false } result. Callers MUST render an honest unavailable state
+// and MUST NOT fabricate output. Nothing here ever invents a grade.
+
+import { readAiConfig, isAiConfigured } from './config.js'
+import { buildStudyGradingPrompt, parseStudyGradeResult } from './contracts/studyGrading.js'
+import { generateJson as geminiGenerateJson } from './providers/gemini.js'
+
+export { isAiConfigured, readAiConfig, writeAiConfig, clearAiConfig } from './config.js'
+
+/** Provider registry. New providers register a generateJson(config, prompt). */
+const PROVIDERS = {
+  gemini: geminiGenerateJson,
+}
+
+/**
+ * Dependency seam for tests: callers can pass an explicit `generate` function
+ * (config, prompt) => Promise<object>, otherwise the configured provider is used.
+ */
+function resolveGenerate(explicit) {
+  if (explicit) return explicit
+  const config = readAiConfig()
+  if (!config) return null
+  const impl = PROVIDERS[config.provider]
+  if (!impl) return null
+  return (prompt) => impl(config, prompt)
+}
+
+const unavailable = (reason, message = '') => ({ available: false, reason, message })
+
+/**
+ * Grade a study translation attempt.
+ *
+ * @returns {Promise<{available:true, result:object} | {available:false, reason:string, message?:string}>}
+ */
+export async function gradeStudyAttempt({ source, translation, attempt = 0, priorFeedback = '' }, { generate } = {}) {
+  const run = resolveGenerate(generate)
+  if (!run) return unavailable('no-provider', 'AI grading is not configured on this device.')
+  if (!translation || !translation.trim()) return unavailable('empty', 'Nothing to grade.')
+
+  try {
+    const prompt = buildStudyGradingPrompt({ source, translation, attempt, priorFeedback })
+    const raw = await run(prompt)
+    const result = parseStudyGradeResult(raw)
+    return { available: true, result }
+  } catch (error) {
+    // A provider/network/parse failure must not become a fabricated grade.
+    return unavailable('error', error?.message || 'AI grading failed.')
+  }
+}
