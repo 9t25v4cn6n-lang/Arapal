@@ -281,13 +281,15 @@ whole package's acceptance evidence is met.
 
 | `c4862e8` | IP-06 R-019 | Honest persistence-failure banner. The store already knew whether the last write landed but nothing surfaced it; on a device that can't save (private mode / quota full) work was accepted silently. `PersistenceBanner` now shows a global notice so no "saved" claim can mislead. | in-browser: hidden when healthy → forced `setItem` throw makes it appear → persists across nav → clears after a real write; **QA production 0** |
 
-## Current gate state (HEAD `c4862e8`, 2026-08-25)
+| `2c87996` | IP-04 R-017 | Exams are generated from the OPEN project's real canonical segments, not the `studyScopePool` fixture. Fixture pool, fixture seed exams, and the dead length-heuristic grader removed; records project-scoped; empty project shows an honest empty state; miss handoff routes by canonical segment id; grader receives each segment's real source text. | 36/36 behaviour (incl. exam→study handoff), 75/75 data+AI unit, **QA production 0**; live: empty→honest, seeded→builder previews its own 1.1/1.2/1.3 |
 
-- **build** PASS · **data tests** 37/37 · **AI unit tests** 27/27 · **behaviour** 36 passed / 2 skipped.
+## Current gate state (HEAD `2c87996`, 2026-08-25)
+
+- **build** PASS · **data + AI unit tests** 75/75 (data 39 + AI 36) · **behaviour** 36 passed / 2 skipped · **lint** 0 errors.
 - **lint** now **PASSES — 0 errors** (`e27e94c`→`b3a3bf4`): the genuine no-dupe-keys bug fixed, dead code removed, and dev-tooling/legacy-reference debt scoped-exempt with rationale; 6 non-blocking exhaustive-deps warnings remain. Dimension H lint is closed.
 - **deterministic QA**: re-run after the mobile-nav + shell change — **production 0 violations, 0 blank routes, 0 page errors** across all 14 routes. Visual regression not yet re-baselined (belongs to IP-09).
 - **AI unit tests**: 36 (study 19 + exam 8 + discussion 9). **data 39/39**.
-- Working tree clean; every increment committed. Verified progress now touches all nine packages; the remainder is each package's long tail (IP-04 exam durability store-wiring, IP-05 Research companion/patch, IP-06 persistence-health UI + durable notes, IP-07 Seg-Review toolbar + Exam-Attempt-390, IP-08 bundle compile-out, IP-09 security/privacy/ops + VR baseline).
+- Working tree clean; every increment committed. **Done since last summary:** IP-06 persistence-failure banner (R-019); IP-07 Exam-Attempt-390 + confirmed Seg-Review@390 within QA tolerance; IP-04 R-017 exams from real project segments (fixture pool/seeds/heuristic-grader removed). **Remaining long tail:** IP-05 Research companion grounded answers + Create-patch + durable notes; IP-08 lab-chunk compile-out + built-`dist` smoke; IP-09 security/privacy/ops review + VR re-baseline.
 
 ## Additional convergence increments (2026-08-25)
 
