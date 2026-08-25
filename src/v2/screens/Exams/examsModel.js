@@ -96,9 +96,11 @@ const initialExamSeeds = [
     title: 'Purity recall sprint',
     createdAt: 'Yesterday',
     scopeLabel: 'Trackers 1–4',
-    status: 'completed',
+    // No fabricated score: this seed has never been attempted, so it is 'ready'
+    // and unscored rather than showing an invented 82% (R-016).
+    status: 'ready',
     questionIds: ['1.1', '1.2', '1.3', '1.4'],
-    lastScore: 82,
+    lastScore: null,
   },
 ];
 

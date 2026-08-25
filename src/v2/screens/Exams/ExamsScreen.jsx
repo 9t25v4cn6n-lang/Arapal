@@ -19,7 +19,6 @@ import { colors, radius, spacing, typography } from '../../foundation/tokens'
 import layoutContract from './ExamsScreen.contract'
 import {
   createExamRecord,
-  evaluateAttempt,
   EXAM_CONTEXT_STORAGE_KEY,
   filterScopeItems,
   hydrateInitialExams,
@@ -28,6 +27,7 @@ import {
   studyScopePool,
   writePersistedAttempt,
 } from './examsModel'
+import { gradeExam } from '../../services/ai'
 
 /**
  * Exams.
@@ -65,6 +65,7 @@ export default function ExamsScreen({ route, shell }) {
   const [activeResult, setActiveResult] = useState(null)
   const [attemptStartedAt, setAttemptStartedAt] = useState(restoredAttempt?.startedAt ?? null)
   const [nowMs, setNowMs] = useState(null)
+  const [grading, setGrading] = useState(false)
   const autosaveTimerRef = useRef(null)
 
   const activeExam = useMemo(
@@ -140,7 +141,7 @@ export default function ExamsScreen({ route, shell }) {
 
   const groupedMisses = useMemo(() => {
     if (!activeResult) return []
-    const misses = activeResult.questions.filter((question) => question.outcome !== 'pass')
+    const misses = activeResult.questions.filter((question) => question.outcome === 'miss' || question.outcome === 'review')
     const map = new Map()
     misses.forEach((question) => {
       const key = reviewGrouping === 'concept' ? question.conceptLabel : question.segmentLabel
@@ -196,14 +197,76 @@ export default function ExamsScreen({ route, shell }) {
     setView('take')
   }
 
-  const handleSubmitExam = () => {
+  const handleSubmitExam = async () => {
     if (!activeExam) return
-    const result = evaluateAttempt(activeExam, answers)
+    setGrading(true)
     writePersistedAttempt(null)
-    setActiveResult({ ...result, examId: activeExam.id, examTitle: activeExam.title })
+
+    // Grade against the real exam contract. No provider → an honest UNGRADED
+    // result, never a score fabricated from answer length or fixed question
+    // indexes (the R-016 exam defect).
+    const graded = await gradeExam({
+      questions: activeExam.questions.map((q) => ({
+        id: q.id, prompt: q.label, concept: q.concept, segmentRef: q.label,
+      })),
+      answers,
+    })
+    setGrading(false)
+
+    let result
+    if (graded.available) {
+      const g = graded.result
+      const outcomeOf = (r) => (r === 'correct' ? 'pass' : r === 'partial' ? 'review' : 'miss')
+      const questions = g.questions.map((gq) => {
+        const q = activeExam.questions.find((item) => item.id === gq.questionId) ?? {}
+        return {
+          ...q,
+          answer: answers[gq.questionId] ?? '',
+          outcome: outcomeOf(gq.result),
+          conceptLabel: gq.concept || q.concept,
+          segmentLabel: gq.segmentRef || q.label,
+          remediationNote: gq.why || q.reviewNote,
+          modelPoints: gq.modelPoints,
+        }
+      })
+      result = {
+        graded: true,
+        score: g.score,
+        passCount: g.correctCount,
+        reviewCount: questions.filter((q) => q.outcome === 'review').length,
+        missCount: g.missCount,
+        weaknessMap: g.weaknessMap,
+        questions,
+        examId: activeExam.id,
+        examTitle: activeExam.title,
+      }
+    } else {
+      // Honest ungraded: the attempt is saved and its answers preserved, but no
+      // score is invented.
+      result = {
+        graded: false,
+        gradeMessage: graded.message || 'AI grading is not configured, so this attempt is saved but not scored.',
+        score: null,
+        passCount: 0,
+        reviewCount: 0,
+        missCount: 0,
+        questions: activeExam.questions.map((q) => ({
+          ...q,
+          answer: answers[q.id] ?? '',
+          outcome: 'ungraded',
+          conceptLabel: q.concept,
+          segmentLabel: q.label,
+          remediationNote: q.reviewNote,
+        })),
+        examId: activeExam.id,
+        examTitle: activeExam.title,
+      }
+    }
+
+    setActiveResult(result)
     setExams((current) => current.map((exam) => (
       exam.id === activeExam.id
-        ? { ...exam, status: 'completed', lastScore: result.score, lastResult: result }
+        ? { ...exam, status: 'completed', lastScore: result.graded ? result.score : null, lastResult: result }
         : exam
     )))
     setView('results')
@@ -212,22 +275,22 @@ export default function ExamsScreen({ route, shell }) {
   /**
    * Review a completed attempt.
    *
-   * A completed exam that carries a stored result reopens that result. The two
-   * seeded exams predate any attempt and have only a score, so their review is
-   * reconstructed from fixture answers — exactly as the legacy screen did it,
-   * and marked here as fixture reconstruction rather than left to look like
-   * recorded data.
+   * Only a real stored result is shown. Reviews are never reconstructed from
+   * invented answers — a completed exam with no recorded result is shown as an
+   * honest "not scored" outcome rather than fabricated data.
    */
   const handleReviewResults = (exam) => {
-    const result = exam.lastResult ?? evaluateAttempt(
-      exam,
-      Object.fromEntries(exam.questions.map((question, index) => [
-        question.id,
-        index % 3 === 0
-          ? 'Short answer draft'
-          : 'A fuller answer that holds the distinction more carefully and connects the ruling back to study context.',
-      ])),
-    )
+    const result = exam.lastResult ?? {
+      graded: false,
+      gradeMessage: 'This assessment has no recorded grade.',
+      score: null,
+      passCount: 0,
+      reviewCount: 0,
+      missCount: 0,
+      questions: exam.questions.map((q) => ({
+        ...q, answer: '', outcome: 'ungraded', conceptLabel: q.concept, segmentLabel: q.label,
+      })),
+    }
     setActiveExamId(exam.id)
     setActiveResult({ ...result, examId: exam.id, examTitle: exam.title })
     setView('results')
@@ -745,16 +808,28 @@ function ResultsView({ result, grouping, onGrouping, groups, onJumpToStudy, onDo
   return (
     <>
       <section style={{ ...surface, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: spacing[24], flexWrap: 'wrap', padding: spacing[24] }}>
-        <div style={{ display: 'inline-flex', alignItems: 'baseline', gap: spacing[16] }}>
-          <span style={{ ...typography.displayTitle, color: colors.textStrong }}>{result.score}%</span>
-          {/* Zero-count badges are noise: "0 worth reviewing" in review amber
-              draws the eye to a state that does not exist. Only outcomes that
-              actually occurred get a badge. */}
-          <div style={{ display: 'inline-flex', gap: spacing[8], flexWrap: 'wrap' }}>
-            {result.passCount ? <Badge tone="ready">{result.passCount} strong</Badge> : null}
-            {result.reviewCount ? <Badge tone="review">{result.reviewCount} worth reviewing</Badge> : null}
-            {result.missCount ? <Badge tone="critical">{result.missCount} misses</Badge> : null}
-          </div>
+        <div style={{ display: 'inline-flex', alignItems: 'baseline', gap: spacing[16], flexWrap: 'wrap', minWidth: 0 }}>
+          {result.graded ? (
+            <>
+              <span style={{ ...typography.displayTitle, color: colors.textStrong }}>{result.score}%</span>
+              {/* Zero-count badges are noise: "0 worth reviewing" in review amber
+                  draws the eye to a state that does not exist. Only outcomes that
+                  actually occurred get a badge. */}
+              <div style={{ display: 'inline-flex', gap: spacing[8], flexWrap: 'wrap' }}>
+                {result.passCount ? <Badge tone="ready">{result.passCount} strong</Badge> : null}
+                {result.reviewCount ? <Badge tone="review">{result.reviewCount} worth reviewing</Badge> : null}
+                {result.missCount ? <Badge tone="critical">{result.missCount} misses</Badge> : null}
+              </div>
+            </>
+          ) : (
+            // Honest ungraded: no fabricated score. The attempt is saved.
+            <div style={{ display: 'grid', gap: spacing[4] }}>
+              <span style={{ ...typography.sectionTitle, color: colors.textStrong }}>Attempt saved · not scored</span>
+              <span style={{ ...typography.metaText, color: colors.textSoft, maxWidth: '52ch' }}>
+                {result.gradeMessage}
+              </span>
+            </div>
+          )}
         </div>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[12], flexWrap: 'wrap' }}>
           {firstRemediation ? (
@@ -813,8 +888,14 @@ function ResultsView({ result, grouping, onGrouping, groups, onJumpToStudy, onDo
           </div>
         )) : (
           <div style={{ ...surface, display: 'grid', gap: spacing[8], padding: spacing[24] }}>
-            <strong style={{ ...typography.sectionTitle, color: colors.textStrong }}>Nothing needs remediation</strong>
-            <p style={{ ...typography.supportSubtext, margin: 0, color: colors.textSoft }}>Every answer in this attempt was strong.</p>
+            <strong style={{ ...typography.sectionTitle, color: colors.textStrong }}>
+              {result.graded ? 'Nothing needs remediation' : 'Not graded yet'}
+            </strong>
+            <p style={{ ...typography.supportSubtext, margin: 0, color: colors.textSoft }}>
+              {result.graded
+                ? 'Every answer in this attempt was strong.'
+                : 'This attempt is saved but has not been graded, so there is nothing to remediate yet.'}
+            </p>
           </div>
         )}
       </section>
