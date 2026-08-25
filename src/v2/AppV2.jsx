@@ -4,6 +4,7 @@ import { shellSizing } from './foundation/layout/shellSizing'
 import { useAppIntro } from './foundation/primitives/AppIntro'
 import useNavigationRailState from './foundation/primitives/useNavigationRailState'
 import useIsMobileViewport from './foundation/primitives/useIsMobileViewport'
+import MobileNavBar, { MOBILE_NAV_HEIGHT_PX } from './foundation/primitives/MobileNavBar'
 
 // Internal design/QA surfaces. They stay reachable in development but must not
 // be routable in a production build — a hand-typed `#v2/patternLab` on the live
@@ -88,6 +89,11 @@ export default function AppV2({ routeId = defaultRouteId }) {
     ...navigationRailState,
   }
 
+  // At mobile the vertical rail is hidden, so a route that would normally carry
+  // it gets the bottom nav bar instead — otherwise there is no way to leave the
+  // screen (R-020). The stage reserves the bar's height so nothing hides under it.
+  const showMobileNav = isMobileViewport && activeRoute.shell?.showRail !== false
+
   return (
     <>
       {/* The stage is muted only while the intro is on top of it, and the class
@@ -98,10 +104,19 @@ export default function AppV2({ routeId = defaultRouteId }) {
         // Sizing is inline because the class's stylesheet unmounts with the
         // overlay: the wrapper must lay out identically whether the intro is
         // playing, leaving, or was never there.
-        style={{ flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}
+        style={{
+          flex: '1 1 auto',
+          minHeight: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          paddingBottom: showMobileNav ? `${MOBILE_NAV_HEIGHT_PX}px` : undefined,
+        }}
       >
         <Suspense fallback={null}><ActiveScreen route={activeRoute} shell={shell} /></Suspense>
       </div>
+      {showMobileNav ? (
+        <MobileNavBar items={railItems} activeRouteId={activeRailRouteId} onNavigate={shell.navigate} />
+      ) : null}
       {introOverlay}
     </>
   )
