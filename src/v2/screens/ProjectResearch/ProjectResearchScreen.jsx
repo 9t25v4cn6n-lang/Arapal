@@ -39,8 +39,6 @@ const researchFilters = [
   { id: 'completed', label: 'Completed', shortLabel: 'Completed', icon: CheckCircle2 },
 ]
 
-const companionCitations = ['1.3', '2.3']
-
 function ProjectResearchHeader({ stats, projectSummary, onOpenStudy }) {
   const metrics = [
     { value: stats.totalSegments, label: 'segments' },
@@ -122,7 +120,7 @@ function ResearchDesk({
         {selectedSegment ? <SourceReaderPanel
           mode={rightMode}
           selectedSegment={selectedSegment}
-          citations={companionCitations}
+          askSegments={rows.map((row) => ({ ref: row.id, heading: row.heading, text: row.arabic }))}
           onModeChange={onModeChange}
           onSelectSegment={onSelectSegment}
           onOpenStudy={onOpenStudy}

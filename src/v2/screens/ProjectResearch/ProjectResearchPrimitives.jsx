@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { colors } from '../../foundation/tokens'
 import { Badge, Chip } from '../../foundation/primitives/CompactControls'
+import { researchAsk } from '../../services/ai'
 
 /**
  * Research states three kinds of fact about a segment and used to draw each one
@@ -337,47 +338,83 @@ export function SourceReader(props) {
   return <SegmentInspector {...props} />
 }
 
-export function AskCompanion({ selectedSegment, citations, onSelectSegment }) {
+export function AskCompanion({ selectedSegment, segments = [], onSelectSegment }) {
   const [question, setQuestion] = useState('')
-  const [hasAnswer, setHasAnswer] = useState(true)
+  // answer holds a real, project-grounded reply; there is no default fixture.
+  // status: 'idle' | 'loading' | 'answered' | 'unavailable' | 'error'.
+  const [answer, setAnswer] = useState(null)
+  const [status, setStatus] = useState('idle')
+  const [notice, setNotice] = useState('')
 
-  const submitQuestion = () => {
-    if (question.trim()) {
-      setHasAnswer(true)
-      setQuestion('')
+  const submitQuestion = async () => {
+    const q = question.trim()
+    if (!q || status === 'loading') return
+
+    setStatus('loading')
+    setNotice('')
+    setAnswer(null)
+
+    const res = await researchAsk({ question: q, segments })
+    if (res.available) {
+      setAnswer(res.result)
+      setStatus('answered')
+    } else {
+      // Honest: no provider or a failure yields a stated reason, never a
+      // fabricated answer about content the product did not derive.
+      setStatus(res.reason === 'no-provider' ? 'unavailable' : 'error')
+      setNotice(res.message || 'The research companion is unavailable.')
     }
   }
 
   return (
     <div className="project-research__companionView" data-debug-item="project_research_companion">
       <div className="project-research__companionBody">
-        {hasAnswer ? (
+        {status === 'answered' && answer ? (
           <article className="project-research__answerCard">
-            <p>
-              The city-condition issue appears in the Jumu’ah passage and the later outskirts ruling.
-              Treat <span dir="rtl" lang="ar">مصر جامع</span> as a legal status, not just physical size.
-            </p>
-            <div className="project-research__citationRow" aria-label="Cited segments">
-              {citations.map((id) => (
-                <button key={id} type="button" onClick={() => onSelectSegment(id)}>
-                  Segment {id}
-                </button>
-              ))}
-            </div>
+            {answer.answerMd.split(/\n{2,}/).map((para, index) => (
+              <p key={index}>{para}</p>
+            ))}
+            {answer.citations.length ? (
+              <div className="project-research__citationRow" aria-label="Cited segments">
+                {answer.citations.map((id) => (
+                  <button key={id} type="button" onClick={() => onSelectSegment(id)}>
+                    Segment {id}
+                  </button>
+                ))}
+              </div>
+            ) : null}
           </article>
-        ) : (
+        ) : null}
+
+        {status === 'loading' ? (
+          <div className="project-research__answerPlaceholder" role="status">
+            <Sparkles size={24} strokeWidth={1.8} />
+            <strong>Reading this project’s segments…</strong>
+            <span>Grounding the answer in your own material.</span>
+          </div>
+        ) : null}
+
+        {status === 'unavailable' || status === 'error' ? (
+          <div className="project-research__answerPlaceholder" role="alert">
+            <MessageSquareText size={24} strokeWidth={1.8} />
+            <strong>{status === 'unavailable' ? 'AI companion not configured' : 'The answer could not be produced'}</strong>
+            <span>{notice}</span>
+          </div>
+        ) : null}
+
+        {status === 'idle' ? (
           <div className="project-research__answerPlaceholder">
             <MessageSquareText size={24} strokeWidth={1.8} />
             <strong>Start with a project-level question.</strong>
-            <span>Ask about a word, issue, mistake pattern, or translation choice.</span>
+            <span>Ask about a word, issue, mistake pattern, or translation choice. Answers are grounded in this project’s {segments.length} segment{segments.length === 1 ? '' : 's'}.</span>
           </div>
-        )}
+        ) : null}
 
         <div className="project-research__promptRow">
-          <button type="button" onClick={() => setQuestion('Where did I struggle with city-condition terminology?')}>
-            Weak terminology
+          <button type="button" onClick={() => setQuestion('What are the recurring themes across this project’s segments?')}>
+            Recurring themes
           </button>
-          <button type="button" onClick={() => setQuestion(`Explain segment ${selectedSegment?.id ?? '1.3'} in context.`)}>
+          <button type="button" onClick={() => setQuestion(`Explain segment ${selectedSegment?.id ?? segments[0]?.ref ?? ''} in context.`)}>
             Explain selected
           </button>
         </div>
@@ -386,19 +423,22 @@ export function AskCompanion({ selectedSegment, citations, onSelectSegment }) {
           <label className="project-research__askBox">
             <textarea
               value={question}
-              onChange={(event) => {
-                setQuestion(event.target.value)
-                if (!event.target.value.trim()) {
-                  setHasAnswer(false)
-                }
+              onChange={(event) => setQuestion(event.target.value)}
+              onKeyDown={(event) => {
+                if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') submitQuestion()
               }}
-              placeholder="Ask about this project’s saved knowledge..."
+              placeholder="Ask about this project’s segments..."
               rows={2}
             />
           </label>
-          <button type="button" className="project-research__askButton" onClick={submitQuestion}>
+          <button
+            type="button"
+            className="project-research__askButton"
+            onClick={submitQuestion}
+            disabled={!question.trim() || status === 'loading'}
+          >
             <Sparkles size={15} strokeWidth={2} />
-            Ask
+            {status === 'loading' ? 'Asking…' : 'Ask'}
           </button>
         </div>
       </div>
@@ -409,7 +449,7 @@ export function AskCompanion({ selectedSegment, citations, onSelectSegment }) {
 export function SourceReaderPanel({
   mode,
   selectedSegment,
-  citations,
+  askSegments = [],
   onModeChange,
   onSelectSegment,
   onOpenStudy,
@@ -474,7 +514,7 @@ export function SourceReaderPanel({
 
         <div className="project-research__rightBody">
           {mode === 'ask' ? (
-            <AskCompanion selectedSegment={selectedSegment} citations={citations} onSelectSegment={openCitedSegment} />
+            <AskCompanion selectedSegment={selectedSegment} segments={askSegments} onSelectSegment={openCitedSegment} />
           ) : (
             <SegmentInspector
               segment={selectedSegment}
