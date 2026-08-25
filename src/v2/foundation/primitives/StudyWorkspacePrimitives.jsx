@@ -34,6 +34,7 @@ import {
 import IconActionButton from './IconActionButton'
 import PrimaryCTA from './PrimaryCTA'
 import { colors, containsArabic, elevation, motion, radius, spacing, typography } from '../tokens'
+import { discuss, summariseDiscussion } from '../../services/ai'
 
 // Resolved once at module scope, not per render: the submit handler already
 // accepts either modifier, so the label must name the one this machine uses.
@@ -3107,7 +3108,46 @@ export function StudyTranslationEditor({
  * two verbs, in two places, which reads as two different capabilities. Nothing
  * is discarded either way, so both say Hide.
  */
-export function StudyDiscussionCompanion({ onClose, segmentLabel }) {
+export function StudyDiscussionCompanion({ onClose, segmentLabel, segmentText = '', segmentRef = '', passed = false, onSaveSummary }) {
+  const [messages, setMessages] = useState([])
+  const [input, setInput] = useState('')
+  const [status, setStatus] = useState('idle') // idle | sending | summarising
+  const [notice, setNotice] = useState(null)
+
+  const busy = status !== 'idle'
+
+  const send = async () => {
+    const text = input.trim()
+    if (!text || busy) return
+    // The typed message is NOT cleared until the send succeeds, so a failed send
+    // never loses the user's words (R-022).
+    setStatus('sending')
+    setNotice(null)
+    const nextMessages = [...messages, { role: 'user', text }]
+    const res = await discuss({ segmentText, segmentRef, messages: nextMessages, revealBestTranslation: passed })
+    setStatus('idle')
+    if (res.available) {
+      setMessages([...nextMessages, { role: 'assistant', text: res.result.replyMd }])
+      setInput('')
+    } else {
+      setNotice(res.message)
+    }
+  }
+
+  const summarise = async () => {
+    if (busy || messages.length === 0) return
+    setStatus('summarising')
+    setNotice(null)
+    const res = await summariseDiscussion({ segmentText, segmentRef, messages })
+    setStatus('idle')
+    if (res.available) {
+      onSaveSummary?.(res.result.summaryText)
+      setNotice('Summary saved to this segment.')
+    } else {
+      setNotice(res.message)
+    }
+  }
+
   return (
     <StudyPanel className="study-v2__discussion" tone="slate" debugItem="study_discussion_companion">
       <CardHeader
@@ -3118,18 +3158,67 @@ export function StudyDiscussionCompanion({ onClose, segmentLabel }) {
         <button type="button" className="study-v2__miniPill" onClick={onClose} title="Hide the discussion for this segment">Hide</button>
       </CardHeader>
       <div className="study-v2__cardBody study-v2__discussionBody">
-        <div className="study-v2__contextBox">
-          <strong>Start the conversation</strong>
-          <br />
-          Ask a segment-specific question. The summary can be saved back to this segment later.
-        </div>
-        <p className="study-v2__supportText">
-          Your companion can help unpack wording, compare views, and point out what needs revision without moving you away from the current segment.
-        </p>
-        <textarea className="study-v2__discussionInput" placeholder="Ask a segment-specific follow-up question..." />
+        {messages.length === 0 ? (
+          <div className="study-v2__contextBox">
+            <strong>Start the conversation</strong>
+            <br />
+            Ask a segment-specific question. The summary can be saved back to this segment later.
+          </div>
+        ) : (
+          <div className="study-v2__discussionThread" role="log" aria-label="Discussion messages" style={{ display: 'grid', gap: spacing[8] }}>
+            {messages.map((m, i) => (
+              <p
+                key={i}
+                className="study-v2__supportText"
+                style={{
+                  margin: 0,
+                  padding: `${spacing[8]} ${spacing[12]}`,
+                  borderRadius: radius[12],
+                  background: m.role === 'user' ? colors.accentMist : colors.surfacePrimary,
+                  border: m.role === 'user' ? 'none' : `1px solid ${colors.borderSoft}`,
+                  color: colors.textBody,
+                }}
+              >
+                <strong style={{ ...typography.eyebrowLabel, color: colors.textSoft, display: 'block', marginBottom: spacing[4] }}>
+                  {m.role === 'user' ? 'You' : 'Companion'}
+                </strong>
+                {m.text}
+              </p>
+            ))}
+          </div>
+        )}
+
+        {notice ? <p className="study-v2__sampleNotice" role="status" style={{ margin: `${spacing[8]} 0 0` }}>{notice}</p> : null}
+        {status === 'sending' ? <p className="study-v2__supportText" role="status" style={{ margin: `${spacing[8]} 0 0` }}>Sending…</p> : null}
+
+        <textarea
+          className="study-v2__discussionInput"
+          placeholder="Ask a segment-specific follow-up question..."
+          value={input}
+          onChange={(event) => setInput(event.target.value)}
+          onKeyDown={(event) => { if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') send() }}
+          disabled={busy}
+        />
         <div className="study-v2__discussionFooter">
-          <button type="button" className="study-v2__miniPill" title="Summarise and save discussion">Summarise and save</button>
-          <PrimaryCTA minWidth={112} height={44} icon={<Send size={15} strokeWidth={1.9} />} title="Send companion message">Send</PrimaryCTA>
+          <button
+            type="button"
+            className="study-v2__miniPill"
+            title="Summarise and save discussion"
+            onClick={summarise}
+            disabled={busy || messages.length === 0}
+          >
+            {status === 'summarising' ? 'Summarising…' : 'Summarise and save'}
+          </button>
+          <PrimaryCTA
+            minWidth={112}
+            height={44}
+            icon={<Send size={15} strokeWidth={1.9} />}
+            title="Send companion message"
+            onClick={send}
+            disabled={busy || !input.trim()}
+          >
+            {notice && status === 'idle' ? 'Retry' : 'Send'}
+          </PrimaryCTA>
         </div>
       </div>
     </StudyPanel>
