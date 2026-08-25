@@ -120,9 +120,6 @@ export function DockableToolbarIconButton({
             : 'none',
         cursor: disabled ? 'not-allowed' : 'pointer',
         opacity: disabled ? 0.42 : 1,
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         padding: 0,
       }}
     >

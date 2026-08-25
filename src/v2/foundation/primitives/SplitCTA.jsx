@@ -97,7 +97,6 @@ export default function SplitCTA({
   minWidth = 340,
   height = 56,
   splitButtonLabel = 'Open action options',
-  menuOffset = 16,
   primaryDebugItem,
   tailDebugItem,
   primaryButtonStyle = {},

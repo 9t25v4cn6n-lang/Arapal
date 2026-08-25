@@ -146,7 +146,7 @@ export default function ProjectResearchScreen({ route, shell }) {
 
   // Live current-project research model, not the Al-Hidayah fixture. The pure
   // stats/filter helpers below are unchanged; only their input is now real.
-  const { hasProject, projectSummary, segments: researchSegments } = useLiveResearch()
+  const { projectSummary, segments: researchSegments } = useLiveResearch()
 
   const stats = useMemo(() => getResearchStats(researchSegments), [researchSegments])
   const revisionEntries = useMemo(() => getRevisionQueue(researchSegments), [researchSegments])

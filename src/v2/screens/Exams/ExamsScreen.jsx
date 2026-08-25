@@ -65,7 +65,6 @@ export default function ExamsScreen({ route, shell }) {
   const [activeResult, setActiveResult] = useState(null)
   const [attemptStartedAt, setAttemptStartedAt] = useState(restoredAttempt?.startedAt ?? null)
   const [nowMs, setNowMs] = useState(null)
-  const [grading, setGrading] = useState(false)
   const autosaveTimerRef = useRef(null)
 
   const activeExam = useMemo(
@@ -199,7 +198,6 @@ export default function ExamsScreen({ route, shell }) {
 
   const handleSubmitExam = async () => {
     if (!activeExam) return
-    setGrading(true)
     writePersistedAttempt(null)
 
     // Grade against the real exam contract. No provider → an honest UNGRADED
@@ -211,7 +209,6 @@ export default function ExamsScreen({ route, shell }) {
       })),
       answers,
     })
-    setGrading(false)
 
     let result
     if (graded.available) {

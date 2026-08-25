@@ -49,7 +49,10 @@ export default defineConfig([
       // Still ignore capitalised UNUSED ARGS: a destructured component prop such
       // as `icon: Icon` that a variant chooses not to render is a deliberate
       // signature, not dead code.
-      'no-unused-vars': ['error', { argsIgnorePattern: '^[A-Z_]' }],
+      // ignoreRestSiblings allows the "omit a key via destructure + rest" idiom
+      // (e.g. `const { drive, ...rest } = state` to serialise everything but the
+      // drive function) without flagging the intentionally-omitted binding.
+      'no-unused-vars': ['error', { argsIgnorePattern: '^[A-Z_]', ignoreRestSiblings: true }],
     },
   },
   {
@@ -77,6 +80,42 @@ export default defineConfig([
     // doctrine audit exists to detect — "fixing" it would delete the test case.
     files: ['tests/fixtures/**'],
     rules: { 'no-unused-vars': 'off' },
+  },
+  {
+    // NOT the shipping V2 product: the legacy app kept as a behaviour source
+    // (surface:'reference', scheduled for deletion once ported), the debug
+    // overlay/inspector, and the Lab/QualityDashboard routes now compiled out of
+    // production (import.meta.env.PROD gate in AppV2). Their fast-refresh shape
+    // and effect-in-legacy patterns are not product debt, so the strict
+    // react-hooks/react-refresh rules are relaxed here rather than churning code
+    // that is either dev-only or on its way out. The exemption goes away with the
+    // files.
+    files: [
+      'src/App.jsx',
+      'src/components/**',
+      'src/screens/**',
+      'src/v2/screens/QualityDashboard/**',
+      'src/v2/foundation/debug/**',
+    ],
+    rules: {
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/refs': 'off',
+      'react-refresh/only-export-components': 'off',
+    },
+  },
+  {
+    // Foundation primitives and layout modules legitimately co-locate a component
+    // with the small helper constants/functions used only with it (e.g.
+    // SegmentationFlowPrimitives, NavigationRail, bodyBackdropPresets). That
+    // degrades fast refresh — a dev-only concern — not production correctness, so
+    // only that one rule is relaxed. ScreenContractRenderer additionally reads a
+    // ref during render inside a DEBUG-only branch (gated by debugEnabled), never
+    // in the production path, so react-hooks/refs is relaxed for these too.
+    files: ['src/v2/foundation/primitives/**', 'src/v2/foundation/layout/**'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+      'react-hooks/refs': 'off',
+    },
   },
   {
     files: ['scripts/**/*.{js,mjs}', 'tests/**/*.{js,mjs}', '*.config.js'],

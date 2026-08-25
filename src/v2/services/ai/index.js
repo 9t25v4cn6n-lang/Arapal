@@ -9,7 +9,7 @@
 // { available:false } result. Callers MUST render an honest unavailable state
 // and MUST NOT fabricate output. Nothing here ever invents a grade.
 
-import { readAiConfig, isAiConfigured } from './config.js'
+import { readAiConfig } from './config.js'
 import { buildStudyGradingPrompt, parseStudyGradeResult } from './contracts/studyGrading.js'
 import { buildExamGradingPrompt, parseExamGradeResult } from './contracts/examGrading.js'
 import { generateJson as geminiGenerateJson } from './providers/gemini.js'
