@@ -288,7 +288,11 @@ whole package's acceptance evidence is met.
 | `6d720ce` | IP-04 R-016 exams | Exam grading honest via the exam service; no fabricated `%`; honest ungraded state; seed `82%` removed. | in-browser: no fabricated score anywhere; behaviour updated + green |
 | `e27e94c` | IP-08 R-021 | Production entry is V2 Project Home; empty/unknown URLs → V2, only explicit legacy hashes → reference app; 7 Lab/Dashboard routes gated out of production (`import.meta.env.PROD`). | in-browser: root + unknown → V2, `#home` → legacy; behaviour 36/2; build PASS |
 | `b3a3bf4` | IP-09 lint | Lint gate clean (0 errors, was 21). | `npm run lint` exits 0; build/data/AI green |
+| `bb6cb86` | IP-06 R-019 | Top-level ErrorBoundary + storage schema/version validation with quarantine (corrupt/wrong-shape/future-version state is set aside, recoverable, and the app continues from empty). | data 39/39; behaviour 36/2; in-browser: injected corrupt state → app renders normally, state quarantined, no blank crash |
+| `9016d65` | IP-07 R-020 | Projects mobile overlap at 390 fixed: alignContent-start on the stretched grids, flex-column workspace with flexShrink:0 regions, companion hidden at ≤560. | in-browser 390: hero/summary/rail/detail stack, **no overlap** (measured); 1280 editorial layout intact |
+| `9016d65` | QA regression | Full deterministic QA after all Study/Exams/routing/responsive/error-boundary changes. | **productionBlocking 0, 0 blank routes, 0 page errors** across all 14 routes; `artifacts/qa/visual-standard.json` @ 2026-08-25T15:03Z |
 
 **IP-08 remaining:** compile the (now-unreachable, lazy) Lab chunks out of the production bundle, and smoke the built `dist` from `/`.
+**IP-07 remaining:** Study at tablet-768 (R-013, Submit/Discuss reachability), Segmentation Review @390, Exam Attempt @390, and a mobile global-navigation replacement.
 
 **Standing limitation (not a RED blocker):** this environment has no Gemini key and no network to Google, so IP-03/04/05 AI paths are proven by unit tests + the honest-unavailable branch in-browser; live end-to-end AI output is verifiable only by the product owner with a key.
