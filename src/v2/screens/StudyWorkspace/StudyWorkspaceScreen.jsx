@@ -528,6 +528,9 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     // Focus view, where the screen's own controls live.
     Layer1_Header_CenterLane: (
       <StudyShellTitleBar
+        // The live project's real title, not a fixed book name. Only the
+        // reference/demo mode (no live project) falls back to the default.
+        title={isLive ? project?.title || undefined : undefined}
         chapterLabel={segmentMeta.chapterLabel}
         segmentLabel={currentSegment.label}
       />

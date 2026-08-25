@@ -2389,7 +2389,7 @@ export function SegmentationReviewActionRegion({
   )
 }
 
-export function SegmentationSuccessView({ shell, publishedSegments }) {
+export function SegmentationSuccessView({ shell, publishedSegments, projectTitle = '' }) {
   // Report what was actually produced, not the fixture's length.
   const segmentCount = publishedSegments?.length ?? reviewSegments.length
 
@@ -2516,9 +2516,9 @@ export function SegmentationSuccessView({ shell, publishedSegments }) {
           }}
         >
           {[
-            ['Project', 'New project'],
-            ['Batch ID', 'new'],
-            ['Status', 'Live'],
+            ['Project', projectTitle || 'Untitled project'],
+            ['Segments', String(publishedSegments?.length ?? 0)],
+            ['Status', 'Ready to study'],
           ].map(([label, value]) => (
             <div key={label} style={{ display: 'grid', gap: spacing[12], justifyItems: 'center', minWidth: 0 }}>
               <span style={flowType.meta}>{label}</span>

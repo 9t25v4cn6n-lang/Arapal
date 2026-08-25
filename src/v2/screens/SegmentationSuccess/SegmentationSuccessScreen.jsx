@@ -27,6 +27,7 @@ export default function SegmentationSuccessScreen({ route, shell }) {
     const project = select.getCurrentProject(s)
     return project ? select.listSegments(project.id, s) : null
   })
+  const projectTitle = useArapal((s) => select.getCurrentProject(s)?.title ?? '')
 
   const slots = {
     ...getSegmentationFlowHeaderSlots({
@@ -35,7 +36,7 @@ export default function SegmentationSuccessScreen({ route, shell }) {
       stepIndex: 2,
       backRoute: 'segmentationReview',
     }),
-    Layer3_SegmentationFlow_Page: <SegmentationSuccessView shell={shell} publishedSegments={publishedSegments} />,
+    Layer3_SegmentationFlow_Page: <SegmentationSuccessView shell={shell} publishedSegments={publishedSegments} projectTitle={projectTitle} />,
   }
 
   return (
