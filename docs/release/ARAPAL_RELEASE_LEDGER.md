@@ -276,7 +276,10 @@ whole package's acceptance evidence is met.
 
 | `f9d1739`+`337120a` | IP-05 R-022 | Provider-neutral discussion + summary AI service, and the Study discussion companion wired to it: controlled input, message thread, loading/error/**retry**, message preserved on failed send, one summary saved back to the segment; honest-unavailable without a provider. | 36 AI unit tests (incl. 9 discussion); build+lint clean; **in-browser: Send → honest "Discussion needs an AI provider", message preserved, button → Retry** |
 
-## Current gate state (HEAD `337120a`, 2026-08-25)
+| `fe933aa` | IP-04 R-017 | Created exams persist (`design-sandbox.exams.v1`) so a saved assessment + its attempt survive reload — no more disappearing exam / blank attempt shell. | in-browser: created "DURABILITYCHECK exam" survives reload; exam behaviour 3/3 |
+| `17100f4` | IP-07 R-020 | Exam Attempt + Builder collapse to one column at 390 (were pushing the answer panel ~248px off-screen). | in-browser 390: answer textarea on-screen (L49–R341), full attempt stacks; **QA production 0** across all routes |
+
+## Current gate state (HEAD `17100f4`, 2026-08-25)
 
 - **build** PASS · **data tests** 37/37 · **AI unit tests** 27/27 · **behaviour** 36 passed / 2 skipped.
 - **lint** now **PASSES — 0 errors** (`e27e94c`→`b3a3bf4`): the genuine no-dupe-keys bug fixed, dead code removed, and dev-tooling/legacy-reference debt scoped-exempt with rationale; 6 non-blocking exhaustive-deps warnings remain. Dimension H lint is closed.
