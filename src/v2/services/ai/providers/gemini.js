@@ -18,10 +18,13 @@ const ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models'
  * @returns {Promise<object>} parsed JSON object from the model
  */
 export async function generateJson(config, prompt) {
-  const url = `${ENDPOINT}/${encodeURIComponent(config.model)}:generateContent?key=${encodeURIComponent(config.apiKey)}`
+  const url = `${ENDPOINT}/${encodeURIComponent(config.model)}:generateContent`
   const res = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    // The key travels in the x-goog-api-key header, NOT the URL query string:
+    // a URL with `?key=` lands in browser history, proxy logs, and Referer
+    // headers, so keeping the secret out of the URL is the safer default.
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': config.apiKey },
     body: JSON.stringify({
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: { responseMimeType: 'application/json', temperature: 0.2 },
