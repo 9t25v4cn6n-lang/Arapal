@@ -293,6 +293,8 @@ whole package's acceptance evidence is met.
 | `9016d65` | QA regression | Full deterministic QA after all Study/Exams/routing/responsive/error-boundary changes. | **productionBlocking 0, 0 blank routes, 0 page errors** across all 14 routes; `artifacts/qa/visual-standard.json` @ 2026-08-25T15:03Z |
 
 **IP-08 remaining:** compile the (now-unreachable, lazy) Lab chunks out of the production bundle, and smoke the built `dist` from `/`.
-**IP-07 remaining:** Study at tablet-768 (R-013, Submit/Discuss reachability), Segmentation Review @390, Exam Attempt @390, and a mobile global-navigation replacement.
+| `ffbc28a` | IP-07 R-013 | Study usable at tablet-768: a new compact range (561–1024px) defaults the segment + support rails to collapsed 72px strips so the work lane gets the width; resize-into-range also collapses them. Mobile (≤560) and desktop (>1024) unchanged. | in-browser 768: source reads normally, editor full-width, **Discuss + SUBMIT reachable**; 1280 fresh load shows rails expanded |
+
+**IP-07 remaining:** Segmentation Review @390, Exam Attempt @390, and a mobile global-navigation replacement (the rail is hidden at ≤560 with no substitute). The two worst responsive P0s (Projects-390 overlap, Study-768 unusable) are now fixed.
 
 **Standing limitation (not a RED blocker):** this environment has no Gemini key and no network to Google, so IP-03/04/05 AI paths are proven by unit tests + the honest-unavailable branch in-browser; live end-to-end AI output is verifiable only by the product owner with a key.
