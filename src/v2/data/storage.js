@@ -30,16 +30,49 @@ export const emptyState = () => ({
   seededAt: null,
 })
 
+/** Collections that MUST be plain objects for selectors not to throw. */
+const COLLECTIONS = ['projects', 'sources', 'segments', 'drafts', 'studyRecords', 'results', 'exams', 'attempts', 'proposals', 'archives']
+const QUARANTINE_KEY = `${KEY}.quarantine`
+
+const isPlainObject = (v) => !!v && typeof v === 'object' && !Array.isArray(v)
+
+/**
+ * Move an unusable persisted state aside (recoverable) rather than deleting it,
+ * then continue from a clean empty state. This is what stops a wrong-shape or
+ * future-version state from throwing a selector TypeError and blanking the app
+ * (R-019). The quarantined copy is kept so nothing is silently destroyed.
+ */
+function quarantine(raw, reason) {
+  try {
+    window.localStorage.setItem(QUARANTINE_KEY, JSON.stringify({ at: new Date().toISOString(), reason, raw }))
+    window.localStorage.removeItem(KEY)
+  } catch { /* best effort */ }
+}
+
 export function read() {
   if (!hasWindow()) return emptyState()
   try {
     const raw = window.localStorage.getItem(KEY)
     if (!raw) return migrateLegacy(emptyState())
     const parsed = JSON.parse(raw)
-    if (!parsed || typeof parsed !== 'object') return emptyState()
-    // Merge onto a fresh shape so a state written by an older build that lacks
-    // a collection cannot produce undefined lookups at read sites.
-    return { ...emptyState(), ...parsed }
+    if (!isPlainObject(parsed)) {
+      quarantine(raw, 'not-an-object')
+      return emptyState()
+    }
+    // A state written by a NEWER build may have a shape this build cannot read.
+    // Quarantine rather than guess.
+    if (typeof parsed.version === 'number' && parsed.version > emptyState().version) {
+      quarantine(raw, `future-version-${parsed.version}`)
+      return emptyState()
+    }
+    // Merge onto a fresh shape so a state that lacks a collection cannot produce
+    // undefined lookups, then validate every collection is the right shape.
+    const merged = { ...emptyState(), ...parsed }
+    if (!COLLECTIONS.every((key) => isPlainObject(merged[key]))) {
+      quarantine(raw, 'malformed-collection')
+      return emptyState()
+    }
+    return merged
   } catch {
     // Corrupt or unreadable storage must not brick the app.
     return emptyState()

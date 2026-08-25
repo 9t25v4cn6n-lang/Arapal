@@ -219,6 +219,23 @@ test('corrupt storage does not brick the app', () => {
   assert.deepEqual(recovered.projects, {})
 })
 
+test('a wrong-shape persisted collection is quarantined, not thrown on (R-019)', () => {
+  globalThis.window.localStorage.setItem('arapal.v1.state', JSON.stringify({ version: 1, projects: 'corrupt' }))
+  const recovered = storage.read()
+  assert.deepEqual(recovered.projects, {}, 'selectors get a clean empty collection, not a string')
+  assert.ok(
+    globalThis.window.localStorage.getItem('arapal.v1.state.quarantine'),
+    'the corrupt state is kept aside for recovery, not deleted',
+  )
+})
+
+test('a future-version persisted state is quarantined rather than guessed', () => {
+  globalThis.window.localStorage.setItem('arapal.v1.state', JSON.stringify({ version: 99, projects: {} }))
+  const recovered = storage.read()
+  assert.equal(recovered.version, 1)
+  assert.ok(globalThis.window.localStorage.getItem('arapal.v1.state.quarantine'))
+})
+
 // ── exams ────────────────────────────────────────────────────────────────────
 
 test('attempt answers persist and the attempt resumes rather than duplicating', () => {
