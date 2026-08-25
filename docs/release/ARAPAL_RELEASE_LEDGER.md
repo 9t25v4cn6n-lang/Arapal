@@ -317,7 +317,7 @@ seam store test. **Remaining EXTERNAL verification step:** a valid Gemini key +
 network access, which produces a real provider PASS end-to-end — verifiable only
 by the product owner with a key.
 
-## Current gate state (HEAD `e7bc2ff`, 2026-08-25)
+## Current gate state (HEAD `e00b4ed`, 2026-08-26)
 
 - **build** PASS · **data + AI unit tests** 86/86 (data 43 + AI 43) · **behaviour** 36 passed / 2 skipped · **lint** 0 errors.
 - **lint** now **PASSES — 0 errors** (`e27e94c`→`b3a3bf4`): the genuine no-dupe-keys bug fixed, dead code removed, and dev-tooling/legacy-reference debt scoped-exempt with rationale; 6 non-blocking exhaustive-deps warnings remain. Dimension H lint is closed.
