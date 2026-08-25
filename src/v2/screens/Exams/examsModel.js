@@ -189,6 +189,32 @@ function writePersistedAttempt(attempt) {
   }
 }
 
+// A created assessment lived only in React state, so a reload dropped it and any
+// autosaved attempt pointing at it reopened blank (R-017). The exam list now
+// persists too, so a saved assessment and its attempt survive reload.
+const EXAMS_STORAGE_KEY = 'design-sandbox.exams.v1';
+
+function readPersistedExams() {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.localStorage.getItem(EXAMS_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    return Array.isArray(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function writePersistedExams(exams) {
+  if (typeof window === 'undefined') return false;
+  try {
+    window.localStorage.setItem(EXAMS_STORAGE_KEY, JSON.stringify(exams));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function evaluateAttempt(exam, answers) {
   const gradedQuestions = exam.questions.map((question, index) => {
     const answer = answers[question.id] ?? '';
@@ -240,5 +266,7 @@ export {
   filterScopeItems,
   readPersistedAttempt,
   writePersistedAttempt,
+  readPersistedExams,
+  writePersistedExams,
   evaluateAttempt,
 }

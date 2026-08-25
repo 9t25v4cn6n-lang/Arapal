@@ -23,9 +23,11 @@ import {
   filterScopeItems,
   hydrateInitialExams,
   readPersistedAttempt,
+  readPersistedExams,
   slugifyExamTitle,
   studyScopePool,
   writePersistedAttempt,
+  writePersistedExams,
 } from './examsModel'
 import { gradeExam } from '../../services/ai'
 
@@ -51,7 +53,9 @@ import { gradeExam } from '../../services/ai'
 export default function ExamsScreen({ route, shell }) {
   const restoredAttempt = useMemo(() => readPersistedAttempt(), [])
   const [view, setView] = useState(() => (restoredAttempt?.examId ? 'take' : 'library'))
-  const [exams, setExams] = useState(() => hydrateInitialExams())
+  // Hydrate from persisted exams so a created assessment survives reload; fall
+  // back to the starter set only when nothing has been saved yet (R-017).
+  const [exams, setExams] = useState(() => readPersistedExams() ?? hydrateInitialExams())
   const [scopeMode, setScopeMode] = useState('prefix')
   const [prefixValue, setPrefixValue] = useState('2')
   const [rangeStart, setRangeStart] = useState(2)
@@ -80,6 +84,12 @@ export default function ExamsScreen({ route, shell }) {
     () => Object.values(answers).filter((value) => value.trim()).length,
     [answers],
   )
+
+  // Persist the exam list whenever it changes, so created assessments survive a
+  // reload and an autosaved attempt still resolves to a real exam (R-017).
+  useEffect(() => {
+    writePersistedExams(exams)
+  }, [exams])
 
   useEffect(() => {
     if (view !== 'take') return undefined
