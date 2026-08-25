@@ -285,9 +285,12 @@ whole package's acceptance evidence is met.
 
 | `51b9438` | IP-08 | Dev/QA lab surfaces compiled OUT of the production bundle. `devRoutes.ts` (buildDevRoutes() fn so top-level `lazy()` isn't a side effect) attached only under `import.meta.env.DEV`; Rollup tree-shakes the whole module + every lab chunk in a prod build. Render-time `DEV_ONLY_ROUTES` gate removed — the module boundary is the gate. | dist **16 → 2 JS chunks**, 0 lab chunks; built-dist smoke: `/`→V2 Home, `#v2/patternLab`→falls through, no console errors; DEV still renders labs; 75/75 unit, 36/36 behaviour, QA production 0 |
 
-## Current gate state (HEAD `51b9438`, 2026-08-25)
+| `fb9179d` | IP-05 | Durable, project-scoped notes: manual notes + saved discussion summaries were React-only and lost on reload. Now a first-class store collection keyed by (projectId, segmentId) — cascades on delete, archived (not destroyed) on re-segmentation. | 4 new store tests; in-browser: seeded note renders after reload + a UI-added note persists (2 notes) |
+| `6994bf3` | IP-05 | Real Research companion: "Ask across the whole project" rendered ONE hard-coded paragraph + fixture citations for every question and called nothing. Now `researchAsk` grounds the question in the project's own segments, constrains citations to supplied refs, and is honestly unavailable without a provider — never a fabricated answer. | 7 new research tests; in-browser (no key): idle shows real "3 segments" grounding, Ask shows "AI companion not configured", no fabricated answer |
 
-- **build** PASS · **data + AI unit tests** 75/75 (data 39 + AI 36) · **behaviour** 36 passed / 2 skipped · **lint** 0 errors.
+## Current gate state (HEAD `6994bf3`, 2026-08-25)
+
+- **build** PASS · **data + AI unit tests** 86/86 (data 43 + AI 43) · **behaviour** 36 passed / 2 skipped · **lint** 0 errors.
 - **lint** now **PASSES — 0 errors** (`e27e94c`→`b3a3bf4`): the genuine no-dupe-keys bug fixed, dead code removed, and dev-tooling/legacy-reference debt scoped-exempt with rationale; 6 non-blocking exhaustive-deps warnings remain. Dimension H lint is closed.
 - **deterministic QA**: re-run after the mobile-nav + shell change — **production 0 violations, 0 blank routes, 0 page errors** across all 14 routes. Visual regression not yet re-baselined (belongs to IP-09).
 - **AI unit tests**: 36 (study 19 + exam 8 + discussion 9). **data 39/39**.
