@@ -9,7 +9,7 @@ import * as storage from './storage.js'
 import {
   createProject, createSource, createSegment, createDraft,
   createStudyRecord, createResult, createExam, createAttempt,
-  segmentKey,
+  createProposal, segmentKey,
 } from './schema.js'
 import { evaluateTranslation } from './evaluation.js'
 import { gradeStudyAttempt } from '../services/ai/index.js'
@@ -137,12 +137,40 @@ export function addSource({ projectId, rawText, label }) {
   return source
 }
 
+// ── segmentation proposal (pre-approval) ─────────────────────────────────────
+
 /**
- * Replace a project's segments with the output of segmentation.
+ * Store a non-authoritative segmentation proposal for a project. This does NOT
+ * publish canonical segments — Study still sees whatever was previously approved
+ * (or nothing). The proposal exists to be reviewed/edited and then explicitly
+ * approved (DECISIONS §5). Replaces the previous flow that published segments
+ * before the user had reviewed anything (R-015).
+ */
+export function saveProposal({ projectId, sourceId, chunks, method, style, granularity }) {
+  const project = state.projects[projectId]
+  if (!project) throw new Error(`saveProposal: unknown project ${projectId}`)
+  const proposal = createProposal({ projectId, sourceId, chunks, method, style, granularity })
+  commit({ ...state, proposals: { ...state.proposals, [projectId]: proposal } })
+  return proposal
+}
+
+export const getProposal = (projectId, s = state) => s.proposals[projectId] ?? null
+
+export function clearProposal(projectId) {
+  if (!state.proposals[projectId]) return
+  const proposals = { ...state.proposals }
+  delete proposals[projectId]
+  commit({ ...state, proposals })
+}
+
+/**
+ * Publish a project's canonical segments — the explicit approval transaction.
  *
- * This is the handoff that was previously discarded: the old flow ended with
- * 'window.location.hash = 'study'' and no payload, so Study reopened a fixture
- * and the user's approved work vanished.
+ * Non-destructive on re-segmentation (DECISIONS §5, RED-05): when the project
+ * already has canonical segments, its prior segments/drafts/study-records/
+ * results are ARCHIVED (kept, recoverable) rather than silently deleted before
+ * approval. This is also the handoff the old flow discarded — it ended with a
+ * bare hash change carrying no payload, so approved work vanished.
  */
 export function publishSegments({ projectId, sourceId, chunks }) {
   const project = state.projects[projectId]
@@ -159,23 +187,54 @@ export function publishSegments({ projectId, sourceId, chunks }) {
       chapterLabel: typeof chunk === 'string' ? '' : chunk.chapterLabel ?? '',
     }))
 
-  // Drop the project's previous segments and everything keyed to them, so a
-  // re-run cannot leave orphaned drafts pointing at segments that no longer exist.
+  const priorSegments = Object.values(state.segments).filter((seg) => seg.projectId === projectId)
+  const staleIds = new Set(priorSegments.map((s) => s.id))
   const keptSegments = Object.fromEntries(
     Object.entries(state.segments).filter(([, seg]) => seg.projectId !== projectId))
-  const staleIds = new Set(
-    Object.values(state.segments).filter((s) => s.projectId === projectId).map((s) => s.id))
-  const pruneKeyed = (collection) => Object.fromEntries(
-    Object.entries(collection).filter(([k]) => {
+  const partitionKeyed = (collection) => {
+    const kept = {}
+    const removed = {}
+    for (const [k, v] of Object.entries(collection)) {
       const [pid, sid] = k.split('::')
-      return pid !== projectId || !staleIds.has(sid)
-    }))
+      if (pid === projectId && staleIds.has(sid)) removed[k] = v
+      else kept[k] = v
+    }
+    return { kept, removed }
+  }
+  const draftsPart = partitionKeyed(state.drafts)
+  const recordsPart = partitionKeyed(state.studyRecords)
+  const priorResults = Object.fromEntries(
+    Object.entries(state.results).filter(([, r]) => r.projectId === projectId && staleIds.has(r.segmentId)))
+
+  // Only archive if there was real prior canonical work to preserve.
+  const hadPriorWork =
+    priorSegments.length > 0 &&
+    (Object.keys(draftsPart.removed).length ||
+      Object.values(recordsPart.removed).some((r) => r.submissionState !== 'draft') ||
+      Object.keys(priorResults).length)
+  const nextArchives = hadPriorWork
+    ? {
+        ...state.archives,
+        [projectId]: [
+          ...(state.archives[projectId] ?? []),
+          {
+            archivedAt: new Date().toISOString(),
+            segments: priorSegments,
+            drafts: draftsPart.removed,
+            studyRecords: recordsPart.removed,
+            results: priorResults,
+          },
+        ],
+      }
+    : state.archives
 
   commit({
     ...state,
     segments: { ...keptSegments, ...Object.fromEntries(segments.map((s) => [s.id, s])) },
-    drafts: pruneKeyed(state.drafts),
-    studyRecords: pruneKeyed(state.studyRecords),
+    drafts: draftsPart.kept,
+    studyRecords: recordsPart.kept,
+    archives: nextArchives,
+    proposals: (() => { const p = { ...state.proposals }; delete p[projectId]; return p })(),
     projects: {
       ...state.projects,
       [projectId]: {

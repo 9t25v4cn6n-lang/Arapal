@@ -25,17 +25,19 @@ test.describe('segmentation → study handoff', () => {
   test('granularity and style survive a reload, because they change the output', async ({ page }) => {
     await openPaste(page)
 
-    // Granularity is not a cosmetic preference: on a five-sentence source it
-    // takes the result from three segments to five. It was omitted from the
-    // preference store AND hard-coded at mount, so choosing Tighter and coming
-    // back silently re-segmented the next source differently.
+    // Intake starts empty now, and the action menu lives on the primary CTA,
+    // which is disabled until there is source text — so paste first, then adjust
+    // options. Granularity is not cosmetic: on a five-sentence source it takes
+    // the result from three segments to five. It was omitted from the preference
+    // store AND hard-coded at mount, so choosing Tighter and coming back silently
+    // re-segmented the next source differently.
+    await page.locator('textarea').first().fill(SOURCE)
+    await page.waitForTimeout(300)
     await page.getByRole('button', { name: /open action options/i }).first().click()
     await page.waitForTimeout(400)
     await page.getByRole('button', { name: /tighter/i }).first().click()
     await page.waitForTimeout(300)
 
-    await page.locator('textarea').first().fill(SOURCE)
-    await page.waitForTimeout(300)
     await page.getByRole('button', { name: /segment text/i }).first().click()
     await page.waitForTimeout(4000)
 
@@ -44,6 +46,10 @@ test.describe('segmentation → study handoff', () => {
 
     await page.goto('/?chrome=0#v2/segmentationPasteNext', { waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(2400)
+    // The action menu lives on the CTA, disabled until there is text — so type
+    // before opening it to read back the persisted granularity.
+    await page.locator('textarea').first().fill(SOURCE)
+    await page.waitForTimeout(300)
     await page.getByRole('button', { name: /open action options/i }).first().click()
     await page.waitForTimeout(400)
 

@@ -13,7 +13,7 @@ import {
 } from '../../foundation/primitives/SegmentationFlowPrimitives'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import layoutContract from './SegmentationReviewScreen.contract'
-import { select, getSnapshot } from '../../data'
+import { select, actions, getSnapshot } from '../../data'
 
 const reviewSectionSize = 3
 
@@ -146,12 +146,27 @@ function cloneSegments(segments) {
 
 export default function SegmentationReviewScreen({ route, shell }) {
   const nextSegmentIdRef = useRef(11)
-  // Seed from what was actually published, so Review edits the user's own
-  // proposal rather than a fixture that happens to look similar.
+  // Seed from the NON-AUTHORITATIVE proposal, so Review edits the user's own
+  // proposed segmentation before anything becomes canonical. Nothing is
+  // published until Approve (DECISIONS §5, R-015).
   const [segments, setSegments] = useState(() => {
     const snapshot = getSnapshot()
     const project = select.getCurrentProject(snapshot)
-    return createSegmentationReviewSegments(project ? select.listSegments(project.id, snapshot) : null)
+    const proposal = project ? select.getProposal(project.id, snapshot) : null
+    // Prefer a pending (unpublished) proposal; otherwise fall back to the current
+    // canonical segments so a user can re-review already-published work. Only if
+    // neither exists does the fixture placeholder show.
+    const proposed = proposal
+      ? proposal.chunks.map((chunk, index) => ({
+          id: `prop_${index}`,
+          title: chunk.title || '',
+          text: chunk.text,
+          chapterLabel: chunk.chapterLabel || '',
+        }))
+      : project
+        ? select.listSegments(project.id, snapshot)
+        : null
+    return createSegmentationReviewSegments(proposed?.length ? proposed : null)
   })
   const [groupTitles, setGroupTitles] = useState(createSegmentationReviewGroupTitles)
   const [staleGroupIds, setStaleGroupIds] = useState([])
@@ -665,7 +680,26 @@ export default function SegmentationReviewScreen({ route, shell }) {
         segmentCount={segments.length}
         reviewCount={summary.totalReview}
         readyCount={summary.ready}
-        onApprove={() => shell.navigate('segmentationSuccess')}
+        onApprove={() => {
+          // Approval is the ONLY canonical publish. It publishes exactly the
+          // segments as reviewed and edited here, so Review edits are authoritative
+          // (they were previously component-only and discarded). publishSegments is
+          // non-destructive to any prior study work (DECISIONS §5).
+          const snapshot = getSnapshot()
+          const project = select.getCurrentProject(snapshot)
+          const proposal = project ? select.getProposal(project.id, snapshot) : null
+          const sourceId = proposal?.sourceId ?? project?.sourceIds?.[0]
+          if (project && sourceId) {
+            const chunks = segments.map((segment, index) => ({
+              text: segment.text,
+              ref: `1.${index + 1}`,
+              title: segment.label && !/^Segment \d+$/.test(segment.label) ? segment.label : '',
+              chapterLabel: segment.groupLabel && segment.groupLabel !== 'Proposed segments' ? segment.groupLabel : 'Chapter 1',
+            }))
+            actions.publishSegments({ projectId: project.id, sourceId, chunks })
+          }
+          shell.navigate('segmentationSuccess')
+        }}
         // Re-segmenting means going back to the source and splitting again,
         // which is the same destination "Edit source" already uses — a real
         // action, not a button added to match a picture.

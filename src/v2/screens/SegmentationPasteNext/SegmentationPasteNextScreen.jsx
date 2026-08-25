@@ -25,9 +25,11 @@ import layoutContract from './SegmentationPasteNextScreen.contract'
 // the other four about what the flow is.
 const workspaceSteps = segmentationFlowSteps
 
-const initialText = `في بداية الربيع خرجت القافلة من المدينة قبل شروق الشمس.
-وكانت السماء صافية والهواء بارداً على نحوٍ خفيف.
-توقفت المجموعة عند البئر القديمة لتراجع المؤن وتتأكد من الطريق.`
+// Intake starts EMPTY: the user pastes their own source. It used to be
+// pre-filled with a fixed passage, which is why the "empty" intake state was
+// never actually reachable and a project could be created from demo text
+// (R-015).
+const initialText = ''
 
 const centeredActionWidth = {
   width: '100%',
@@ -199,9 +201,11 @@ export default function SegmentationPasteNextScreen({ route, shell }) {
               showSegmentationTransition,
             })
 
-            // Persist the source and its derived segments before navigating.
-            // The previous flow changed the hash and carried nothing, so an
-            // approved segmentation was discarded and Study reopened a fixture.
+            // Persist the source and store a NON-AUTHORITATIVE proposal — do NOT
+            // publish canonical segments here. Publication happens only after the
+            // user reviews and explicitly approves (DECISIONS §5, R-015). The old
+            // flow published before review, so segments were canonical before the
+            // user had seen them.
             const markers = generateMarkers(rawText, selectedMethod.id, style, granularity)
             if (markers.length) {
               const existing = select.getCurrentProject(getSnapshot())
@@ -214,11 +218,25 @@ export default function SegmentationPasteNextScreen({ route, shell }) {
                 rawText,
                 label: 'Pasted source',
               })
-              actions.publishSegments({
-                projectId: project.id,
-                sourceId: source.id,
-                chunks: markersToChunks(markers, { chapterLabel: 'Chapter 1' }),
-              })
+              const chunks = markersToChunks(markers, { chapterLabel: 'Chapter 1' })
+              // Quick mode is the user's pre-authorised approval: it skips the
+              // manual Review step, so publishing now IS the explicit approval and
+              // avoids leaving an un-approved proposal in limbo during the flow's
+              // animation. The manual / non-quick paths instead store a proposal
+              // and publish only when the user approves in Review (DECISIONS §5).
+              const autoApprove = quickMode && selectedMethod.id !== 'manual'
+              if (autoApprove) {
+                actions.publishSegments({ projectId: project.id, sourceId: source.id, chunks })
+              } else {
+                actions.saveProposal({
+                  projectId: project.id,
+                  sourceId: source.id,
+                  chunks,
+                  method: selectedMethod.id,
+                  style,
+                  granularity,
+                })
+              }
             }
 
             shell.navigate(selectedMethod.id === 'manual' ? 'segmentationReview' : 'segmentationLoading')

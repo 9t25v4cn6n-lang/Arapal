@@ -64,17 +64,52 @@ test('segmentation output reaches the project instead of being discarded', () =>
   assert.equal(store.getProject(project.id).currentSegmentId, stored[0].id)
 })
 
-test('re-publishing segmentation prunes the old segments and their drafts', () => {
+test('re-segmentation replaces canonical segments but ARCHIVES prior work, never deletes it', () => {
   const { project, source, segments } = seedProject()
   store.saveDraft({ projectId: project.id, segmentId: segments[0].id, text: 'old draft' })
 
   store.publishSegments({ projectId: project.id, sourceId: source.id, chunks: ['Only one now.'] })
 
+  // New canonical segmentation is in force…
   assert.equal(store.listSegments(project.id).length, 1)
-  assert.equal(
-    store.getDraft(project.id, segments[0].id), null,
-    'a draft for a segment that no longer exists must not survive',
-  )
+  // …and the old draft no longer resolves against a segment that is gone…
+  assert.equal(store.getDraft(project.id, segments[0].id), null)
+  // …but it was preserved in the archive, not silently destroyed (DECISIONS §5).
+  const archive = store.getSnapshot().archives[project.id]
+  assert.ok(Array.isArray(archive) && archive.length === 1, 'prior work is archived')
+  const archivedDraft = Object.values(archive[0].drafts).find((d) => d.text === 'old draft')
+  assert.ok(archivedDraft, 'the archived draft text is recoverable')
+})
+
+// ── proposal → approval authority (R-015 / DECISIONS §5) ──────────────────────
+
+test('a proposal is not canonical: saving one publishes no segments', () => {
+  const project = store.addProject({ title: 'Proposal project' })
+  const source = store.addSource({ projectId: project.id, rawText: 'One. Two.' })
+  store.saveProposal({
+    projectId: project.id, sourceId: source.id,
+    chunks: [{ text: 'One.' }, { text: 'Two.' }], method: 'ai',
+  })
+  // Before approval the authoritative segment count is zero.
+  assert.equal(store.listSegments(project.id).length, 0)
+  assert.ok(store.getProposal(project.id), 'the proposal is stored for review')
+  assert.equal(store.getProjectProgress(project.id).total, 0)
+})
+
+test('approval publishes exactly the proposed chunks and clears the proposal', () => {
+  const project = store.addProject({ title: 'Approve project' })
+  const source = store.addSource({ projectId: project.id, rawText: 'One. Two.' })
+  const proposal = store.saveProposal({
+    projectId: project.id, sourceId: source.id,
+    chunks: [{ text: 'One.', ref: '1.1' }, { text: 'Two.', ref: '1.2' }], method: 'ai',
+  })
+
+  store.publishSegments({ projectId: project.id, sourceId: source.id, chunks: proposal.chunks })
+
+  const segs = store.listSegments(project.id)
+  assert.equal(segs.length, 2)
+  assert.equal(segs[0].text, 'One.')
+  assert.equal(store.getProposal(project.id), null, 'the proposal is consumed on approval')
 })
 
 // ── the leak that put one segment's draft on another ─────────────────────────

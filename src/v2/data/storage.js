@@ -24,6 +24,8 @@ export const emptyState = () => ({
   results: {},
   exams: {},
   attempts: {},
+  proposals: {},     // keyed projectId — non-authoritative segmentation, pre-approval
+  archives: {},      // keyed projectId — prior canonical study data kept on re-segmentation
   currentProjectId: null,
   seededAt: null,
 })

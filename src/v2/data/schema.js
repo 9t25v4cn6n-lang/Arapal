@@ -135,6 +135,26 @@ export function createResult({
   }
 }
 
+/**
+ * A non-authoritative segmentation proposal. It is NOT canonical: Study must not
+ * treat it as segments, and it becomes canonical only through an explicit
+ * approval that publishes it (DECISIONS §5). Chunks are { text, ref?, title?,
+ * chapterLabel? }.
+ */
+export function createProposal({ projectId, sourceId, chunks = [], method = 'ai', style = '', granularity = '' }) {
+  const now = new Date().toISOString()
+  return {
+    projectId,
+    sourceId,
+    chunks,
+    method,
+    style,
+    granularity,
+    createdAt: now,
+    updatedAt: now,
+  }
+}
+
 export function createExam({ projectId, title, scope, questions = [] }) {
   return {
     id: newId('exm'),
