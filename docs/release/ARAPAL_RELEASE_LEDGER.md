@@ -272,4 +272,13 @@ whole package's acceptance evidence is met.
 
 **IP-04 still to do (R-017 durability, the store-wiring rewrite):** move exams to the project-scoped store (`addExam`/`listExams`) so a created assessment + attempt survive reload and restored identity is validated before Attempt; generate questions from the **real project segments** (drop the Al-Hidayah `studyScopePool` fixture); route exam-miss remediation to Study via the **stable segment id** (currently the handoff still writes a human ref, so it relies on the R-018 recoverable-notice). The fabricated grading (R-016) is now gone; the remaining work is durability + real-segment scoping.
 
+| 2026-08-25 | `2164595` | IP-04 exam tests | Exam behaviour tests updated to the honest reality (miss-based remediation legitimately requires a real grade; the handoff mechanism is covered by segmentation-handoff.spec.js). | both pass; **full behaviour suite 36 passed / 2 skipped** after all Exams/Study/segmentation changes |
+
+## Current gate state (HEAD `2164595`, 2026-08-25)
+
+- **build** PASS · **data tests** 37/37 · **AI unit tests** 27/27 · **behaviour** 36 passed / 2 skipped.
+- **lint** still 21 genuine tracked errors (Dimension H / IP-09), unchanged and recorded — not hidden.
+- **deterministic QA / visual regression**: last run at the IP-01 checkpoint (production 0 blocking); not re-run since the Study/Exams data changes (no production-surface geometry changed, but a fresh QA + VR pass belongs in IP-07/IP-09).
+- Working tree clean; every increment committed.
+
 **Standing limitation (not a RED blocker):** this environment has no Gemini key and no network to Google, so IP-03/04/05 AI paths are proven by unit tests + the honest-unavailable branch in-browser; live end-to-end AI output is verifiable only by the product owner with a key.
