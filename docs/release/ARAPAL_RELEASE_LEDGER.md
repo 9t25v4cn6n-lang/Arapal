@@ -393,3 +393,34 @@ Evidence (unit + rendered):
 Gate: build PASS, lint 0, unit 108/108, behaviour 42/2, QA production 0.
 
 Exams AI-recovery entry points are completed with IP-S3-04.
+
+## S3-004 — RESOLVED (IP-S3-04)
+
+Root-cause fixes:
+- **Explicit task:** every Attempt question states its task ("Translate the
+  passage below into clear English.") above the Arabic source, so the user knows
+  what to produce — not a blank box under a passage.
+- **Synchronous save boundary:** "Save and next" (and Submit, and tab
+  close/reload) flush the current answer to storage SYNCHRONOUSLY via refs before
+  navigating — no reliance on the 600ms debounce. `answersRef`/`indexRef` mirror
+  state so a value typed a moment before the boundary is included.
+- **Validated restore:** a restored attempt is honoured only if its exam still
+  exists; a stale/orphan attempt is cleared and routed to a recoverable Library
+  message, never a blank Attempt shell.
+- **Graded/ungraded taxonomy:** exam status is `graded` vs `ungraded`; the
+  library files unscored attempts under "Attempted · not scored", never among
+  graded results.
+- **Recovery:** the ungraded Results view offers Setup AI (no provider) or Retry
+  grading (provider failed) — `handleRetryGrading` re-grades the RECORDED answers
+  without loss.
+
+Evidence — `tests/behaviour/exam-recovery.spec.js` (4/4):
+- The question states its task + source.
+- **Save and next → IMMEDIATE reload keeps the answer** (persisted attempt shows
+  the Q1 answer and index advanced) — the exact S3-004 data-loss reproduction,
+  now fixed.
+- A stale attempt (its exam gone) shows the library + "couldn't be resumed"
+  message and the stale attempt is cleared (no blank shell).
+- Submitting without AI is ungraded (no fabricated score) and offers Setup AI /
+  Retry grading.
+Gate: build PASS, lint 0, unit 108/108, behaviour 46/2, QA production 0.

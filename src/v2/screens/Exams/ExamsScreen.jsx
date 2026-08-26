@@ -8,6 +8,7 @@ import {
   Play,
   Plus,
   Save,
+  Sparkles,
   Target,
 } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -55,11 +56,19 @@ export default function ExamsScreen({ route, shell }) {
   // so instead of offering scope that maps to nothing (R-017).
   const { project, pool } = useLiveExamScope()
   const restoredAttempt = useMemo(() => readPersistedAttempt(), [])
-  const [view, setView] = useState(() => (restoredAttempt?.examId ? 'take' : 'library'))
   // Hydrate from the persisted list so a created assessment survives reload.
   // There are no fixture seeds: a project's library starts empty and is filled
   // by building assessments from that project's segments (R-017).
   const [exams, setExams] = useState(() => readPersistedExams() ?? [])
+  // A restored attempt is only honoured if its exam STILL EXISTS. A stale/orphan
+  // attempt must route to a recoverable Library message, never a blank Take shell
+  // (S3-004). Validated once, against the persisted exam list, at mount.
+  const restoredAttemptValid = useMemo(
+    () => !!(restoredAttempt?.examId && (readPersistedExams() ?? []).some((e) => e.id === restoredAttempt.examId)),
+    [restoredAttempt],
+  )
+  const [view, setView] = useState(() => (restoredAttemptValid ? 'take' : 'library'))
+  const [staleAttempt, setStaleAttempt] = useState(() => !!(restoredAttempt?.examId && !restoredAttemptValid))
   const [scopeMode, setScopeMode] = useState('prefix')
   // Scope defaults track the real pool, so the first preview is never empty on a
   // project whose segments do not happen to start at the old fixture's "2".
@@ -67,15 +76,21 @@ export default function ExamsScreen({ route, shell }) {
   const [rangeStart, setRangeStart] = useState(1)
   const [rangeEnd, setRangeEnd] = useState(() => Math.max(1, pool.length))
   const [draftTitle, setDraftTitle] = useState('Focused checkpoint')
-  const [activeExamId, setActiveExamId] = useState(restoredAttempt?.examId ?? null)
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(restoredAttempt?.currentQuestionIndex ?? 0)
-  const [answers, setAnswers] = useState(restoredAttempt?.answers ?? {})
+  const [activeExamId, setActiveExamId] = useState(restoredAttemptValid ? restoredAttempt.examId : null)
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(restoredAttemptValid ? (restoredAttempt.currentQuestionIndex ?? 0) : 0)
+  const [answers, setAnswers] = useState(restoredAttemptValid ? (restoredAttempt.answers ?? {}) : {})
   const [autosaveState, setAutosaveState] = useState('Saved')
   const [reviewGrouping, setReviewGrouping] = useState('concept')
   const [activeResult, setActiveResult] = useState(null)
-  const [attemptStartedAt, setAttemptStartedAt] = useState(restoredAttempt?.startedAt ?? null)
+  const [attemptStartedAt, setAttemptStartedAt] = useState(restoredAttemptValid ? (restoredAttempt.startedAt ?? null) : null)
   const [nowMs, setNowMs] = useState(null)
   const autosaveTimerRef = useRef(null)
+  // Refs mirror the attempt state so an explicit save boundary (Save and next,
+  // submit, unload) flushes the LATEST answers synchronously — never a stale
+  // closure and never waiting on the debounce (S3-004).
+  const answersRef = useRef(restoredAttemptValid ? (restoredAttempt.answers ?? {}) : {})
+  const indexRef = useRef(restoredAttemptValid ? (restoredAttempt.currentQuestionIndex ?? 0) : 0)
+  const startedAtRef = useRef(restoredAttemptValid ? (restoredAttempt.startedAt ?? null) : null)
 
   const activeExam = useMemo(
     () => exams.find((exam) => exam.id === activeExamId) || null,
@@ -104,6 +119,43 @@ export default function ExamsScreen({ route, shell }) {
   useEffect(() => {
     writePersistedExams(exams)
   }, [exams])
+
+  // A stale attempt (its exam no longer exists) is discarded from storage on
+  // mount so it cannot reopen a blank shell on the next visit either (S3-004).
+  useEffect(() => {
+    if (staleAttempt) writePersistedAttempt(null)
+  }, [staleAttempt])
+
+  // Write the current attempt to storage NOW, synchronously. Reads the refs so a
+  // value typed a moment before an explicit boundary is included.
+  const flushAttempt = (overrides = {}) => {
+    if (autosaveTimerRef.current) window.clearTimeout(autosaveTimerRef.current)
+    const saved = writePersistedAttempt({
+      examId: activeExamId,
+      answers: answersRef.current,
+      currentQuestionIndex: indexRef.current,
+      startedAt: startedAtRef.current,
+      updatedAt: new Date().toISOString(),
+      ...overrides,
+    })
+    setAutosaveState(saved ? 'Saved' : 'Not saved')
+    return saved
+  }
+
+  // An explicit boundary the user did not click — closing/reloading the tab —
+  // must still not lose the current answer.
+  useEffect(() => {
+    if (view !== 'take') return undefined
+    const onUnload = () => {
+      writePersistedAttempt({
+        examId: activeExamId, answers: answersRef.current,
+        currentQuestionIndex: indexRef.current, startedAt: startedAtRef.current,
+        updatedAt: new Date().toISOString(),
+      })
+    }
+    window.addEventListener('beforeunload', onUnload)
+    return () => window.removeEventListener('beforeunload', onUnload)
+  }, [view, activeExamId])
 
   useEffect(() => {
     if (view !== 'take') return undefined
@@ -143,24 +195,28 @@ export default function ExamsScreen({ route, shell }) {
   )
 
   const library = useMemo(() => {
-    const ready = projectExams.filter((exam) => exam.status !== 'completed')
-    const completed = projectExams.filter((exam) => exam.status === 'completed')
-    const scored = completed.filter((exam) => typeof exam.lastScore === 'number')
+    const isDone = (exam) => exam.status === 'graded' || exam.status === 'ungraded' || exam.status === 'completed'
+    const ready = projectExams.filter((exam) => !isDone(exam))
+    // Graded and ungraded are SEPARATE completion buckets, so an unscored attempt
+    // is never presented among graded results (S3-004).
+    const graded = projectExams.filter((exam) => exam.status === 'graded' || (exam.status === 'completed' && typeof exam.lastScore === 'number'))
+    const ungraded = projectExams.filter((exam) => exam.status === 'ungraded' || (exam.status === 'completed' && typeof exam.lastScore !== 'number'))
+    const scored = graded.filter((exam) => typeof exam.lastScore === 'number')
 
     return {
       ready,
-      completed,
-      // The one aggregate that says something a list does not: how you are
-      // doing. "Saved exams: 2" and "Ready to take: 1" were counters for a list
-      // of two items sitting directly beneath them.
+      completed: graded,
+      graded,
+      ungraded,
       averageScore: scored.length
         ? Math.round(scored.reduce((total, exam) => total + exam.lastScore, 0) / scored.length)
         : null,
-      resumable: restoredAttempt?.examId
+      // A resumable attempt must still exist AND belong to this project (S3-004).
+      resumable: restoredAttemptValid
         ? projectExams.find((exam) => exam.id === restoredAttempt.examId) ?? null
         : null,
     }
-  }, [projectExams, restoredAttempt])
+  }, [projectExams, restoredAttempt, restoredAttemptValid])
 
   const groupedMisses = useMemo(() => {
     if (!activeResult) return []
@@ -200,30 +256,54 @@ export default function ExamsScreen({ route, shell }) {
     resetDraft()
   }
 
+  // Navigation IS a save boundary. The current answer is flushed synchronously
+  // with the destination index before we move — reloading immediately after
+  // "Save and next" cannot lose it (S3-004).
+  const goToQuestion = (nextIndex) => {
+    indexRef.current = nextIndex
+    flushAttempt({ currentQuestionIndex: nextIndex })
+    setCurrentQuestionIndex(nextIndex)
+  }
+
   const handleOpenTake = (examId) => {
     const exam = exams.find((item) => item.id === examId)
     if (!exam) return
     const startedAt = Date.now()
+    const freshAnswers = Object.fromEntries(exam.questions.map((question) => [question.id, '']))
+    answersRef.current = freshAnswers
+    indexRef.current = 0
+    startedAtRef.current = startedAt
     setAttemptStartedAt(startedAt)
     setNowMs(startedAt)
     setActiveExamId(exam.id)
     setCurrentQuestionIndex(0)
-    setAnswers(Object.fromEntries(exam.questions.map((question) => [question.id, ''])))
+    setAnswers(freshAnswers)
     setAutosaveState('Saved')
     setView('take')
+    // Persist immediately so a reload right after opening resumes, not resets.
+    writePersistedAttempt({ examId: exam.id, answers: freshAnswers, currentQuestionIndex: 0, startedAt, updatedAt: new Date().toISOString() })
   }
 
   const handleResumeAttempt = () => {
     if (!library.resumable) return
+    const resumeAnswers = restoredAttempt?.answers ?? {}
+    const resumeIndex = restoredAttempt?.currentQuestionIndex ?? 0
+    const resumeStarted = restoredAttempt?.startedAt ?? Date.now()
+    answersRef.current = resumeAnswers
+    indexRef.current = resumeIndex
+    startedAtRef.current = resumeStarted
     setActiveExamId(library.resumable.id)
-    setCurrentQuestionIndex(restoredAttempt?.currentQuestionIndex ?? 0)
-    setAnswers(restoredAttempt?.answers ?? {})
-    setAttemptStartedAt(restoredAttempt?.startedAt ?? Date.now())
+    setCurrentQuestionIndex(resumeIndex)
+    setAnswers(resumeAnswers)
+    setAttemptStartedAt(resumeStarted)
     setView('take')
   }
 
   const handleSubmitExam = async () => {
     if (!activeExam) return
+    // Grade the LATEST answers (the ref includes a value typed right before
+    // Submit). The attempt is cleared only after the result is recorded.
+    const finalAnswers = answersRef.current
     writePersistedAttempt(null)
 
     // Grade against the real exam contract. No provider → an honest UNGRADED
@@ -236,7 +316,7 @@ export default function ExamsScreen({ route, shell }) {
         // nothing to grade against.
         id: q.id, prompt: q.source || q.label, concept: q.concept, segmentRef: q.id,
       })),
-      answers,
+      answers: finalAnswers,
       sourceContext: activeExam.questions
         .map((q) => `${q.id} — ${q.concept}: ${q.source}`)
         .join('\n'),
@@ -250,7 +330,7 @@ export default function ExamsScreen({ route, shell }) {
         const q = activeExam.questions.find((item) => item.id === gq.questionId) ?? {}
         return {
           ...q,
-          answer: answers[gq.questionId] ?? '',
+          answer: finalAnswers[gq.questionId] ?? '',
           outcome: outcomeOf(gq.result),
           conceptLabel: gq.concept || q.concept,
           segmentLabel: gq.segmentRef || q.label,
@@ -274,14 +354,19 @@ export default function ExamsScreen({ route, shell }) {
       // score is invented.
       result = {
         graded: false,
-        gradeMessage: graded.message || 'AI grading is not configured, so this attempt is saved but not scored.',
+        // Distinguish "no provider configured" from "a configured provider
+        // failed", so Results can offer Setup AI vs Retry (S3-004).
+        gradeReason: graded.reason === 'no-provider' ? 'unconfigured' : 'failed',
+        gradeMessage: graded.reason === 'no-provider'
+          ? 'AI grading is not configured, so this attempt is saved but not scored.'
+          : (graded.message || 'Grading couldn’t complete, so this attempt is saved but not scored.'),
         score: null,
         passCount: 0,
         reviewCount: 0,
         missCount: 0,
         questions: activeExam.questions.map((q) => ({
           ...q,
-          answer: answers[q.id] ?? '',
+          answer: finalAnswers[q.id] ?? '',
           outcome: 'ungraded',
           conceptLabel: q.concept,
           segmentLabel: q.label,
@@ -295,10 +380,24 @@ export default function ExamsScreen({ route, shell }) {
     setActiveResult(result)
     setExams((current) => current.map((exam) => (
       exam.id === activeExam.id
-        ? { ...exam, status: 'completed', lastScore: result.graded ? result.score : null, lastResult: result }
+        // 'graded' vs 'ungraded' are distinct completion states, so the library
+        // never files an unscored attempt under graded results (S3-004).
+        ? { ...exam, status: result.graded ? 'graded' : 'ungraded', lastScore: result.graded ? result.score : null, lastResult: result }
         : exam
     )))
     setView('results')
+  }
+
+  // Re-grade an already-taken exam WITHOUT losing its recorded answers — the
+  // recovery path from an ungraded/failed result once AI is set up (S3-004).
+  const handleRetryGrading = async (exam) => {
+    const target = exam ?? activeExam
+    if (!target) return
+    const recordedAnswers = Object.fromEntries((target.lastResult?.questions ?? []).map((q) => [q.id, q.answer ?? '']))
+    answersRef.current = recordedAnswers
+    setAnswers(recordedAnswers)
+    setActiveExamId(target.id)
+    await handleSubmitExam()
   }
 
   /**
@@ -379,6 +478,8 @@ export default function ExamsScreen({ route, shell }) {
             onResume={handleResumeAttempt}
             onReview={handleReviewResults}
             onCreate={() => { resetDraft(); setView('generate') }}
+            staleAttempt={staleAttempt}
+            onDismissStale={() => setStaleAttempt(false)}
           />
         ) : null}
 
@@ -412,8 +513,15 @@ export default function ExamsScreen({ route, shell }) {
             answeredCount={answeredCount}
             autosaveState={autosaveState}
             elapsedMinutes={elapsedMinutes}
-            onSelectQuestion={setCurrentQuestionIndex}
-            onAnswer={(value) => currentQuestion && setAnswers((current) => ({ ...current, [currentQuestion.id]: value }))}
+            onSelectQuestion={goToQuestion}
+            onAnswer={(value) => {
+              if (!currentQuestion) return
+              setAnswers((current) => {
+                const next = { ...current, [currentQuestion.id]: value }
+                answersRef.current = next
+                return next
+              })
+            }}
             onSubmit={handleSubmitExam}
           />
         ) : null}
@@ -426,6 +534,8 @@ export default function ExamsScreen({ route, shell }) {
             groups={groupedMisses}
             onJumpToStudy={handleJumpToStudy}
             onDone={() => setView('library')}
+            onSetupAi={() => shell.openAiConfig?.()}
+            onRetryGrade={() => handleRetryGrading(activeExam)}
           />
         ) : null}
       </>
@@ -456,11 +566,19 @@ export default function ExamsScreen({ route, shell }) {
 
 // ── 1. take the next assessment · 2. manage the library ──────────────────────
 
-function LibraryView({ library, onStart, onResume, onReview, onCreate }) {
+function LibraryView({ library, onStart, onResume, onReview, onCreate, staleAttempt, onDismissStale }) {
   const [lead, ...rest] = library.ready
 
   return (
     <>
+      {staleAttempt ? (
+        <div style={{ ...surface, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: spacing[16], flexWrap: 'wrap', padding: spacing[16], borderColor: colors.review }}>
+          <span style={{ ...typography.metaText, color: colors.textBody }}>
+            An in-progress attempt couldn’t be resumed — its assessment no longer exists. It has been cleared so you can start fresh.
+          </span>
+          <GhostButton onClick={onDismissStale}>Dismiss</GhostButton>
+        </div>
+      ) : null}
       <Section
         title="Ready to take"
         count={library.ready.length}
@@ -503,6 +621,21 @@ function LibraryView({ library, onStart, onResume, onReview, onCreate }) {
           />
         ))}
       </Section>
+
+      {/* Attempted but NOT scored — kept distinct from graded results so the
+          taxonomy is honest (S3-004). Review offers Setup AI / retry grading. */}
+      {library.ungraded.length ? (
+        <Section title="Attempted · not scored" count={library.ungraded.length}>
+          {library.ungraded.map((exam) => (
+            <ExamRow
+              key={exam.id}
+              exam={exam}
+              onOpen={() => onStart(exam.id)}
+              onReview={() => onReview(exam)}
+            />
+          ))}
+        </Section>
+      ) : null}
     </>
   )
 }
@@ -732,6 +865,19 @@ function Field({ label, children }) {
 
 // ── take ─────────────────────────────────────────────────────────────────────
 
+// Every question states its task explicitly, so the user knows whether to
+// translate, explain, analyse, or recall — not just an Arabic passage over a
+// blank box (S3-004). Study-segment assessments are translation by default.
+const TASK_INSTRUCTION = {
+  translate: 'Translate the passage below into clear English.',
+  explain: 'Explain the ruling in the passage below, in your own words.',
+  analyse: 'Analyse the passage below — its structure, evidence, and legal frame.',
+  recall: 'Answer the question below from memory.',
+}
+function questionTaskInstruction(task) {
+  return TASK_INSTRUCTION[task] || TASK_INSTRUCTION.translate
+}
+
 function TakeView({
   isMobile = false,
   exam, currentIndex, currentQuestion, answers, answeredCount,
@@ -795,7 +941,14 @@ function TakeView({
             </div>
           </div>
 
-          <p style={{ ...typography.bodyText, margin: 0, padding: spacing[16], borderRadius: radius[12], background: colors.surfaceSoft, border: `1px solid ${colors.borderSoft}`, color: colors.textBody }}>
+          <div style={{ display: 'grid', gap: spacing[4] }}>
+            <span style={{ ...typography.eyebrowLabel, color: colors.accentStrong }}>Your task</span>
+            <strong style={{ ...typography.bodyText, color: colors.textStrong }}>
+              {questionTaskInstruction(currentQuestion?.task)}
+            </strong>
+          </div>
+
+          <p dir="rtl" lang="ar" style={{ ...typography.bodyText, margin: 0, padding: spacing[16], borderRadius: radius[12], background: colors.surfaceSoft, border: `1px solid ${colors.borderSoft}`, color: colors.textBody }}>
             {currentQuestion?.source}
           </p>
 
@@ -848,7 +1001,7 @@ function TakeView({
 
 // ── review ───────────────────────────────────────────────────────────────────
 
-function ResultsView({ result, grouping, onGrouping, groups, onJumpToStudy, onDone }) {
+function ResultsView({ result, grouping, onGrouping, groups, onJumpToStudy, onDone, onSetupAi, onRetryGrade }) {
   // The page's own heading is "Needs attention", and every row's action is
   // "Open in study" — yet the one dominant blue control was "Back to
   // assessments", which is the action that ABANDONS the remediation the page
@@ -887,7 +1040,25 @@ function ResultsView({ result, grouping, onGrouping, groups, onJumpToStudy, onDo
           )}
         </div>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[12], flexWrap: 'wrap' }}>
-          {firstRemediation ? (
+          {!result.graded ? (
+            // Ungraded recovery, answers preserved (S3-004): Setup AI when no
+            // provider is configured, otherwise retry grading the saved answers.
+            <>
+              {result.gradeReason === 'unconfigured' ? (
+                <>
+                  <PrimaryCTA icon={<Sparkles size={16} strokeWidth={1.9} />} minWidth={200} height={48} onClick={onSetupAi}>
+                    Set up AI
+                  </PrimaryCTA>
+                  <GhostButton size="md" onClick={onRetryGrade}>Retry grading</GhostButton>
+                </>
+              ) : (
+                <PrimaryCTA icon={<Check size={16} strokeWidth={1.9} />} minWidth={200} height={48} onClick={onRetryGrade}>
+                  Retry grading
+                </PrimaryCTA>
+              )}
+              <GhostButton size="md" onClick={onDone}>Assessment library</GhostButton>
+            </>
+          ) : firstRemediation ? (
             <>
               <PrimaryCTA
                 icon={<BookOpen size={16} strokeWidth={1.9} />}

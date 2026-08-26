@@ -27,6 +27,9 @@ export function segmentToQuestion(seg) {
     segmentId: seg.id,
     tracker: seg.index + 1,
     prefix,
+    // Study-segment assessments ask the learner to translate the segment; the
+    // task is explicit so the Attempt view can state it (S3-004).
+    task: 'translate',
     label: seg.title ? `${ref} · ${seg.title}` : ref,
     concept: seg.chapterLabel || seg.title || `Segment ${ref}`,
     source: seg.text,
