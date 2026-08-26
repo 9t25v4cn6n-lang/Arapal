@@ -2,345 +2,271 @@
 
 ## Purpose
 
-This is the current, evidence-backed distance to public release. It is not a historical defect archive and it is not a composite quality score.
+This is the current, evidence-backed distance to public release. It is not a historical defect archive, an implementation completion log, or a composite quality score.
 
-A prior finding appears here only when it was reverified on the current running product or remains a genuine unresolved release risk.
+A finding appears here only when it was independently reproduced on the current candidate, verified in the current implementation, or remains an explicit external verification requirement.
 
 ---
 
 # Evidence header
 
-- **Candidate commit:** 85764fad6a84399ab4c2eb5d89823b8a1044449f
-- **Branch:** audit/release-certification
-- **Working tree:** DIRTY — 702 paths at Stage 1 reconciliation: 664 deleted, 30 modified, 8 untracked. The running product can be audited, but no exact immutable release candidate can be certified from this tree.
-- **Running app/config:** Vite development server at http://localhost:5173; production build separately exercised with vite build.
-- **Stage 0 authority:** Claude Ultracode baseline, 2026-08-24.
-- **Stage 1 authority:** GPT-5.6 Ultra independent product/visual audit, 2026-08-24, using the Stage 1 prompt in docs/release/PROMPTS.md. The requested standalone GPT_5_6_ULTRA_INITIAL_PRODUCT_AUDIT_PROMPT.md is not present in the current tree; the repository's current embedded prompt is the operative equivalent.
+- **Gate:** Stage 3 independent Product / UX / Visual gate.
+- **Verdict date:** 2026-08-26.
+- **Candidate branch:** `audit/release-certification`.
+- **Candidate commit:** `8dfdf3a3390a33530cc58f9b5949a7095af560b5`.
+- **Candidate state:** clean before this ledger-only audit update. No product code was changed by Stage 3.
+- **Running product:** Vite development application at `http://localhost:5173`, with fresh origin-scoped runs also performed at `http://127.0.0.1:5173` and `http://0.0.0.0:5173` to avoid inherited local state.
+- **Required widths exercised:** desktop 1440×900, tablet 768×1024, mobile 390×844.
+- **Authority:** the rendered running product and exact candidate, reconciled only after the fresh rendered and journey passes with the Release Contract, Visual Product Standard, Decisions, current source, and current release evidence.
 
-## Stage 1 execution
+## Independence protocol
 
-The audit followed render-first, code-second ordering.
+The Stage 3 prompt's ordering was followed.
 
-1. The running product was exercised as a first-use and returning-use journey at desktop, tablet 768×1024 and mobile 390×844.
-2. The live journey covered the empty/base entry, V2 Project Home, project creation, source intake, segmentation, Study draft/fail/pass/reload/discussion, Research browse/search/selection/handoff, and Exams create/attempt/reload/results/remediation.
-3. The current release-capture corpus was reviewed across all six declared viewports. Its true status is 151 CAPTURED, 3 UNREACHABLE and 2 executions with no completed status because of timeout.
-4. Only after the rendered symptoms were recorded were the implementation, tests and current release evidence inspected for root cause and scope.
+1. Pass 1 assessed the rendered product at desktop, tablet, and mobile without reading this ledger or source.
+2. Pass 2 exercised the first-run, project/source, segmentation, Study, Research, Exams, reload, AI-unconfigured, and AI-configuration journeys without reading this ledger or source.
+3. Only after the independent findings were recorded did Pass 3 read the prior ledger, Stage 2 evidence, automated evidence, and relevant source.
 
-Primary rendered evidence:
+Evidence language used below:
 
-- artifacts/release-audit/evidence
-- artifacts/qa/visual-standard.json
-- test-results/release-audit-release-evid-*-tablet-768/error-context.md
-
----
-
-# A. Release verdict
-
-## NOT RELEASE READY
-
-The most important reasons are:
-
-1. Production screens do not share one live project model. A newly created Arabic project reaches Study, while Projects, Research and Exams continue to present unrelated Al-Hidayah/prayer fixtures as the user's work.
-2. Segmentation violates its authority model: clicking the proposal action publishes segments before approval, Review edits are local-only, and default Quick mode can skip Review.
-3. Product truth is not trustworthy. Study turns a form-only heuristic into green studied/completed state and unsupported claims; Exams fabricates scores from answer length and hard-coded question indexes.
-4. Required V1 persistence and handoffs fail: a newly created assessment disappears on reload, an attempt can reopen as a blank screen, and Research/Exam remediation opens the wrong live segment.
-5. Required responsive journeys are unusable at current release widths: Study at 768, Segmentation Review and Exam Attempt at 390, Projects at 390, plus no mobile global navigation.
-6. The public entry still opens the incompatible legacy product, development/reference routes and assets remain production reachable, and the release workflow can report success while gates or capture states fail.
-7. There is no clean exact-SHA candidate, deployment/rollback/monitoring package, or explicit security/privacy disposition for indefinitely stored Arabic source and study data.
+- **VERIFIED:** directly reproduced or observed in exact-candidate source/executable evidence.
+- **REASONED INFERENCE:** conclusion follows from verified evidence but was not itself rendered end to end.
+- **UNKNOWN / EXTERNAL:** requires credentials, deployment, platform access, or a supported environment not present in this audit.
 
 ---
 
-# Current evidence reconciliation
+# A. Stage 3 product gate
 
-| Evidence | Current result | Stage 1 interpretation |
+## PRODUCT REWORK REQUIRED
+
+The exact candidate must not proceed to release-candidate assembly.
+
+The first-run surface and much of the visual language are strong, and several previous failures no longer reproduce. The release is nevertheless blocked because the canonical-source transaction is misleading and publishes before review, the primary Study loop cannot render its contracted live AI review, required mobile/tablet compositions fail, Exams contains save/recovery ambiguity, contextual tools still present unrelated fixture knowledge, and the automated release evidence passes while required states are unreachable or widths are absent.
+
+This is not a request for broad redesign. The required work is concentrated in the root-cause packages in §D.
+
+---
+
+# B. Blocking findings
+
+Only P0/P1 findings that prevent progression are active here.
+
+## S3-001 — Canonical source approval and project identity are not trustworthy
+
+- **Severity:** P0.
+- **Symptom:** `AI Segment Text` presents deterministic local splitting as AI, publishes the proposal as canonical, and reaches `Segments Ready` before the user reviews or approves it. `New source` does not create a new project: it replaces the current project's canonical segments while retaining the old project title and identity.
+- **Evidence — VERIFIED:** on a fresh `127.0.0.1` origin, a pasted 14-word source produced two authoritative Study segments before `Approve & Continue` was used. Success appeared before Review. Review then claimed `24 words`, and a label edit disappeared on reload before approval. On a separate fresh `0.0.0.0` origin, `New source` from the labelled Al-Hidayah sample replaced its content with one historian-text segment while the project still identified itself as the Al-Hidayah sample and the project count remained one. The first-run promise says sample content can be deleted at any time, but no project/sample delete control is exposed.
+- **Diagnosis — VERIFIED after Passes 1–2:** segmentation defaults to `method: 'ai'` and `quickMode: true`; the CTA invokes a local deterministic marker generator. The quick path calls `publishSegments` immediately. Success also contains an auto-publish safety path. Intake reuses the current project, and prior work is moved into an internal archive with no in-product restore surface. Review's `24 words` text is hard-coded.
+- **Affected states:** first-run sample, Add source, New source, segmentation intake, proposal, Review, Success, Study handoff, re-segmentation of a project with existing work.
+- **Why it matters:** this breaks the product's governing sequence—preserved source → proposal → explicit canonical approval—and makes destructive project/source state appear safe and complete.
+- **Classification:** systemic transaction, identity, and product-language defect; prior R-015 was documented as complete but is **REGRESSION / NOT ACTUALLY RESOLVED** on the candidate.
+- **Required outcome to close:** distinguish new-project creation from re-segmentation; make local versus provider-backed segmentation truthful; keep proposals non-authoritative until an explicit visible approval; make Success impossible before durable approval; persist or warn about dirty Review edits; show exact source/count; retain stable project identity; and expose an understandable restore/delete policy for replaced work and sample data.
+
+## S3-002 — The primary Study review contract cannot render real live grading output
+
+- **Severity:** P0.
+- **Symptom:** live Study can save an attempt and request grading, but a genuine provider result cannot produce the contracted review: user translation, best-in-class translation, precise feedback, vocabulary/guidance, and actionable retry evidence. Segment-specific support also shows unrelated fixed lexicography and retry language.
+- **Evidence — VERIFIED:** arbitrary fresh segments about a student and a physician both showed the same prayer/city lexicography (`مصر جامع`, `أفنية`, `مصلى`). The sample's water segment also showed those unrelated terms. The rendered submitted/reference surface can show positive Best-in-Class framing while saying no reference is published. No-provider submission itself was honest and did not fabricate a pass.
+- **Diagnosis — VERIFIED after Passes 1–2:** `gradeSegment` stores the provider's `feedback`, `bestTranslation`, `vocabulary`, `guidance`, and related result fields. The live screen does not feed that result into the review UI: `StudySubmittedStack` receives `bestTranslation={null}` for live projects, and the support rail renders generic bodies instead of `lastResult`. Quick Lexicography and retry guidance are fixed fixture constants. Therefore a valid-key PASS cannot satisfy the primary loop even if Gemini returns a correct response.
+- **Affected states:** Study fail, retry, pass, submitted review, Best-in-Class card, vocabulary, guidance, progress to next segment, and Discussion context after grading.
+- **Why it matters:** Study is the core Arapal loop. A product whose central successful-review state discards the evaluator's actual output is functionally incomplete and can visually imply knowledge it did not render.
+- **Classification:** systemic view-model/result-schema integration defect; previous R-016/R-026 are **STILL LIVE / REOPENED**.
+- **Required outcome to close:** define one rendered adapter over the stored grading result; render real feedback, best translation, vocabulary, guidance, takeaways, and retry blockers exactly; derive every segment-specific support surface from current source/result data; forbid success styling or reference comparison when its evidence is absent; and verify injected PASS and FAIL results through the actual production UI before valid-key external verification.
+
+## S3-003 — Required mobile and tablet compositions lose core product functionality
+
+- **Severity:** P1.
+- **Symptom:** required-width screens are not merely compressed; primary work becomes clipped, overlapped, or zero-height.
+- **Evidence — VERIFIED:** at 390×844, populated Projects overlays the third summary metric with `STUDY DASHBOARD`; measured summary content requires 198px inside a 150px track. At 390, Research gives the main result/ledger desk `0px` height, leaving only masthead, lenses, and revision queue visible; Search, ledger, inspector, Ask, and Open in Study are inaccessible. At 768, Projects reserves fixed rail/gap widths that leave approximately 126px for its detail panel, reducing the main action/detail area to an unusable sliver. At 390, segmentation intake visibly labels the header as step `2 REVIEW` while the user is on step 1, and the proposal-mode line clips; at 768, source-header metadata clips.
+- **Affected states:** populated Projects at 390/768, Research at 390, segmentation source intake at 390/768. The current Study and Exam mobile compositions are materially improved and are not included in this finding.
+- **Why it matters:** 390 and 768 are required release widths. Research is a V1 destination and Projects/source intake are entry-critical; hidden or overlapping primary work is a professional release blocker.
+- **Classification:** systemic breakpoint/track-priority defect with local manifestations; previous R-020 is **STILL LIVE / PARTIALLY RESOLVED**.
+- **Required outcome to close:** establish explicit mobile/tablet task order; use normal-flow content where text height is realistic; collapse or sequence secondary rails before primary work loses width/height; make the active segmentation step unambiguous; and complete realistic-content rendered journeys at 390, 768, 1280, and 1440 with every primary action reachable.
+
+## S3-004 — Exams do not provide a reliable answer, save, and recovery contract
+
+- **Severity:** P1.
+- **Symptom:** an assessment question displays Arabic source plus a blank answer box without telling the user whether to translate, explain, or analyse. `Save and next` can navigate before the debounced save completes. A stale persisted attempt can reopen as a blank Attempt shell. An honestly unscored completed attempt offers no direct AI setup or retry-grading path.
+- **Evidence — VERIFIED:** on a fresh assessment, reloading about 220ms after `Save and next` while the UI still said `Saving` lost the answer and returned to question 1; waiting until `Saved` preserved it. An inherited orphan attempt repeatedly reopened a blank Attempt state; source inspection confirmed restoration enters Take whenever an attempt has an `examId`, without first proving that the corresponding exam exists. Submitting without AI correctly produced `Attempt saved · not scored`, but Results exposed only Back/Assessment library, and Library grouped the ungraded record under `Completed`.
+- **Affected states:** assessment builder preview, Attempt, Save and next, reload/resume, Results, completed Library record, AI-unconfigured recovery.
+- **Why it matters:** users cannot know the requested task, and an explicit save action can lose work. Blank recovery and ungraded-completion language undermine confidence in assessment records.
+- **Classification:** systemic Exams state-machine and persistence-boundary defect; previous R-017 is **PARTIALLY RESOLVED / STILL LIVE**.
+- **Required outcome to close:** render an explicit question instruction/type; synchronously flush the current answer before Save and next, submit, or unload; validate exam/attempt identity before restoring; route stale data to a recoverable Library message; distinguish completed-ungraded from graded; and provide Setup AI plus retry grading without discarding answers.
+
+## S3-005 — Contextual knowledge and AI recovery states are not consistently truthful
+
+- **Severity:** P1.
+- **Symptom:** project-dependent knowledge surfaces retain unrelated topic fixtures, and configured-but-failing AI exposes inconsistent status and recovery.
+- **Evidence — VERIFIED:** Research on arbitrary project text still showed `City terms`, `0 city-condition links`, and duplicated `Chapter 1 · Chapter 1` framing. Study Quick Lexicography showed the unrelated prayer/city vocabulary described in S3-002. With a stored invalid key, the setup modal continued to badge `AI is configured` after a failed real request; Discussion exposed the raw prototype error `gemini request failed: 400`. The fresh no-provider Discussion state preserved the question and offered Retry, but did not link directly to Setup AI.
+- **Diagnosis — VERIFIED after Passes 1–2:** Research still imports quick refinements/revision-queue content from `projectResearchData.js`. Provider exceptions are returned verbatim from the shared AI service; Study normalises them locally, while Discussion prints `res.message`. AI setup treats key presence as configured even after first-use validation fails.
+- **Affected states:** Study lexicography/retry, Research browse/refine, AI setup after failed validation, Discussion failure/retry, and equivalent recovery entry points in Exams/Research.
+- **Why it matters:** Arapal presents these surfaces as grounded scholarly help. Unrelated terms and raw provider errors make the product feel fixture-backed and developer-facing, especially in the AI-dependent core loop.
+- **Classification:** systemic contextual-data adapter and AI operational-state defect; R-026 is **STILL LIVE**, with additional Stage 3 discoveries.
+- **Required outcome to close:** remove or derive every contextual refinement from the active project/segment; distinguish key stored, verified, and failed states; normalise provider/network/parse errors centrally; and offer consistent Setup/Retry recovery from every AI-dependent feature without leaking provider implementation strings.
+
+## S3-006 — Current release evidence can pass without covering the states it names
+
+- **Severity:** P1 release-process blocker.
+- **Symptom:** green suite summaries cannot certify this candidate or disprove the rendered findings.
+- **Evidence — VERIFIED on exact candidate:** `npm run vr` reported 56 passed while also reporting eight states as unreachable: Projects advanced, Research selected, Exam attempt, and Exam results at both configured widths. The test intentionally records unreachable and returns success. Its matrix is only 1440×900 and 1280×800, so it does not exercise required 390 or 768 states. `npm run qa` reported zero production-surface findings but exited 1 because 171 reference findings still feed the gate; the output labels production zero as the Floor gate while the exit logic gates the combined total when no baseline is present. The generated QA matrix also omits 768. Prior release-capture artifacts were generated before the candidate, and a supposedly captured Projects 390 image visibly contains overlap.
+- **Affected states:** release authority for every required journey; especially driven/interactive, populated, 390, 768, built-dist, and exact-candidate claims.
+- **Why it matters:** the candidate cannot proceed on evidence that silently treats unreachable as pass, measures different widths/states, or has an internally contradictory exit contract.
+- **Classification:** systemic release-harness/evidence-integrity defect; this is a **NEW Stage 3 reconciliation finding**.
+- **Required outcome to close:** bind every artifact to candidate SHA and built asset hash; fail closed on unreachable, wrong route, page/request errors, and timeouts; add required 390 and 768 populated/journey states; separate production and reference exit contracts coherently; render from built `dist`; and require reviewed visual/product evidence rather than treating capture status or unchanged pixels as quality approval.
+
+---
+
+# C. High-value P2 refinements
+
+These do not independently block progression once the P0/P1 work is closed.
+
+| ID | Refinement | Evidence / required direction |
 |---|---|---|
-| Production build | PASS on the dirty tree; main chunk warning remains | Proves compilation only. It is not clean-candidate or production-entry evidence. |
-| Lint | FAIL; 21 real tracked source/test errors plus dirty-tree archive noise | Dimension H remains open. |
-| Deterministic QA | FAIL with 8 production overlaps, all Projects at 390×844 | Reproduced visually and promoted into the systemic responsive finding R-020. |
-| Data tests | PASS 34/34 | The central store works in isolation, but production Projects/Research/Exams bypass material parts of it. This cannot certify the journeys. |
-| Behaviour tests | PASS 36, SKIP 2 | Several tests encode publish-before-approval, use stable fixtures, assert only banners/body text, or exercise the unused exam store. They do not cover the fresh-project cross-module journey. |
-| Visual regression | FAIL 10/56 against a stale baseline | Useful as a change signal, not release evidence until intentionally reviewed and rebaselined. |
-| Release-evidence harness | Playwright reports 154 passed, 2 failed | Not 154 captures: 151 CAPTURED, 3 UNREACHABLE that return success, and 2 tablet timeouts. Page errors, failed requests, route correctness and meaningful content are recorded but not asserted. It serves the development server, not built dist. |
-| Audit suite | Command exits 0 while lanes contain findings/degraded or missing input | Informational only; not a release gate as currently wired. |
-| Security/privacy/operations | No current package | Remains an explicit release blocker, not an assumed pass. |
+| S3-P2-01 | Replace release-facing `design-sandbox` identity. | The browser document title and package identity still say `design-sandbox`. Use the Arapal product name and deliberate metadata; migrate any persisted key names only with backward-compatible data handling. |
+| S3-P2-02 | Finish Research editorial terminology. | The Arabic project title followed by English `knowledge explorer` and repeated chapter labels reads like residual concept copy. Reconcile with the product's scholarly/editorial naming after S3-005. |
+| S3-P2-03 | Remove premature preservation language. | The empty intake labels the editor `PRESERVED SOURCE` before anything has been durably preserved. State what is true at each point in the transaction. |
+| S3-P2-04 | Address bundle hygiene after production-surface separation. | Exact build passes but warns that the main minified JavaScript chunk is approximately 1,081 kB. Measure user impact before choosing a budget or split. |
 
-Verified positive boundaries, with limited scope:
-
-- No recognizable tracked client credentials, dangerous HTML injection API, eval-style execution or product console logging was found.
-- No external AI/model client currently sends user text off-device.
-- Live Study drafts persisted across reload in the exercised happy path.
-- V2 Project Home and Study Focus are visually strong at the widths where their workflows remain usable.
-
-These positives do not close the active findings below.
+Taste-only observations requiring no tracked change: the first-run and most desktop Study/Exam surfaces are visually coherent and launch-quality in isolation; the slightly asymmetrical tablet first-run spacing is not material.
 
 ---
 
-# B. Current active ledger
+# D. Implementation packages
 
-| ID | Domain | Severity | Rendered/product symptom | Verified root cause and evidence | Affected states / scope | Required outcome to close | State / owner |
-|---|---|---:|---|---|---|---|---|
-| R-001 | Candidate / evidence integrity | P0 | No immutable product instance can be nominated for release; current evidence cannot prove one coherent SHA-bound run. | 702 dirty paths and no local run identity. CI run_gate records non-zero exits then returns success. The release harness permits UNREACHABLE, does not assert recorded runtime errors, and runs npm run dev rather than built dist. Current capture truth is 151 captured + 3 unreachable + 2 timed out. | Entire release; systemic. | Nominate one clean SHA, build once, serve that immutable artifact, make every required gate/state fail closed, record SHA/tooling/exit codes/artifact hashes, and complete all release evidence against that same artifact. | OPEN / Release authority |
-| R-014 | Product data / context truth | P0 | After creating the caravan project, Projects still showed Jumu'ah/Purity/Fasting; Research remained a 30-segment Al-Hidayah ledger; Exams remained a prayer fixture. Study mixed the live Arabic source with an Al-Hidayah header, unrelated Quick Lexicography and legal-condition retry copy. Research also advertises Ask Companion/Create patch capabilities that are not grounded in the live project. | Projects imports static studyDashboardData and generates 1,800 fake history rows. Research imports projectResearchData; Ask Companion ignores the submitted question and reuses a fixed answer/citations, while Create patch has no handler. Exams imports static seed/model data. Study defaults the shell title, Quick Lexicography, retry copy and GradeBody claims to fixture-derived content; its other live support cards correctly show unavailable placeholders. These screens do not share one live model. | Projects, Research, selected Study identity/support, Exams and their cross-screen summaries; systemic. | Establish one project-scoped production repository/view model. Every production screen must read the selected live project and stable IDs. Fixtures must require an explicit sample/test boundary and be visibly labelled, never silently used as production fallback. Unsupported companion/patch capabilities must be implemented against that boundary or removed/disabled honestly. | OPEN / Implementation |
-| R-015 | Source / segmentation authority | P0 | The nominal empty intake is prefilled and actionable. Selecting AI segmentation reached Live/Success before review; Review showed a different hard-coded source/word count and its edits did not become authoritative. Re-running this flow on a project with study work can replace the authoritative segmentation before consent. | Intake starts with a hard-coded 28-word passage, calls addSource and publishSegments before navigation, and defaults Quick mode to true. Review edits only component state; Approve only navigates; its source tray is hard-coded. publishSegments deletes prior segments, drafts and study records before approval and can leave results orphaned. The deterministic local splitter is labelled AI. | Source intake, loading, review, success, re-segmentation and Study handoff; systemic authority/data-loss failure. | Persist source first, store a non-authoritative proposal separately, require an explicit approval transaction to publish the edited proposal, and make Success unreachable before durable approval. Review must show the exact preserved source/count. Existing study work needs an explicit non-destructive migration/archive policy. | OPEN + RED-05 / Product owner then Implementation |
-| R-016 | Evaluation / product truth | P0 | A plausible live translation was marked green, studied and No issues found despite no meaning/reference evaluation. The UI retained Best in Class framing and claimed nothing was untranslated. The same seeded exam displayed 82% in Library and 13% in Results. | Study evaluator checks only length, punctuation and remaining Arabic; store maps heuristic pass to submitted/completed. Support UI ignores stored notes and emits fixed claims. Exams grades by character length and fixed question indexes, then presents a percentage, misses and remediation. | Study pass/fail/progress/support and all Exam result surfaces; systemic. | Separate saved attempt, surface observations, self-attested study completion and any future semantic evaluation. Render evaluator output exactly; remove unsupported pass/score/best/reference claims. Exams needs an explicit evaluation contract or an honest ungraded mode. | OPEN + RED-01/02 / Product owner then Implementation |
-| R-017 | Exams / durable identity | P0 | A newly saved assessment appeared, accepted an answer and claimed autosave; reload produced a blank Attempt shell, then the created assessment was absent from Library. | Exams rehydrates only static seeds. A created exam exists only in React state while autosave stores an attempt pointing to that transient ID. Production Exams bypasses the already-implemented central exam/attempt store and reconstructs seeded results. | Exam builder, Library, Attempt, reload/re-entry and Results; systemic. | Persist the assessment definition, attempt and immutable result snapshot through one store. Validate restored identity before entering Attempt; never reconstruct historical results. Prove create/reload/resume/submit/review with consistent totals and score semantics. | OPEN / Implementation |
-| R-018 | Contextual handoff / stable identity | P0 | Opening selected Research segment 1.3 or an Exam remediation returned to the caravan project's first segment 1.1, losing the selected context and provenance target. | Research performs a bare route navigation. Exams writes human reference/question IDs while live segments use seg_* IDs. Study silently converts a no-match to index 0 and does not persist selected current segment. The canonical navigation API is unused. | Research → Study, Exams → Study, resume/current-segment behavior; systemic. | Route all handoffs through a canonical projectId + segmentId contract, resolve refs explicitly within a project, reject stale context visibly, and persist the actual current segment. Browser evidence must show the exact selected source and active row before and after reload. | OPEN / Implementation |
-| R-019 | Persistence / recovery | P0 | Happy-path draft reload worked, but the product has no truthful failure UI when local persistence is unavailable; source can still claim preserved and Study continues in volatile memory without surfacing persistence failure. Manual notes also disappear on reload. A lightweight wrong-shape state reproduction throws a selector TypeError; a browser blank/crash outcome was not separately rendered. | Store mutates memory before checking localStorage and exposes persistenceHealthy, but no product screen consumes it. Study manual notes live only in component state. Storage shallow-merges valid JSON without schema validation; no app error boundary or recovery/export path exists. Browser impact from the verified TypeError is a reasoned inference. | All saved user source, drafts, notes, records, exams and attempts; systemic. | Return durability outcomes to the initiating UI, withhold success claims/navigation on failure, preserve text for retry/copy/export, persist manual notes with correct ownership, validate/version stored state, quarantine corruption, and provide a top-level recovery boundary. | OPEN / Implementation |
-| R-020 | Responsive composition / navigation | P0 | At 768 Study's three rails leave roughly 129px for the work lane and make Submit/Discuss unreachable. At 390 Segmentation Review clips proposal/action controls, Exam Attempt places the answer panel off-screen, and Projects layers hero/summary/cards. Mobile has no global navigation replacement. | One binary mobile breakpoint at 560px; Study retains fixed side rails at tablet; Exams and Review retain desktop grids/action groups; Projects uses compressed finite tracks with visible overflow; AppV2 hides the navigation rail on mobile and renders no replacement. | Study, Segmentation Review, Exam Builder/Attempt, Projects, Research priority, global navigation at 390/768; systemic. | Define intentional compact/tablet/mobile compositions: collapse or drawer secondary Study rails before the work lane fails, sequence Exam/Review flows, restore Projects normal flow, put Research search before secondary queues, and add a mobile app-navigation pattern. | OPEN / Implementation |
-| R-021 | Production entry / dev separation | P0 | The base URL opens a visibly different legacy home; in the live audit its muted intro obscured content beyond 10 seconds. Users can encounter two incompatible homes and vocabularies. | Empty and unknown non-V2 hashes return legacy App, which explains why the overlay appears. Source schedules that intro to finish after 2.1 seconds, so the cause of its observed indefinite persistence remains UNKNOWN. Only Projects and Exams aliases normalize to V2. Seven Lab/Quality routes and production query-state switches are unguarded; clean HEAD also tracks screenshots and internal audit JSON under public. | Public root/unknown URLs, global shell, production bundle/assets; systemic. | Make V2 Project Home the production root, define safe unknown-route behavior, remove legacy from the production entry/bundle, and compile out Lab/debug routes, query injectors and internal/reference assets. Verify root and supported aliases from built dist; if the legacy overlay remains testable, trace its timer/runtime behavior separately. | OPEN / Implementation |
-| R-022 | Discussion / recovery | P1 | Typing a segment question and pressing Send produced no reply, loading, error or retry. Summarise and save also did nothing while promising a saved segment summary. | Discussion textarea is uncontrolled and Send/Summarise controls have no handlers; there is no session/message/error state or persistence boundary. | Study draft/submitted discussion and required one-summary-per-session semantics; systemic feature gap. | Implement the contextual session, controlled message preservation, loading/error/retry, and exactly one saved summary attached to the correct segment/attempt/record—or remove/disable the unsupported promise until that boundary exists. | OPEN + RED-03 / Product owner then Implementation |
-| R-023 | Security / privacy / operations | P1; P0 if an authenticated or multi-user release is intended | The product gives no user-facing disposition for indefinitely stored source/translations/results, and there is no evidenced production host, deployment, rollback, monitoring or incident path. | Plaintext shared-origin localStorage has no identity/tenant isolation, retention, delete-all/export or privacy disclosure. Intended local-only versus multi-user model and host headers are unknown. No deployment/rollback/monitoring package was found. | All user data and public operations; systemic/external decision. | Decide deployment and user/data model; complete current threat/privacy review, retention/delete/export controls or authenticated isolation as applicable, CSP/security-header and dependency disposition, exact-artifact deployment, rollback drill, error visibility and triage ownership. | OPEN + RED-04 / Product owner and Release authority |
-| R-024 | Performance / compatibility | UNKNOWN release-blocking evidence gap | User impact under real mobile networks, long Arabic content, large project collections and non-Chromium browsers is not known. | Current build has a verified bundle-hygiene warning: an approximately 972 KiB raw main chunk, broad font assets and legacy/Lab code. Only Chromium is configured, and no realistic scale/slow/error package exists. User-visible impact is not yet proven. | Initial load, supported browsers, long/large content and mobile reliability; systemic evidence gap. | Define supported browsers and budgets; measure built dist under representative throttling; split production routes/assets and subset fonts; stress long Arabic and large collections; run the supported browser matrix. | UNKNOWN / Engineering authority |
-| R-025 | Visual/product finish | P2 | Compact desktop Study clips lexicography and makes source overflow ambiguous; Segmentation Success exposes placeholder-like Project New project / Batch ID new metadata; Research no-results lacks one-click reset; one submitted CTA wraps at 1280. | Local/component sizing and unfinished state copy after the systemic route/data problems. | Selected Study, Segmentation Success, Research no-results and compact desktop states; mixed local/systemic. | Resolve after the higher-order data and responsive packages; verify complete content, clear recovery and stable action typography across 1280/1366/1440/1920. | OPEN / Design + Implementation |
-| R-010 | Real-user evidence | P3 / post-RC | No current real-user usability evidence. | External evidence has not yet been collected. | Whole product; external. | Run representative usability work after repository release blockers are closed; promote any exposed defect by actual severity. | UNKNOWN / Product owner |
+Packages are grouped by root cause and ordered by product dependency. This ledger specifies outcomes, not implementation details.
 
----
+## IP-S3-01 — Project/source transaction and canonical approval
 
-# C. Implementation packages
+- **Findings:** S3-001 and the source/project portion of S3-003.
+- **Objective:** make creation, preserved source, proposal, approval, replacement, archive, restore, and deletion one explicit project-scoped transaction model.
+- **Required outcomes:** separate Create project/Add source/Re-segment actions; use truthful local/provider labels; keep proposal state non-canonical; make explicit approval atomic; persist Review edits or warn before loss; preserve stable identity; surface restore/delete behavior; derive source counts and Success metadata from the committed transaction.
+- **Closure evidence:** fresh-origin create and re-segment journeys, including reload before/after approval, with an existing draft/note/result; canonical state remains unchanged until approval; cancelled or failed work remains recoverable; sample deletion is discoverable and verified.
 
-The packages are ordered by dependency, not by screen.
+## IP-S3-02 — Study grading-result view model and grounded support
 
-## IP-01 — One production data spine and explicit sample boundary
+- **Findings:** S3-002 and Study portions of S3-005.
+- **Objective:** make the actual stored evaluator result the sole authority for live review and support.
+- **Required outcomes:** a typed/validated result adapter drives pass/fail, best translation, feedback, vocabulary, guidance, takeaways, retry, progress, and Discussion context; no fixture fallback on live segments; no success/reference styling without evidence.
+- **Closure evidence:** production UI tests inject representative PASS, critical FAIL, malformed, unavailable, and provider-error results and assert every visible field plus reload/next-segment behavior; a fresh arbitrary source contains no unrelated prayer/city strings.
 
-- **Objective:** Make the selected live project, source, segments, records and stable IDs the sole production data source.
-- **Findings:** R-014 and the data foundations of R-017/R-018.
-- **Likely layer:** src/v2/data selectors/repository, screen view-model adapters, route context; fixture/demo entry separated at build/runtime boundary.
-- **Acceptance evidence:** Create one unique Arabic project and prove its exact title/source/counts in Project Home, Projects, Research, Study and Exams. Assert unrelated Al-Hidayah/prayer/legal/lexicography fixture strings are absent unless an explicitly labelled sample mode is enabled. Verify project-to-project isolation.
+## IP-S3-03 — Required-width composition system
 
-## IP-02 — Segmentation proposal-to-approval transaction
+- **Findings:** S3-003.
+- **Objective:** make 390 and 768 first-class task compositions rather than compressed desktop grids.
+- **Required outcomes:** Projects content uses realistic normal-flow height; tablet detail remains actionable; Research prioritises Search/ledger/selected result and never gives the work surface zero height; segmentation stepper/source metadata recompose without clipping; shared shell/navigation remains intact.
+- **Closure evidence:** rendered realistic-content journeys at 390×844, 768×1024, 1280×800, and 1440×900 with measured non-overlap, visible primary controls, scroll ownership, keyboard access, and human product review.
 
-- **Objective:** Restore the product contract: preserved source → non-authoritative proposal → editable review → explicit durable publish.
-- **Findings:** R-015.
-- **Likely layer:** segmentation domain state/store actions plus Paste, Review and Success orchestration.
-- **Acceptance evidence:** Before approval, authoritative segment count remains zero; Review shows the exact preserved source and word count; edited boundaries/labels survive Review reload; Approve atomically publishes exactly those edits; Success and Study show the approved result only. Re-segmenting an established project preserves or explicitly archives every draft, note, study record, result and summary according to RED-05, with no silent loss or orphaned data.
+## IP-S3-04 — Exams instruction, persistence, and recovery state machine
 
-## IP-03 — Honest evaluation and completion semantics
+- **Findings:** S3-004.
+- **Objective:** make an assessment understandable, durably saved at explicit boundaries, and recoverable from stale identity or unavailable grading.
+- **Required outcomes:** explicit question task/type; synchronous save boundary for Save and next/submit; validated restoration; recoverable stale-attempt routing; immutable answer/result record; ungraded versus graded taxonomy; Setup AI and retry grading from Results.
+- **Closure evidence:** save-then-immediate-reload, multi-question navigation, browser close/re-entry, stale-exam injection, unconfigured submit, configured failure, successful grade, and exact remediation handoff without answer loss.
 
-- **Objective:** Stop UI and progress state from claiming knowledge the evaluator did not measure.
-- **Findings:** R-016; depends on RED-01 and RED-02.
-- **Likely layer:** evaluator interface/result schema, study-record state machine, support/result primitives, exam result model.
-- **Acceptance evidence:** UI renders stored observations exactly, omits score/best/reference when absent, and cannot turn a form-only check into semantic pass. Exams are either transparently ungraded or validated against an agreed corpus including same-length right/wrong answers, Arabic, malformed, error, timeout and stability cases.
+## IP-S3-05 — Context derivation and AI operational-state contract
 
-## IP-04 — Durable Exams and canonical segment handoffs
+- **Findings:** S3-005 and Research portions of S3-003.
+- **Objective:** centralise contextual-data provenance and consistent AI lifecycle/recovery semantics.
+- **Required outcomes:** project refinements and labels derive only from active project data; AI status distinguishes absent/stored/verified/failed; provider errors are normalised centrally; all AI surfaces preserve input and provide consistent Setup/Retry actions; no raw transport/provider strings reach users.
+- **Closure evidence:** arbitrary unrelated projects, invalid key, quota/network/parse failure, retry-after-correction, and cross-feature UI assertions for Study, Discussion, Research, and Exams.
 
-- **Objective:** Give assessments/results durable identity and make every remediation target exact.
-- **Findings:** R-017 and R-018; depends on IP-01 and IP-03.
-- **Likely layer:** central exam/attempt store, immutable result snapshots, data/navigation.js, current-segment persistence.
-- **Acceptance evidence:** Create/reload/resume/submit/reopen an assessment with unchanged definition, answers and result semantics. Open Research segment 1.2 and each Exam miss into that exact project/segment before and after reload; stale identity produces a recoverable message, never silent segment 1 fallback.
+## IP-S3-06 — Fail-closed exact-candidate release evidence
 
-## IP-05 — Contextual assistance and repair as real bounded capabilities
-
-- **Objective:** Fulfil or honestly withdraw the promised Study Discussion, Research companion and Create patch capabilities.
-- **Findings:** R-022 and the companion/patch portion of R-014; provider aspects depend on RED-03.
-- **Likely layer:** discussion session/message model, grounded async service boundary, citation/provenance contract, controlled patch proposal, summary persistence attached to segment/attempt/current record.
-- **Acceptance evidence:** A controlled Study message survives failed send, exposes loading/error/retry, successful response stays on the same segment, close restores work state, and exactly one summary per session survives reload with correct ownership. Research questions produce grounded, question-dependent answers/citations or an honest unavailable state. Create patch has a controlled proposal/review action or is absent/disabled.
-
-## IP-06 — Durability and crash recovery
-
-- **Objective:** Make every saved/preserved claim conditional on durable success and recover safely from unavailable/corrupt storage.
-- **Findings:** R-019.
-- **Likely layer:** store action return contracts, schema migration/validation, app error boundary, recovery/export UI.
-- **Acceptance evidence:** Forced quota/disabled storage cannot lose the user's visible text or claim success; retry/copy/export works. Manual notes survive reload with correct project/segment ownership. Wrong-shape and future-version state is quarantined with a recover/reset path instead of a blank/crash.
-
-## IP-07 — Responsive workspace and mobile navigation system
-
-- **Objective:** Give each required width a deliberate task composition rather than compressed desktop grids.
-- **Findings:** R-020 and responsive parts of R-025.
-- **Likely layer:** shared shell breakpoint policy, screen contracts, drawer/stepper/mobile navigation primitives.
-- **Acceptance evidence:** Complete keyboard/pointer journeys at 390, 768, 1280 and 1440 for source review, Study draft/fail/pass/discussion, Exam builder/attempt/results and remediation. No clipped/off-canvas primary control; main Study lane remains readable. Mobile exposes a named global navigation landmark, keyboard-operable destinations, correct aria-current and a nonempty accessibility tree.
-
-## IP-08 — Production surface separation
-
-- **Objective:** Ship one coherent V2 product and no accidental reference/development surface.
-- **Findings:** R-021.
-- **Likely layer:** RootApp routing, route registry/build flags, query-state gates, public asset allowlist, bundle boundaries.
-- **Acceptance evidence:** Built-dist smoke from /, supported aliases and unknown routes; one V2 home/shell only; forbidden legacy/Lab hashes, debug query injectors and internal screenshot/audit paths are absent or safely unavailable.
-
-## IP-09 — Exact-candidate release, security and operations package
-
-- **Objective:** Convert a converged product into a certifiable, operable public release.
-- **Findings:** R-001, R-023 and R-024; depends on all earlier packages.
-- **Likely layer:** CI/release workflow, production artifact server, host configuration/headers, observability/runbooks, performance and browser matrix.
-- **Acceptance evidence:** Clean nominated SHA; fail-closed gates; every required state CAPTURED on the named route from built dist; current security/privacy/dependency disposition; supported-browser and performance/scale evidence; exact-artifact deploy, smoke, rollback drill, monitoring and triage owner.
+- **Findings:** S3-006.
+- **Objective:** make a green release signal mean the named state was reached and reviewed on the exact built candidate at every required width.
+- **Required outcomes:** exact SHA/build hash/run identity; built-dist server; required 390/768/1280/1440 coverage; populated and interactive states; unreachable/wrong-route/error/timeout failure; coherent production/reference gate exits; reviewed render index; deploy/smoke/rollback/monitoring evidence.
+- **Closure evidence:** one immutable candidate package in which build, lint, unit, behavior, rendered QA, visual regression, required journey capture, security/privacy, and operations gates all complete successfully and fail when a required state is deliberately made unreachable.
 
 Dependency order:
 
-IP-01 → IP-02/IP-03/IP-04/IP-05; IP-03 → IP-04; IP-06 must land before full persistence journeys; IP-07 follows stable interaction/data shapes; IP-08 precedes the final IP-09 candidate package.
+`IP-S3-01 → IP-S3-02 / IP-S3-04 / IP-S3-05`; `IP-S3-03` follows the stable task/state shapes; `IP-S3-06` is rerun only after the product blockers close.
 
 ---
 
-# D. Unknowns / RED decisions
+# E. Fresh discoveries and reconciliation
 
-Implementation must not invent these semantics.
+## Fresh discoveries recorded before reading the prior ledger
 
-| ID | Decision / unknown | Why it is RED | Required owner/output |
-|---|---|---|---|
-| RED-01 | What does submitted, studied, complete or pass mean when Study has only a form-level heuristic and no semantic evaluator? | This determines authoritative progress and which success surfaces may appear. | Product owner: explicit V1 state model and copy/evidence contract. |
-| RED-02 | Are V1 assessments semantically graded, self-checked/ungraded, or deferred? | A real evaluator requires rubric/corpus/error semantics; an ungraded mode requires removal of score/miss claims. | Product owner + linguistic authority: assessment contract and representative corpus, or explicit ungraded decision. |
-| RED-03 | Is external AI actually part of V1 segmentation, Discussion and the Research companion, and if so which service/data-quality/error boundary? | Current segmentation is deterministic but labelled AI, Discussion has no provider, and Research returns fixed answers/citations. Implementation cannot choose model, grounding, privacy, cost, latency or authority semantics implicitly. | Product owner + security/linguistic authority: service or rename/de-scope decision, quality set, server-side credential boundary, user-content consent/retention and failure policy. |
-| RED-04 | Is the released product local-only/single-device, shared-device, or authenticated multi-user; where is it hosted? | Storage, isolation, deletion/export, headers, retention and deployment design all depend on this. | Product owner + release/security authority: deployment/data architecture and privacy disposition. |
-| RED-05 | When an established project is re-segmented, what happens to stable segment identity and its drafts, notes, summaries, results and study records? | Current replacement deletes material work before approval and can orphan results; implementation must not guess whether to migrate, archive, version or require destructive confirmation. | Product owner + data authority: explicit non-destructive migration/version/archive policy and user confirmation semantics. |
-| UNKNOWN-01 | Supported browser/device set, loading budget and realistic scale ceiling | Current evidence is Chromium-only and fixture-scale. | Engineering/release authority: support matrix, performance budgets and stress corpus. |
-| UNKNOWN-02 | Real-user comprehension/usability after convergence | Repository review cannot substitute for representative users. | Product owner: post-RC usability study; promote discovered defects by severity. |
+- Success and canonical Study state occurred before segmentation Review/approval on a fresh origin.
+- `New source` replaced the sample's canonical contents while retaining sample identity rather than creating a new project.
+- Review edits vanished on reload before approval; intake and Review disagreed on word count.
+- Live Quick Lexicography was unrelated to every custom segment exercised.
+- Projects failed with populated realistic content at 390 and lost its detail workspace at 768.
+- Research's primary workspace collapsed to zero height at 390.
+- Exams did not tell the user what kind of answer to provide, and `Save and next` could lose the answer during its visible Saving state.
+- No-provider grading was honest, but AI failure/configuration recovery was inconsistent across features.
+- The first-run sample deletion promise had no matching product control.
+
+## Previous concerns that no longer reproduce
+
+- The public root now enters the V2 first-run product; the legacy home is not the default root experience.
+- Source intake starts empty rather than with an unlabelled prefilled passage.
+- Fresh Study submission without AI is saved honestly as an attempt, is not marked passed/studied, and offers Setup AI.
+- Study drafts survive reload and remain segment-scoped in the exercised happy path.
+- Research is scoped to the current project's real segments, and Research → Study opened the exact selected segment; stale context produced a recoverable notice.
+- Exams are built from the current project's real segments and no longer fabricate a score when AI is unavailable.
+- Exam Attempt and Results are usable at 390 in the exercised normal states.
+- Mobile global navigation is present and functional.
+- Study is usable at 768 with collapsed secondary rails.
+- Discussion preserves an unsent question and exposes honest unavailable/retry behavior. The notes surface is present; full notes ownership/reload coverage was not independently repeated in Stage 3.
+
+## Prior concerns that remain live or were only partially closed
+
+- R-015 source/proposal authority remains live as S3-001 despite its Stage 2 completion claim.
+- R-016/R-026 result/support truth remains live as S3-002/S3-005: grading is no longer fabricated, but real result consumption and grounded support are incomplete.
+- R-017 Exams durability is partially improved, but save-boundary and stale-identity recovery remain live as S3-004.
+- R-020 responsive work is partially improved, but Projects, Research, and source intake still fail required widths as S3-003.
+- The security/privacy review correctly describes local storage and BYO-key behavior, but the first-run deletion claim is not implemented in the product.
 
 ---
 
-# Historical lead reconciliation
+# F. Exact-candidate executable evidence reconciliation
 
-| Prior ID | Classification on current product | Evidence / disposition |
+| Evidence | Exact-candidate result | Release interpretation |
 |---|---|---|
-| R-002 | NOT REPRODUCED | Live AI SEGMENT TEXT control exposed a button role and accessible name. Remove from active ledger unless new assistive-technology evidence contradicts this. |
-| R-003 | SUPERSEDED | Mixed/Arabic Research content cannot be meaningfully certified while Research is disconnected from live data; covered by R-014 and IP-01. |
-| R-004 | STILL LIVE, SUPERSEDED BY R-021 | Legacy is not outside production: base/unknown URLs route to it. |
-| R-005 | RESOLVED AS AN AUDIT TASK | Fresh-eyes V1 product audit completed; discovered product findings are R-014–R-025. |
-| R-006 | RESOLVED AS AN AUDIT TASK | Independent composition review completed across the current corpus; live visual findings moved to R-020/R-025. |
-| R-007 | STILL LIVE, SUPERSEDED BY R-016 + RED-01/02/03 | The actual AI/evaluation boundary is now characterised rather than unknown. |
-| R-008 | STILL LIVE, SUPERSEDED BY R-023 + RED-04 | Security/privacy remains unevidenced and architecture-dependent. |
-| R-009 | STILL LIVE, SUPERSEDED BY R-023 | Deployment/rollback/monitoring evidence remains absent. |
-| R-011 | STILL LIVE, SUPERSEDED BY R-020 | Projects 390 overlap was manually reproduced and is part of the systemic responsive package. |
-| R-012 | STILL LIVE, SUPERSEDED BY R-021 | Lab/dev routes and public audit assets remain production reachable. |
-| R-013 | STILL LIVE, SUPERSEDED BY R-020 | Tablet Study failure was manually confirmed as an unusable three-column composition, not only a harness timeout. |
+| Git identity | PASS: clean `8dfdf3a3390a33530cc58f9b5949a7095af560b5` before ledger edit | Exact source candidate exists. This does not make the product ready. |
+| Production build | PASS; main minified JS ≈1,080.95 kB, gzip ≈255.67 kB; chunk-size warning | Compilation evidence only; P2 performance follow-up remains. |
+| Lint | PASS: 0 errors, 6 warnings | Engineering floor only. |
+| Data + AI unit tests | PASS: 89/89 | Contracts/store behavior are covered; live Study result rendering and the rendered transaction are not. |
+| Behavior tests | PASS: 36, SKIP: 2 | Useful for persistence/handoff basics. They do not reject publish-before-review, Save-and-next debounce loss, or missing live result consumption. |
+| Deterministic rendered QA | **FAIL exit 1**; report says 171 total/reference, 0 production, 0 blank, 0 drift | The production measurements are useful, but the exit contract is internally inconsistent and the matrix omits tablet 768 and the reproduced task/data conditions. |
+| Visual regression | Command PASS: 56/56; **8 named states unreachable** | Not a release pass. Unreachable returns success, driven states can be reachability-only, and widths are limited to 1440/1280. |
+| Prior release capture corpus | Not exact candidate; of 156 declared executions, 151 are CAPTURED, 3 UNREACHABLE, and 2 lack completed status after timeout | Historical development evidence only. CAPTURED is not visual approval; at least one captured Projects 390 image visibly contains overlap. |
+| Security/privacy review | Current architectural description exists | Local-only/BYO-key boundary is documented. In-product deletion/export/restore and deployed-host verification remain incomplete or external. |
+| Operations runbook | Generic static deployment procedure exists | No exact deployed artifact identity, production host, rollback drill, monitoring signal, or named triage evidence was available for Stage 3. |
+
+Green automated checks do not overrule the independent product findings because they do not encode the failed semantics and required-width states.
 
 ---
 
-# Finding states and closure rules
+# G. External verification still required
 
-- UNKNOWN — not yet investigated on the current candidate.
-- VERIFY — a lead awaits current reproduction.
-- OPEN — reproduced or implementation-verified and requires work.
-- IN_PROGRESS.
-- RESOLVED — closed with current evidence at the appropriate level.
-- NOT_REPRODUCED — current reproduction attempted and failed, with evidence.
-- ACCEPTED_RISK — deliberately accepted with rationale, blast radius, owner and follow-up.
-- DEFERRED_P2/P3 — explicitly non-blocking future work.
+These are not classified as product failures merely because the audit environment lacked credentials or production infrastructure.
+
+1. **Valid Gemini key:** complete at least one real Study FAIL/retry and one real PASS, verifying the provider request, parsed result, full rendered review, progress transition, reload, and next segment. Repeat successful/error recovery for Discussion, Research Ask, Exam grading, and exact remediation.
+2. **Provider configuration:** confirm the approved Gemini model/endpoint, browser CORS behavior, quota/rate/error handling, key removal, and no raw key in URL/history/logs.
+3. **Built deployed artifact:** deploy the exact nominated build, record host and asset hashes, smoke supported routes, verify CSP/security headers and storage isolation, exercise rollback, and prove monitoring/triage visibility.
+4. **Compatibility/performance:** define supported browsers/devices and run the built product across that matrix with long Arabic source, large project/history data, representative mobile network/CPU conditions, and agreed budgets.
+5. **User-data controls:** verify the final delete/export/archive/restore policy and its user-facing behavior on real stored projects before making deletion/preservation claims.
+
+---
+
+# H. Finding states and closure rules
+
+- **OPEN:** independently reproduced or implementation-verified and requires work.
+- **PARTIALLY RESOLVED:** material improvement exists, but acceptance outcome is not met.
+- **RESOLVED:** closed with current evidence at the appropriate level.
+- **NOT REPRODUCED:** current reproduction attempted and failed, with evidence.
+- **UNKNOWN / EXTERNAL:** cannot be resolved without credentials, deployment, platform, or policy authority.
+- **TASTE ONLY:** no tracked change.
 
 Closure evidence must match the claim:
 
-- function → journey/test evidence;
-- persistence → reload/re-entry and failure-path evidence;
-- visual/responsive → rendered evidence across affected states and widths;
-- engineering → exact build/runtime/test evidence;
-- security/privacy/operations → explicit review and production evidence.
+- function → complete journey and failure-path evidence;
+- persistence → immediate reload/re-entry and unavailable/corrupt-storage evidence;
+- visual/responsive → realistic rendered evidence at every affected required width;
+- AI → deterministic UI-state evidence plus valid-provider external evidence;
+- engineering → exact source/build/test/run identity;
+- release → built-dist, fail-closed, exact-candidate deployment/rollback/monitoring package.
 
-Do not close a finding from code changes or prose alone. Do not use a composite release-readiness score.
-
----
-
-# Closure log
-
-| ID | Closed/reconciled on | Evidence | Notes |
-|---|---|---|---|
-| R-002 | 2026-08-24 running product at 85764fa | Live in-app browser accessibility tree and button inspection | NOT_REPRODUCED; current accessible name is AI SEGMENT TEXT. |
-| R-003–R-009, R-011–R-013 | 2026-08-24 Stage 1 audit | Reconciliation table above | Prior audit/unknown rows were resolved as audit tasks or superseded by current root-cause entries; no product defect was falsely marked fixed. |
-
----
-
-# Stage 2 convergence progress log
-
-Chronological record of implementation increments against the packages in §C.
-Each entry is a committed, evidence-backed step; findings close only when their
-whole package's acceptance evidence is met.
-
-| Date | Commit | Package | Change | Evidence |
-|---|---|---|---|---|
-| 2026-08-24 | `e9a1359` | Pre-Stage-2 | Clean checkpoint from the reorg tree: docs structure + AI prompts + ledger kept; eslint/gitignore repaired (archive noise → lint back to 21 genuine errors, not hidden); generated evidence excluded; 3 orphan duplicates removed; favicon restored. | build PASS, data tests 34/34, lint 21 genuine errors |
-| 2026-08-24 | `18fcc58` | IP-01 (1/3) | Projects now reads the live project model via a new `liveProjectsData` adapter into the existing `Lesson` shape; fabricated 1,800-row history and Jumu'ah/Purity/Fasting fixtures removed; resume routes through the canonical handoff; honest empty-library and honest zero counts. | build PASS; in-browser: labelled sample project with real 0/4 counts, **zero fixture strings**, empty store shows "No projects yet", no console errors |
-| 2026-08-24 | `37886bc` | IP-01 (2/3) | Project Research reads the CURRENT project's real segments via new `liveResearchData`; 30-segment Al-Hidayah fixture ledger removed; best-translation/evaluation/vocabulary render honest "available after study" placeholders (populated only by the real evaluator, IP-03); "Open in study" hands off the stable segment id (R-018). | build PASS; in-browser: sample project's 4 real segments (1.1–1.4), honest "Not started" + empty inspector fields, fixture ledger gone, no console errors |
-| 2026-08-24 | `37886bc` | IP-01 regression | Full deterministic QA after screens 1–2. | `npm run qa`: **productionBlocking 0** (was 8), referenceBlocking 171, **0 blank routes, 0 page errors** across all 14 routes; `artifacts/qa/visual-standard.json` @ 2026-08-24T14:09Z |
-
-**Honest caveat on the QA delta:** `v2-projects` production violations fell 8→0 **partly because the checker now exercises the empty-library state** (Projects reads the store, which the checker leaves empty), not because the populated Projects card was made responsive. The **populated Projects-at-390 overlap (R-020) is still open** and belongs to IP-07; do not read productionBlocking:0 as closing R-020.
-
-| 2026-08-25 | `f882f9d` | IP-03 (1/2) | Provider-neutral AI grading boundary + Study grading contract derived from the source prompt (unchanged): pass = no critical-fail gate + no missing core anchor + ≥85% weighted-anchor coverage + grade ≥8.25/10; the **application** computes the outcome so a lenient model cannot leak a false pass (R-016 guard); BYO-key local config, honest `{available:false}` when unconfigured/empty/error — never fabricated. | **19 unit tests pass** (13 contract + 6 service): threshold gates, model-override guard, best-translation withheld on fail, unavailable/error paths; build PASS |
-
-**IP-01 remaining:** Exams still imports static seed/model data and fabricates grading; it is entangled with the real evaluation boundary (IP-03) and a new provider-neutral exam contract (IP-04), so it is sequenced after the AI boundary rather than shallow-wired now. Cross-project isolation for R-014 to be asserted once a second distinct project can be created end-to-end (needs IP-02 segmentation approval).
-
-| 2026-08-25 | `b3c599b` | IP-03 (2/2) | Wired the boundary into the store + Study: a new `'attempted'` state means "submitted, surface-checked, NOT graded"; `submitSegment` never yields a pass; async `gradeSegment` produces `'submitted'`/`'failed'` only from a real grade and stays `'attempted'` with an honest reason when unconfigured; `getProjectProgress` counts only real passes. | data 35/35, AI 19/19, Study behaviour 12/12, build PASS; **in-browser: submit → "AI grading is not configured on this device.", STUDIED stays 0/4, no false pass** (R-016 core fixed & verified) |
-| 2026-08-25 | `b3c599b` | R-026 (new) | **Discovered:** the "Quick Lexicography" strip beside the Study source still renders fixture terms (مصر جامع / أفنية / مصلى) in live mode, unrelated to the current segment — while the Support panel correctly shows honest "not prepared" placeholders. A second fixture surface presenting as segment-specific knowledge. | in-browser at #v2/studyWorkspace on the sample project |
-
-**IP-03 status:** core R-016 defect closed and verified (no form-check pass; honest unavailable). Remaining within IP-03/IP-05 scope: (a) the Study *review* panel rendering of real AI outputs (bestTranslation/feedback/vocabulary/guidance) on a genuine pass is stored in the result but only reachable with a provider key — unverifiable here; (b) **R-026** Quick Lexicography fixture strip (support-module residual, IP-05).
-
-| 2026-08-25 | `9bda383` | IP-02 | Segmentation proposal→approval transaction (R-015, DECISIONS §5): new `proposals`/`archives` slices + `saveProposal`/`getProposal`/`clearProposal`; `publishSegments` is now the explicit approval AND non-destructive (archives prior study work on re-segmentation, RED-05); paste intake starts empty; Quick mode auto-approves on paste, manual/non-quick publish only on Review's Approve; Review seeds from the proposal (else canonical) and Approve publishes the edited segments; Success reactive + safety-net auto-approve. | data 37/37 (proposal-not-canonical, approval-publishes, archive-on-resegment); segmentation-handoff behaviour spec green; **in-browser: pasted custom Arabic → proposal → approval → 2 real segments in Study titled from the source, zero fixtures**; build PASS |
-| 2026-08-25 | `9bda383` | R-027 / R-028 (new) | **Discovered residuals** (both P2, IP-01/R-025 family): R-027 — Study workspace header still shows the fixture subtitle "Al-Hidayah • The Book of Prayer" for a non-Al-Hidayah live project; R-028 — Segmentation Success metadata shows placeholder "PROJECT: New project / BATCH ID: new" instead of the real project title. | in-browser after end-to-end segmentation of a custom source |
-| 2026-08-25 | `c2d9208` | R-027 / R-028 RESOLVED | Study shell title bar now receives the live project title (reference/demo keeps the default); Success metadata shows the real title, real segment count, "Ready to study". | **full behaviour suite 36 passed / 2 skipped** (baseline parity, no regression from IP-02/IP-03); in-browser both surfaces show the pasted project's real Arabic title + real count |
-| 2026-08-25 | `9d1020d` | IP-04 (part) — R-018 handoff | Study honours the handoff's project + stable segment id: a mount effect selects the context's projectId if different; a segment that doesn't resolve shows a recoverable alert and lands on the first segment (never a silent segment-1). | **in-browser: Research segment 1.2 → "Open in study" → Study opens exactly 1.2** with a "From research" provenance banner and 1.2's source text; build PASS |
-
-**IP-04 remaining (the large part):** the Exams screen (`src/v2/screens/Exams/ExamsScreen.jsx`, 842 lines) is entirely local `useState` over a seed model and fabricates `score %` (R-016/R-017). It needs: (a) durable create/attempt/result persistence through the already-built central store (`addExam`/`startAttempt`/`saveAnswer`/`completeAttempt`/`listExams`/`getAttempt`) so a created assessment and its attempt survive reload; (b) a derived provider-neutral **exam** contract (done, see below) with an honest **ungraded/unavailable** mode instead of fabricated percentages; (c) the Exam-miss→Study handoff on the same stable-id contract. This is a major screen rewrite comparable to Research and is the next focused increment.
-
-| 2026-08-25 | `a573031` | IP-04 (part) — exam contract | Provider-neutral exam grading contract + service derived from the Study prompt §19 EXAM MODE + DECISIONS §2: the application computes the score from per-question results (correct/partial/incorrect), each miss carries its segment ref for exact remediation, honest-unavailable without a provider. | **27 AI unit tests** (19 study + 8 exam): score-from-results, miss→segment, unknown-result guard, unavailable/error; build PASS |
-
-| 2026-08-25 | `6d720ce` | IP-04 (part) — R-016 exams | Exam grading is honest: submit grades through the provider-neutral exam service; **no provider → "Attempt saved · not scored"**, never a fabricated %; review shows only a real stored result; the seed exam's fabricated `lastScore: 82` is removed; remediation copy is honest for an ungraded attempt. | build PASS; **in-browser: library "Nothing completed yet" (no 82%); take + submit → "Attempt saved · not scored — AI grading is not configured", "Not graded yet"** — no fabricated score anywhere |
-
-**IP-04 still to do (R-017 durability, the store-wiring rewrite):** move exams to the project-scoped store (`addExam`/`listExams`) so a created assessment + attempt survive reload and restored identity is validated before Attempt; generate questions from the **real project segments** (drop the Al-Hidayah `studyScopePool` fixture); route exam-miss remediation to Study via the **stable segment id** (currently the handoff still writes a human ref, so it relies on the R-018 recoverable-notice). The fabricated grading (R-016) is now gone; the remaining work is durability + real-segment scoping.
-
-| 2026-08-25 | `2164595` | IP-04 exam tests | Exam behaviour tests updated to the honest reality (miss-based remediation legitimately requires a real grade; the handoff mechanism is covered by segmentation-handoff.spec.js). | both pass; **full behaviour suite 36 passed / 2 skipped** after all Exams/Study/segmentation changes |
-
-| `f9d1739`+`337120a` | IP-05 R-022 | Provider-neutral discussion + summary AI service, and the Study discussion companion wired to it: controlled input, message thread, loading/error/**retry**, message preserved on failed send, one summary saved back to the segment; honest-unavailable without a provider. | 36 AI unit tests (incl. 9 discussion); build+lint clean; **in-browser: Send → honest "Discussion needs an AI provider", message preserved, button → Retry** |
-
-| `fe933aa` | IP-04 R-017 | Created exams persist (`design-sandbox.exams.v1`) so a saved assessment + its attempt survive reload — no more disappearing exam / blank attempt shell. | in-browser: created "DURABILITYCHECK exam" survives reload; exam behaviour 3/3 |
-| `17100f4` | IP-07 R-020 | Exam Attempt + Builder collapse to one column at 390 (were pushing the answer panel ~248px off-screen). | in-browser 390: answer textarea on-screen (L49–R341), full attempt stacks; **QA production 0** across all routes |
-
-| `c4862e8` | IP-06 R-019 | Honest persistence-failure banner. The store already knew whether the last write landed but nothing surfaced it; on a device that can't save (private mode / quota full) work was accepted silently. `PersistenceBanner` now shows a global notice so no "saved" claim can mislead. | in-browser: hidden when healthy → forced `setItem` throw makes it appear → persists across nav → clears after a real write; **QA production 0** |
-
-| `2c87996` | IP-04 R-017 | Exams are generated from the OPEN project's real canonical segments, not the `studyScopePool` fixture. Fixture pool, fixture seed exams, and the dead length-heuristic grader removed; records project-scoped; empty project shows an honest empty state; miss handoff routes by canonical segment id; grader receives each segment's real source text. | 36/36 behaviour (incl. exam→study handoff), 75/75 data+AI unit, **QA production 0**; live: empty→honest, seeded→builder previews its own 1.1/1.2/1.3 |
-
-| `51b9438` | IP-08 | Dev/QA lab surfaces compiled OUT of the production bundle. `devRoutes.ts` (buildDevRoutes() fn so top-level `lazy()` isn't a side effect) attached only under `import.meta.env.DEV`; Rollup tree-shakes the whole module + every lab chunk in a prod build. Render-time `DEV_ONLY_ROUTES` gate removed — the module boundary is the gate. | dist **16 → 2 JS chunks**, 0 lab chunks; built-dist smoke: `/`→V2 Home, `#v2/patternLab`→falls through, no console errors; DEV still renders labs; 75/75 unit, 36/36 behaviour, QA production 0 |
-
-| `fb9179d` | IP-05 | Durable, project-scoped notes: manual notes + saved discussion summaries were React-only and lost on reload. Now a first-class store collection keyed by (projectId, segmentId) — cascades on delete, archived (not destroyed) on re-segmentation. | 4 new store tests; in-browser: seeded note renders after reload + a UI-added note persists (2 notes) |
-| `6994bf3` | IP-05 | Real Research companion: "Ask across the whole project" rendered ONE hard-coded paragraph + fixture citations for every question and called nothing. Now `researchAsk` grounds the question in the project's own segments, constrains citations to supplied refs, and is honestly unavailable without a provider — never a fabricated answer. | 7 new research tests; in-browser (no key): idle shows real "3 segments" grounding, Ask shows "AI companion not configured", no fabricated answer |
-
-| `e5ad7f7` | IP-09 | Security & Privacy Review + Ops Runbook written; Gemini key moved from URL query to `x-goog-api-key` header (keeps the secret out of history/Referer/logs). Review documents the full local-data inventory, the single BYO-key AI boundary, and the two honest data-control gaps (no in-product AI-config UI, no export/delete UI) as Stage-3 recommendations. | docs added; lint 0, build PASS |
-| `e7bc2ff` | IP-09 | Visual-regression golden re-baselined to the intended post-convergence UI (16 snapshots updated). | `npm run vr` passes clean 56/56 |
-
-### P1 finding — no in-product AI configuration (opened + closed 2026-08-26)
-
-**Finding:** every AI capability (Study grading, Discussion, Research, Exam) ran
-through the provider-neutral service, but nothing in the product called
-`writeAiConfig`/`clearAiConfig` — a normal user could only enable AI by hand-
-writing the `arapal.ai.config` localStorage key in dev tools. That is developer
-setup, not a usable product capability, so AI was effectively unreachable.
-
-**Closure evidence:**
-
-| Commit | Change | Evidence |
-|---|---|---|
-| _(this change)_ | `AiConfigDialog` — the smallest professional BYO-key surface, in the existing token language. Drives the existing config layer; states which provider is supported (Google Gemini), whether a key is saved, that Study/Discussion/Research/Exam AI is unavailable without one, and that the key is local-only and never bundled/logged. Save + Remove. Two discoverable entries: a persistent AI-setup control in the nav rail foot, and a contextual "Set up AI" link in the Study "not configured" notice. `gradeSegment` gained a test seam. | build/lint clean; **89/89** unit (incl. 3 new store tests: pass→submitted, fail→failed, no-provider→attempted); 36/2 behaviour; QA production 0; VR 56/56 clean |
-
-**Primary Study path verified from the UI (item 8/9):** with AI unconfigured,
-translate → Submit → honest "not configured" notice + "Set up AI" (no fake pass,
-segment stays `attempted`). Opened the dialog from that link, saved a key →
-status "AI is configured". Re-submitted → the app **crossed the boundary**: a
-real request reached Gemini and returned HTTP 400 for the (deliberately invalid)
-test key, so the segment stayed `attempted` with an honest "couldn't reach the AI
-provider" notice — **never a fabricated pass**. The application-side PASS branch
-(grade → `submitted` + real result) is proven deterministically by the injected-
-seam store test. **Remaining EXTERNAL verification step:** a valid Gemini key +
-network access, which produces a real provider PASS end-to-end — verifiable only
-by the product owner with a key.
-
-## Current gate state (HEAD `e00b4ed`, 2026-08-26)
-
-- **build** PASS · **data + AI unit tests** 86/86 (data 43 + AI 43) · **behaviour** 36 passed / 2 skipped · **lint** 0 errors.
-- **lint** now **PASSES — 0 errors** (`e27e94c`→`b3a3bf4`): the genuine no-dupe-keys bug fixed, dead code removed, and dev-tooling/legacy-reference debt scoped-exempt with rationale; 6 non-blocking exhaustive-deps warnings remain. Dimension H lint is closed.
-- **deterministic QA**: re-run after the mobile-nav + shell change — **production 0 violations, 0 blank routes, 0 page errors** across all 14 routes. Visual regression not yet re-baselined (belongs to IP-09).
-- **AI unit tests**: 36 (study 19 + exam 8 + discussion 9). **data 39/39**.
-- Working tree clean; every increment committed. **All nine implementation packages (IP-01…IP-09) are now complete.** Since the last summary: IP-06 persistence banner; IP-07 Exam-Attempt-390; IP-04 R-017 exams from real segments; IP-08 lab-chunk compile-out + built-`dist` smoke; IP-05 durable notes + grounded Research companion; IP-09 security/privacy review + ops runbook + Gemini key hardening + VR re-baseline. **In-product AI configuration is now shipped** (BYO-key `AiConfigDialog`, closing the P1 finding below). **Remaining Stage-3 recommendation (not a release blocker):** a data export / "delete all my data" UI — the mechanism (`deleteProject`) already exists and is honest at the data layer, it is simply not yet surfaced; see the Security & Privacy Review §3. Left for independent Stage-3 judgement.
-
-## Additional convergence increments (2026-08-25)
-
-| Commit | Package | Change | Evidence |
-|---|---|---|---|
-| `6d720ce` | IP-04 R-016 exams | Exam grading honest via the exam service; no fabricated `%`; honest ungraded state; seed `82%` removed. | in-browser: no fabricated score anywhere; behaviour updated + green |
-| `e27e94c` | IP-08 R-021 | Production entry is V2 Project Home; empty/unknown URLs → V2, only explicit legacy hashes → reference app; 7 Lab/Dashboard routes gated out of production (`import.meta.env.PROD`). | in-browser: root + unknown → V2, `#home` → legacy; behaviour 36/2; build PASS |
-| `b3a3bf4` | IP-09 lint | Lint gate clean (0 errors, was 21). | `npm run lint` exits 0; build/data/AI green |
-| `bb6cb86` | IP-06 R-019 | Top-level ErrorBoundary + storage schema/version validation with quarantine (corrupt/wrong-shape/future-version state is set aside, recoverable, and the app continues from empty). | data 39/39; behaviour 36/2; in-browser: injected corrupt state → app renders normally, state quarantined, no blank crash |
-| `9016d65` | IP-07 R-020 | Projects mobile overlap at 390 fixed: alignContent-start on the stretched grids, flex-column workspace with flexShrink:0 regions, companion hidden at ≤560. | in-browser 390: hero/summary/rail/detail stack, **no overlap** (measured); 1280 editorial layout intact |
-| `9016d65` | QA regression | Full deterministic QA after all Study/Exams/routing/responsive/error-boundary changes. | **productionBlocking 0, 0 blank routes, 0 page errors** across all 14 routes; `artifacts/qa/visual-standard.json` @ 2026-08-25T15:03Z |
-
-**IP-08 — DONE (`51b9438`):** Lab chunks are tree-shaken out of the production build (16 → 2 JS chunks) and the built `dist` was smoked from `/` (V2 entry, dev routes fall through, no console errors).
-| `ffbc28a` | IP-07 R-013 | Study usable at tablet-768: a new compact range (561–1024px) defaults the segment + support rails to collapsed 72px strips so the work lane gets the width; resize-into-range also collapses them. Mobile (≤560) and desktop (>1024) unchanged. | in-browser 768: source reads normally, editor full-width, **Discuss + SUBMIT reachable**; 1280 fresh load shows rails expanded |
-
-| `80048e9` | IP-07 R-020 | Mobile global navigation: a new in-flow bottom `MobileNavBar` (6 primary destinations, `<nav>` landmark, aria-current) shown at ≤560 for rail-bearing routes; the universal shell now fills its stage (`minHeight:100%`) rather than a hard 100vh so nothing renders under the bar. | **QA production 0** (fixed the 24 overlaps the first fixed-position pass caused); behaviour 36/2; in-browser: tabs navigate + track active route, desktop rail intact |
-
-**IP-07 remaining:** Segmentation Review resegment-toolbar clip @390, Exam Attempt @390. The three worst responsive gaps (Projects-390 overlap, Study-768 unusable, no mobile nav) are now fixed.
-
-**Standing limitation (not a RED blocker):** this environment has no Gemini key and no network to Google, so IP-03/04/05 AI paths are proven by unit tests + the honest-unavailable branch in-browser; live end-to-end AI output is verifiable only by the product owner with a key.
+No P0/P1 finding may close from code changes, unit tests, an unchanged screenshot, a `CAPTURED` status, or implementation-team prose alone.
