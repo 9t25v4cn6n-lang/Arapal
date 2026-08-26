@@ -30,54 +30,54 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Prepare audit output
+      - name: Record candidate identity
         run: |
           mkdir -p artifacts/release-audit/logs
           printf '{"sha":"%s","ref":"%s","run_id":"%s"}\n' \
             "$GITHUB_SHA" "$GITHUB_REF_NAME" "$GITHUB_RUN_ID" \
             > artifacts/release-audit/run-identity.json
 
-      - name: Existing release gates
-        shell: bash
-        run: |
-          set +e
-          run_gate () {
-            name="$1"; shift
-            echo "=== $name ===" | tee "artifacts/release-audit/logs/${name}.log"
-            "$@" 2>&1 | tee -a "artifacts/release-audit/logs/${name}.log"
-            code=${PIPESTATUS[0]}
-            echo "$code" > "artifacts/release-audit/logs/${name}.exit-code"
-            return 0
-          }
-          run_gate build npm run build
-          run_gate lint npm run lint
-          run_gate audit-suite npm run audit:suite
-          run_gate qa npm run qa
-          run_gate visual-regression npm run vr
-          run_gate behaviour npm run test:behaviour
-          run_gate data npm run test:data
+      # Release-critical gates. Each records its exit code; the job fails at the
+      # end if ANY of them failed. Nothing is swallowed — a red gate is a red
+      # release. (The previous harness ran every gate under `set +e; return 0`,
+      # so the job passed no matter what failed — S3-006.)
+      - name: Build (exact candidate)
+        run: npm run build
 
-      - name: Start app
-        shell: bash
-        run: |
-          npm run dev -- --host 127.0.0.1 > artifacts/release-audit/logs/vite.log 2>&1 &
-          echo $! > /tmp/arapal-vite.pid
-          for i in {1..60}; do
-            if curl -fsS http://127.0.0.1:5173 >/dev/null; then exit 0; fi
-            sleep 1
-          done
-          echo "Vite server did not become ready" >&2
-          exit 1
+      - name: Lint
+        run: npm run lint
 
-      - name: Capture exhaustive release evidence
-        env:
-          CI: "true"
-          RELEASE_AUDIT_DIR: artifacts/release-audit/evidence
-        run: npx playwright test tests/release-audit/release-evidence.spec.js --project=chromium
+      - name: Audit suite
+        run: npm run audit:suite
 
-      - name: Build human-readable evidence index
+      - name: Unit — data
+        run: npm run test:data
+
+      - name: Rendered QA (production Floor gate)
+        run: npm run qa
+
+      - name: Visual regression
+        run: npm run vr
+
+      - name: Behaviour
+        run: npm run test:behaviour
+
+      # Fail-closed exact-candidate release evidence: builds dist, binds every
+      # artifact to the SHA + built-asset hash, serves the BUILT dist, and
+      # captures the required journeys at 390/768/1280/1440. Unreachable, wrong
+      # route, page/request error, or timeout fails this step.
+      - name: Fail-closed release evidence (built dist)
+        run: npm run audit:evidence
+
+      # Prove the gate bites: routing a required journey to a nonexistent screen
+      # MUST turn the capture red. This step exits 0 only when that happens.
+      - name: Prove fail-closed
+        run: npm run audit:evidence:prove
+
+      - name: Rebuild reviewed evidence index for the real run
         if: always()
-        run: node scripts/release-audit/build-report.mjs artifacts/release-audit/evidence || true
+        run: |
+          npm run audit:evidence || true
 
       - name: Upload release evidence
         if: always()

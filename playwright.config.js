@@ -53,7 +53,10 @@ export default defineConfig({
   workers: 1,
   reporter: process.env.CI ? 'list' : [['list']],
   use: {
-    baseURL: 'http://localhost:5173',
+    // Release evidence renders against the BUILT dist served by the orchestrator
+    // (scripts/release-audit/run.mjs), which sets ARAPAL_BASE_URL to its preview
+    // origin. The dev VR/behaviour loops keep the default dev server.
+    baseURL: process.env.ARAPAL_BASE_URL || 'http://localhost:5173',
     trace: 'off',
     screenshot: 'off',
     launchOptions: {

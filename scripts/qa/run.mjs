@@ -227,10 +227,17 @@ if (baseline.generatedAt) {
     await ratchetDown(baseline, counts, checkedPairs, verdict.improvements)
   }
 }
+// The release Floor gate is the PRODUCTION surface. With no baseline present the
+// exit used to gate on the COMBINED blocking total, so reference (legacy) findings
+// failed the run while the console printed "production surface: 0 ← Floor gate" —
+// an exit contract that contradicted its own label (S3-006). Production and
+// reference are now separate contracts: production blocking gates the release
+// Floor; reference is reported below but does not fail this gate on its own.
+const productionBlockingForGate = blocking.filter((b) => b.surface !== 'reference')
 const gated =
   blankRoutes.length > 0 ||
   driftedRoutes.length > 0 ||
-  (baseline.generatedAt ? verdict.regressions.length > 0 : blocking.length > 0)
+  (baseline.generatedAt ? verdict.regressions.length > 0 : productionBlockingForGate.length > 0)
 
 if (args.json) {
   console.log(JSON.stringify(payload.totals, null, 1))
