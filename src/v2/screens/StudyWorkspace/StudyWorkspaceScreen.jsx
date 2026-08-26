@@ -18,6 +18,7 @@ import useIsMobileViewport from '../../foundation/primitives/useIsMobileViewport
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import { motion } from '../../foundation/tokens'
 import layoutContract from './StudyWorkspaceScreen.contract'
+import { adaptStudyResult } from './studyResultView'
 import {
   actions, select, useArapal, useNotes, navigation, SAMPLE_EVALUATION_NOTICE,
 } from '../../data'
@@ -299,6 +300,11 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     isLive && currentSegment ? select.getDraft(project.id, currentSegment.id, s) : null)
   const lastResult = useArapal((s) =>
     storeRecord?.lastResultId ? select.getResult(storeRecord.lastResultId, s) : null)
+  // The one validated view over the stored grade. On a live project it is the
+  // SOLE authority for the review; the reference surface keeps its own fixtures
+  // (S3-002). Non-AI/sample results yield an empty view — honest absence, never
+  // invented feedback or a fabricated reference translation.
+  const resultView = useMemo(() => adaptStudyResult(isLive ? lastResult : null), [isLive, lastResult])
 
   const currentRecord = isLive
     ? (storeRecord ?? { submissionState: 'draft', attempts: 0 })
@@ -663,10 +669,14 @@ export default function StudyWorkspaceScreen({ route, shell }) {
               onIncreaseFont={() => setSourceFontScale((current) => Math.min(1.44, Number((current + 0.08).toFixed(2))))}
             />
             <StudySubmittedStack
-              // Reference content belongs to the reference route. A live project
-              // has no published reference translation, and inventing one is the
-              // same untruth as inventing a grade.
-              bestTranslation={isLive ? null : bestInClassTranslation}
+              // Reference content belongs to the reference route. A live project's
+              // best translation comes ONLY from the stored grade (present on a
+              // real pass); inventing one is the same untruth as inventing a grade.
+              bestTranslation={isLive ? resultView.bestTranslation : bestInClassTranslation}
+              // The real evaluator evidence — feedback, criterion checks,
+              // vocabulary, guidance, takeaways — drives the review on live
+              // projects, and nothing stands in for it when it is absent (S3-002).
+              result={isLive ? resultView : null}
               // The user's OWN words when there are any. This passed the module
               // fixture unconditionally, so after submitting a real translation
               // the panel headed "Your translation" showed a stranger's — the
@@ -706,7 +716,9 @@ export default function StudyWorkspaceScreen({ route, shell }) {
               />
             </div>
             <div className="study-v2__composerLex">
-              <StudyQuickLexicography terms={lexicographyTerms} />
+              {/* Live projects get grounded vocabulary from the grade only; the
+                  reference surface keeps its own demo terms (S3-002). */}
+              <StudyQuickLexicography terms={isLive ? resultView.vocabulary.map((v) => ({ arabic: v.term, transliteration: v.type || '', description: v.gloss || '' })) : lexicographyTerms} />
             </div>
             <div className="study-v2__composerEditor">
               <StudyTranslationEditor
@@ -738,8 +750,16 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     // dropped the handoff for anyone without a project, which is exactly the
     // audience most likely to be exploring from Exams.
     Layer4_Study_ContextRegion:
-      (context && !contextDismissed) || contextSegmentMissing || grading || gradeNotice || (isLive && lastResult?.isSample) ? (
+      (context && !contextDismissed) || contextSegmentMissing || grading || gradeNotice || (isLive && lastResult?.isSample) || (currentState === 'failed' && resultView.blockingIssues.length) ? (
         <div className="study-v2__contextStrip">
+          {currentState === 'failed' && resultView.blockingIssues.length ? (
+            <div className="study-v2__sampleNotice" role="alert" style={{ display: 'grid', gap: '6px' }}>
+              <strong>This attempt didn’t pass. Fix these, then submit again:</strong>
+              {resultView.blockingIssues.map((issue, i) => (
+                <span key={i}>• {issue.fix || issue.text || issue.issueType || 'See feedback'}</span>
+              ))}
+            </div>
+          ) : null}
           {contextSegmentMissing ? (
             <p className="study-v2__sampleNotice" role="alert">
               The segment this link pointed to isn’t in the current project — showing the first segment instead.

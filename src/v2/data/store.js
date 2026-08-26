@@ -488,6 +488,9 @@ export async function gradeSegment({ projectId, segmentId }, { grade = gradeStud
     guidance: g.guidance,
     takeaways: g.takeaways,
     topics: g.topics,
+    anchors: g.anchors,
+    categoryScores: g.categoryScores,
+    blockingIssues: g.blockingIssues,
   })
 
   commit({

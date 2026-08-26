@@ -2917,14 +2917,23 @@ export function StudyQuickLexicography({ terms }) {
         <BookOpen size={13} strokeWidth={1.9} />
         Quick Lexicography
       </div>
-      <div ref={stripRef} className="study-v2__lexStrip" {...stripEdges}>
-        {terms.map((term) => (
-          <div key={term.transliteration} className="study-v2__lexTerm" title={term.description}>
-            <span className="study-v2__arabicInline" dir="rtl">{term.arabic}</span>
-            <span className="study-v2__mono">{term.transliteration}</span>
-          </div>
-        ))}
-      </div>
+      {terms.length ? (
+        <div ref={stripRef} className="study-v2__lexStrip" {...stripEdges}>
+          {terms.map((term, index) => (
+            <div key={term.transliteration || term.arabic || index} className="study-v2__lexTerm" title={term.description}>
+              <span className="study-v2__arabicInline" dir="rtl">{term.arabic}</span>
+              <span className="study-v2__mono">{term.transliteration}</span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        // Honest absence: vocabulary is grounded in the grade, so before this
+        // segment is graded there is none to show — never an unrelated fixture
+        // list (S3-002).
+        <p className="study-v2__bodyText" style={{ color: colors.textSoft, margin: 0 }}>
+          Vocabulary appears here after the segment is graded.
+        </p>
+      )}
     </section>
   )
 }
@@ -3225,7 +3234,75 @@ export function StudyDiscussionCompanion({ onClose, segmentLabel, segmentText = 
   )
 }
 
-export function StudySubmittedStack({ bestTranslation, userTranslation, onDiscuss, manualNotes = [], onAddManualNote }) {
+// Real evaluator evidence, rendered ONLY from the stored result (S3-002). Each
+// panel appears solely when the grade actually carries its data — no fixture,
+// no success styling without evidence.
+function StudyResultEvidence({ result }) {
+  if (!result || !result.graded) return null
+  const p = (text, key) => <p key={key} className="study-v2__bodyText">{text}</p>
+  return (
+    <>
+      {result.feedback ? (
+        <StudyPanel tone="slate" className="study-v2__resultPanel" anchor="feedback">
+          <CardHeader badge={<Info size={15} />} title="Feedback" tone="slate" />
+          <div className="study-v2__cardBody">{p(result.feedback, 'fb')}</div>
+        </StudyPanel>
+      ) : null}
+      {result.anchors.length ? (
+        <StudyPanel tone="slate" className="study-v2__resultPanel" anchor="evidence">
+          <CardHeader badge={<CheckCircle2 size={15} />} title="What the grade checked" tone="slate" />
+          <div className="study-v2__cardBody" style={{ display: 'grid', gap: spacing[8] }}>
+            {result.anchors.map((a, i) => (
+              <div key={i}>
+                <p className="study-v2__bodyText">
+                  <strong>{a.anchor || `Anchor ${i + 1}`}</strong>
+                  <span style={{ color: colors.textSoft }}> · {a.status || 'checked'}{a.core ? ' · core' : ''}</span>
+                </p>
+                {a.whatWentWrong ? <p className="study-v2__bodyText" style={{ color: colors.textSoft }}>{a.whatWentWrong}</p> : null}
+              </div>
+            ))}
+          </div>
+        </StudyPanel>
+      ) : null}
+      {result.vocabulary.length ? (
+        <StudyPanel tone="slate" className="study-v2__resultPanel" anchor="vocab">
+          <CardHeader badge={<BookOpen size={15} />} title="Vocabulary" tone="slate" />
+          <div className="study-v2__cardBody" style={{ display: 'grid', gap: spacing[8] }}>
+            {result.vocabulary.map((v, i) => (
+              <p key={i} className="study-v2__bodyText">
+                <strong>{v.term}</strong>{v.gloss ? ` — ${v.gloss}` : ''}
+                {v.why ? <span style={{ color: colors.textSoft }}> · {v.why}</span> : null}
+              </p>
+            ))}
+          </div>
+        </StudyPanel>
+      ) : null}
+      {result.guidance.length ? (
+        <StudyPanel tone="slate" className="study-v2__resultPanel" anchor="guidance">
+          <CardHeader badge={<Sparkles size={15} />} title="Guidance" tone="slate" />
+          <div className="study-v2__cardBody" style={{ display: 'grid', gap: spacing[8] }}>
+            {result.guidance.map((g, i) => (
+              <p key={i} className="study-v2__bodyText">
+                <strong>{g.unit || g.function || `Point ${i + 1}`}</strong>
+                {g.rendering || g.functionHere ? ` — ${g.rendering || g.functionHere}` : ''}
+              </p>
+            ))}
+          </div>
+        </StudyPanel>
+      ) : null}
+      {result.takeaways.length ? (
+        <StudyPanel tone="slate" className="study-v2__resultPanel" anchor="takeaways">
+          <CardHeader badge={<Award size={15} />} title="Takeaways" tone="slate" />
+          <div className="study-v2__cardBody" style={{ display: 'grid', gap: spacing[8] }}>
+            {result.takeaways.map((tk, i) => p(tk.note || tk.evidence || tk.function || String(tk), i))}
+          </div>
+        </StudyPanel>
+      ) : null}
+    </>
+  )
+}
+
+export function StudySubmittedStack({ bestTranslation, userTranslation, onDiscuss, manualNotes = [], onAddManualNote, result = null }) {
   const [isAddingNote, setIsAddingNote] = useState(false)
   const [manualNoteDraft, setManualNoteDraft] = useState('')
 
@@ -3278,6 +3355,7 @@ export function StudySubmittedStack({ bestTranslation, userTranslation, onDiscus
           <p className="study-v2__bodyText">{userTranslation}</p>
         </div>
       </StudyPanel>
+      <StudyResultEvidence result={result} />
       <StudyPanel tone="slate" className="study-v2__resultPanel study-v2__notesPanel" anchor="notes">
         <CardHeader badge={<ScrollText size={15} />} title="Discussion Summary & Notes" tone="slate">
           <button type="button" className="study-v2__miniPill" onClick={() => setIsAddingNote(true)} title="Add a manual note">

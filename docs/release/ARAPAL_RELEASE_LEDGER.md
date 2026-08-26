@@ -322,3 +322,38 @@ build PASS, lint 0, unit 98/98, behaviour 36/2, QA production 0.
 Residual (documented, not blocking S3-001): a valid-key Gemini segmentation PASS
 is the external verification item; the application/config boundary and the
 on-device path are complete and verified.
+
+## S3-002 — RESOLVED (IP-S3-02)
+
+Root-cause fixes:
+- **One validated result adapter** (`studyResultView.adaptStudyResult`) is the
+  SOLE authority for the live review. It exposes only fields a real AI grade
+  carries (a surface-check, sample, or null result yields an empty view — honest
+  absence), and never a best translation before a genuine pass.
+- **The review renders the real evaluator output:** `StudySubmittedStack` now
+  renders Feedback, "What the grade checked" (criterion anchors), Vocabulary,
+  Guidance, and Takeaways from the stored result; best-in-class comes from the
+  result (live) instead of `bestTranslation={null}`.
+- **No live fixture fallback:** Quick Lexicography draws grounded vocabulary from
+  the grade on live projects (honest "appears after grading" when absent) instead
+  of the fixed prayer/city term list; the support rail stays honest-empty on live.
+- **Fail path:** a critical FAIL surfaces the real blocking issues ("fix these,
+  then submit again") and shows no best-in-class card.
+- Result schema extended with `anchors`/`categoryScores`/`blockingIssues`;
+  `gradeSegment` persists them.
+
+Evidence — production UI with injected results (`tests/behaviour/study-review.spec.js`, 4/4):
+- Injected PASS over an ARBITRARY physician source renders best-in-class,
+  feedback, vocabulary, guidance, takeaways and criterion evidence, and contains
+  **no** `مصر جامع`/Friday-prayer/comprehensive-city fixture strings; verified in
+  the rendered desktop UI (screenshot).
+- Injected PASS survives reload.
+- Injected critical FAIL shows the blocking issue and **no** best-in-class card.
+- Malformed grade degrades to honest absence ("No reference translation…"), no
+  crash, no fixture.
+Adapter unit tests (`tests/data/studyResultView.test.mjs`, 6/6) cover
+PASS/FAIL/surface-check/sample/malformed/null. Gate: build PASS, lint 0, unit
+104/104, behaviour 40/2, QA production 0.
+
+External item: a valid-key Gemini PASS end-to-end; the render path and every
+result state are proven with injected results.

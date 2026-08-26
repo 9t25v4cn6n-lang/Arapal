@@ -133,6 +133,9 @@ export function createResult({
   // fabricated. mode records which evaluator produced this result.
   bestTranslation = '', feedback = '', vocabulary = [], guidance = [],
   takeaways = [], topics = [], mode = 'surface-check',
+  // Criterion-level evidence (source §15 anchors + §16 category scores). Present
+  // on a real AI grade; drives the review's evidence, never fabricated.
+  anchors = [], categoryScores = {}, blockingIssues = [],
 }) {
   return {
     id: newId('res'),
@@ -149,6 +152,9 @@ export function createResult({
     guidance,
     takeaways,
     topics,
+    anchors,
+    categoryScores,
+    blockingIssues,
     createdAt: new Date().toISOString(),
   }
 }
