@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import useIsMobileViewport from '../primitives/useIsMobileViewport'
+import useIsMobileViewport, { useIsTabletViewport } from '../primitives/useIsMobileViewport'
 import { colors, elevation } from '../tokens'
 import { resolveBodyBackdropPreset } from './bodyBackdropPresets'
 
@@ -107,7 +107,7 @@ function buildRuntimeContractMeta(contract, containerOverrides, rootNode) {
  * layout rather than splitting it across a contract and a stylesheet that cannot
  * win.
  */
-function getContainerStyle(container, override, isActive, isMobile) {
+function getContainerStyle(container, override, isActive, isMobile, isTablet) {
   const style = {
     boxSizing: 'border-box',
     minWidth: 0,
@@ -134,8 +134,12 @@ function getContainerStyle(container, override, isActive, isMobile) {
 
   Object.assign(style, override?.style)
 
-  // Last, so it beats both the base declaration and any override — the mobile
-  // frame is the most specific statement about the layout, not the least.
+  // Tablet first, then mobile last — so at ≤560 the mobile frame still wins over
+  // any tablet restatement, and the tablet band (561–1024) gets its own layout
+  // instead of inheriting a desktop rail that crushes the detail (S3-003).
+  if (isTablet && container.tablet) {
+    Object.assign(style, container.tablet)
+  }
   if (isMobile && container.mobile) {
     Object.assign(style, container.mobile)
   }
@@ -151,6 +155,7 @@ function getContainerStyle(container, override, isActive, isMobile) {
 
 export default function ScreenContractRenderer({ contract, slotContent = {}, containerOverrides = {}, debugTools = null }) {
   const isMobile = useIsMobileViewport()
+  const isTablet = useIsTabletViewport()
   const rootRef = useRef(null)
   const [isDebugOpen, setIsDebugOpen] = useState(readDebugInitiallyEnabled)
   const [hoveredContainerName, setHoveredContainerName] = useState(null)
@@ -263,7 +268,7 @@ export default function ScreenContractRenderer({ contract, slotContent = {}, con
         data-debug-name={container.name}
         data-debug-allow-empty={container.allowEmpty ? 'true' : undefined}
         data-debug-semantic-role={container.semanticRole ?? undefined}
-        style={getContainerStyle(container, override, isActive, isMobile)}
+        style={getContainerStyle(container, override, isActive, isMobile, isTablet)}
         onMouseEnter={shouldAttachMouseEnter ? handleMouseEnter : undefined}
         onMouseLeave={shouldAttachMouseLeave ? handleMouseLeave : undefined}
         onClick={override?.onClick}

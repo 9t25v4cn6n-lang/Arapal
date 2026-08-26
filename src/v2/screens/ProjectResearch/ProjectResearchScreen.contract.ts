@@ -51,6 +51,15 @@ const layoutContract = createScreenLayoutContract({
         position: 'relative',
         zIndex: 1,
       },
+      // At mobile the fixed 1fr desk track was starved to ~0 height by the tall
+      // stacked lens rail above it (S3-003). Normal-flow scroll instead: the
+      // header, lenses, and desk each take real height and the page scrolls.
+      mobile: {
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'auto',
+        gap: spacing[16],
+      },
     },
   ],
   layer3: [
@@ -70,6 +79,9 @@ const layoutContract = createScreenLayoutContract({
       style: {
         minWidth: 0,
       },
+      // Keep the masthead's full (stacked) height in the mobile flex column so
+      // its Study-mode control doesn't overlap the lens panel below it (S3-003).
+      mobile: { flexShrink: 0 },
     },
     {
       name: 'Layer3_ProjectResearch_Main',
@@ -84,9 +96,13 @@ const layoutContract = createScreenLayoutContract({
       // title clipped inside its own block and the ledger pushed off the frame.
       // The lenses are a filter over the ledger, so on mobile the ledger gets the
       // width and the rail stacks above it rather than competing for it.
+      // Flex column at mobile so the lens rail and the desk stack at their real
+      // content height instead of fixed tracks that collapse the desk (S3-003).
       mobile: {
-        gridTemplateColumns: 'minmax(0, 1fr)',
-        gridTemplateRows: 'auto minmax(0, 1fr)',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'visible',
+        gap: spacing[16],
       },
       alignItems: 'stretch',
       justifyContent: 'stretch',
@@ -119,6 +135,8 @@ const layoutContract = createScreenLayoutContract({
         minWidth: 0,
         minHeight: 0,
       },
+      // Keep content height in the mobile flex column (S3-003).
+      mobile: { flexShrink: 0, overflow: 'visible' },
     },
     {
       name: 'Layer4_ProjectResearch_ResultSurface',
@@ -138,6 +156,9 @@ const layoutContract = createScreenLayoutContract({
         minWidth: 0,
         minHeight: 0,
       },
+      // The desk must keep a real, usable height on its own — never collapse to
+      // zero — so it stays a first-class work surface at mobile (S3-003).
+      mobile: { flexShrink: 0, overflow: 'visible', minHeight: '70vh' },
     },
   ],
 })

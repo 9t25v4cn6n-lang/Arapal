@@ -1,4 +1,5 @@
 import { colors, radius, spacing, typography } from '../tokens'
+import useIsMobileViewport from './useIsMobileViewport'
 
 /**
  * Contrast-safe background/foreground pairs for a step badge.
@@ -47,6 +48,27 @@ export function StepNumberBadge({ children, tone = 'pending', background, color,
 }
 
 export default function StepBar({ steps = [], currentIndex = 0, debugItem }) {
+  const isMobile = useIsMobileViewport()
+
+  // On a narrow header the full three-step rail wrapped and left the wrong step
+  // (e.g. "2 REVIEW") as the only one visible while the user was on step 1
+  // (S3-003). At mobile it collapses to an UNAMBIGUOUS single current step:
+  // "Step 1 of 3 · Source".
+  if (isMobile) {
+    const current = steps[currentIndex] ?? steps[0]
+    return (
+      <div
+        data-debug-item={debugItem}
+        style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[8], minWidth: 0, maxWidth: '100%' }}
+      >
+        <StepNumberBadge tone="current">{currentIndex + 1}</StepNumberBadge>
+        <span style={{ ...typography.eyebrowLabel, color: colors.textSoft, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          Step {currentIndex + 1} of {steps.length}{current?.label ? ` · ${current.label}` : ''}
+        </span>
+      </div>
+    )
+  }
+
   return (
     <div
       data-debug-item={debugItem}

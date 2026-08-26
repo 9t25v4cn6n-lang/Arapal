@@ -424,3 +424,36 @@ Evidence — `tests/behaviour/exam-recovery.spec.js` (4/4):
 - Submitting without AI is ungraded (no fabricated score) and offers Setup AI /
   Retry grading.
 Gate: build PASS, lint 0, unit 108/108, behaviour 46/2, QA production 0.
+
+## S3-003 — RESOLVED (IP-S3-03)
+
+Root causes + fixes (verified with realistic populated content at 390/768/1280/1440):
+- **Projects 390 overlap:** the mobile grid's default `align-content: stretch`
+  split `auto auto` into EQUAL tracks, so a populated 3-metric summary (198px)
+  overflowed its 150px track and the workspace overlapped it. Fixed by making the
+  root + orientation flex columns with `flexShrink:0` regions — content-height
+  stacking, root scrolls. Verified: workspace heading now below the summary (490
+  > 454), no overlap.
+- **Projects 768 detail sliver:** the desktop 3-column workspace (380px rail) was
+  used at 768, leaving the DETAIL pane 126px. Added a real TABLET breakpoint
+  (561–1024) to the contract renderer; Projects stacks the rail above a
+  full-width detail at tablet. Verified: detail 126px → 644px.
+- **Research 390 zero-height work surface:** the desk (`height:100%`) sat in a
+  1fr track starved to ~0 by the tall stacked lens rail. Fixed: Research root is
+  a scrolling flex column at mobile, the desk region carries a real `min-height`,
+  the deskBody is one column. Verified: desk 2px → 896px; search + ledger rows
+  reachable; masthead study-mode no longer overlaps the lenses.
+- **Segmentation 390 wrong active step:** the wrapped 3-step rail left "2 REVIEW"
+  as the only visible step on step 1. The StepBar now collapses to an unambiguous
+  "Step 1 of 3 · Source" at mobile.
+- **Segmentation 390/768 clipped metadata:** the SplitCTA `max-content` cluster
+  overran the frame (and its inner 340px min overlapped the options tail), the
+  CTA meta row (inline-flex) clipped its third label, and the editor seal spilled.
+  Fixed: SplitCTA fills width with a fractional lead + 0 inner min at mobile, the
+  meta row is full-width flex-wrap, the decorative seal hides at mobile, and the
+  CTA label shortens. Verified: intake 390 overflow 0.
+
+Desktop unchanged (1440 workspace/summary intact, overflow 0). The 5 desktop VR
+states that changed (empty Review from S3-001, derived research queue from
+S3-005, intake meta row) were inspected and re-baselined. Gate: build PASS, lint
+0, unit 108/108, behaviour 46/2, QA production 0, VR 56/56.

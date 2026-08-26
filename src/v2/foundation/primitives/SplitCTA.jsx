@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom'
 import { motion, radius } from '../tokens'
 import { ctaChrome } from './ctaChromePresets'
 import PrimaryCTA from './PrimaryCTA'
+import useIsMobileViewport from './useIsMobileViewport'
 
 const splitCtaMetrics = {
   tailWidth: 72,
@@ -163,6 +164,10 @@ export default function SplitCTA({
   }, [isMenuOpen])
 
   const showActiveChrome = !disabled && (isMenuOpen || isSplitHovered || isSplitFocused)
+  const isMobile = useIsMobileViewport()
+  // A narrower options tail at mobile hands ~20px back to the primary label so it
+  // is not clipped inside the 390 frame (S3-003).
+  const tailW = isMobile ? 52 : splitCtaMetrics.tailWidth
 
   return (
     <div
@@ -175,10 +180,15 @@ export default function SplitCTA({
         // with `width: max-content` and no ceiling, so the action ran 66px past
         // the frame and took the meta row above it along. A minimum is a
         // preference, not a promise the viewport has to keep.
-        gridTemplateColumns: `minmax(0, ${minWidth}px) ${splitCtaMetrics.tailWidth}px`,
+        // At mobile the cluster FILLS its lane (1fr lead) so the primary action
+        // shrinks to the frame instead of running past it; on wider frames it
+        // keeps its max-content preference (S3-003).
+        gridTemplateColumns: isMobile
+          ? `minmax(0, 1fr) ${tailW}px`
+          : `minmax(0, ${minWidth}px) ${tailW}px`,
         alignItems: 'stretch',
         justifyContent: 'center',
-        width: 'max-content',
+        width: isMobile ? '100%' : 'max-content',
         maxWidth: '100%',
         height,
         isolation: 'isolate',
@@ -205,7 +215,10 @@ export default function SplitCTA({
         disabled={disabled}
         onClick={onPrimaryClick}
         forceActiveChrome={isMenuOpen}
-        minWidth={minWidth}
+        // At mobile the lead track is a 1fr cell, so the inner button must give
+        // up its 340px minimum or it overflows the cell and overlaps the options
+        // tail (S3-003).
+        minWidth={isMobile ? 0 : minWidth}
         height={height}
         shape="splitLead"
         style={primaryButtonStyle}
@@ -232,7 +245,7 @@ export default function SplitCTA({
           position: 'relative',
           isolation: 'isolate',
           overflow: 'hidden',
-          width: splitCtaMetrics.tailWidth,
+          width: tailW,
           minHeight: height,
           height,
           border: 'none',

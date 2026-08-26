@@ -1469,6 +1469,28 @@ const researchStyles = `
      are also in the ledger header, so on mobile it goes rather than wraps. */
   @media (max-width: 560px) {
     .project-research__metricStrip { display: none; }
+
+    /* The desk stops being a fixed-height clipped viewport and becomes a real,
+       content-height work surface that scrolls with the page (S3-003). Its
+       parent region carries the min-height; here it just stops forcing 100% of a
+       collapsed track and stops hiding its overflow. */
+    .project-research__desk {
+      height: auto;
+      min-height: 0;
+      overflow: visible;
+    }
+    /* One column: the ledger takes the width, and the inspector (only present
+       once a segment is selected) stacks beneath it rather than reserving 424px
+       that pushed the ledger off the frame. */
+    .project-research__deskBody,
+    .project-research__deskBody.is-browse {
+      grid-template-columns: minmax(0, 1fr);
+      overflow: visible;
+    }
+    /* The masthead's 360px second column doesn't fit 390; let it stack. */
+    .project-research__masthead {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 
   .project-research__metricPill {

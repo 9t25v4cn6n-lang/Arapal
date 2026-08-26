@@ -59,9 +59,13 @@ const layoutContract = createScreenLayoutContract({
       mobile: {
         padding: `${spacing[24]} ${spacing[16]} ${spacing[40]}`,
         gap: spacing[24],
-        // Content-size the rows and pack them from the top. Without this the
-        // stretched full-height root split its `auto auto` rows into two equal
-        // tracks, so the hero overflowed its half onto the summary band (R-020).
+        // Flex column, not a grid: `grid-template-rows: auto auto` with the
+        // default `align-content: stretch` split the full-height root into two
+        // EQUAL tracks, so a populated summary (198px) overflowed its 150px track
+        // and the workspace overlapped it (S3-003, R-020 was only partial). Flex
+        // stacks the orientation and workspace at their real content height.
+        display: 'flex',
+        flexDirection: 'column',
         alignContent: 'start',
       },
     },
@@ -83,7 +87,10 @@ const layoutContract = createScreenLayoutContract({
       overflow: 'visible',
       textAlign: 'left',
       style: { gridRow: '1', minWidth: 0 },
-      mobile: { gap: spacing[24], alignContent: 'start' },
+      // Flex column at mobile for the same reason as the root: the hero + summary
+      // must stack at content height, not be split into equal stretched tracks
+      // that clip the third summary metric (S3-003).
+      mobile: { display: 'flex', flexDirection: 'column', gap: spacing[24], alignContent: 'start', flexShrink: 0 },
     },
     {
       name: 'Layer3_Projects_Workspace',
@@ -104,9 +111,21 @@ const layoutContract = createScreenLayoutContract({
         // Flex column, not a single-column grid: a stretched full-height grid
         // split its implicit rows into equal tracks, so the lesson rail and the
         // detail stage overlapped. Flex stacks them at content height (R-020).
+        // flexShrink 0 so the workspace keeps its height inside the root's flex
+        // column and the root scrolls, rather than compressing (S3-003).
         display: 'flex',
         flexDirection: 'column',
         gap: spacing[24],
+        flexShrink: 0,
+      },
+      // At tablet the fixed 380px rail + 58px trailing column left the DETAIL
+      // pane ~126px — an unusable sliver (S3-003). Stack the rail above the
+      // full-width detail instead, the same shape mobile uses.
+      tablet: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: spacing[32],
+        flexShrink: 0,
       },
     },
   ],
@@ -126,6 +145,8 @@ const layoutContract = createScreenLayoutContract({
       overflow: 'visible',
       textAlign: 'left',
       style: { gridRow: '1', minWidth: 0 },
+      // Keep content height inside the orientation's mobile flex column (S3-003).
+      mobile: { flexShrink: 0 },
     },
     {
       name: 'Layer4_Projects_Summary',
@@ -135,6 +156,9 @@ const layoutContract = createScreenLayoutContract({
       display: 'flex',
       layoutMode: 'flex',
       flexDirection: 'column',
+      // Keep its true content height so the third metric card is never clipped by
+      // a shrunk track (S3-003).
+      mobile: { flexShrink: 0 },
       alignItems: 'stretch',
       justifyContent: 'stretch',
       padding: '0',
@@ -162,6 +186,7 @@ const layoutContract = createScreenLayoutContract({
       // flexShrink 0 in the mobile flex column: the rail must keep its content
       // height, not collapse and let its list overflow onto the detail stage.
       mobile: { gridColumn: '1', flexShrink: 0 },
+      tablet: { flexShrink: 0 },
     },
     {
       name: 'Layer4_Projects_DetailStage',
@@ -180,6 +205,7 @@ const layoutContract = createScreenLayoutContract({
       textAlign: 'left',
       style: { gridColumn: '2', minWidth: 0, minHeight: 0 },
       mobile: { gridColumn: '1', flexShrink: 0 },
+      tablet: { flexShrink: 0 },
     },
     {
       name: 'Layer4_Projects_History',
@@ -198,6 +224,7 @@ const layoutContract = createScreenLayoutContract({
       textAlign: 'left',
       style: { gridColumn: '3', minWidth: 0, minHeight: 0, alignSelf: 'stretch' },
       mobile: { display: 'none' },
+      tablet: { display: 'none' },
     },
   ],
 })

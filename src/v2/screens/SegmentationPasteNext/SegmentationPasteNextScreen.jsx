@@ -14,6 +14,7 @@ import {
   clearSegmentationIntent,
 } from '../../foundation/primitives/segmentationFlowState'
 import SplitCTA from '../../foundation/primitives/SplitCTA'
+import useIsMobileViewport from '../../foundation/primitives/useIsMobileViewport'
 import { actions, select, getSnapshot } from '../../data'
 import { generateMarkers, markersToChunks } from '../../lib/segmentation'
 import StepBar from '../../foundation/primitives/StepBar'
@@ -51,6 +52,7 @@ function deriveProjectTitle(rawText) {
 }
 
 export default function SegmentationPasteNextScreen({ route, shell }) {
+  const isMobile = useIsMobileViewport()
   const [rawText, setRawText] = useState(initialText)
   const [method, setMethod] = useState(() => readSegmentationFlowPreferences().method)
   // Seeded from the stored preferences like method is, rather than hard-coded.
@@ -155,7 +157,12 @@ export default function SegmentationPasteNextScreen({ route, shell }) {
         <div
           data-debug-item="cta_meta_row"
           style={{
-            display: 'inline-flex',
+            // flex + full width (not inline-flex) so the row FILLS the frame and
+            // wraps within it — inline-flex sized to content and overran 390,
+            // clipping the granularity label (S3-003).
+            display: 'flex',
+            width: '100%',
+            maxWidth: '100%',
             alignItems: 'center',
             gap: spacing[8],
             flexWrap: 'wrap',
@@ -179,10 +186,10 @@ export default function SegmentationPasteNextScreen({ route, shell }) {
         <SplitCTA
           label={
             selectedMethod.id === 'manual'
-              ? 'Manual review'
+              ? (isMobile ? 'Manual' : 'Manual review')
               : selectedMethod.id === 'ai'
-                ? 'AI segmentation'
-                : 'Segment on device'
+                ? (isMobile ? 'AI segment' : 'AI segmentation')
+                : (isMobile ? 'Segment' : 'Segment on device')
           }
           icon={
             selectedMethod.id === 'manual'

@@ -38,3 +38,24 @@ function getServerSnapshot() {
 export default function useIsMobileViewport() {
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 }
+
+// The tablet band sits ABOVE the mobile breakpoint and below the desktop
+// three-pane width. A contract can restate layout here (`tablet` block) so a
+// fixed desktop rail does not crush the primary detail at 768 (S3-003).
+export const TABLET_MAX_PX = 1024
+const TABLET_QUERY = `(min-width: ${MOBILE_BREAKPOINT_PX + 1}px) and (max-width: ${TABLET_MAX_PX}px)`
+
+function subscribeTablet(onChange) {
+  if (typeof window === 'undefined' || !window.matchMedia) return () => {}
+  const list = window.matchMedia(TABLET_QUERY)
+  list.addEventListener('change', onChange)
+  return () => list.removeEventListener('change', onChange)
+}
+function getTabletSnapshot() {
+  if (typeof window === 'undefined' || !window.matchMedia) return false
+  return window.matchMedia(TABLET_QUERY).matches
+}
+
+export function useIsTabletViewport() {
+  return useSyncExternalStore(subscribeTablet, getTabletSnapshot, getServerSnapshot)
+}

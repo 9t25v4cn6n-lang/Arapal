@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { colors, radius, spacing, surfacePadding, typography } from '../tokens'
+import useIsMobileViewport from './useIsMobileViewport'
 
 const editorSurfaceMetrics = {
   cornerSize: 16,
@@ -127,6 +128,7 @@ export default function EditorSurface({
   const cornerInset = Math.max(Number.parseInt(spacing[4], 10), frameInset - cornerGapPx)
   const frameRadius = 28
   const headerInset = surfacePadding.editorHeaderX
+  const isMobile = useIsMobileViewport()
   const footerInset = surfacePadding.editorFooterX
   const bodyInset = surfacePadding.editorBody
   const decorativeWatermarkSize = `${Math.max(24, Math.round((Number.parseFloat(typography.displayTitle.fontSize) * 0.667 - 4) * 1000) / 1000)}px`
@@ -285,6 +287,9 @@ export default function EditorSurface({
               style={{ minWidth: 0, minHeight: 1 }}
             />
 
+            {/* The decorative seal is header chrome; at 390 it clipped past the
+                frame, so it yields to the primary paste area (S3-003). */}
+            {isMobile ? null : (
             <div
               data-debug-item="editor_header_right_slot"
               style={{ display: 'inline-flex', alignItems: 'center', justifySelf: 'end', minWidth: 0 }}
@@ -312,6 +317,7 @@ export default function EditorSurface({
                 {seal}
               </div>
             </div>
+            )}
           </div>
         </div>
 
