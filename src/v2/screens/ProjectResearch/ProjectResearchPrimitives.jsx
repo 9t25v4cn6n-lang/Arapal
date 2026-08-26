@@ -338,7 +338,7 @@ export function SourceReader(props) {
   return <SegmentInspector {...props} />
 }
 
-export function AskCompanion({ selectedSegment, segments = [], onSelectSegment }) {
+export function AskCompanion({ selectedSegment, segments = [], onSelectSegment, onSetupAi }) {
   const [question, setQuestion] = useState('')
   // answer holds a real, project-grounded reply; there is no default fixture.
   // status: 'idle' | 'loading' | 'answered' | 'unavailable' | 'error'.
@@ -397,8 +397,16 @@ export function AskCompanion({ selectedSegment, segments = [], onSelectSegment }
         {status === 'unavailable' || status === 'error' ? (
           <div className="project-research__answerPlaceholder" role="alert">
             <MessageSquareText size={24} strokeWidth={1.8} />
-            <strong>{status === 'unavailable' ? 'AI companion not configured' : 'The answer could not be produced'}</strong>
+            <strong>{status === 'unavailable' ? 'AI companion not configured' : 'The answer couldn’t be produced'}</strong>
+            {/* The notice is centrally normalised — never a raw provider string
+                (S3-005). The typed question is preserved for Retry. */}
             <span>{notice}</span>
+            <div className="project-research__promptRow" style={{ marginTop: '8px' }}>
+              {status === 'unavailable' && onSetupAi ? (
+                <button type="button" onClick={onSetupAi}>Set up AI</button>
+              ) : null}
+              <button type="button" onClick={submitQuestion} disabled={!question.trim()}>Retry</button>
+            </div>
           </div>
         ) : null}
 
@@ -454,6 +462,7 @@ export function SourceReaderPanel({
   onSelectSegment,
   onOpenStudy,
   onClearSelection,
+  onSetupAi,
 }) {
   const openCitedSegment = (segmentId) => {
     onSelectSegment(segmentId)
@@ -514,7 +523,7 @@ export function SourceReaderPanel({
 
         <div className="project-research__rightBody">
           {mode === 'ask' ? (
-            <AskCompanion selectedSegment={selectedSegment} segments={askSegments} onSelectSegment={openCitedSegment} />
+            <AskCompanion selectedSegment={selectedSegment} segments={askSegments} onSelectSegment={openCitedSegment} onSetupAi={onSetupAi} />
           ) : (
             <SegmentInspector
               segment={selectedSegment}

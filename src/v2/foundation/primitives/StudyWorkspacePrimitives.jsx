@@ -3117,11 +3117,12 @@ export function StudyTranslationEditor({
  * two verbs, in two places, which reads as two different capabilities. Nothing
  * is discarded either way, so both say Hide.
  */
-export function StudyDiscussionCompanion({ onClose, segmentLabel, segmentText = '', segmentRef = '', passed = false, onSaveSummary }) {
+export function StudyDiscussionCompanion({ onClose, segmentLabel, segmentText = '', segmentRef = '', passed = false, onSaveSummary, onSetupAi }) {
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [status, setStatus] = useState('idle') // idle | sending | summarising
   const [notice, setNotice] = useState(null)
+  const [noticeReason, setNoticeReason] = useState(null)
 
   const busy = status !== 'idle'
 
@@ -3132,6 +3133,7 @@ export function StudyDiscussionCompanion({ onClose, segmentLabel, segmentText = 
     // never loses the user's words (R-022).
     setStatus('sending')
     setNotice(null)
+    setNoticeReason(null)
     const nextMessages = [...messages, { role: 'user', text }]
     const res = await discuss({ segmentText, segmentRef, messages: nextMessages, revealBestTranslation: passed })
     setStatus('idle')
@@ -3139,7 +3141,10 @@ export function StudyDiscussionCompanion({ onClose, segmentLabel, segmentText = 
       setMessages([...nextMessages, { role: 'assistant', text: res.result.replyMd }])
       setInput('')
     } else {
+      // res.message is the CENTRALLY normalised message — never a raw provider
+      // string (S3-005). The typed message is preserved for Retry.
       setNotice(res.message)
+      setNoticeReason(res.reason)
     }
   }
 
@@ -3147,6 +3152,7 @@ export function StudyDiscussionCompanion({ onClose, segmentLabel, segmentText = 
     if (busy || messages.length === 0) return
     setStatus('summarising')
     setNotice(null)
+    setNoticeReason(null)
     const res = await summariseDiscussion({ segmentText, segmentRef, messages })
     setStatus('idle')
     if (res.available) {
@@ -3154,6 +3160,7 @@ export function StudyDiscussionCompanion({ onClose, segmentLabel, segmentText = 
       setNotice('Summary saved to this segment.')
     } else {
       setNotice(res.message)
+      setNoticeReason(res.reason)
     }
   }
 
@@ -3197,7 +3204,23 @@ export function StudyDiscussionCompanion({ onClose, segmentLabel, segmentText = 
           </div>
         )}
 
-        {notice ? <p className="study-v2__sampleNotice" role="status" style={{ margin: `${spacing[8]} 0 0` }}>{notice}</p> : null}
+        {notice ? (
+          <p className="study-v2__sampleNotice" role="status" style={{ margin: `${spacing[8]} 0 0` }}>
+            {notice}
+            {noticeReason === 'no-provider' && onSetupAi ? (
+              <>
+                {' '}
+                <button
+                  type="button"
+                  onClick={onSetupAi}
+                  style={{ border: 'none', background: 'transparent', padding: 0, color: 'inherit', font: 'inherit', fontWeight: 600, textDecoration: 'underline', cursor: 'pointer' }}
+                >
+                  Set up AI
+                </button>
+              </>
+            ) : null}
+          </p>
+        ) : null}
         {status === 'sending' ? <p className="study-v2__supportText" role="status" style={{ margin: `${spacing[8]} 0 0` }}>Sending…</p> : null}
 
         <textarea

@@ -1,8 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
 import { Sparkles, X, Check, ShieldCheck } from 'lucide-react'
 import { colors, radius, spacing, typography } from '../tokens'
-import { isAiConfigured, readAiConfig, writeAiConfig, clearAiConfig } from '../../services/ai'
+import { readAiConfig, writeAiConfig, clearAiConfig, getAiState, resetAiHealth } from '../../services/ai'
 import PrimaryCTA from './PrimaryCTA'
+
+// The four AI operational states, badged consistently (S3-005). Key presence is
+// NOT "verified" — a saved-but-unused or a failed key must say so honestly.
+const STATE_BADGE = {
+  absent: { label: 'AI is not configured', tone: 'soft' },
+  unverified: { label: 'Key saved — not yet verified', tone: 'soft' },
+  verified: { label: 'AI is configured and verified', tone: 'good' },
+  failed: { label: 'The saved key failed — check it', tone: 'bad' },
+}
 
 // The one provider Arapal V1 ships an adapter for. Stated plainly in the UI so a
 // user knows exactly whose terms their study content is sent under, and so this
@@ -26,10 +35,11 @@ const SUPPORTED_PROVIDER = { id: 'gemini', label: 'Google Gemini', defaultModel:
 export default function AiConfigDialog({ open, onClose }) {
   const [apiKey, setApiKey] = useState('')
   const [model, setModel] = useState(() => readAiConfig()?.model || '')
-  const [configured, setConfigured] = useState(() => isAiConfigured())
+  const [aiState, setAiState] = useState(() => getAiState())
   const [error, setError] = useState('')
   const [saved, setSaved] = useState(false)
   const keyInputRef = useRef(null)
+  const configured = aiState !== 'absent'
 
   useEffect(() => {
     if (!open) return undefined
@@ -58,7 +68,10 @@ export default function AiConfigDialog({ open, onClose }) {
       setError('This device could not save the key (private mode or storage is full).')
       return
     }
-    setConfigured(true)
+    // A newly-saved key is UNVERIFIED — its validity is unknown until a real call
+    // succeeds. Never badge it as verified on save (S3-005).
+    resetAiHealth()
+    setAiState('unverified')
     setApiKey('')
     setError('')
     setSaved(true)
@@ -66,7 +79,8 @@ export default function AiConfigDialog({ open, onClose }) {
 
   const handleRemove = () => {
     clearAiConfig()
-    setConfigured(false)
+    resetAiHealth()
+    setAiState('absent')
     setApiKey('')
     setSaved(false)
     setError('')
@@ -128,12 +142,14 @@ export default function AiConfigDialog({ open, onClose }) {
             padding: `${spacing[4]} ${spacing[12]}`, borderRadius: radius.pill,
             background: colors.surfaceSoft,
             border: `1px solid ${colors.borderSoft}`,
-            color: configured ? colors.successStrong : colors.textSoft,
+            color: STATE_BADGE[aiState].tone === 'good' ? colors.successStrong
+              : STATE_BADGE[aiState].tone === 'bad' ? colors.critical
+                : colors.textSoft,
             ...typography.metaText,
           }}
         >
-          {configured ? <Check size={14} strokeWidth={2.2} /> : null}
-          {configured ? 'AI is configured' : 'AI is not configured'}
+          {STATE_BADGE[aiState].tone === 'good' ? <Check size={14} strokeWidth={2.2} /> : null}
+          {STATE_BADGE[aiState].label}
         </span>
 
         <p style={{ ...typography.supportSubtext, margin: 0, color: colors.textSoft }}>

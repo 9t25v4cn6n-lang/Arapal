@@ -501,11 +501,13 @@ export const researchSegments = [
   }),
 ]
 
+// Refinements that derive from a segment's real properties, so they apply to
+// ANY project. The old 'City terms' chip was a fixture specific to the Al-Hidayah
+// sample and leaked into every project (S3-005).
 export const quickRefinements = [
   { id: 'revision', label: 'Needs revision' },
   { id: 'no-translation', label: 'No translation' },
   { id: 'vocab-rich', label: 'Vocab rich' },
-  { id: 'city-terms', label: 'City terms' },
 ]
 
 export function getResearchStats(segments = researchSegments) {
@@ -527,30 +529,33 @@ export function getResearchStats(segments = researchSegments) {
 
 export function getRevisionQueue(segments = researchSegments) {
   const stats = getResearchStats(segments)
-  const cityTerms = segments.filter((item) => item.tags.includes('city-condition')).length
   const comparisonItems = segments.filter((item) => item.userTranslation && item.bestTranslation).length
 
+  // Every entry derives from the project's OWN segment data. The former
+  // "Recurring terms · N city-condition links" entry was a fixture-specific
+  // topic that read as "0 city-condition links" on any real project (S3-005);
+  // it is replaced by the segment's real vocabulary count.
   return [
     {
       id: 'weak',
       label: 'Weak segments',
-      detail: `${stats.needsAttention} saved review points`,
+      detail: `${stats.needsAttention} to review`,
       filter: 'weak',
       query: '',
     },
     {
-      id: 'terms',
-      label: 'Recurring terms',
-      detail: `${cityTerms} city-condition links`,
-      filter: 'all',
-      query: 'city-condition',
+      id: 'vocab',
+      label: 'Vocabulary notes',
+      detail: `${stats.vocabularyNotes} captured`,
+      filter: 'vocabulary',
+      query: '',
     },
     {
       id: 'comparison',
       label: 'Translation comparison',
       detail: `${comparisonItems} comparison-ready`,
       filter: 'all',
-      query: 'best translation',
+      query: '',
     },
   ]
 }

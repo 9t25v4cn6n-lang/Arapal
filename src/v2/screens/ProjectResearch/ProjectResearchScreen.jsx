@@ -95,6 +95,7 @@ function ResearchDesk({
   onModeChange,
   onOpenStudy,
   onClearSelection,
+  onSetupAi,
 }) {
   const activeFilterLabel = researchFilters.find((filter) => filter.id === activeFilter)?.label ?? 'All knowledge'
 
@@ -125,6 +126,7 @@ function ResearchDesk({
           onSelectSegment={onSelectSegment}
           onOpenStudy={onOpenStudy}
           onClearSelection={onClearSelection}
+          onSetupAi={onSetupAi}
         /> : null}
       </div>
     </main>
@@ -219,6 +221,7 @@ export default function ProjectResearchScreen({ route, shell }) {
         onModeChange={setRightMode}
         onOpenStudy={openStudyMode}
         onClearSelection={() => setSelectedSegmentId(null)}
+        onSetupAi={() => shell.openAiConfig?.()}
       />
     ),
   }

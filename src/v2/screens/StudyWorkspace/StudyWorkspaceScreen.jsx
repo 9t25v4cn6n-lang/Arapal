@@ -691,7 +691,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
               onAddManualNote={addManualNote}
             />
             <StudySubmissionNavigator onJumpTo={jumpToStudyAnchor} notesAvailable={currentManualNotes.length > 0} />
-            {discussionVisible ? <StudyDiscussionCompanion onClose={closeDiscussion} segmentLabel={currentSegment?.label} segmentText={currentSegment?.text ?? ""} segmentRef={currentSegment?.ref ?? ""} passed={currentState === "submitted"} onSaveSummary={(text) => addManualNote(text, "discussion")} /> : null}
+            {discussionVisible ? <StudyDiscussionCompanion onClose={closeDiscussion} segmentLabel={currentSegment?.label} segmentText={currentSegment?.text ?? ""} segmentRef={currentSegment?.ref ?? ""} passed={currentState === "submitted"} onSaveSummary={(text) => addManualNote(text, "discussion")} onSetupAi={shell.openAiConfig} /> : null}
           </div>
         ) : (
           <div
@@ -738,7 +738,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
               />
             </div>
             <div className="study-v2__composerCompanion">
-              {discussionVisible ? <StudyDiscussionCompanion onClose={closeDiscussion} segmentLabel={currentSegment?.label} segmentText={currentSegment?.text ?? ""} segmentRef={currentSegment?.ref ?? ""} passed={currentState === "submitted"} onSaveSummary={(text) => addManualNote(text, "discussion")} /> : null}
+              {discussionVisible ? <StudyDiscussionCompanion onClose={closeDiscussion} segmentLabel={currentSegment?.label} segmentText={currentSegment?.text ?? ""} segmentRef={currentSegment?.ref ?? ""} passed={currentState === "submitted"} onSaveSummary={(text) => addManualNote(text, "discussion")} onSetupAi={shell.openAiConfig} /> : null}
             </div>
           </div>
         )}

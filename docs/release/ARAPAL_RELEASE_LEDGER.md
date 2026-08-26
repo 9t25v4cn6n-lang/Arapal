@@ -357,3 +357,39 @@ PASS/FAIL/surface-check/sample/malformed/null. Gate: build PASS, lint 0, unit
 
 External item: a valid-key Gemini PASS end-to-end; the render path and every
 result state are proven with injected results.
+
+## S3-005 — RESOLVED (IP-S3-05)
+
+Root-cause fixes:
+- **Context provenance:** the Research revision queue and quick refinements now
+  derive entirely from the active project's segments. The fixture "City terms"
+  chip and the "N city-condition links" entry (which read "0" on any real
+  project) are removed; the queue is Weak segments / Vocabulary notes /
+  Translation comparison from real counts. (Study Quick Lexicography was grounded
+  in IP-S3-02.)
+- **Central AI operational state** (`services/ai/health.js`): one `getAiState()`
+  distinguishing **absent / unverified / verified / failed**. Key presence is
+  never badged as verified — a saved key is "unverified" until a real call
+  succeeds; a failed real call flips it to "failed". `resolveGenerate` records
+  success/failure centrally.
+- **Central error normalisation** (`normalizeAiError`): every provider call is
+  wrapped so services receive only a calm message. No surface can render a raw
+  transport string such as `gemini request failed: 400`.
+- **Consistent recovery:** the AiConfigDialog badge reflects the four states;
+  the Study grade notice, the Study Discussion companion, and the Research Ask
+  companion all preserve the user's input and offer Setup AI (no-provider) and/or
+  Retry.
+
+Evidence (unit + rendered):
+- `tests/ai/health.test.mjs` (4/4): state transitions; 400/401/429/network/parse
+  all normalise to non-raw messages.
+- `tests/behaviour/ai-state.spec.js` (2/2): an arbitrary physician project shows
+  no "City terms"/"city-condition"; a configured-but-invalid key surfaces a
+  normalised message (asserted NOT to contain `gemini request failed`/`400`),
+  preserves the typed question, and records AI state `failed`.
+- In-browser (screenshot): Discussion with an invalid key shows "The AI provider
+  rejected the request — check your API key in AI setup.", the question is
+  retained, RETRY is offered, and Quick Lexicography shows honest absence.
+Gate: build PASS, lint 0, unit 108/108, behaviour 42/2, QA production 0.
+
+Exams AI-recovery entry points are completed with IP-S3-04.

@@ -10,6 +10,7 @@
 // and MUST NOT fabricate output. Nothing here ever invents a grade.
 
 import { readAiConfig } from './config.js'
+import { recordAiSuccess, recordAiFailure, normalizeAiError } from './health.js'
 import { buildStudyGradingPrompt, parseStudyGradeResult } from './contracts/studyGrading.js'
 import { buildExamGradingPrompt, parseExamGradeResult } from './contracts/examGrading.js'
 import {
@@ -21,6 +22,7 @@ import { buildSegmentationPrompt, parseSegmentationResult } from './contracts/se
 import { generateJson as geminiGenerateJson } from './providers/gemini.js'
 
 export { isAiConfigured, readAiConfig, writeAiConfig, clearAiConfig } from './config.js'
+export { getAiState, readAiHealth, resetAiHealth, normalizeAiError } from './health.js'
 
 /** Provider registry. New providers register a generateJson(config, prompt). */
 const PROVIDERS = {
@@ -37,7 +39,19 @@ function resolveGenerate(explicit) {
   if (!config) return null
   const impl = PROVIDERS[config.provider]
   if (!impl) return null
-  return (prompt) => impl(config, prompt)
+  // Central seam: every real provider call updates the AI operational state and
+  // surfaces only a NORMALISED error, so no service returns a raw transport
+  // string and the verified/failed state is consistent everywhere (S3-005).
+  return async (prompt) => {
+    try {
+      const out = await impl(config, prompt)
+      recordAiSuccess()
+      return out
+    } catch (error) {
+      recordAiFailure()
+      throw new Error(normalizeAiError(error).message)
+    }
+  }
 }
 
 const unavailable = (reason, message = '') => ({ available: false, reason, message })
