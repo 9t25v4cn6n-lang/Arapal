@@ -22,7 +22,8 @@ import layoutContract from './ProjectsScreen.contract'
 import ArapalCompanion from './ArapalCompanion.jsx'
 import { useLiveLessons, useLiveStudyHistory } from './liveProjectsData'
 import { useVirtualRows } from './useVirtualRows'
-import { actions, navigation, select } from '../../data'
+import { actions, navigation, select, useArchives } from '../../data'
+import { setSegmentationIntent } from '../../foundation/primitives/segmentationFlowState'
 
 const AdvancedOptionsPanel = lazy(() => import('./AdvancedOptionsPanel.jsx'))
 
@@ -1050,7 +1051,7 @@ function DashboardDetailIntro({ lesson }) {
   )
 }
 
-function DetailStage({ lesson, onResume, onBrowse }) {
+function DetailStage({ lesson, onResume, onBrowse, archiveCount = 0, onDelete, onRestore }) {
   return (
     <main className="study-dashboard study-dashboard__detailStage" data-debug-item="study_dashboard_workspace">
       <div className="study-dashboard__primaryGroup">
@@ -1058,7 +1059,48 @@ function DetailStage({ lesson, onResume, onBrowse }) {
         <ResumeStage lesson={lesson} onResume={onResume} onBrowse={onBrowse} />
       </div>
       <AdvancedDisclosureContainer lesson={lesson} />
+      <ProjectManageBar archiveCount={archiveCount} onDelete={onDelete} onRestore={onRestore} />
     </main>
+  )
+}
+
+/**
+ * The product-visible restore/delete policy (S3-001). Prior work replaced by a
+ * re-segmentation is recoverable here, and any project — including the labelled
+ * sample — can be deleted, honouring the first-run promise that the sample can
+ * be removed at any time. Delete asks for confirmation because it is destructive.
+ */
+function ProjectManageBar({ archiveCount = 0, onDelete, onRestore }) {
+  const [confirming, setConfirming] = useState(false)
+  const linkStyle = {
+    border: 'none', background: 'transparent', padding: 0, cursor: 'pointer',
+    font: 'inherit', color: colors.textSoft, textDecoration: 'underline',
+  }
+  return (
+    <div
+      data-debug-item="project_manage_bar"
+      style={{
+        display: 'flex', alignItems: 'center', gap: spacing[16], flexWrap: 'wrap',
+        marginTop: spacing[16], paddingTop: spacing[12],
+        borderTop: `1px solid ${colors.borderSoft}`,
+        ...typography.metaText,
+      }}
+    >
+      {archiveCount > 0 ? (
+        <button type="button" style={linkStyle} onClick={onRestore}>
+          Restore previous work{archiveCount > 1 ? ` (${archiveCount} kept)` : ''}
+        </button>
+      ) : null}
+      {confirming ? (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[12], color: colors.textBody }}>
+          Delete this project and all its work?
+          <button type="button" style={{ ...linkStyle, color: colors.critical, fontWeight: 600 }} onClick={onDelete}>Delete</button>
+          <button type="button" style={linkStyle} onClick={() => setConfirming(false)}>Cancel</button>
+        </span>
+      ) : (
+        <button type="button" style={linkStyle} onClick={() => setConfirming(true)}>Delete project</button>
+      )}
+    </div>
   )
 }
 
@@ -1235,6 +1277,9 @@ export default function ProjectsScreen({ route, shell }) {
       shell.navigate('studyWorkspace')
       return
     }
+    // A setup project resumes into re-segmentation of ITS OWN source, so mark
+    // the intent (keeps this project's identity) — never a new project (S3-001).
+    setSegmentationIntent('resegment')
     shell.navigate(selectedLesson.primaryRoute)
   }, [selectedLesson, shell])
 
@@ -1242,6 +1287,16 @@ export default function ProjectsScreen({ route, shell }) {
     if (selectedLesson) actions.selectProject(selectedLesson.id)
     shell.navigate('projectResearch')
   }, [selectedLesson, shell])
+
+  const archives = useArchives(selectedLesson?.id)
+  const handleDelete = useCallback(() => {
+    if (!selectedLesson) return
+    actions.deleteProject(selectedLesson.id)
+    setSelectedLessonId(null)
+  }, [selectedLesson])
+  const handleRestore = useCallback(() => {
+    if (selectedLesson) actions.restoreArchive(selectedLesson.id)
+  }, [selectedLesson])
 
   const screenSlots = {
     Layer4_Projects_Hero: <DashboardHero />,
@@ -1256,9 +1311,19 @@ export default function ProjectsScreen({ route, shell }) {
       />
     ) : null,
     Layer4_Projects_DetailStage: selectedLesson ? (
-      <DetailStage lesson={selectedLesson} onResume={handleResume} onBrowse={handleBrowse} />
+      <DetailStage
+        lesson={selectedLesson}
+        onResume={handleResume}
+        onBrowse={handleBrowse}
+        archiveCount={archives.length}
+        onDelete={handleDelete}
+        onRestore={handleRestore}
+      />
     ) : (
-      <EmptyLibrary onAddSource={() => shell.navigate('segmentationPasteNext')} onGoHome={() => shell.navigate('projectHome')} />
+      <EmptyLibrary
+        onAddSource={() => { setSegmentationIntent('new'); shell.navigate('segmentationPasteNext') }}
+        onGoHome={() => shell.navigate('projectHome')}
+      />
     ),
     Layer4_Projects_History: selectedLesson ? <StudyHistoryPanelContainer key={selectedLesson.id} lesson={selectedLesson} /> : null,
   }

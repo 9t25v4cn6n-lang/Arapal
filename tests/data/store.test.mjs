@@ -186,6 +186,38 @@ test('no provider leaves the segment attempted with an honest reason, never a pa
   assert.equal(store.getStudyRecord(project.id, seg.id).submissionState, 'attempted', 'unconfigured AI never completes the segment')
 })
 
+// ── proposal edits persist; re-segmentation is restorable (S3-001) ────────────
+
+test('updateProposal persists Review edits without publishing anything canonical', () => {
+  const project = store.addProject({ title: 'Editable' })
+  const source = store.addSource({ projectId: project.id, rawText: 'One. Two.' })
+  store.saveProposal({ projectId: project.id, sourceId: source.id, chunks: [{ text: 'One.' }, { text: 'Two.' }], method: 'local', style: 'meaning', granularity: 'balanced' })
+
+  store.updateProposal({ projectId: project.id, chunks: [{ text: 'One edited.', title: 'Renamed', ref: '1.1' }] })
+
+  const reloaded = storage.read()
+  assert.equal(reloaded.proposals[project.id].chunks.length, 1, 'the edit survives a reload')
+  assert.equal(reloaded.proposals[project.id].chunks[0].title, 'Renamed')
+  assert.equal(store.listSegments(project.id).length, 0, 'still nothing canonical before approval')
+})
+
+test('restoreArchive brings back re-segmented work and its drafts, reversibly', () => {
+  const { project, source, segments } = seedProject()
+  store.saveDraft({ projectId: project.id, segmentId: segments[0].id, text: 'draft v1' })
+
+  // Re-segment to one segment — prior work is archived, not destroyed.
+  store.publishSegments({ projectId: project.id, sourceId: source.id, chunks: ['Only one now.'] })
+  assert.equal(store.listSegments(project.id).length, 1)
+  assert.ok(store.listArchives(project.id).length >= 1, 'prior work was archived')
+
+  // Restore surfaces the archived version as canonical again.
+  store.restoreArchive(project.id)
+  assert.equal(store.listSegments(project.id).length, 2, 'the earlier 2-segment work is restored')
+  assert.equal(store.getDraft(project.id, segments[0].id)?.text, 'draft v1', 'the archived draft came back')
+  // …and the restore is itself reversible (the one-segment version is now archived).
+  assert.ok(store.listArchives(project.id).length >= 1, 'restore re-archived the replaced version')
+})
+
 // ── proposal → approval authority (R-015 / DECISIONS §5) ──────────────────────
 
 test('a proposal is not canonical: saving one publishes no segments', () => {

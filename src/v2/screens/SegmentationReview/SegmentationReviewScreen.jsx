@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   createSegmentationReviewSegments,
   createSegmentationReviewGroupTitles,
@@ -12,6 +12,7 @@ import {
   SegmentationReviewSourceTray,
 } from '../../foundation/primitives/SegmentationFlowPrimitives'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
+import { setSegmentationIntent } from '../../foundation/primitives/segmentationFlowState'
 import layoutContract from './SegmentationReviewScreen.contract'
 import { select, actions, getSnapshot } from '../../data'
 
@@ -146,6 +147,20 @@ function cloneSegments(segments) {
 
 export default function SegmentationReviewScreen({ route, shell }) {
   const nextSegmentIdRef = useRef(11)
+  // The real source under review, so the tray shows the actual text and its true
+  // word count instead of the hard-coded "24 words" fixture (S3-001). Computed
+  // once: the source does not change while Review is open.
+  const [sourceInfo] = useState(() => {
+    const snapshot = getSnapshot()
+    const project = select.getCurrentProject(snapshot)
+    if (!project) return { text: '', wordCount: 0 }
+    const proposal = select.getProposal(project.id, snapshot)
+    const sourceId = proposal?.sourceId ?? project.sourceIds?.[project.sourceIds.length - 1]
+    const source = sourceId ? snapshot.sources[sourceId] : null
+    const text = source?.rawText ?? ''
+    const trimmed = text.trim()
+    return { text, wordCount: trimmed ? trimmed.split(/\s+/).filter(Boolean).length : 0 }
+  })
   // Seed from the NON-AUTHORITATIVE proposal, so Review edits the user's own
   // proposed segmentation before anything becomes canonical. Nothing is
   // published until Approve (DECISIONS §5, R-015).
@@ -186,6 +201,22 @@ export default function SegmentationReviewScreen({ route, shell }) {
   const [collapsedGroupIds, setCollapsedGroupIds] = useState([])
   const [proposalViewMode, setProposalViewMode] = useState('grid')
   const [toolbarIsFloating, setToolbarIsFloating] = useState(false)
+
+  // Persist Review edits back onto the non-authoritative proposal so a label
+  // edit (or split/merge) survives a reload before approval (S3-001). This never
+  // publishes; Approve remains the only canonical write.
+  useEffect(() => {
+    const snapshot = getSnapshot()
+    const project = select.getCurrentProject(snapshot)
+    if (!project || !select.getProposal(project.id, snapshot) || !segments.length) return
+    const chunks = segments.map((segment, index) => ({
+      text: segment.text,
+      ref: `1.${index + 1}`,
+      title: segment.label && !/^Segment \d+$/.test(segment.label) ? segment.label : '',
+      chapterLabel: segment.groupLabel && segment.groupLabel !== 'Proposed segments' ? segment.groupLabel : 'Chapter 1',
+    }))
+    actions.updateProposal({ projectId: project.id, chunks })
+  }, [segments])
 
   const summary = getSegmentationReviewSummary(segments)
   const selectedRange = getSelectionRange(segments, selectionRange)
@@ -600,7 +631,9 @@ export default function SegmentationReviewScreen({ route, shell }) {
       <SegmentationReviewSourceTray
         sourceMode={sourceMode}
         onSourceModeChange={setSourceMode}
-        onEditSource={() => shell.navigate('segmentationPasteNext')}
+        onEditSource={() => { setSegmentationIntent('resegment'); shell.navigate('segmentationPasteNext') }}
+        sourceText={sourceInfo.text}
+        wordCount={sourceInfo.wordCount}
       />
     ),
     Layer4_Review_SelectedToolbarRegion: (
@@ -703,7 +736,7 @@ export default function SegmentationReviewScreen({ route, shell }) {
         // Re-segmenting means going back to the source and splitting again,
         // which is the same destination "Edit source" already uses — a real
         // action, not a button added to match a picture.
-        onResegment={() => shell.navigate('segmentationPasteNext')}
+        onResegment={() => { setSegmentationIntent('resegment'); shell.navigate('segmentationPasteNext') }}
       />
     ),
   }

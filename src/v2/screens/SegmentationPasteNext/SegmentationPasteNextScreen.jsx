@@ -1,4 +1,4 @@
-import { Edit3, Sparkles } from 'lucide-react'
+import { Edit3, Sparkles, SplitSquareVertical } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import BackPill from '../../foundation/primitives/BackPill'
 import EditorSurface from '../../foundation/primitives/EditorSurface'
@@ -10,6 +10,8 @@ import SegmentationOptionsPopover, {
 import {
   readSegmentationFlowPreferences,
   saveSegmentationFlowPreferences,
+  readSegmentationIntent,
+  clearSegmentationIntent,
 } from '../../foundation/primitives/segmentationFlowState'
 import SplitCTA from '../../foundation/primitives/SplitCTA'
 import { actions, select, getSnapshot } from '../../data'
@@ -56,7 +58,6 @@ export default function SegmentationPasteNextScreen({ route, shell }) {
   // user's choice could not survive a reload even once the store carried it.
   const [style, setStyle] = useState(() => readSegmentationFlowPreferences().style)
   const [granularity, setGranularity] = useState(() => readSegmentationFlowPreferences().granularity)
-  const [quickMode, setQuickMode] = useState(() => readSegmentationFlowPreferences().quickMode)
   const [showSegmentationTransition, setShowSegmentationTransition] = useState(
     () => readSegmentationFlowPreferences().showSegmentationTransition,
   )
@@ -176,11 +177,19 @@ export default function SegmentationPasteNextScreen({ route, shell }) {
         </div>
 
         <SplitCTA
-          label={selectedMethod.id === 'manual' ? 'Manual review' : 'AI Segment Text'}
+          label={
+            selectedMethod.id === 'manual'
+              ? 'Manual review'
+              : selectedMethod.id === 'ai'
+                ? 'AI segmentation'
+                : 'Segment on device'
+          }
           icon={
             selectedMethod.id === 'manual'
               ? <Edit3 size={16} strokeWidth={1.9} />
-              : <Sparkles size={16} strokeWidth={1.9} />
+              : selectedMethod.id === 'ai'
+                ? <Sparkles size={16} strokeWidth={1.9} />
+                : <SplitSquareVertical size={16} strokeWidth={1.9} />
           }
           primaryContentStyle={{
             fontSize: typography.ctaLabel.fontSize,
@@ -197,47 +206,48 @@ export default function SegmentationPasteNextScreen({ route, shell }) {
               method: selectedMethod.id,
               style,
               granularity,
-              quickMode,
               showSegmentationTransition,
             })
 
-            // Persist the source and store a NON-AUTHORITATIVE proposal — do NOT
-            // publish canonical segments here. Publication happens only after the
-            // user reviews and explicitly approves (DECISIONS §5, R-015). The old
-            // flow published before review, so segments were canonical before the
-            // user had seen them.
-            const markers = generateMarkers(rawText, selectedMethod.id, style, granularity)
-            if (markers.length) {
-              const existing = select.getCurrentProject(getSnapshot())
-              const project = existing ?? actions.addProject({
-                title: deriveProjectTitle(rawText),
-                subtitle: 'Pasted source',
-              })
-              const source = actions.addSource({
-                projectId: project.id,
-                rawText,
-                label: 'Pasted source',
-              })
-              const chunks = markersToChunks(markers, { chapterLabel: 'Chapter 1' })
-              // Quick mode is the user's pre-authorised approval: it skips the
-              // manual Review step, so publishing now IS the explicit approval and
-              // avoids leaving an un-approved proposal in limbo during the flow's
-              // animation. The manual / non-quick paths instead store a proposal
-              // and publish only when the user approves in Review (DECISIONS §5).
-              const autoApprove = quickMode && selectedMethod.id !== 'manual'
-              if (autoApprove) {
-                actions.publishSegments({ projectId: project.id, sourceId: source.id, chunks })
-              } else {
-                actions.saveProposal({
-                  projectId: project.id,
-                  sourceId: source.id,
-                  chunks,
-                  method: selectedMethod.id,
-                  style,
-                  granularity,
-                })
-              }
+            // Two distinct intents. 'new' always creates a fresh project so a
+            // "New source" can never silently overwrite another project's
+            // canonical identity (S3-001). 'resegment' keeps the current
+            // project's identity and re-proposes; re-segmentation stays
+            // non-destructive (DECISIONS §5). NOTHING is published here: this
+            // stores a NON-AUTHORITATIVE proposal only, and publication happens
+            // exclusively when the user approves in Review.
+            const intent = readSegmentationIntent()
+            const existing = select.getCurrentProject(getSnapshot())
+            const project = (intent === 'resegment' && existing)
+              ? existing
+              : actions.addProject({ title: deriveProjectTitle(rawText), subtitle: 'Pasted source' })
+            const source = actions.addSource({ projectId: project.id, rawText, label: 'Pasted source' })
+            clearSegmentationIntent()
+
+            if (selectedMethod.id === 'ai') {
+              // The provider proposes the split; the Loading screen performs the
+              // async call and stores the resulting proposal (or shows an honest
+              // unavailable/error state). Only the raw source is persisted now.
+              shell.navigate('segmentationLoading')
+              return
             }
+
+            // Deterministic, on-device proposal. Manual starts from the whole
+            // source as one segment for the user to split in Review.
+            const chunks = selectedMethod.id === 'manual'
+              ? [{ text: rawText.trim(), title: '', chapterLabel: 'Chapter 1' }]
+              : markersToChunks(
+                  generateMarkers(rawText, 'local', style, granularity),
+                  { chapterLabel: 'Chapter 1' },
+                )
+            actions.saveProposal({
+              projectId: project.id,
+              sourceId: source.id,
+              chunks,
+              method: selectedMethod.id,
+              style,
+              granularity,
+            })
 
             shell.navigate(selectedMethod.id === 'manual' ? 'segmentationReview' : 'segmentationLoading')
           }}
@@ -256,13 +266,6 @@ export default function SegmentationPasteNextScreen({ route, shell }) {
               granularityOptions={granularityOptions}
               granularity={granularity}
               onGranularityChange={setGranularity}
-              quickMode={quickMode}
-              onQuickModeChange={setQuickMode}
-              quickModeMeta={
-                quickMode
-                  ? 'Go straight to Segments Ready after the AI pass'
-                  : 'Open review first before showing Segments Ready'
-              }
               showSegmentationTransition={showSegmentationTransition}
               onShowSegmentationTransitionChange={setShowSegmentationTransition}
             />

@@ -1,10 +1,14 @@
 import { forwardRef } from 'react'
-import { Check, Edit3, Sparkles } from 'lucide-react'
+import { Check, Edit3, Sparkles, SplitSquareVertical } from 'lucide-react'
 import { colors, radius, spacing, typography } from '../tokens'
 
+// Truthful method labels (S3-001): the on-device splitter is deterministic and
+// must not be presented as AI. Only the provider-backed method is labelled AI,
+// and it genuinely calls the provider.
 export const segmentationMethodOptions = [
-  { id: 'ai', label: 'AI proposal', icon: Sparkles },
-  { id: 'manual', label: 'Manual start', icon: Edit3 },
+  { id: 'local', label: 'Segment on device', icon: SplitSquareVertical, meta: 'Deterministic split, no AI' },
+  { id: 'ai', label: 'AI segmentation', icon: Sparkles, meta: 'Uses your configured AI provider' },
+  { id: 'manual', label: 'Manual start', icon: Edit3, meta: 'Start from the whole source' },
 ]
 
 export const segmentationStyleOptions = [
@@ -305,9 +309,6 @@ const SegmentationOptionsPopover = forwardRef(function SegmentationOptionsPopove
     granularityOptions = segmentationGranularityOptions,
     granularity,
     onGranularityChange = () => {},
-    quickMode = false,
-    onQuickModeChange = () => {},
-    quickModeMeta = 'Go straight to Segments Ready after the AI pass',
     showSegmentationTransition = true,
     onShowSegmentationTransitionChange = () => {},
     containerStyle,
@@ -333,6 +334,7 @@ const SegmentationOptionsPopover = forwardRef(function SegmentationOptionsPopove
               selected={method === option.id}
               icon={option.icon}
               label={option.label}
+              meta={option.meta}
               onClick={() => onMethodChange(option.id)}
             />
           ))}
@@ -363,12 +365,6 @@ const SegmentationOptionsPopover = forwardRef(function SegmentationOptionsPopove
         </SplitMenuSection>
 
         <SplitMenuSection label="Preferences">
-          <SplitMenuToggle
-            title="Quick mode"
-            meta={quickModeMeta}
-            active={quickMode}
-            onClick={() => onQuickModeChange(!quickMode)}
-          />
           <SplitMenuToggle
             title="Show segmentation animation"
             meta="Let the text split visually before study"

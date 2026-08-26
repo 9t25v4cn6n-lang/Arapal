@@ -170,6 +170,91 @@ export function clearProposal(projectId) {
 }
 
 /**
+ * Persist Review edits back onto the NON-AUTHORITATIVE proposal (still not
+ * canonical). Without this, an edit made in Review lived only in component state
+ * and vanished on reload before approval (S3-001). Publication remains the
+ * explicit Approve action.
+ */
+export function updateProposal({ projectId, chunks }) {
+  const existing = state.proposals[projectId]
+  if (!existing) return null
+  const proposal = { ...existing, chunks, updatedAt: new Date().toISOString() }
+  commit({ ...state, proposals: { ...state.proposals, [projectId]: proposal } })
+  return proposal
+}
+
+/** Prior canonical work kept when a project was re-segmented (DECISIONS §5). */
+export const listArchives = (projectId, s = state) => s.archives[projectId] ?? EMPTY_LIST_ARCHIVES
+const EMPTY_LIST_ARCHIVES = Object.freeze([])
+
+/**
+ * Restore the most recent archived segmentation as canonical, re-archiving the
+ * CURRENT work so the restore is itself reversible. This is the product-visible
+ * counterpart to non-destructive re-segmentation: replaced work is not lost, and
+ * the user can bring it back (S3-001).
+ */
+export function restoreArchive(projectId) {
+  const archives = state.archives[projectId]
+  if (!archives || !archives.length) return null
+  const archive = archives[archives.length - 1]
+
+  const currentSegments = Object.values(state.segments).filter((seg) => seg.projectId === projectId)
+  const currentIds = new Set(currentSegments.map((seg) => seg.id))
+  const partitionKeyed = (coll) => {
+    const removed = {}
+    const kept = {}
+    for (const [k, v] of Object.entries(coll)) {
+      if (k.split('::')[0] === projectId) removed[k] = v
+      else kept[k] = v
+    }
+    return { removed, kept }
+  }
+  const draftsPart = partitionKeyed(state.drafts)
+  const recordsPart = partitionKeyed(state.studyRecords)
+  const notesPart = partitionKeyed(state.notes)
+  const currentResults = Object.fromEntries(
+    Object.entries(state.results).filter(([, r]) => r.projectId === projectId && currentIds.has(r.segmentId)))
+  const keptResults = Object.fromEntries(
+    Object.entries(state.results).filter(([id]) => !currentResults[id]))
+  const segmentsWithoutProject = Object.fromEntries(
+    Object.entries(state.segments).filter(([, seg]) => seg.projectId !== projectId))
+  const restoredSegments = Object.fromEntries((archive.segments ?? []).map((seg) => [seg.id, seg]))
+
+  commit({
+    ...state,
+    segments: { ...segmentsWithoutProject, ...restoredSegments },
+    drafts: { ...draftsPart.kept, ...(archive.drafts ?? {}) },
+    studyRecords: { ...recordsPart.kept, ...(archive.studyRecords ?? {}) },
+    notes: { ...notesPart.kept, ...(archive.notes ?? {}) },
+    results: { ...keptResults, ...(archive.results ?? {}) },
+    archives: {
+      ...state.archives,
+      [projectId]: [
+        ...archives.slice(0, -1),
+        {
+          archivedAt: new Date().toISOString(),
+          segments: currentSegments,
+          drafts: draftsPart.removed,
+          studyRecords: recordsPart.removed,
+          notes: notesPart.removed,
+          results: currentResults,
+        },
+      ],
+    },
+    projects: {
+      ...state.projects,
+      [projectId]: {
+        ...state.projects[projectId],
+        segmentIds: (archive.segments ?? []).map((seg) => seg.id),
+        currentSegmentId: archive.segments?.[0]?.id ?? null,
+        updatedAt: new Date().toISOString(),
+      },
+    },
+  })
+  return archive
+}
+
+/**
  * Publish a project's canonical segments — the explicit approval transaction.
  *
  * Non-destructive on re-segmentation (DECISIONS §5, RED-05): when the project

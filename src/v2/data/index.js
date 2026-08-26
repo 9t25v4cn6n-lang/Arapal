@@ -37,8 +37,10 @@ export const actions = {
   addProject: store.addProject,
   selectProject: store.selectProject,
   deleteProject: store.deleteProject,
+  restoreArchive: store.restoreArchive,
   addSource: store.addSource,
   saveProposal: store.saveProposal,
+  updateProposal: store.updateProposal,
   clearProposal: store.clearProposal,
   publishSegments: store.publishSegments,
   saveDraft: store.saveDraft,
@@ -69,6 +71,7 @@ export const select = {
   getAttempt: store.getAttempt,
   findOpenAttempt: store.findOpenAttempt,
   getProjectProgress: store.getProjectProgress,
+  listArchives: store.listArchives,
 }
 
 export { subscribe, getSnapshot, persistenceHealthy, __resetForTests } from './store.js'
@@ -128,6 +131,9 @@ export const useStudyRecord = (projectId, segmentId) =>
 
 export const useNotes = (projectId, segmentId) =>
   useArapal((s) => (projectId && segmentId ? store.listNotes(projectId, segmentId, s) : EMPTY_LIST))
+
+export const useArchives = (projectId) =>
+  useArapal((s) => (projectId ? store.listArchives(projectId, s) : EMPTY_LIST))
 
 export const useProjectProgress = (projectId) =>
   useArapal((s) => (projectId ? store.getProjectProgress(projectId, s) : EMPTY_PROGRESS))

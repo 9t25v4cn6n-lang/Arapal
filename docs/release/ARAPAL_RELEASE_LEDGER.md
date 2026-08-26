@@ -270,3 +270,55 @@ Closure evidence must match the claim:
 - release → built-dist, fail-closed, exact-candidate deployment/rollback/monitoring package.
 
 No P0/P1 finding may close from code changes, unit tests, an unchanged screenshot, a `CAPTURED` status, or implementation-team prose alone.
+
+---
+
+# I. Stage 3 closure log (rework continuation)
+
+Closure evidence recorded per package. Findings in §B are NOT weakened; this log
+records the work and rendered/journey evidence that meets each required outcome.
+
+## S3-001 — RESOLVED (IP-S3-01)
+
+Root-cause fixes:
+- **Non-authoritative until approval:** the quick-mode auto-publish and the
+  Success auto-publish "safety path" are removed. Every method routes to Review;
+  `getPostSegmentationRoute()` always returns `segmentationReview`. Publication is
+  the explicit `Approve & Continue` action and nowhere else.
+- **Truthful labels:** the default method is on-device deterministic splitting,
+  labelled **"Segment on device" (no AI)**. A separate **"AI segmentation"**
+  method genuinely calls the provider via the derived segmentation contract
+  (`contracts/segmentation.js`, from the source prompt) and is honestly
+  unavailable without a key. Deterministic local splitting is never called AI.
+- **Stable identity:** an explicit Create-vs-Re-segment intent. "Add source" /
+  "New source" always create a NEW project; re-segmentation keeps the current
+  project's identity and stays non-destructive (archive).
+- **Truthful counts:** the Review source tray renders the real source word count
+  and text (the hard-coded "24 words" and the caravan fixture fallback are gone).
+- **Edit persistence:** Review edits are written back to the non-authoritative
+  proposal (`updateProposal`), so a label edit survives reload before approval.
+- **Restore/delete:** Projects exposes a **Delete project** control (with
+  confirm) for any project including the sample, and a **Restore previous work**
+  control backed by a reversible `restoreArchive`.
+
+Rendered / journey evidence (dev build, fresh origin):
+- Fresh create: paste 15-word source → "Segment on device" → store holds a
+  proposal (1 chunk) and **0 canonical segments**; routed to Review (not Success).
+- Real count "15 words" shown in Review (not "24").
+- Reload before approval: still on Review, **0 canonical segments**, proposal
+  persists.
+- `Approve & Continue`: **1 canonical segment created**, proposal cleared, lands
+  on Success.
+- "New source" from an existing project: project count **1 → 2**, new project id
+  distinct, first project's canonical segment intact (identity not replaced).
+- Sample deletion: confirm dialog → project count **1 → 0**.
+
+Tests: `tests/behaviour/segmentation-handoff.spec.js` rewritten to the
+proposal→approval semantics (10/10). `tests/data/store.test.mjs` adds
+updateProposal-persist and reversible restoreArchive. `tests/ai/segmentation.test.mjs`
+adds the segmentation contract (anchor validation, honest-unavailable). Gate:
+build PASS, lint 0, unit 98/98, behaviour 36/2, QA production 0.
+
+Residual (documented, not blocking S3-001): a valid-key Gemini segmentation PASS
+is the external verification item; the application/config boundary and the
+on-device path are complete and verified.

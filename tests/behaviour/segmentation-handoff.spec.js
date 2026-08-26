@@ -21,6 +21,28 @@ async function openPaste(page) {
   await page.waitForTimeout(2400)
 }
 
+// The default method is truthful on-device splitting, so the primary CTA reads
+// "Segment on device" (never "AI ..."). Clicking it stores a NON-AUTHORITATIVE
+// proposal and routes to Review — it does NOT publish (S3-001).
+const PRIMARY_CTA = 'button:has-text("Segment on device")'
+
+async function pasteToProposal(page, source = SOURCE) {
+  await openPaste(page)
+  await page.locator('textarea').first().fill(source)
+  await page.waitForTimeout(300)
+  await page.locator(PRIMARY_CTA).first().click()
+}
+
+// The full transaction: paste → proposal → Review → EXPLICIT approval → canonical.
+async function pasteAndApprove(page, source = SOURCE) {
+  await pasteToProposal(page, source)
+  await page.waitForURL(/segmentationReview/, { timeout: 15000 }).catch(() => {})
+  await page.waitForTimeout(1500)
+  await page.getByRole('button', { name: /approve & continue|^approve/i }).first().click()
+  await page.waitForURL(/segmentationSuccess/, { timeout: 15000 }).catch(() => {})
+  await page.waitForTimeout(1200)
+}
+
 test.describe('segmentation → study handoff', () => {
   test('granularity and style survive a reload, because they change the output', async ({ page }) => {
     await openPaste(page)
@@ -38,7 +60,7 @@ test.describe('segmentation → study handoff', () => {
     await page.getByRole('button', { name: /tighter/i }).first().click()
     await page.waitForTimeout(300)
 
-    await page.getByRole('button', { name: /segment text/i }).first().click()
+    await page.locator(PRIMARY_CTA).first().click()
     await page.waitForTimeout(4000)
 
     const stored = await page.evaluate(() => localStorage.getItem('arapal:v2:segmentation-flow'))
@@ -62,19 +84,28 @@ test.describe('segmentation → study handoff', () => {
     expect(tighterSelected, 'the reloaded screen re-selects the stored granularity').toBe(true)
   })
 
-  test('the pasted source becomes a real project with real segments', async ({ page }) => {
-    await openPaste(page)
-    await page.locator('textarea').first().fill(SOURCE)
-    await page.waitForTimeout(300)
-    await page.getByRole('button', { name: /segment text/i }).first().click()
+  test('a proposal is stored on segment, and canonical segments appear ONLY after approval', async ({ page }) => {
+    await pasteToProposal(page)
     await page.waitForTimeout(1500)
 
-    const state = await page.evaluate(() => JSON.parse(localStorage.getItem('arapal.v1.state')))
+    // After segmenting: a project + source exist, a NON-AUTHORITATIVE proposal
+    // is stored, and NOTHING is canonical yet (S3-001).
+    let state = await page.evaluate(() => JSON.parse(localStorage.getItem('arapal.v1.state')))
     expect(Object.keys(state.projects), 'a project was created').toHaveLength(1)
     expect(Object.keys(state.sources), 'the source was kept').toHaveLength(1)
+    const projectId = Object.keys(state.projects)[0]
+    expect(state.proposals[projectId]?.chunks?.length, 'a proposal was stored').toBeGreaterThan(0)
+    expect(Object.keys(state.segments), 'nothing is canonical before approval').toHaveLength(0)
 
+    // Approve in Review — the only canonical publish.
+    await page.waitForURL(/segmentationReview/, { timeout: 15000 })
+    await page.waitForTimeout(1000)
+    await page.getByRole('button', { name: /approve & continue|^approve/i }).first().click()
+    await page.waitForTimeout(1500)
+
+    state = await page.evaluate(() => JSON.parse(localStorage.getItem('arapal.v1.state')))
     const segments = Object.values(state.segments)
-    expect(segments.length, 'segments were derived from the source').toBeGreaterThan(0)
+    expect(segments.length, 'segments are canonical after approval').toBeGreaterThan(0)
     expect(
       segments.map((s) => s.text).join(' '),
       "the user's own words are what got segmented",
@@ -85,7 +116,7 @@ test.describe('segmentation → study handoff', () => {
     await openPaste(page)
     await page.locator('textarea').first().fill(SOURCE)
     await page.waitForTimeout(300)
-    await page.getByRole('button', { name: /segment text/i }).first().click()
+    await page.locator(PRIMARY_CTA).first().click()
     await page.waitForTimeout(1500)
 
     const title = await page.evaluate(() => {
@@ -95,12 +126,8 @@ test.describe('segmentation → study handoff', () => {
     expect(title).toContain(MARKER)
   })
 
-  test('Study opens the segmented source, not a fixture', async ({ page }) => {
-    await openPaste(page)
-    await page.locator('textarea').first().fill(SOURCE)
-    await page.waitForTimeout(300)
-    await page.getByRole('button', { name: /segment text/i }).first().click()
-    await page.waitForTimeout(1500)
+  test('Study opens the approved source, not a fixture', async ({ page }) => {
+    await pasteAndApprove(page)
 
     await page.goto('/?chrome=0#v2/studyWorkspace', { waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(2400)
@@ -110,12 +137,8 @@ test.describe('segmentation → study handoff', () => {
     expect(text, 'the hard-coded demo project must not reappear').not.toContain('Tayammum')
   })
 
-  test('the segmented work survives a reload', async ({ page }) => {
-    await openPaste(page)
-    await page.locator('textarea').first().fill(SOURCE)
-    await page.waitForTimeout(300)
-    await page.getByRole('button', { name: /segment text/i }).first().click()
-    await page.waitForTimeout(1500)
+  test('the approved work survives a reload', async ({ page }) => {
+    await pasteAndApprove(page)
 
     await page.goto('/?chrome=0#v2/studyWorkspace', { waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(2400)
@@ -134,7 +157,7 @@ test.describe('segmentation → study handoff', () => {
 
     // getByRole picks up the split tail (the options chevron) first, which
     // stays operable by design; target the primary control itself.
-    const primary = page.locator('button:has-text("Segment Text")').first()
+    const primary = page.locator('button:has-text("Segment on device")').first()
     await expect(primary, 'the primary CTA is disabled with no source').toBeDisabled()
 
     const projects = await page.evaluate(() => {
@@ -147,11 +170,7 @@ test.describe('segmentation → study handoff', () => {
 
 test.describe('exam → study handoff across the product boundary', () => {
   test('a legacy exam context lands in V2 Study, on the right segment', async ({ page }) => {
-    await openPaste(page)
-    await page.locator('textarea').first().fill(SOURCE)
-    await page.waitForTimeout(300)
-    await page.getByRole('button', { name: /segment text/i }).first().click()
-    await page.waitForTimeout(4000)
+    await pasteAndApprove(page)
 
     // Exams is production but still runs in the legacy shell, so it writes the
     // legacy context shape. writeContext published both keys and readContext read
@@ -178,25 +197,19 @@ test.describe('exam → study handoff across the product boundary', () => {
 })
 
 test.describe('review and success reflect the published segmentation', () => {
-  const publish = async (page) => {
-    await openPaste(page)
-    await page.locator('textarea').first().fill(SOURCE)
-    await page.waitForTimeout(300)
-    await page.getByRole('button', { name: /segment text/i }).first().click()
-    await page.waitForTimeout(1500)
-  }
-
   test('Review edits the user’s own proposal, not a fixture', async ({ page }) => {
-    await publish(page)
+    await pasteToProposal(page)
+    await page.waitForTimeout(1000)
     await page.goto('/?chrome=0#v2/segmentationReview', { waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(2600)
     expect(await body(page), 'the review list shows the pasted source').toContain(MARKER)
   })
 
   test('Success reports the real segment count', async ({ page }) => {
-    await publish(page)
+    await pasteAndApprove(page)
     const expected = await page.evaluate(() =>
       Object.keys(JSON.parse(localStorage.getItem('arapal.v1.state')).segments).length)
+    expect(expected, 'approval produced canonical segments').toBeGreaterThan(0)
 
     await page.goto('/?chrome=0#v2/segmentationSuccess', { waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(2600)
@@ -204,7 +217,7 @@ test.describe('review and success reflect the published segmentation', () => {
   })
 
   test('Start Studying carries context into Study', async ({ page }) => {
-    await publish(page)
+    await pasteAndApprove(page)
     await page.goto('/?chrome=0#v2/segmentationSuccess', { waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(2600)
     await page.getByRole('button', { name: /start studying/i }).first().click()

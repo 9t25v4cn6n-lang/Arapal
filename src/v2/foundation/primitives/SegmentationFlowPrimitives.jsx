@@ -124,20 +124,22 @@ const reviewSegments = [
 ]
 
 /**
- * Seed the review list. Prefers the segments the user actually just published;
- * falls back to the built-in proposal so the route stays inspectable on its own.
+ * Seed the review list from the user's OWN proposal/segments. There is no
+ * fixture fallback: reviewing content the user never produced (the caravan
+ * placeholder) was part of S3-001. With nothing to review the list is empty and
+ * the screen says so honestly.
  */
 export function createSegmentationReviewSegments(published) {
   if (published?.length) {
     return published.map((segment, index) => ({
-      id: segment.id,
+      id: segment.id ?? `prop_${index}`,
       label: segment.title || `Segment ${index + 1}`,
       text: segment.text,
       groupLabel: segment.chapterLabel || 'Proposed segments',
       reviewState: 'ready',
     }))
   }
-  return reviewSegments.map((segment) => ({ ...segment }))
+  return []
 }
 
 export function getSegmentationReviewSummary(segments) {
@@ -1411,13 +1413,13 @@ export function SegmentationReviewIntro({ summary }) {
   )
 }
 
-export function SegmentationReviewSourceTray({ sourceMode, onSourceModeChange, onEditSource }) {
+export function SegmentationReviewSourceTray({ sourceMode, onSourceModeChange, onEditSource, sourceText = '', wordCount = 0 }) {
   return (
     <FlowPanel
       title={null}
       barStart={
         <span style={flowType.panelHeaderTitle}>
-          Source text <span style={{ color: colors.textSoft }}>· 24 words</span>
+          Source text{wordCount ? <span style={{ color: colors.textSoft }}> · {wordCount} words</span> : null}
         </span>
       }
       barEnd={
@@ -1453,7 +1455,7 @@ export function SegmentationReviewSourceTray({ sourceMode, onSourceModeChange, o
             overflowWrap: 'anywhere',
           }}
         >
-          {segmentationSourceText}
+          {sourceText || 'The source text is not available for this review.'}
         </div>
       ) : null}
     </FlowPanel>
@@ -1654,7 +1656,7 @@ export function SegmentationReviewSelectedToolbar({
   const selectionCount = selectedSegments.length
   const hasSelection = selectionCount > 0
   const toolbarSubtitle = !hasSelection
-    ? 'Select a continuous segment range'
+    ? 'Select a segment range'
     : selectionCount === 1
       ? `Editing ${selectedSegment.label}`
       : `Editing ${selectedDisplayRange} · ${selectionCount} segments`

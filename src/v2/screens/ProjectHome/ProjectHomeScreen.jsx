@@ -6,6 +6,7 @@ import layoutContract from './ProjectHomeScreen.contract'
 import {
   actions, navigation, seedSampleProject, useProjects, useCurrentProject, useArapal, select,
 } from '../../data'
+import { setSegmentationIntent } from '../../foundation/primitives/segmentationFlowState'
 
 /**
  * Project Home.
@@ -44,7 +45,10 @@ export default function ProjectHomeScreen({ route, shell }) {
 
   const hasWork = projects.length > 0
 
-  const openSegmentation = () => shell.navigate('segmentationPasteNext')
+  // "Add source" and "New source" both start a BRAND-NEW project, so a new paste
+  // can never silently overwrite an existing project's canonical identity
+  // (S3-001). Re-segmenting a project is a separate, explicitly-intent action.
+  const openSegmentation = () => { setSegmentationIntent('new'); shell.navigate('segmentationPasteNext') }
 
   const resume = (project) => {
     const next = select.getProjectProgress(project.id).nextSegment

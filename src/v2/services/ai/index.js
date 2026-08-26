@@ -17,6 +17,7 @@ import {
   buildDiscussionSummaryPrompt, parseDiscussionSummary,
 } from './contracts/discussion.js'
 import { buildResearchAskPrompt, parseResearchAnswer } from './contracts/research.js'
+import { buildSegmentationPrompt, parseSegmentationResult } from './contracts/segmentation.js'
 import { generateJson as geminiGenerateJson } from './providers/gemini.js'
 
 export { isAiConfigured, readAiConfig, writeAiConfig, clearAiConfig } from './config.js'
@@ -122,6 +123,28 @@ export async function researchAsk({ question, segments = [] }, { generate } = {}
     return { available: true, result }
   } catch (error) {
     return unavailable('error', error?.message || 'The research answer failed.')
+  }
+}
+
+/**
+ * Provider-backed segmentation. Returns a NON-AUTHORITATIVE proposal (chunks)
+ * compiled from validated marker anchors, or an honest unavailable/failed state
+ * — never canonical segments and never a fabricated split. The application, not
+ * this call, decides when a proposal becomes canonical (S3-001).
+ */
+export async function segmentText({ source, style = 'meaning', granularity = 'balanced' }, { generate } = {}) {
+  const run = resolveGenerate(generate)
+  if (!run) return unavailable('no-provider', 'AI segmentation needs an AI provider, which is not configured on this device.')
+  if (!source || !source.trim()) return unavailable('empty', 'Paste some source text first.')
+
+  try {
+    const prompt = buildSegmentationPrompt({ source, style, granularity })
+    const raw = await run(prompt)
+    const result = parseSegmentationResult(raw, source)
+    if (!result.chunks.length) return unavailable('error', 'The segmentation result was empty.')
+    return { available: true, result }
+  } catch (error) {
+    return unavailable('error', error?.message || 'AI segmentation failed.')
   }
 }
 
