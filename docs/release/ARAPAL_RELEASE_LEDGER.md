@@ -710,3 +710,27 @@ user items 4/5), CV-P8 (trust contract), deeper CV-P4/CV-P5 finishing, and CV-EV
 (evidence overhaul with production-transport interception for built-dist PASS/FAIL,
 migration/transition-table/isolation tests, and AC-01…08 built-product evidence).
 Not yet Stage-3-ready; no Stage 3 performed.
+
+## Package E — Home vs Projects distinct roles (P2 + user item 2)
+
+Directive Programme 2 + user-reported duplication. The returning Project Home
+rendered a "Your projects" list of every project — the same library Projects owns,
+which is why the two screens read as duplicates.
+- Home's returning state now owns RETURNING only: one Continue hero for the active
+  project (Resume + progress), genuinely actionable attention, New source, and a
+  "Browse all projects (N)" link to the Projects route. The full project list is
+  removed — Home no longer reproduces the library.
+- Attention is grounded (Programme 2 / "labels are not learning truth"): it counts
+  only segments in the ACTIVE project whose last validated result was a fail
+  (submissionState 'failed'), links to the exact failed segment, and is hidden when
+  zero — never an invented or empty card.
+- Removed the now-dead per-project progress map and the list-row helpers.
+
+Verified in-browser (seeded sample): returning Home shows "Pick up where you left
+off" → Continue (1.1, Resume study, 0/4) → New source + Browse all projects (1); no
+project list. Build PASS, lint 0 on the file.
+
+Remaining P2 (open): the Projects side — remove the welcome ceremony / non-actionable
+dashboard metrics / second promoted-resume / static Advanced Options / ephemeral
+Study History drawer; editable project names; archive/restore + data controls +
+delete surfaced in Projects.

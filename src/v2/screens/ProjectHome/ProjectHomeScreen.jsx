@@ -26,22 +26,25 @@ import { setSegmentationIntent } from '../../foundation/primitives/segmentationF
 export default function ProjectHomeScreen({ route, shell }) {
   const projects = useProjects()
   const currentProject = useCurrentProject()
-  // Completed count per project, so the list can say which one needs attention.
-  // Only the current project's progress was read, which left every other row
-  // showing a bare title and a segment count — a list you cannot triage from.
-  //
-  // NUMBERS, not progress objects. useArapal compares one level with Object.is,
-  // so a map of freshly-derived objects is a new value on every call: getSnapshot
-  // never looks cached and React spins into "Maximum update depth exceeded". The
-  // hook's own docstring warns about exactly this and I walked into it anyway.
-  // The total needs no selector at all — it is project.segmentIds.length.
-  const completedByProject = useArapal((s) => {
-    const out = {}
-    for (const project of projects) out[project.id] = select.getProjectProgress(project.id, s).completed
-    return out
-  })
   const progress = useArapal((s) =>
     currentProject ? select.getProjectProgress(currentProject.id, s) : null)
+
+  // Genuinely actionable attention (Programme 2): segments in the ACTIVE project
+  // whose last validated result was a fail — the real "needs another pass" set,
+  // never a count derived from a presentation tone. Primitives only (a number and
+  // a string id), because useArapal compares one level with Object.is and a fresh
+  // object every render spins React into an update loop.
+  const attentionCount = useArapal((s) => {
+    if (!currentProject) return 0
+    return select.listSegments(currentProject.id, s)
+      .filter((seg) => select.getStudyRecord(currentProject.id, seg.id, s)?.submissionState === 'failed').length
+  })
+  const attentionSegmentId = useArapal((s) => {
+    if (!currentProject) return null
+    const seg = select.listSegments(currentProject.id, s)
+      .find((seg) => select.getStudyRecord(currentProject.id, seg.id, s)?.submissionState === 'failed')
+    return seg?.id ?? null
+  })
 
   const hasWork = projects.length > 0
 
@@ -60,6 +63,15 @@ export default function ProjectHomeScreen({ route, shell }) {
     shell.navigate('studyWorkspace')
   }
 
+  // Home links to Projects for browsing/managing the library rather than
+  // reproducing it (Programme 2). Attention opens the exact failed segment.
+  const openProjects = () => shell.navigate('projects')
+  const reviewAttention = () => {
+    if (!currentProject || !attentionSegmentId) return
+    actions.selectProject(currentProject.id)
+    navigation.resumeProject({ projectId: currentProject.id, segmentId: attentionSegmentId })
+  }
+
   const slots = {
     Layer3_Home_Lead: (
       <div style={{ display: 'grid', gap: spacing[8], justifyItems: hasWork ? 'start' : 'center' }}>
@@ -76,7 +88,7 @@ export default function ProjectHomeScreen({ route, shell }) {
     ),
 
     Layer3_Home_Body: hasWork
-      ? <ReturningState projects={projects} current={currentProject} progress={progress} completedByProject={completedByProject} onResume={resume} onNewSource={openSegmentation} />
+      ? <ReturningState current={currentProject} progress={progress} projectCount={projects.length} attentionCount={attentionCount} onResume={resume} onNewSource={openSegmentation} onOpenProjects={openProjects} onReviewAttention={reviewAttention} />
       : <FirstRunState onAddSource={openSegmentation} onUseSample={() => { seedSampleProject(); shell.navigate('studyWorkspace') }} />,
   }
 
@@ -214,7 +226,11 @@ function FirstRunState({ onAddSource, onUseSample }) {
   )
 }
 
-function ReturningState({ projects, current, progress, completedByProject, onResume, onNewSource }) {
+// Home owns RETURNING to the active project — one Continue, genuinely actionable
+// attention, and new-source — and links to Projects for the library rather than
+// reproducing it (Programme 2). The full project list lived here and duplicated
+// Projects; that made Home and Projects read as the same screen.
+function ReturningState({ current, progress, projectCount, attentionCount, onResume, onNewSource, onOpenProjects, onReviewAttention }) {
   const next = progress?.nextSegment
   const continueTitle = next ? `${next.ref} ${next.title}`.trim() : current?.title
   return (
@@ -248,43 +264,29 @@ function ReturningState({ projects, current, progress, completedByProject, onRes
         </div>
       ) : null}
 
-      <div style={{ display: 'grid', gap: spacing[12] }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: spacing[16] }}>
-          <span style={{ ...eyebrow }}>Your projects</span>
-          <button type="button" style={{ ...ghostButton }} onClick={onNewSource}>
-            <Plus size={15} strokeWidth={1.9} />
-            New source
-          </button>
-        </div>
-        <div style={{ display: 'grid', gap: spacing[8] }}>
-          {projects.map((project) => {
-            const total = project.segmentIds.length
-            const completed = completedByProject?.[project.id] ?? 0
+      {/* Actionable attention, shown only when there is something to act on —
+          segments the evaluator actually failed, never an empty or invented card. */}
+      {attentionCount > 0 ? (
+        <button type="button" onClick={onReviewAttention} style={{ ...row }}>
+          <span style={{ display: 'grid', gap: spacing[4], minWidth: 0, textAlign: 'left', flex: '1 1 auto' }}>
+            <strong style={{ ...typography.sectionTitle, color: colors.textStrong, margin: 0 }}>
+              {attentionCount} segment{attentionCount === 1 ? '' : 's'} need another pass
+            </strong>
+            <span style={{ ...meta }}>Review the segments that didn’t pass and try again.</span>
+          </span>
+          <ArrowRight size={16} strokeWidth={1.9} />
+        </button>
+      ) : null}
 
-            return (
-              <button
-                key={project.id}
-                type="button"
-                onClick={() => onResume(project)}
-                style={{ ...row }}
-              >
-                <span style={{ display: 'grid', gap: spacing[8], minWidth: 0, textAlign: 'left', flex: '1 1 auto' }}>
-                  <strong dir="auto" style={getRowTitleStyle(project.title)}>{project.title}</strong>
-                  {/* What the row is for: telling projects apart. It used to read
-                      "N segments", which is the one fact that does not help you
-                      choose — every project has some. Progress and recency are
-                      what say which one is waiting for you. */}
-                  <span style={{ ...meta }}>
-                    {completed} of {total} studied
-                    {formatLastActive(project.updatedAt) ? ` · ${formatLastActive(project.updatedAt)}` : ''}
-                  </span>
-                  {total ? <ProgressBar completed={completed} total={total} /> : null}
-                </span>
-                <ArrowRight size={16} strokeWidth={1.9} />
-              </button>
-            )
-          })}
-        </div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: spacing[16], flexWrap: 'wrap' }}>
+        <button type="button" style={{ ...ghostButton }} onClick={onNewSource}>
+          <Plus size={15} strokeWidth={1.9} />
+          New source
+        </button>
+        <button type="button" style={{ ...ghostButton }} onClick={onOpenProjects}>
+          Browse all projects{projectCount ? ` (${projectCount})` : ''}
+          <ArrowRight size={15} strokeWidth={1.9} />
+        </button>
       </div>
     </div>
   )
@@ -298,18 +300,6 @@ function ReturningState({ projects, current, progress, completedByProject, onRes
  * to have lost the thread. Returns null rather than a guess when the timestamp is
  * missing or unparseable, so the row simply omits it.
  */
-function formatLastActive(iso) {
-  if (!iso) return null
-  const then = Date.parse(iso)
-  if (Number.isNaN(then)) return null
-  const days = Math.floor((Date.now() - then) / 86400000)
-  if (days <= 0) return 'today'
-  if (days === 1) return 'yesterday'
-  if (days < 7) return `${days}d ago`
-  if (days < 28) return `${Math.floor(days / 7)}w ago`
-  return `${Math.floor(days / 28)}mo ago`
-}
-
 function ProgressBar({ completed, total }) {
   const pct = total ? Math.round((completed / total) * 100) : 0
   return (
@@ -351,21 +341,6 @@ const lead = {
 const meta = {
   ...typography.metaText,
   color: colors.textSoft,
-}
-
-/**
- * A project's title is user content, so its script is not known at design time.
- * Arabic in the Latin UI role at line-height 1.3 crops its own ascenders and
- * diacritics — visible in the rendered row, invisible to any overflow check.
- */
-function getRowTitleStyle(text) {
-  return {
-    ...getScriptAwareRole(text, { latin: typography.sectionTitle, arabic: typography.arabicCompact }),
-    color: colors.textStrong,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-  }
 }
 
 function getCardTitleStyle(text) {
