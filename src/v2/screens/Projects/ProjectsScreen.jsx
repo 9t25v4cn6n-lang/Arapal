@@ -19,7 +19,6 @@ import PrimaryCTA from '../../foundation/primitives/PrimaryCTA'
 import { colors, elevation, motion, radius, spacing, typography } from '../../foundation/tokens'
 import { compactControl } from '../../foundation/tokens/compactControl'
 import layoutContract from './ProjectsScreen.contract'
-import ArapalCompanion from './ArapalCompanion.jsx'
 import { useLiveLessons, useLiveStudyHistory } from './liveProjectsData'
 import { useVirtualRows } from './useVirtualRows'
 import { actions, navigation, select, useArchives } from '../../data'
@@ -851,13 +850,6 @@ function getSupportSummary(lesson) {
   return `${lesson.savedNoteCount} ${noteLabel} / ${lesson.savedVocabCount} ${termLabel}`
 }
 
-function getDaypart() {
-  const hour = new Date().getHours()
-  if (hour < 12) return 'Good morning'
-  if (hour < 18) return 'Good afternoon'
-  return 'Good evening'
-}
-
 function getDashboardSummary(lessons) {
   return lessons.reduce((summary, lesson) => ({
     ready: summary.ready + (lesson.status === 'ready' ? 1 : 0),
@@ -866,16 +858,16 @@ function getDashboardSummary(lessons) {
   }), { ready: 0, studied: 0, saved: 0 })
 }
 
+// Projects is the find-and-manage library, not a second welcome screen — the
+// mascot and the "Welcome back to your reading" ceremony are removed (Programme 2).
+// Home owns returning; this header states what Projects is for.
 function DashboardHero() {
   return (
-    <section className="study-dashboard study-dashboard__hero" aria-label="Welcome back" data-debug-item="projects_hero">
+    <section className="study-dashboard study-dashboard__hero" aria-label="Projects" data-debug-item="projects_hero">
       <div className="study-dashboard__heroCopy">
-        <p className="study-dashboard__eyebrow">{getDaypart()}</p>
-        <h1 className="study-dashboard__heroTitle">Welcome back to your reading.</h1>
-        <p className="study-dashboard__heroSupport">Your place is ready. Pick up from the next useful study action.</p>
-      </div>
-      <div className="study-dashboard__companionFrame" data-debug-item="projects_companion">
-        <ArapalCompanion />
+        <p className="study-dashboard__eyebrow">Projects</p>
+        <h1 className="study-dashboard__heroTitle">Your projects.</h1>
+        <p className="study-dashboard__heroSupport">Find a project and open it in Study, Research or Exams — or start a new source.</p>
       </div>
     </section>
   )

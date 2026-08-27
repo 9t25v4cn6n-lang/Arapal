@@ -734,3 +734,19 @@ Remaining P2 (open): the Projects side — remove the welcome ceremony / non-act
 dashboard metrics / second promoted-resume / static Advanced Options / ephemeral
 Study History drawer; editable project names; archive/restore + data controls +
 delete surfaced in Projects.
+
+## Package F — Projects: remove mascot + welcome ceremony (P2, partial)
+
+Directive Programme 2: Projects owns finding/managing, not a second welcome. The
+mascot Companion and the "Welcome back to your reading" hero are removed; the
+header now states what Projects is for ("Your projects. Find a project and open it
+in Study, Research or Exams — or start a new source."). Deleted the orphaned
+ArapalCompanion.jsx and the getDaypart daypart helper. Verified in-browser on the
+seeded sample. Build PASS, lint 0 on the file.
+
+Remaining P2 on Projects (open, next package — layout-contract work): remove the
+non-actionable summary metrics; remove the second promoted-resume ("Study
+dashboard · Pick up where you left off") that duplicates Home; remove the static
+Advanced Options; retire the ephemeral Study History drawer (study history is
+durable in Research); surface editable project names, archive/restore, data
+controls and delete in Projects.
