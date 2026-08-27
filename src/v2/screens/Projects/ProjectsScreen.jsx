@@ -850,14 +850,6 @@ function getSupportSummary(lesson) {
   return `${lesson.savedNoteCount} ${noteLabel} / ${lesson.savedVocabCount} ${termLabel}`
 }
 
-function getDashboardSummary(lessons) {
-  return lessons.reduce((summary, lesson) => ({
-    ready: summary.ready + (lesson.status === 'ready' ? 1 : 0),
-    studied: summary.studied + lesson.completedSegments,
-    saved: summary.saved + lesson.savedNoteCount + lesson.savedVocabCount,
-  }), { ready: 0, studied: 0, saved: 0 })
-}
-
 // Projects is the find-and-manage library, not a second welcome screen — the
 // mascot and the "Welcome back to your reading" ceremony are removed (Programme 2).
 // Home owns returning; this header states what Projects is for.
@@ -873,26 +865,6 @@ function DashboardHero() {
   )
 }
 
-function DashboardSummary({ lessons }) {
-  const summary = useMemo(() => getDashboardSummary(lessons), [lessons])
-  const metrics = [
-    { value: summary.ready, label: 'ready lessons' },
-    { value: summary.studied, label: 'segments studied' },
-    { value: summary.saved, label: 'saved items' },
-  ]
-
-  return (
-    <section className="study-dashboard study-dashboard__summaryGrid" aria-label="Study summary" data-debug-item="projects_summary">
-      {metrics.map((metric) => (
-        <div key={metric.label} className="study-dashboard__summaryMetric">
-          <strong>{metric.value}</strong>
-          <span>{metric.label}</span>
-        </div>
-      ))}
-    </section>
-  )
-}
-
 function LessonRail({ lessons, selectedLessonId, searchQuery, onSearchChange, onSelectLesson }) {
   const filteredLessons = useMemo(() => getFilteredLessons(lessons, searchQuery), [lessons, searchQuery])
 
@@ -901,10 +873,10 @@ function LessonRail({ lessons, selectedLessonId, searchQuery, onSearchChange, on
       <div className="study-dashboard__railHeader">
         <div className="study-dashboard__railIntro">
           <div>
-            <p className="study-dashboard__eyebrow">Study dashboard</p>
-            <h2 className="study-dashboard__railTitle">Pick up where you left off.</h2>
+            <p className="study-dashboard__eyebrow">Library</p>
+            <h2 className="study-dashboard__railTitle">Choose a project.</h2>
           </div>
-          <p className="study-dashboard__supportText">Complexity stays out of the way. Choose a lesson, then resume the next useful study action.</p>
+          <p className="study-dashboard__supportText">Search your projects and open one to study, research or assess. Home is where you pick up where you left off.</p>
         </div>
         <label className="study-dashboard__search">
           <Search size={16} strokeWidth={1.9} color={colors.textFaint} />
@@ -1292,7 +1264,9 @@ export default function ProjectsScreen({ route, shell }) {
 
   const screenSlots = {
     Layer4_Projects_Hero: <DashboardHero />,
-    Layer4_Projects_Summary: lessons.length ? <DashboardSummary lessons={lessons} /> : null,
+    // Non-actionable aggregate metrics removed (Programme 2): counts that do not
+    // change the next decision are noise above the library.
+    Layer4_Projects_Summary: null,
     Layer4_Projects_LessonRail: lessons.length ? (
       <LessonRail
         lessons={lessons}

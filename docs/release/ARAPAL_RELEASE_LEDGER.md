@@ -797,3 +797,23 @@ cycle is ~10 min), and drive the real product per change.
    state-specific + persistence + action-reachability assertions; negative harness proofs.
 
 Not yet Stage-3-ready. No Stage 3 performed. Not pushed.
+
+## Package G — Projects: remove summary metrics + reframe rail copy (P2)
+
+Directive Programme 2. Verified in-browser on the seeded sample:
+- Removed the non-actionable aggregate summary metrics (ready lessons / segments
+  studied / saved items) — the Summary slot is null and the region collapses
+  cleanly. Deleted DashboardSummary + getDashboardSummary.
+- Reframed the lesson-rail intro off the verbatim Home duplication: "Study
+  dashboard / Pick up where you left off" → "Library / Choose a project.", with
+  "Home is where you pick up where you left off" pointing the resume job back to
+  Home. Projects now reads as the library, Home as the command centre.
+
+Build PASS, lint 0 on the file.
+
+Remaining Projects P2 (careful separate pass — large self-contained deletions):
+retire the Study History drawer (StudyHistoryPanelContainer + VirtualizedHistoryTable,
+~144 lines; history is durable in Research) and the static Advanced Options panel;
+add editable project names + archive/restore/data-controls/delete surfacing.
+NOTE: the history/advanced removal must delete only lines 1099-1242 (the two history
+functions), NOT overrun into `export default function ProjectsScreen` at 1243.
