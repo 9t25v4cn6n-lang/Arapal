@@ -846,3 +846,24 @@ detail (resume/open, progress, delete/archive manage bar), no mascot, welcome
 ceremony, summary metrics, duplicate resume copy, history drawer, or advanced cards.
 Remaining P2: editable project names + fuller archive/restore/data-controls/delete
 (overlaps CV-P8 trust contract).
+
+## Stage 2 convergence — green checkpoint 3 (HEAD 8efc658); CV-P2 substantially closed
+
+Continuation from 371daf7. Projects P2 converged. Cumulative gate green:
+build PASS · lint 0 · unit PASS · behaviour 47/47 · QA production 0 · VR 52/52.
+
+Added commits: e6ef3cf (retire Study History drawer), 8efc658 (remove static
+Advanced Options).
+
+**CV-P2 status:** substantially CLOSED. Home = returning command centre (one
+Continue + grounded attention + New source + Browse-projects link); Projects =
+find-and-manage library (clean header, search + lesson list + detail with
+resume/open + progress + delete/archive manage bar). Removed across E–I: the
+duplicative Home project list, mascot Companion, "Welcome back" ceremony,
+non-actionable summary metrics, duplicate "Pick up where you left off" resume copy,
+ephemeral Study History drawer, static Advanced Options panel. Segmentation already
+out of global nav (Package A). Remaining P2 fragment folded into CV-P8: editable
+project names + fuller archive/restore/data-controls/delete.
+
+Next per plan: CV-P1 (domain spine) or CV-P8 (trust contract), then CV-P6/P7/P5-finish/EV.
+Not yet Stage-3-ready. No Stage 3 performed. Not pushed.
