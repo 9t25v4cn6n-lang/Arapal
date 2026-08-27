@@ -750,3 +750,50 @@ dashboard · Pick up where you left off") that duplicates Home; remove the stati
 Advanced Options; retire the ephemeral Study History drawer (study history is
 durable in Research); surface editable project names, archive/restore, data
 controls and delete in Projects.
+
+## Stage 2 convergence — green checkpoint 2 (HEAD 4a220c8)
+
+Continuation from 5e3ef38. Home/Projects role split landed. Cumulative gate green:
+build PASS · lint 0 · unit PASS · behaviour 47/47 · QA production 0 · VR 52/52.
+
+Added commits:
+- 944192f — Home returning state owns the active project only (Continue + grounded
+  attention + New source + Browse-all-projects link); duplicative project list removed (P2)
+- d61e602 — Projects removes the mascot Companion + "Welcome back" ceremony;
+  purposeful "Your projects" header (P2)
+- 4a220c8 — re-baseline projects-library goldens for the reframed header
+
+### Prioritised remaining Stage 2 plan (for efficient continuation)
+
+Batch each screen's visual changes into ONE package + ONE VR re-baseline (each VR
+cycle is ~10 min), and drive the real product per change.
+
+1. **Projects P2 finish** (one package): set `Layer4_Projects_Summary` slot → null
+   and delete `DashboardSummary`/`getDashboardSummary` (non-actionable metrics);
+   set `Layer4_Projects_History` slot → null and delete
+   `StudyHistoryPanelContainer`/`VirtualizedHistoryTable` + the `useLiveStudyHistory`
+   import + `History` icon (history is durable in Research); remove `AdvancedOptionsPanel`
+   from the DetailStage (delete the lazy import + AdvancedOptionsPanel.jsx); reframe
+   the lesson-rail intro copy off the verbatim Home duplication ("Pick up where you
+   left off"). Verify 390/768/1280/1440, re-baseline projects-library/projects-advanced-open.
+2. **CV-P1 spine**: move segmentation intent + source-entry draft off sessionStorage
+   into the store (workflowId+revision); per-project active segment as the durable
+   Study position; persistence-success on every mutation (extend the publish-honesty
+   pattern); one `learningState(projectId, segmentId)` selector consumed by Home/
+   Projects/Research/Exams; migrate/quarantine any legacy keys. Unit + isolation tests.
+3. **CV-P6 Exams**: attempt lifecycle already on the store — audit for the immutable
+   submitted-answer snapshot, retry-grading-from-snapshot, retake-as-new-attempt,
+   and library action distinctness; add transition-table tests.
+4. **CV-P7 responsive** (user items 4/5): mobile Study one continuous flow;
+   Discussion as a reachable full-height sheet without shifting the work lane; the
+   collapsed-support float control must work or be removed (no dead control).
+5. **CV-P8 trust contract**: data-controls dialog (versioned Export / validated
+   Restore / Delete project / Delete all + local-storage disclosure).
+6. **CV-P5 Research finish**: grounded filter set (drop duplicate Mistakes/Weak
+   lenses); reduce revision-queue ceremony; dossier with empty sections hidden.
+7. **CV-EV evidence**: production-transport interception (Playwright route-mock the
+   provider endpoint) for built-dist PASS/FAIL/Discussion/Research/Exam; migration +
+   transition-table + reload/isolation tests; AC-01…08 built-product evidence with
+   state-specific + persistence + action-reachability assertions; negative harness proofs.
+
+Not yet Stage-3-ready. No Stage 3 performed. Not pushed.
