@@ -653,3 +653,30 @@ Gate: build PASS, lint 0 on the file, rendered at desktop + tablet.
 Remaining P5 (open): grounded filter set (drop duplicate Mistakes/Weak lenses to
 All / Needs revision / Notes / Vocabulary / Completed); reduce the revision-queue
 ceremony; dossier from canonical data with empty sections hidden.
+
+## Package D — Dev grade override (test the PASS/FAIL result screens)
+
+User request: input a temporary, isolated, easily-removable override so the Study
+result screens can be exercised without a live AI provider. Implemented at the AI
+boundary so the REAL pipeline runs (parse → compute-outcome → store → result
+adapter); only the provider network call is skipped.
+- `src/v2/services/ai/devGradeOverride.js`: `?v2GradeOverride=pass|fail` (or
+  `localStorage['arapal.dev.gradeOverride']`) returns a canned response shaped
+  exactly like the study-grading contract. A single guarded branch at the top of
+  `gradeStudyAttempt` consumes it before the provider check.
+- Safety: `import.meta.env?.DEV`-gated. Verified the whole feature (including the
+  `v2GradeOverride` string and canned payloads) is **tree-shaken out of the
+  production dist** — it can never fabricate a grade in a released build (the
+  "no production fixture fallback" invariant holds). AI unit tests pass.
+
+Verified in-browser (dev): PASS → Best-in-class translation + Your translation +
+grounded Surface-check support + Continue/Next dominant + progress advanced +
+persists across reload. FAIL → "This attempt didn't pass" with the real blockers,
+translation preserved in place, TRY AGAIN + Submit again dominant, amber (not
+passed) status, no best translation revealed. Both match the Programme 4 PASS/FAIL
+contract — and confirm Package B's support rail correctly RETURNS once a grade
+produces grounded content.
+
+Removal: delete the module + the guarded branch. Note for CV-EV: release evidence
+still needs production-transport interception (Playwright route mocking of the
+provider endpoint) for built-dist PASS/FAIL, since this dev override is inert there.

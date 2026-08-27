@@ -12,6 +12,7 @@
 import { readAiConfig } from './config.js'
 import { recordAiSuccess, recordAiFailure, normalizeAiError } from './health.js'
 import { buildStudyGradingPrompt, parseStudyGradeResult } from './contracts/studyGrading.js'
+import { readDevGradeOverride, buildDevGradeResponse } from './devGradeOverride.js'
 import { buildExamGradingPrompt, parseExamGradeResult } from './contracts/examGrading.js'
 import {
   buildDiscussionPrompt, parseDiscussionReply,
@@ -62,9 +63,21 @@ const unavailable = (reason, message = '') => ({ available: false, reason, messa
  * @returns {Promise<{available:true, result:object} | {available:false, reason:string, message?:string}>}
  */
 export async function gradeStudyAttempt({ source, translation, attempt = 0, priorFeedback = '' }, { generate } = {}) {
+  if (!translation || !translation.trim()) return unavailable('empty', 'Nothing to grade.')
+
+  // DEV-ONLY, isolated, easily removable (see ./devGradeOverride.js): exercise the
+  // PASS/FAIL result screens without a live provider. Inert in production builds.
+  const devOverride = readDevGradeOverride()
+  if (devOverride) {
+    try {
+      return { available: true, result: parseStudyGradeResult(buildDevGradeResponse(devOverride, { translation })) }
+    } catch (error) {
+      return unavailable('error', error?.message || 'grade override failed.')
+    }
+  }
+
   const run = resolveGenerate(generate)
   if (!run) return unavailable('no-provider', 'AI grading is not configured on this device.')
-  if (!translation || !translation.trim()) return unavailable('empty', 'Nothing to grade.')
 
   try {
     const prompt = buildStudyGradingPrompt({ source, translation, attempt, priorFeedback })
