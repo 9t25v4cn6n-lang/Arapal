@@ -34,7 +34,7 @@ export function readDevGradeOverride() {
 // Canned provider responses shaped exactly like the study grading contract, so
 // they flow through the REAL parse → compute-outcome → store → result-adapter
 // pipeline. The only thing skipped is the network call to the provider.
-export function buildDevGradeResponse(mode, { translation = '' } = {}) {
+export function buildDevGradeResponse(mode) {
   if (mode === 'pass') {
     return JSON.stringify({
       grade: 9.1,

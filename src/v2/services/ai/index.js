@@ -70,7 +70,7 @@ export async function gradeStudyAttempt({ source, translation, attempt = 0, prio
   const devOverride = readDevGradeOverride()
   if (devOverride) {
     try {
-      return { available: true, result: parseStudyGradeResult(buildDevGradeResponse(devOverride, { translation })) }
+      return { available: true, result: parseStudyGradeResult(buildDevGradeResponse(devOverride)) }
     } catch (error) {
       return unavailable('error', error?.message || 'grade override failed.')
     }

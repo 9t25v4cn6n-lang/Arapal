@@ -185,11 +185,13 @@ test.describe('core study loop', () => {
   // and the store — not by translating legacy selectors.
 
   test('parity: the support rail carries guidance, lexicography and phrasing', async ({ page }) => {
-    await openStudy(page)
+    // Migrated for the Stage 2 Study rebuild (Programme 4): a LIVE segment with no
+    // grounded content no longer shows three empty support modules — support
+    // appears only once a grade produces content. Parity for the populated support
+    // rail (and its float/fullscreen modes) is now verified on the reference
+    // surface, whose support is real demo content, not empty placeholders.
+    await openStudy(page, { fresh: false })
     const text = await body(page)
-    // Legacy equivalent: 'support cards swap between pre- and post-submission sets'.
-    // The pre-submission set is what parity requires; V2 additionally offers each
-    // card floated or fullscreen, which legacy cannot do.
     expect(text).toMatch(/Guidance/i)
     expect(text).toMatch(/Lexicography/i)
     expect(text).toMatch(/Phrasing/i)
@@ -200,6 +202,20 @@ test.describe('core study loop', () => {
         'V2 exposes support modes legacy has no equivalent for',
       ).toHaveCount(1)
     }
+  })
+
+  test('a live segment shows no empty support modules before it is graded', async ({ page }) => {
+    // The directive's Programme 4 contract: no empty Quick Lexicography and no
+    // three empty support modules before grounded content exists. The seeded live
+    // project has no result, so the support rail is absent and the work lane leads.
+    await openStudy(page)
+    const text = await body(page)
+    expect(text, 'no empty vocabulary placeholder').not.toMatch(/Vocabulary appears here after the segment is graded/i)
+    expect(text, 'no "not prepared" empty support cards').not.toMatch(/Not prepared for this segment yet/i)
+    await expect(
+      page.getByRole('button', { name: /expand guidance/i }),
+      'the empty support rail is not rendered before grounded content',
+    ).toHaveCount(0)
   })
 
   test('parity: the discussion companion opens and closes', async ({ page }) => {
