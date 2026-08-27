@@ -174,22 +174,11 @@ export const STATES = [
       return clickControl(page, /open action options/i)
     },
   },
-  // seg-processing and seg-loading are the two screens that advance on their own
-  // — loading after 1200ms, the transition after 2200ms — and gotoState settles
-  // for 2400ms before capturing. So the golden checked in under the name
-  // "seg-processing" was a picture of the Success screen: a duplicate of
-  // seg-success under the wrong name, while the transition screen it claimed to
-  // cover had no coverage at all. Nobody noticed, because a wrong-but-stable
-  // golden passes forever.
-  //
-  // Both are held to reachability only, with the pause flag so they at least stay
-  // on the screen they name. Pixels are the wrong instrument here: every element
-  // on both screens carries an infinite animation — a spinning seal, flying
-  // chips, a pulsing bridge — so a pixel golden would either flap or need every
-  // moving part masked, which is a golden of the gaps between the content.
-  // Geometry is covered by `npm run qa`, which freezes motion and now asserts it
-  // measured the route it asked for.
-  { id: 'seg-processing', hash: 'v2/segmentationTransition', area: 'segmentation', query: 'v2FlowPause=1', reachabilityOnly: true },
+  // seg-loading advances on its own; gotoState settles for 2400ms before
+  // capturing, and every element carries an infinite animation, so it is held to
+  // reachability only with the pause flag. The timer-only transition and the
+  // ceremonial Success screen were removed in the Stage 2 fold (Source → Review →
+  // Study): publishing enters Study directly, so those states no longer exist.
   { id: 'seg-loading', hash: 'v2/segmentationLoading', area: 'segmentation', query: 'v2FlowPause=1', reachabilityOnly: true },
   { id: 'seg-review', hash: 'v2/segmentationReview', area: 'segmentation' },
   {
@@ -201,7 +190,6 @@ export const STATES = [
       try { await card.click({ timeout: 3000 }); return true } catch { return false }
     },
   },
-  { id: 'seg-success', hash: 'v2/segmentationSuccess', area: 'segmentation' },
 
   // ── Study ────────────────────────────────────────────────────────────────
   { id: 'study-draft', hash: 'v2/studyWorkspace', area: 'study' },

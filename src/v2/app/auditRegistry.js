@@ -3,10 +3,8 @@ export const coreProductRouteIds = [
   'projects',
   'projectResearch',
   'segmentationPasteNext',
-  'segmentationTransition',
   'segmentationLoading',
   'segmentationReview',
-  'segmentationSuccess',
   'studyWorkspace',
   'exams',
 ]
@@ -16,10 +14,8 @@ export const coreProductScreenDirs = [
   'Projects',
   'ProjectResearch',
   'SegmentationPasteNext',
-  'SegmentationTransition',
   'SegmentationLoading',
   'SegmentationReview',
-  'SegmentationSuccess',
   'StudyWorkspace',
   'Exams',
 ]

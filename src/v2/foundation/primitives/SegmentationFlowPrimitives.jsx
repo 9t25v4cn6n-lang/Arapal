@@ -2324,6 +2324,7 @@ export function SegmentationReviewActionRegion({
   readyCount,
   onApprove,
   onResegment,
+  publishError = null,
 }) {
   return (
     <div
@@ -2369,6 +2370,11 @@ export function SegmentationReviewActionRegion({
         <span style={{ ...flowType.operationalMeta }}>
           {segmentCount} segments · source preserved
         </span>
+        {publishError && (
+          <span role="alert" style={{ ...flowType.operationalMeta, color: colors.reviewStrong, maxWidth: '46ch' }}>
+            {publishError}
+          </span>
+        )}
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: spacing[16] }}>

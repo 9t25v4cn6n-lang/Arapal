@@ -525,3 +525,60 @@ required journey against the deployed origin; a documented rollback drill betwee
 build hashes; runtime monitoring/error reporting on the deployed origin; and a
 live-provider (Gemini) valid-key Study PASS. These need a real host/key and are
 recorded as open, not asserted.
+
+---
+
+# J. Stage 2 convergence (directive, baseline 3cf737b)
+
+Executing `docs/release/ARAPAL_V1_STAGE2_CONVERGENCE_DIRECTIVE.md`: one coherent
+product-consolidation cycle toward the customer chain (source → approved segments
+→ translation → validated result/notes/discussion → project memory → assessment →
+remediation). Old closure claims treated as hypotheses; verified against the
+running product. Not another audit. Stops at a Stage-3-ready state (no self-Stage-3).
+
+## CV-00 — Verified current reality (running product, 3cf737b)
+
+Confirmed shared root causes the directive names, by driving the product:
+- **Route structure as architecture:** the permanent global rail carried Source +
+  Segmentation (SG) as a destination beside Study/Research/Exams; the segmentation
+  flow ran paste → **timer-only transition** → loading → review → **ceremonial
+  Success** → study. Both are ceremony/IA, not product state.
+- **Empty support before content:** Study shows three support modules (Guidance,
+  Lexicography, Phrasing) reading "Not prepared for this segment yet" plus an empty
+  Quick Lexicography before any grounded content exists (Programme 4 target).
+- **Identity/copy:** browser title still `design-sandbox`; intake labels the empty
+  editor `PRESERVED SOURCE` before anything is preserved (P2/P3 truthful-language
+  targets).
+- The store already owns projects/segments/drafts/notes/records/results/proposals/
+  archives/exams/attempts with `persistenceHealthy()` and legacy-migration hooks —
+  the spine is largely present (Programme 1 is completion, not rebuild).
+
+## Package A — IA fold: Source→Review→Study, SG out of global nav (P2 + P3)
+
+Root-cause consolidation, verified end-to-end in-browser on the built flow:
+- **SG removed from the permanent global rail** (`segmentationPasteNext.rail.visible
+  = false`); it stays routable and is launched as an action (Add source / New
+  project / Re-segment). Rail is now PH · PR · RX · SW · EX.
+- **Timer-only transition removed** (`segmentationTransition` route + screen
+  deleted; `getLoadingAdvanceRoute` returns Review; `showSegmentationTransition`
+  preference removed). Processing advances straight to Review.
+- **Ceremonial Success removed** (`segmentationSuccess` route + screen deleted).
+  Review's Approve now publishes and **enters Study directly** with a concise
+  one-shot provenance banner ("N segments saved on this device"), opening the exact
+  first canonical segment.
+- **Persistence honesty on publish (Programme 1):** Approve checks
+  `persistenceHealthy()` after `publishSegments`; on a failed local write it stays
+  in Review with a recoverable message instead of navigating to a false success.
+- Migrated evidence/tests to the new flow (auditRegistry, qa route lists, VR states
+  seg-processing/seg-success removed, segmentation-handoff behaviour rewritten to
+  assert direct-to-Study + provenance + first-segment activation).
+
+Verified in-browser (dev build): pasted a fresh multi-sentence Arabic source →
+on-device proposal (2 segments, RTL correct) → Review with no transition → Approve
+→ **Study on segment 1.1 with the provenance banner and the exact pasted source, no
+fixture contamination**. Build PASS.
+
+Remaining in P2/P3 (open): Home vs Projects role split and removals; editable
+project name; workflow-ID/revision binding of async responses; bounded AI
+timeout/cancellation in the shared boundary; truthful intake preservation language;
+stale/missing-target explicit recovery; remove Create-patch.

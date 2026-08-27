@@ -40,7 +40,6 @@ const defaultFlowPreferences = {
   // equivalents, so this was a parity gap as well as a surprise.
   style: 'meaning',
   granularity: 'balanced',
-  showSegmentationTransition: true,
 }
 
 export function saveSegmentationFlowPreferences(preferences = {}) {
@@ -77,10 +76,6 @@ export function readSegmentationFlowPreferences() {
       granularity: VALID_GRANULARITIES.includes(parsed?.granularity)
         ? parsed.granularity
         : defaultFlowPreferences.granularity,
-      showSegmentationTransition:
-        typeof parsed?.showSegmentationTransition === 'boolean'
-          ? parsed.showSegmentationTransition
-          : defaultFlowPreferences.showSegmentationTransition,
     }
   } catch {
     return defaultFlowPreferences
@@ -95,12 +90,41 @@ export function getPostSegmentationRoute() {
   return 'segmentationReview'
 }
 
-export function getLoadingAdvanceRoute(preferences = readSegmentationFlowPreferences()) {
-  if (preferences.method !== 'manual' && preferences.showSegmentationTransition) {
-    return 'segmentationTransition'
-  }
-
+// Processing advances straight to Review. The separate timer-only transition
+// screen was ceremony between two real states and has been removed (Programme 3):
+// the customer flow is Source → Review → Study.
+export function getLoadingAdvanceRoute() {
   return getPostSegmentationRoute()
+}
+
+// Publishing enters Study directly with a concise confirmation/provenance banner
+// instead of a ceremonial Success route (Programme 3). Approval records a one-shot
+// provenance note that Study reads and clears on arrival — it is confirmation, not
+// identity, so a visit-scoped session flag is the right home for it.
+const publishProvenanceKey = 'arapal:v2:publish-provenance'
+
+export function setPublishProvenance({ projectId, segmentCount, sourceLabel = '' } = {}) {
+  if (typeof window === 'undefined' || !projectId) return
+  try {
+    window.sessionStorage.setItem(
+      publishProvenanceKey,
+      JSON.stringify({ projectId, segmentCount, sourceLabel, at: Date.now() }),
+    )
+  } catch { /* ignore */ }
+}
+
+export function readAndClearPublishProvenance(projectId) {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = window.sessionStorage.getItem(publishProvenanceKey)
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    // Only the project that was just published may consume its own banner, so a
+    // stale note can never surface on an unrelated project (context isolation).
+    if (parsed?.projectId !== projectId) return null
+    window.sessionStorage.removeItem(publishProvenanceKey)
+    return parsed
+  } catch { return null }
 }
 
 export function shouldPauseSegmentationFlowTimers() {

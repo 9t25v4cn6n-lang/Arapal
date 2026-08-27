@@ -66,10 +66,8 @@ export const ROUTES = [
   // and the transition route was reporting the review screen's. Two of thirteen
   // routes silently pointed at the wrong thing, which is the same shape of
   // blindness as the old checker's screenCount: 1.
-  { id: 'v2-segmentationTransition', hash: 'v2/segmentationTransition', app: 'v2', query: 'v2FlowPause=1', surface: 'production' },
   { id: 'v2-segmentationLoading', hash: 'v2/segmentationLoading', app: 'v2', query: 'v2FlowPause=1', surface: 'production' },
   { id: 'v2-segmentationReview', hash: 'v2/segmentationReview', app: 'v2', surface: 'production' },
-  { id: 'v2-segmentationSuccess', hash: 'v2/segmentationSuccess', app: 'v2', surface: 'production' },
   { id: 'v2-studyWorkspace', hash: 'v2/studyWorkspace', app: 'v2', surface: 'production' },
   { id: 'v2-exams', hash: 'v2/exams', app: 'v2', surface: 'production' },
 ]

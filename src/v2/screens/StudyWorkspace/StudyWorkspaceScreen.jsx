@@ -19,6 +19,7 @@ import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import { motion } from '../../foundation/tokens'
 import layoutContract from './StudyWorkspaceScreen.contract'
 import { adaptStudyResult } from './studyResultView'
+import { readAndClearPublishProvenance } from '../../foundation/primitives/segmentationFlowState'
 import {
   actions, select, useArapal, useNotes, navigation, SAMPLE_EVALUATION_NOTICE,
 } from '../../data'
@@ -187,6 +188,15 @@ export default function StudyWorkspaceScreen({ route, shell }) {
 
   const [context] = useState(() => navigation.readContext())
   const [contextDismissed, setContextDismissed] = useState(false)
+
+  // A fresh publish enters Study directly (no ceremonial Success route) and
+  // leaves a one-shot provenance note the banner reports once, then clears.
+  const [publishBanner, setPublishBanner] = useState(null)
+  useEffect(() => {
+    if (!project?.id) return
+    const note = readAndClearPublishProvenance(project.id)
+    if (note) setPublishBanner(note)
+  }, [project?.id])
 
   const [segmentRecords, setSegmentRecords] = useState(createInitialSegmentRecords)
   const [currentSegmentId, setCurrentSegmentId] = useState(
@@ -750,8 +760,24 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     // dropped the handoff for anyone without a project, which is exactly the
     // audience most likely to be exploring from Exams.
     Layer4_Study_ContextRegion:
-      (context && !contextDismissed) || contextSegmentMissing || grading || gradeNotice || (isLive && lastResult?.isSample) || (currentState === 'failed' && resultView.blockingIssues.length) ? (
+      publishBanner || (context && !contextDismissed) || contextSegmentMissing || grading || gradeNotice || (isLive && lastResult?.isSample) || (currentState === 'failed' && resultView.blockingIssues.length) ? (
         <div className="study-v2__contextStrip">
+          {publishBanner ? (
+            <div className="study-v2__contextBanner" role="status">
+              <span className="study-v2__contextLabel">Segments published</span>
+              <span className="study-v2__contextDetail">
+                {publishBanner.segmentCount} segment{publishBanner.segmentCount === 1 ? '' : 's'} saved on this device
+                {publishBanner.sourceLabel ? ` · ${publishBanner.sourceLabel}` : ''}. Start with the first segment below.
+              </span>
+              <button
+                type="button"
+                className="study-v2__contextDismiss"
+                onClick={() => setPublishBanner(null)}
+              >
+                Dismiss
+              </button>
+            </div>
+          ) : null}
           {currentState === 'failed' && resultView.blockingIssues.length ? (
             <div className="study-v2__sampleNotice" role="alert" style={{ display: 'grid', gap: '6px' }}>
               <strong>This attempt didn’t pass. Fix these, then submit again:</strong>

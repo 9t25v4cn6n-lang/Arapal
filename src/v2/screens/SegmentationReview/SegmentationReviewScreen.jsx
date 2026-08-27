@@ -12,9 +12,9 @@ import {
   SegmentationReviewSourceTray,
 } from '../../foundation/primitives/SegmentationFlowPrimitives'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
-import { setSegmentationIntent } from '../../foundation/primitives/segmentationFlowState'
+import { setSegmentationIntent, setPublishProvenance } from '../../foundation/primitives/segmentationFlowState'
 import layoutContract from './SegmentationReviewScreen.contract'
-import { select, actions, getSnapshot } from '../../data'
+import { select, actions, getSnapshot, persistenceHealthy } from '../../data'
 
 const reviewSectionSize = 3
 
@@ -201,6 +201,9 @@ export default function SegmentationReviewScreen({ route, shell }) {
   const [collapsedGroupIds, setCollapsedGroupIds] = useState([])
   const [proposalViewMode, setProposalViewMode] = useState('grid')
   const [toolbarIsFloating, setToolbarIsFloating] = useState(false)
+  // Set only when the canonical publish write fails; keeps the user in Review
+  // with an honest recoverable message instead of a false success (Programme 1).
+  const [publishError, setPublishError] = useState(null)
 
   // Persist Review edits back onto the non-authoritative proposal so a label
   // edit (or split/merge) survives a reload before approval (S3-001). This never
@@ -622,9 +625,10 @@ export default function SegmentationReviewScreen({ route, shell }) {
   const slots = {
     ...getSegmentationFlowHeaderSlots({
       shell,
-      // Review is the middle step now, not the last one.
+      // Review is the middle step now, not the last one. Back returns to the
+      // source it came from — never forward to a (removed) Success screen.
       stepIndex: 1,
-      backRoute: 'segmentationSuccess',
+      backRoute: 'segmentationPasteNext',
     }),
     Layer4_Review_IntroRegion: <SegmentationReviewIntro summary={summary} />,
     Layer4_Review_SourceTrayRegion: (
@@ -722,17 +726,34 @@ export default function SegmentationReviewScreen({ route, shell }) {
           const project = select.getCurrentProject(snapshot)
           const proposal = project ? select.getProposal(project.id, snapshot) : null
           const sourceId = proposal?.sourceId ?? project?.sourceIds?.[0]
-          if (project && sourceId) {
-            const chunks = segments.map((segment, index) => ({
-              text: segment.text,
-              ref: `1.${index + 1}`,
-              title: segment.label && !/^Segment \d+$/.test(segment.label) ? segment.label : '',
-              chapterLabel: segment.groupLabel && segment.groupLabel !== 'Proposed segments' ? segment.groupLabel : 'Chapter 1',
-            }))
-            actions.publishSegments({ projectId: project.id, sourceId, chunks })
+          if (!project || !sourceId) {
+            return
           }
-          shell.navigate('segmentationSuccess')
+          const chunks = segments.map((segment, index) => ({
+            text: segment.text,
+            ref: `1.${index + 1}`,
+            title: segment.label && !/^Segment \d+$/.test(segment.label) ? segment.label : '',
+            chapterLabel: segment.groupLabel && segment.groupLabel !== 'Proposed segments' ? segment.groupLabel : 'Chapter 1',
+          }))
+          const published = actions.publishSegments({ projectId: project.id, sourceId, chunks })
+          // Never claim success on a failed local write (Programme 1). If the
+          // canonical write did not land, stay in Review with the proposal intact
+          // rather than entering Study on nothing.
+          if (!persistenceHealthy()) {
+            setPublishError('Could not save the approved segments to this device. Your proposal is preserved — please retry.')
+            return
+          }
+          setPublishError(null)
+          // Publishing enters Study directly (no ceremonial Success route),
+          // carrying a one-shot provenance note for Study's confirmation banner.
+          setPublishProvenance({
+            projectId: project.id,
+            segmentCount: published?.length ?? chunks.length,
+            sourceLabel: project.title ?? '',
+          })
+          shell.navigate('studyWorkspace')
         }}
+        publishError={publishError}
         // Re-segmenting means going back to the source and splitting again,
         // which is the same destination "Edit source" already uses — a real
         // action, not a button added to match a picture.

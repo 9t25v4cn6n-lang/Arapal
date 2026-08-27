@@ -12,14 +12,10 @@ import ProjectResearchScreen from '../screens/ProjectResearch/ProjectResearchScr
 import projectResearchLayoutContract from '../screens/ProjectResearch/ProjectResearchScreen.contract'
 import SegmentationPasteNextScreen from '../screens/SegmentationPasteNext/SegmentationPasteNextScreen'
 import segmentationPasteNextLayoutContract from '../screens/SegmentationPasteNext/SegmentationPasteNextScreen.contract'
-import SegmentationTransitionScreen from '../screens/SegmentationTransition/SegmentationTransitionScreen'
-import segmentationTransitionLayoutContract from '../screens/SegmentationTransition/SegmentationTransitionScreen.contract'
 import SegmentationLoadingScreen from '../screens/SegmentationLoading/SegmentationLoadingScreen'
 import segmentationLoadingLayoutContract from '../screens/SegmentationLoading/SegmentationLoadingScreen.contract'
 import SegmentationReviewScreen from '../screens/SegmentationReview/SegmentationReviewScreen'
 import segmentationReviewLayoutContract from '../screens/SegmentationReview/SegmentationReviewScreen.contract'
-import SegmentationSuccessScreen from '../screens/SegmentationSuccess/SegmentationSuccessScreen'
-import segmentationSuccessLayoutContract from '../screens/SegmentationSuccess/SegmentationSuccessScreen.contract'
 import StudyWorkspaceScreen from '../screens/StudyWorkspace/StudyWorkspaceScreen'
 import studyWorkspaceLayoutContract from '../screens/StudyWorkspace/StudyWorkspaceScreen.contract'
 
@@ -96,45 +92,27 @@ export const routeRegistry = {
   },
   segmentationPasteNext: {
     id: 'segmentationPasteNext',
-    label: 'Segmentation Paste Next',
+    label: 'Add source',
     component: SegmentationPasteNextScreen,
     layoutContract: segmentationPasteNextLayoutContract,
     shell: {
       showRail: true,
       header: {
-        modeLabel: 'Source + Segmentation',
-        description: 'Parallel rebuild review route',
+        modeLabel: 'Add source',
+        description: 'Preserve a source and propose study segments',
       },
+      // Source + Segmentation is an ACTION on a project (Add source, New project,
+      // Re-segment), not a permanent global destination competing with Study,
+      // Research and Exams. It is launched from those affordances and stays
+      // routable, but it no longer occupies a primary rail slot (Programme 2).
       rail: {
-        visible: true,
+        visible: false,
         groupId: 'segmentation',
-        label: 'Source + Segmentation',
+        label: 'Add source',
         shortLabel: 'SG',
         iconKey: 'segmentation',
         order: 40,
         routeId: 'segmentationPasteNext',
-      },
-    },
-  },
-  segmentationTransition: {
-    id: 'segmentationTransition',
-    label: 'Segmentation Transition',
-    component: SegmentationTransitionScreen,
-    layoutContract: segmentationTransitionLayoutContract,
-    shell: {
-      showRail: true,
-      header: {
-        modeLabel: 'Source + Segmentation',
-        description: 'Animate the handoff into processing',
-      },
-      rail: {
-        visible: false,
-        groupId: 'segmentation',
-        label: 'Source + Segmentation',
-        shortLabel: 'SG',
-        iconKey: 'segmentation',
-        order: 40,
-        routeId: 'segmentationPaste',
       },
     },
   },
@@ -170,28 +148,6 @@ export const routeRegistry = {
       header: {
         modeLabel: 'Source + Segmentation',
         description: 'Review and approve segmentation',
-      },
-      rail: {
-        visible: false,
-        groupId: 'segmentation',
-        label: 'Source + Segmentation',
-        shortLabel: 'SG',
-        iconKey: 'segmentation',
-        order: 40,
-        routeId: 'segmentationPaste',
-      },
-    },
-  },
-  segmentationSuccess: {
-    id: 'segmentationSuccess',
-    label: 'Segmentation Success',
-    component: SegmentationSuccessScreen,
-    layoutContract: segmentationSuccessLayoutContract,
-    shell: {
-      showRail: true,
-      header: {
-        modeLabel: 'Source + Segmentation',
-        description: 'Published and ready to continue',
       },
       rail: {
         visible: false,

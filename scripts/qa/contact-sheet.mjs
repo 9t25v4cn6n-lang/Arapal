@@ -33,10 +33,8 @@ const GROUPS = [
     screens: [
       { id: 'v2-segmentationPasteNext', hash: 'v2/segmentationPasteNext', impl: 'v2', file: 'src/v2/screens/SegmentationPasteNext/', lines: 275, verdict: 'keep', why: 'Your pick. Now holds the Segmentation slot in the nav rail.' },
       { id: 'legacy-segmentation', hash: 'segmentation', impl: 'legacy', file: 'src/screens/MakeSegmentationFlowScreen.jsx', lines: 5946, verdict: 'blocked', why: 'BLOCKED — holds the real sentence/paragraph splitting logic and the options model. Extract that first, then archive.' },
-      { id: 'v2-segmentationTransition', hash: 'v2/segmentationTransition', impl: 'v2', file: 'src/v2/screens/SegmentationTransition/', lines: 0, verdict: 'keep', why: 'Processing animation.' },
-      { id: 'v2-segmentationLoading', hash: 'v2/segmentationLoading', impl: 'v2', file: 'src/v2/screens/SegmentationLoading/', lines: 0, verdict: 'keep', why: 'Loading state.' },
-      { id: 'v2-segmentationReview', hash: 'v2/segmentationReview', impl: 'v2', file: 'src/v2/screens/SegmentationReview/', lines: 673, verdict: 'keep', why: 'Review + approve. Floating toolbar still covers 30px of the right column.' },
-      { id: 'v2-segmentationSuccess', hash: 'v2/segmentationSuccess', impl: 'v2', file: 'src/v2/screens/SegmentationSuccess/', lines: 0, verdict: 'keep', why: 'Publish confirmation.' },
+      { id: 'v2-segmentationLoading', hash: 'v2/segmentationLoading', impl: 'v2', file: 'src/v2/screens/SegmentationLoading/', lines: 0, verdict: 'keep', why: 'Processing state; advances straight to Review.' },
+      { id: 'v2-segmentationReview', hash: 'v2/segmentationReview', impl: 'v2', file: 'src/v2/screens/SegmentationReview/', lines: 673, verdict: 'keep', why: 'Review + approve. Approval publishes and enters Study directly (no Success ceremony).' },
     ],
   },
   {

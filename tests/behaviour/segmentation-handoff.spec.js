@@ -39,7 +39,9 @@ async function pasteAndApprove(page, source = SOURCE) {
   await page.waitForURL(/segmentationReview/, { timeout: 15000 }).catch(() => {})
   await page.waitForTimeout(1500)
   await page.getByRole('button', { name: /approve & continue|^approve/i }).first().click()
-  await page.waitForURL(/segmentationSuccess/, { timeout: 15000 }).catch(() => {})
+  // Approval publishes and enters Study directly — no ceremonial Success route
+  // (Stage 2 fold: Source → Review → Study).
+  await page.waitForURL(/studyWorkspace/, { timeout: 15000 }).catch(() => {})
   await page.waitForTimeout(1200)
 }
 
@@ -187,7 +189,11 @@ test.describe('exam → study handoff across the product boundary', () => {
     })
     expect(targetSegment).toBeTruthy()
 
-    await page.goto('/?chrome=0#v2/studyWorkspace', { waitUntil: 'domcontentloaded' })
+    // Approval now lands on Study directly, so the page is already at
+    // #v2/studyWorkspace — a goto to the same URL is a no-op that would not
+    // remount and re-read the exam context. In production the handoff arrives
+    // from Exams (a real route change); here a reload reproduces that fresh entry.
+    await page.reload({ waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(2400)
 
     expect(await body(page), 'provenance from the exam is shown').toMatch(/Exam miss/i)
@@ -196,7 +202,7 @@ test.describe('exam → study handoff across the product boundary', () => {
   })
 })
 
-test.describe('review and success reflect the published segmentation', () => {
+test.describe('review and publish handoff enters Study directly', () => {
   test('Review edits the user’s own proposal, not a fixture', async ({ page }) => {
     await pasteToProposal(page)
     await page.waitForTimeout(1000)
@@ -205,35 +211,35 @@ test.describe('review and success reflect the published segmentation', () => {
     expect(await body(page), 'the review list shows the pasted source').toContain(MARKER)
   })
 
-  test('Success reports the real segment count', async ({ page }) => {
+  test('Approval publishes canonical segments and lands in Study', async ({ page }) => {
     await pasteAndApprove(page)
-    const expected = await page.evaluate(() =>
-      Object.keys(JSON.parse(localStorage.getItem('arapal.v1.state')).segments).length)
-    expect(expected, 'approval produced canonical segments').toBeGreaterThan(0)
 
-    await page.goto('/?chrome=0#v2/segmentationSuccess', { waitUntil: 'domcontentloaded' })
-    await page.waitForTimeout(2600)
-    expect(await body(page)).toMatch(new RegExp(`\\b${expected}\\b`))
+    // The fold: approval goes straight to Study, no Success ceremony in between.
+    expect(page.url(), 'approval enters Study directly').toContain('studyWorkspace')
+
+    const store = await page.evaluate(() =>
+      JSON.parse(localStorage.getItem('arapal.v1.state')))
+    const segmentCount = Object.keys(store.segments).length
+    expect(segmentCount, 'approval produced canonical segments').toBeGreaterThan(0)
+
+    // Study opens the first canonical segment (publish set project.currentSegmentId).
+    const project = Object.values(store.projects).find((p) => p.segmentIds?.length)
+    expect(project?.currentSegmentId, 'the first canonical segment is the active one')
+      .toBe(project.segmentIds[0])
   })
 
-  test('Start Studying carries context into Study', async ({ page }) => {
+  test('Publishing shows the provenance banner and the first segment', async ({ page }) => {
     await pasteAndApprove(page)
-    await page.goto('/?chrome=0#v2/segmentationSuccess', { waitUntil: 'domcontentloaded' })
-    await page.waitForTimeout(2600)
-    await page.getByRole('button', { name: /start studying/i }).first().click()
-    await page.waitForTimeout(1800)
-
-    expect(page.url()).toContain('studyWorkspace')
-    const ctx = await page.evaluate(() => {
-      const raw = sessionStorage.getItem('arapal.v1.context')
-      return raw ? JSON.parse(raw) : null
-    })
-    expect(ctx, 'a context payload was written').toBeTruthy()
-    expect(ctx.kind).toBe('published')
-    expect(ctx.segmentId, 'it names the segment to open').toBeTruthy()
+    await page.waitForTimeout(1200)
 
     const text = await body(page)
-    expect(text, 'Study announces where it came from').toMatch(/from segmentation/i)
-    expect(text).toContain(MARKER)
+    // Confirmation/provenance banner instead of a ceremonial Success screen.
+    expect(text, 'Study confirms what was just published').toMatch(/segments? published|saved on this device/i)
+    expect(text, 'the published source is what Study shows').toContain(MARKER)
+
+    // The one-shot provenance note is consumed (cleared) once shown.
+    const stillThere = await page.evaluate(() =>
+      window.sessionStorage.getItem('arapal:v2:publish-provenance'))
+    expect(stillThere, 'the provenance note is one-shot').toBeNull()
   })
 })
