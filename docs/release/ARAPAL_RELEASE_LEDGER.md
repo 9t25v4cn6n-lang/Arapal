@@ -867,3 +867,17 @@ project names + fuller archive/restore/data-controls/delete.
 
 Next per plan: CV-P1 (domain spine) or CV-P8 (trust contract), then CV-P6/P7/P5-finish/EV.
 Not yet Stage-3-ready. No Stage 3 performed. Not pushed.
+
+## User item 5 verified (Discussion layout) — no desktop reproduction
+
+Measured the Study translation box before/after opening Discussion at 1280: the
+editor kept its exact vertical position (textarea y=452 unchanged; editor y=377
+unchanged; source y=118 unchanged) and moved LEFT (x 521→363), narrowing to make
+room for the Discussion panel on the right — i.e. exactly the requested behaviour.
+At 375 the box also stays put and Discussion stacks below it. So item 5 ("box moves
+up") does not reproduce at standard desktop or mobile widths; likely already
+addressed by prior responsive work or specific to an intermediate width.
+
+Genuine CV-P7 remainder confirmed: mobile Discussion stacks INLINE below the editor
+rather than opening as the full-height reachable sheet/page the directive specifies
+(Programme 7). Tracked under CV-P7, not item 5.
