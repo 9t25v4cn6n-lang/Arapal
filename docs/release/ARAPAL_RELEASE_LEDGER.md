@@ -680,3 +680,33 @@ produces grounded content.
 Removal: delete the module + the guarded branch. Note for CV-EV: release evidence
 still needs production-transport interception (Playwright route mocking of the
 provider endpoint) for built-dist PASS/FAIL, since this dev override is inert there.
+
+## Stage 2 convergence — green checkpoint (HEAD 0f280d7)
+
+Six commits from baseline 3cf737b, each root-caused, verified in the running
+product, and committed. Cumulative gate at HEAD is fully green:
+- build PASS · lint 0 errors · unit PASS · behaviour 46/46 · QA production 0
+  (exit 0) · VR 52/52.
+
+Commits:
+- ef1b130 — fold Source→Review→Study; Segmentation out of the global rail (P2/P3)
+- bd09905 — Study: no empty support modules; AI readiness before submit (P4)
+- ea4cc9e — Research masthead normalised (P5 + user item 3)
+- 2475740 — dev-only grade override to exercise PASS/FAIL screens (user item 6)
+- 9c1d9b9 — lint fix + Study support-rail behaviour parity migrated
+- 0f280d7 — re-baseline research-browse goldens; drop removed seg-success goldens
+
+Behaviour migration of record: the "support rail carries guidance/lexicography/
+phrasing" parity test now targets the reference surface (populated demo support),
+and a new test asserts a LIVE ungraded segment shows NO empty support modules —
+encoding the Programme 4 contract rather than the superseded pre-submission set.
+
+Remaining Stage 2 scope toward the AC-01…AC-08 exit condition: CV-P1 (spine
+completion — source-draft/workflow/intent into the store off sessionStorage,
+per-project active segment, persistence-success on every mutation, one learning-
+state selector, legacy-key migration), CV-P2 (Home vs Projects role split +
+user item 2), CV-P6 (Exams on canonical store), CV-P7 (task-first responsive +
+user items 4/5), CV-P8 (trust contract), deeper CV-P4/CV-P5 finishing, and CV-EV
+(evidence overhaul with production-transport interception for built-dist PASS/FAIL,
+migration/transition-table/isolation tests, and AC-01…08 built-product evidence).
+Not yet Stage-3-ready; no Stage 3 performed.
