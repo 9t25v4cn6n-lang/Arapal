@@ -39,37 +39,20 @@ const researchFilters = [
   { id: 'completed', label: 'Completed', shortLabel: 'Completed', icon: CheckCircle2 },
 ]
 
-function ProjectResearchHeader({ stats, projectSummary, onOpenStudy }) {
-  const metrics = [
-    { value: stats.totalSegments, label: 'segments' },
-    { value: stats.vocabularyNotes, label: 'vocab notes' },
-    { value: stats.needsAttention, label: 'review points' },
-  ]
-
+function ProjectResearchHeader({ projectSummary, onOpenStudy }) {
   return (
     <header className="project-research__masthead" data-debug-item="project_research_header">
       <div className="project-research__titleGroup">
         <p className="project-research__eyebrow">{projectSummary.subtitle}</p>
-        <h1 className="project-research__title">{projectSummary.title} knowledge explorer</h1>
+        <h1 className="project-research__title">{projectSummary.title}</h1>
         <p className="project-research__lead">
           <span>{projectSummary.projectMeta}</span> · Search saved source, translations, feedback, notes, and recurring terms.
         </p>
       </div>
 
-      {/* The metrics describe the project the title names, so they sit WITH the
-          title. They used to be bundled with the Study mode action into a single
-          right-hand cluster, which is why three facts about this project and one
-          way to leave it were reading as the same kind of thing, jammed together
-          against the right edge and disconnected from what they counted. */}
-      <div className="project-research__metricStrip" aria-label="Project research summary">
-        {metrics.map((metric) => (
-          <div key={metric.label} className="project-research__metricPill">
-            <strong>{metric.value}</strong>
-            <span>{metric.label}</span>
-          </div>
-        ))}
-      </div>
-
+      {/* Decorative metric strip removed (Programme 5): counts that do not change
+          the next decision are noise above the actual knowledge. The masthead
+          leads with project context and the one action out of it. */}
       <div className="project-research__headerAside">
         <button type="button" className="project-research__studyLink" onClick={onOpenStudy}>
           <BookOpen size={15} strokeWidth={2} />
@@ -1402,23 +1385,19 @@ const researchStyles = `
     box-shadow: 0 18px 38px rgba(15, 23, 42, 0.1);
   }
 
+  /* Normalised (Programme 5 / user report): the title group was a dark navy pill
+     inside the light masthead — a decorative banner doing nothing. It now sits on
+     the masthead surface with the app's own text colour. */
   .project-research__titleGroup {
     flex: 0 1 auto;
-    padding: ${spacing[10]} ${spacing[20]};
-    border-radius: ${radius[16]};
-    background: linear-gradient(120deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.94));
+    padding: 0;
+    background: transparent;
   }
 
-  /* Pushed right because it is the one ACTION here; the metrics beside the title
-     are facts about the project and stay with it. */
+  /* Pushed right because it is the one ACTION here. */
   .project-research__headerAside {
     margin-inline-start: auto;
     flex: 0 0 auto;
-  }
-
-  .project-research__metricStrip {
-    flex: 0 1 auto;
-    min-width: 0;
   }
 
   .project-research__titleGroup {
@@ -1433,7 +1412,7 @@ const researchStyles = `
   }
 
   .project-research__title {
-    color: ${colors.surfacePrimary};
+    color: ${colors.textStrong};
     font-size: ${typography.pageTitle.fontSize};
     line-height: 1;
   }
@@ -2477,19 +2456,13 @@ const researchStyles = `
       overflow: visible;
     }
 
-    /* The masthead declares minmax(0, 1fr) auto, but "Study mode" is 182px and
-       cannot shrink, so on a 306px header the title got the 78px remainder and
-       wrapped mid-word — "Al-", "Hidayah", "knowled", "explorer" — clipped by
-       the block behind it. They cannot share a row at this width, so they stop
-       sharing one.
-
-       The background goes with it: that gradient hard-cuts dark to light at 34%
-       to sit behind a title on the left and a button on the right, which reads
-       as a broken edge once they are stacked. */
+    /* The masthead declares minmax(0, 1fr) auto, but "Study mode" cannot shrink,
+       so at this width the title and the action stop sharing a row. The masthead
+       keeps the light app surface it uses everywhere else — no dark banner
+       (Programme 5 / user report). */
     .project-research__masthead {
       grid-template-columns: minmax(0, 1fr);
       gap: ${spacing[12]};
-      background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.94));
     }
 
     .project-research__titleGroup { grid-template-columns: minmax(0, 1fr); }

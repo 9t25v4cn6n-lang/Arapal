@@ -633,3 +633,23 @@ no empty modules, with the readiness line and Set up AI. Build PASS.
 Remaining P4 (open): populated PASS result story with Continue dominant; FAIL
 repair-mode polish; the collapsed-support float control (backlog item 4) and the
 Discussion-open work-lane shift (backlog item 5).
+
+## Package C — Research masthead normalised (P5, partial + user item 3)
+
+Directive Programme 5 + user-reported item 3 (dark-blue banner doing nothing).
+Verified in-browser at desktop and 768:
+- Removed the dark-navy title-group banner that appeared at narrow breakpoints
+  (two media-query rules replaced a `linear-gradient(rgba(15,23,42)…)` pill with
+  the app's own light masthead surface; title text returns to `textStrong`).
+- Removed the "knowledge explorer" flourish from the title — the masthead now
+  leads with the plain project title.
+- Removed the decorative metric strip (segments / vocab notes / review points) —
+  counts that do not change the next decision. The masthead now carries project
+  context + the one action (Study mode); lenses, search and the segment ledger
+  lead the surface.
+
+Gate: build PASS, lint 0 on the file, rendered at desktop + tablet.
+
+Remaining P5 (open): grounded filter set (drop duplicate Mistakes/Weak lenses to
+All / Needs revision / Notes / Vocabulary / Completed); reduce the revision-queue
+ceremony; dossier from canonical data with empty sections hidden.
