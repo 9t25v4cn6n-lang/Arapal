@@ -1,4 +1,4 @@
-import { lazy, memo, Suspense, useCallback, useMemo, useState } from 'react'
+import { memo, useCallback, useMemo, useState } from 'react'
 import {
   ArrowRight,
   BookOpen,
@@ -7,7 +7,6 @@ import {
   FolderOpen,
   ListChecks,
   Search,
-  SlidersHorizontal,
 } from 'lucide-react'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
 import UserText from '../../foundation/primitives/UserText'
@@ -19,7 +18,6 @@ import { useLiveLessons } from './liveProjectsData'
 import { actions, navigation, select, useArchives } from '../../data'
 import { setSegmentationIntent } from '../../foundation/primitives/segmentationFlowState'
 
-const AdvancedOptionsPanel = lazy(() => import('./AdvancedOptionsPanel.jsx'))
 
 const dashboardStyles = `
   .study-dashboard,
@@ -970,31 +968,6 @@ const ResumeStage = memo(function ResumeStage({ lesson, onResume, onBrowse }) {
   )
 })
 
-function AdvancedDisclosureContainer({ lesson }) {
-  const [isOpen, setIsOpen] = useState(false)
-
-  return (
-    <section className="study-dashboard__disclosureCard" data-debug-item="study_dashboard_advanced_disclosure">
-      <div className="study-dashboard__disclosureHeader">
-        <div className="study-dashboard__disclosureCopy">
-          <p className="study-dashboard__eyebrow">Advanced options</p>
-          <h2 className="study-dashboard__panelTitle">Setup details stay tucked away.</h2>
-          <p className="study-dashboard__supportText">{lesson.title} has source setup, segmentation, and preferences available when needed.</p>
-        </div>
-        <button type="button" className="study-dashboard__ghostButton" onClick={() => setIsOpen((current) => !current)}>
-          <SlidersHorizontal size={15} strokeWidth={2} />
-          {isOpen ? 'Hide advanced' : 'Show advanced'}
-        </button>
-      </div>
-
-      {isOpen ? (
-        <Suspense fallback={<div className="study-dashboard__advancedFallback">Loading advanced options...</div>}>
-          <AdvancedOptionsPanel />
-        </Suspense>
-      ) : null}
-    </section>
-  )
-}
 
 function DashboardDetailIntro({ lesson }) {
   return (
@@ -1012,7 +985,6 @@ function DetailStage({ lesson, onResume, onBrowse, archiveCount = 0, onDelete, o
         <DashboardDetailIntro lesson={lesson} />
         <ResumeStage lesson={lesson} onResume={onResume} onBrowse={onBrowse} />
       </div>
-      <AdvancedDisclosureContainer lesson={lesson} />
       <ProjectManageBar archiveCount={archiveCount} onDelete={onDelete} onRestore={onRestore} />
     </main>
   )

@@ -832,3 +832,17 @@ lint 0 on the file.
 Remaining Projects P2 (small follow-up): the "Show advanced" Advanced Options
 toggle in the detail (static/prototype affordance); editable project names +
 archive/restore/data-controls/delete surfacing.
+
+## Package I — Projects: remove static Advanced Options (P2)
+
+Directive Programme 2 ("static Advanced Options cards and prototype-facing copy").
+AdvancedOptionsPanel.jsx was a 100-line static display panel with no actions and no
+V1 dependency. Removed the AdvancedDisclosureContainer + its DetailStage usage +
+the lazy import; deleted AdvancedOptionsPanel.jsx and the now-dead lazy/Suspense/
+SlidersHorizontal imports. Build PASS, lint 0 on the file.
+
+Projects P2 now: find-and-manage library — clean header, search + lesson list +
+detail (resume/open, progress, delete/archive manage bar), no mascot, welcome
+ceremony, summary metrics, duplicate resume copy, history drawer, or advanced cards.
+Remaining P2: editable project names + fuller archive/restore/data-controls/delete
+(overlaps CV-P8 trust contract).
