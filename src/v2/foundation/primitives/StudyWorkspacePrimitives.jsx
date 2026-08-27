@@ -2911,29 +2911,28 @@ export function StudySourceCard({
 export function StudyQuickLexicography({ terms }) {
   const [stripRef, stripEdges] = useScrollAffordance('x')
 
+  // Grounded in the grade: before there is vocabulary there is no module, not an
+  // empty one. Showing "Vocabulary appears here after the segment is graded" was
+  // a placeholder module before grounded content existed — the directive says not
+  // to. When the grade produces terms, the section returns (Programme 4).
+  if (!terms.length) {
+    return null
+  }
+
   return (
     <section className="study-v2__studyStack" style={{ gap: 'var(--study-space-12)' }} data-debug-item="study_quick_lexicography">
       <div className="study-v2__lexHeader">
         <BookOpen size={13} strokeWidth={1.9} />
         Quick Lexicography
       </div>
-      {terms.length ? (
-        <div ref={stripRef} className="study-v2__lexStrip" {...stripEdges}>
-          {terms.map((term, index) => (
-            <div key={term.transliteration || term.arabic || index} className="study-v2__lexTerm" title={term.description}>
-              <span className="study-v2__arabicInline" dir="rtl">{term.arabic}</span>
-              <span className="study-v2__mono">{term.transliteration}</span>
-            </div>
-          ))}
-        </div>
-      ) : (
-        // Honest absence: vocabulary is grounded in the grade, so before this
-        // segment is graded there is none to show — never an unrelated fixture
-        // list (S3-002).
-        <p className="study-v2__bodyText" style={{ color: colors.textSoft, margin: 0 }}>
-          Vocabulary appears here after the segment is graded.
-        </p>
-      )}
+      <div ref={stripRef} className="study-v2__lexStrip" {...stripEdges}>
+        {terms.map((term, index) => (
+          <div key={term.transliteration || term.arabic || index} className="study-v2__lexTerm" title={term.description}>
+            <span className="study-v2__arabicInline" dir="rtl">{term.arabic}</span>
+            <span className="study-v2__mono">{term.transliteration}</span>
+          </div>
+        ))}
+      </div>
     </section>
   )
 }

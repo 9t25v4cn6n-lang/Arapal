@@ -20,6 +20,7 @@ import { motion } from '../../foundation/tokens'
 import layoutContract from './StudyWorkspaceScreen.contract'
 import { adaptStudyResult } from './studyResultView'
 import { readAndClearPublishProvenance } from '../../foundation/primitives/segmentationFlowState'
+import { isAiConfigured } from '../../services/ai'
 import {
   actions, select, useArapal, useNotes, navigation, SAMPLE_EVALUATION_NOTICE,
 } from '../../data'
@@ -132,7 +133,7 @@ function createInitialSegmentRecords() {
   }
 }
 
-function getWorkspaceColumns({ focusMode, segmentRailCollapsed, supportRailCollapsed, discussionMode = false, isMobile = false }) {
+function getWorkspaceColumns({ focusMode, segmentRailCollapsed, supportRailCollapsed, discussionMode = false, isMobile = false, supportHidden = false }) {
   // One column at mobile. The three-column workspace is 208px of segments plus
   // 308px of support before the work itself gets a pixel, which on a 390px frame
   // put the support rail's right edge at 576 — 186px outside the window, with no
@@ -154,7 +155,9 @@ function getWorkspaceColumns({ focusMode, segmentRailCollapsed, supportRailColla
   }
 
   const segmentColumn = segmentRailCollapsed ? '72px' : 'minmax(208px, 240px)'
-  const supportColumn = discussionMode ? '0px' : supportRailCollapsed ? '72px' : 'minmax(308px, 340px)'
+  const supportColumn = discussionMode || supportHidden
+    ? '0px'
+    : supportRailCollapsed ? '72px' : 'minmax(308px, 340px)'
 
   return `${segmentColumn} minmax(0, 1fr) ${supportColumn}`
 }
@@ -357,6 +360,27 @@ export default function StudyWorkspaceScreen({ route, shell }) {
   const discussionVisible = discussionOpen || discussionClosing
   const discussionMode = discussionVisible && currentState !== 'submitted'
 
+  // Support (the right rail's Guidance/Lexicography/Phrasing and Quick
+  // Lexicography) is grounded in the grade. On a live segment with no grounded
+  // content yet, these were three "Not prepared for this segment" cards plus an
+  // empty vocabulary strip — modules before there is anything to put in them.
+  // The directive says not to show them until grounded content exists, so on a
+  // live-but-ungrounded segment the whole support column is hidden and the work
+  // lane (source → translation → submit) takes the space. The reference surface
+  // keeps its demo support.
+  const hasGroundedSupport =
+    !isLive
+    || resultView.guidance.length > 0
+    || resultView.vocabulary.length > 0
+    || resultView.takeaways.length > 0
+  const supportHidden = isLive && !hasGroundedSupport
+
+  // AI readiness is surfaced BEFORE submit so grading is never a surprise dead
+  // end (Programme 4). On a live segment with no configured provider the learner
+  // can still draft and save, but sees up front that a grade needs AI setup —
+  // read on each render so returning from AI setup reflects immediately.
+  const aiReadyForGrading = !isLive || isAiConfigured()
+
   useEffect(() => {
     if (!discussionClosing) {
       return undefined
@@ -535,7 +559,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     },
     Layer2_Study_WorkspaceRoot: {
       style: {
-        gridTemplateColumns: getWorkspaceColumns({ focusMode, segmentRailCollapsed, supportRailCollapsed, discussionMode, isMobile }),
+        gridTemplateColumns: getWorkspaceColumns({ focusMode, segmentRailCollapsed, supportRailCollapsed, discussionMode, isMobile, supportHidden }),
         transition: `grid-template-columns ${motion.panel}`,
       },
     },
@@ -563,7 +587,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
         transition: `padding ${motion.panel}`,
       },
     },
-    ...(supportRailCollapsed && !focusMode && !discussionMode
+    ...(supportRailCollapsed && !focusMode && !discussionMode && !supportHidden
       ? {
           Layer3_Study_SupportRail: {
             style: {
@@ -760,8 +784,25 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     // dropped the handoff for anyone without a project, which is exactly the
     // audience most likely to be exploring from Exams.
     Layer4_Study_ContextRegion:
-      publishBanner || (context && !contextDismissed) || contextSegmentMissing || grading || gradeNotice || (isLive && lastResult?.isSample) || (currentState === 'failed' && resultView.blockingIssues.length) ? (
+      publishBanner || (context && !contextDismissed) || contextSegmentMissing || grading || gradeNotice || (isLive && !aiReadyForGrading && currentState !== 'submitted') || (isLive && lastResult?.isSample) || (currentState === 'failed' && resultView.blockingIssues.length) ? (
         <div className="study-v2__contextStrip">
+          {isLive && !aiReadyForGrading && currentState !== 'submitted' && !grading && !gradeNotice ? (
+            <p className="study-v2__sampleNotice" role="note">
+              You can draft and save now — semantic grading needs an AI provider.{' '}
+              <button
+                type="button"
+                onClick={shell.openAiConfig}
+                style={{
+                  border: 'none', background: 'transparent', padding: 0,
+                  color: 'inherit', font: 'inherit', fontWeight: 600,
+                  textDecoration: 'underline', cursor: 'pointer',
+                }}
+              >
+                Set up AI
+              </button>
+              {' '}to grade this translation.
+            </p>
+          ) : null}
           {publishBanner ? (
             <div className="study-v2__contextBanner" role="status">
               <span className="study-v2__contextLabel">Segments published</span>
@@ -846,7 +887,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
         canNext={canGoNext}
       />
     ) : null,
-    Layer3_Study_SupportRail: discussionMode ? null : (
+    Layer3_Study_SupportRail: discussionMode || supportHidden ? null : (
       <StudySupportRail
         state={currentState}
         // The support content is written against the reference passage. With a

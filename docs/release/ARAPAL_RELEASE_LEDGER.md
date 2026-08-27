@@ -582,3 +582,54 @@ Remaining in P2/P3 (open): Home vs Projects role split and removals; editable
 project name; workflow-ID/revision binding of async responses; bounded AI
 timeout/cancellation in the shared boundary; truthful intake preservation language;
 stale/missing-target explicit recovery; remove Create-patch.
+
+## Stage 2 backlog — user-reported from live use (mid-run)
+
+Recorded to address within the programmes, not dropped:
+1. **Arapal logo (top-left) is clipped** — the wordmark/glyph is cut at the top of
+   the shell header. Fresh polish finding (shell chrome). [P7/shell]
+2. **Projects vs Project Home feel duplicative** — confirm distinct workflows or
+   keep one. Directly Programme 2 (Home owns returning + one Resume; Projects owns
+   find/manage). [CV-P2]
+3. **Dark-blue masthead banner in Research does nothing** — remove and normalise to
+   the wider app styling. Directly Programme 5 (remove decorative strips / the
+   "knowledge explorer" flourish). [CV-P5]
+4. **Study RHS support rail: the float button does nothing once collapsed** — it
+   should float the card and swap to a dock/close control. Reconcile with Programme
+   4 ("remove independent float/fullscreen machinery for multiple EMPTY support
+   cards"): floating should either work for populated support or be removed, never
+   a dead control. [CV-P4]
+5. **Discussion open shifts the translation box UP** instead of keeping its vertical
+   position and moving left. Programme 4/7 (Discussion as one coherent side
+   experience without reflowing the work lane). [CV-P4/CV-P7]
+6. **Submit appears to do nothing — no fail/success screen** — with no AI provider,
+   Submit saves an honest attempt but gives no visible outcome, i.e. exactly the
+   "surprise dead end" Programme 4 warns against. AI readiness must be visible
+   BEFORE submit, and Submit's outcome (PASS/FAIL, or honest "saved, needs AI to
+   grade" with Setup AI) must be unmistakable. [CV-P4 — high priority]
+
+## Package B — Study: no empty modules; AI readiness before submit (P4, partial)
+
+Directive Programme 4 + user-reported item 6 (Submit "does nothing" — the surprise
+dead end). Verified in-browser on a live published project with no AI configured:
+- **No empty support modules before grounded content.** On a live-but-ungraded
+  segment the right support rail (Guidance/Lexicography/Phrasing, previously three
+  "Not prepared for this segment" cards) and the empty Quick Lexicography strip
+  ("Vocabulary appears here after the segment is graded") no longer render. The
+  support column collapses to 0 and the work lane (source → translation → Submit)
+  takes the full width. `StudyQuickLexicography` returns null when it has no terms;
+  the Study screen hides the support rail + column when there is no grounded
+  content (guidance/vocabulary/takeaways). The reference surface keeps its demo
+  support; support returns the moment a grade produces content.
+- **AI readiness is visible BEFORE submit.** On a live segment with no configured
+  provider, a calm persistent line now reads "You can draft and save now — semantic
+  grading needs an AI provider. Set up AI to grade this translation." — read on each
+  render so returning from AI setup reflects immediately. The learner no longer
+  reaches grading as a surprise; drafting/saving is never blocked.
+
+Verified: Study on a live segment shows source → translation → Submit at full width,
+no empty modules, with the readiness line and Set up AI. Build PASS.
+
+Remaining P4 (open): populated PASS result story with Continue dominant; FAIL
+repair-mode polish; the collapsed-support float control (backlog item 4) and the
+Discussion-open work-lane shift (backlog item 5).
