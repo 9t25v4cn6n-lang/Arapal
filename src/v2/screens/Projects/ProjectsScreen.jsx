@@ -1,15 +1,11 @@
-import { lazy, memo, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { lazy, memo, Suspense, useCallback, useMemo, useState } from 'react'
 import {
   ArrowRight,
   BookOpen,
-  Bookmark,
   CheckCircle2,
   Clock3,
   FolderOpen,
-  History,
   ListChecks,
-  PanelRightClose,
-  PanelRightOpen,
   Search,
   SlidersHorizontal,
 } from 'lucide-react'
@@ -19,8 +15,7 @@ import PrimaryCTA from '../../foundation/primitives/PrimaryCTA'
 import { colors, elevation, motion, radius, spacing, typography } from '../../foundation/tokens'
 import { compactControl } from '../../foundation/tokens/compactControl'
 import layoutContract from './ProjectsScreen.contract'
-import { useLiveLessons, useLiveStudyHistory } from './liveProjectsData'
-import { useVirtualRows } from './useVirtualRows'
+import { useLiveLessons } from './liveProjectsData'
 import { actions, navigation, select, useArchives } from '../../data'
 import { setSegmentationIntent } from '../../foundation/primitives/segmentationFlowState'
 
@@ -827,11 +822,6 @@ const dashboardStyles = `
   }
 `
 
-const historyStatusLabels = {
-  done: 'Done',
-  'needs-review': 'Review',
-}
-
 function getFilteredLessons(lessons, query) {
   const normalizedQuery = query.trim().toLowerCase()
   if (!normalizedQuery) return lessons
@@ -1068,150 +1058,6 @@ function ProjectManageBar({ archiveCount = 0, onDelete, onRestore }) {
   )
 }
 
-function VirtualizedHistoryTable({ rows, onToggleSaved }) {
-  const listRef = useRef(null)
-  const [scrollTop, setScrollTop] = useState(0)
-  const [viewportHeight, setViewportHeight] = useState(420)
-  const rowHeight = 78
-
-  useEffect(() => {
-    const node = listRef.current
-    if (!node) return undefined
-
-    const updateHeight = () => setViewportHeight(node.clientHeight)
-    updateHeight()
-
-    if (typeof ResizeObserver === 'undefined') {
-      window.addEventListener('resize', updateHeight)
-      return () => window.removeEventListener('resize', updateHeight)
-    }
-
-    const observer = new ResizeObserver(updateHeight)
-    observer.observe(node)
-    return () => observer.disconnect()
-  }, [])
-
-  const virtualRows = useVirtualRows({ itemCount: rows.length, rowHeight, viewportHeight, scrollTop, overscan: 8 })
-
-  return (
-    <div
-      ref={listRef}
-      className="study-dashboard__virtualList"
-      onScroll={(event) => setScrollTop(event.currentTarget.scrollTop)}
-      role="table"
-      aria-rowcount={rows.length}
-      aria-label="Study history"
-    >
-      <div className="study-dashboard__virtualCanvas" style={{ height: virtualRows.totalHeight }}>
-        {virtualRows.items.map(({ index, offsetTop }) => {
-          const row = rows[index]
-          return (
-            <article
-              key={row.id}
-              className="study-dashboard__historyRow"
-              style={{ transform: `translateY(${offsetTop}px)` }}
-              role="row"
-              aria-rowindex={index + 1}
-            >
-              <div style={{ minWidth: 0 }}>
-                <UserText className="study-dashboard__historyRowTitle" text={row.label} latinRole={typography.metaText} />
-                <span className="study-dashboard__historyRowCopy">{row.detail}</span>
-              </div>
-              <div className="study-dashboard__rowMeta">
-                <span className="study-dashboard__quietPill">{historyStatusLabels[row.status]}</span>
-                <button
-                  type="button"
-                  className={`study-dashboard__saveButton${row.saved ? ' is-saved' : ''}`}
-                  aria-label={row.saved ? 'Unsave history item' : 'Save history item'}
-                  onClick={() => onToggleSaved(row.id)}
-                >
-                  <Bookmark size={14} strokeWidth={2} fill={row.saved ? 'currentColor' : 'none'} />
-                </button>
-              </div>
-            </article>
-          )
-        })}
-      </div>
-    </div>
-  )
-}
-
-function StudyHistoryPanelContainer({ lesson }) {
-  const [isOpen, setIsOpen] = useState(false)
-  // Real activity from the store — one row per submitted/attempted segment.
-  // Local reads are synchronous, so there is no loading or error state to model
-  // and no fabricated backlog: an empty history is a genuine "not studied yet".
-  const liveRows = useLiveStudyHistory(lesson.id)
-
-  // Bookmarking is session-scoped highlight state, not durable storage; the
-  // store does not persist it, so nothing here claims it was saved to the
-  // project. Reset on reload is the honest behaviour for an ephemeral flag.
-  const [savedIds, setSavedIds] = useState(() => new Set())
-  const rows = useMemo(
-    () => liveRows.map((row) => (savedIds.has(row.id) ? { ...row, saved: true } : row)),
-    [liveRows, savedIds])
-
-  const completedCount = rows.filter((row) => row.status === 'done').length
-  const savedCount = rows.filter((row) => row.saved).length
-  const reviewCount = rows.filter((row) => row.status === 'needs-review').length
-
-  const toggleSaved = useCallback((rowId) => {
-    setSavedIds((current) => {
-      const next = new Set(current)
-      if (next.has(rowId)) next.delete(rowId)
-      else next.add(rowId)
-      return next
-    })
-  }, [])
-
-  return (
-    <aside className="study-dashboard study-dashboard__historyRail" data-debug-item="study_history_panel_container">
-      <button
-        type="button"
-        className="study-dashboard__historyRailButton"
-        onClick={() => setIsOpen(true)}
-        aria-expanded={isOpen}
-      >
-        <History size={18} strokeWidth={2} />
-        <span className="study-dashboard__historyRailText">Study history</span>
-        <PanelRightOpen size={16} strokeWidth={2} />
-      </button>
-
-      <section className={`study-dashboard__historyPanel${isOpen ? ' is-open' : ''}`} aria-label="Study history panel" inert={!isOpen}>
-        <header className="study-dashboard__historyHeader">
-          <div className="study-dashboard__historyHeading">
-            <span className="study-dashboard__historyIcon" aria-hidden="true"><History size={18} strokeWidth={2} /></span>
-            <div style={{ minWidth: 0 }}>
-              <h2 className="study-dashboard__historyTitle">Study history</h2>
-              <UserText as="p" className="study-dashboard__historySubtitle" text={lesson.title} latinRole={typography.supportSubtext} />
-            </div>
-          </div>
-          <button type="button" className="study-dashboard__historyButton" onClick={() => setIsOpen(false)}>
-            <PanelRightClose size={15} strokeWidth={2} />
-            Close
-          </button>
-        </header>
-
-        <div className="study-dashboard__historySummary" aria-label="History summary">
-          <div className="study-dashboard__historyStat"><strong>{completedCount}</strong><span>Segments</span></div>
-          <div className="study-dashboard__historyStat"><strong>{savedCount}</strong><span>Saved</span></div>
-          <div className="study-dashboard__historyStat"><strong>{reviewCount}</strong><span>Review</span></div>
-        </div>
-
-        <div className="study-dashboard__historyBody">
-          {rows.length ? (
-            <VirtualizedHistoryTable rows={rows} onToggleSaved={toggleSaved} />
-          ) : (
-            <div className="study-dashboard__historyState">
-              No study activity yet. Submitted and attempted segments appear here as you work through this project.
-            </div>
-          )}
-        </div>
-      </section>
-    </aside>
-  )
-}
-
 export default function ProjectsScreen({ route, shell }) {
   const lessons = useLiveLessons()
   const [selectedLessonId, setSelectedLessonId] = useState(null)
@@ -1291,7 +1137,10 @@ export default function ProjectsScreen({ route, shell }) {
         onGoHome={() => shell.navigate('projectHome')}
       />
     ),
-    Layer4_Projects_History: selectedLesson ? <StudyHistoryPanelContainer key={selectedLesson.id} lesson={selectedLesson} /> : null,
+    // Ephemeral Study History drawer removed (Programme 2): the durable study
+    // record lives in Research; a second per-project history panel here had no
+    // durable role.
+    Layer4_Projects_History: null,
   }
 
   return (

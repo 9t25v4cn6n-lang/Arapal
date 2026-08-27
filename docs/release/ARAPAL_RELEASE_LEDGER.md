@@ -817,3 +817,18 @@ retire the Study History drawer (StudyHistoryPanelContainer + VirtualizedHistory
 add editable project names + archive/restore/data-controls/delete surfacing.
 NOTE: the history/advanced removal must delete only lines 1099-1242 (the two history
 functions), NOT overrun into `export default function ProjectsScreen` at 1243.
+
+## Package H — Projects: retire the Study History drawer (P2)
+
+Directive Programme 2 ("ephemeral Study History drawer if it has no durable role").
+Study history is durable in Research, so the per-project Projects drawer was
+redundant. History slot → null; deleted StudyHistoryPanelContainer +
+VirtualizedHistoryTable (144 lines, main component preserved) and the now-dead
+imports (History, useLiveStudyHistory, useVirtualRows, useEffect, useRef, Bookmark,
+PanelRightClose/Open) + the historyStatusLabels const. Verified in-browser: the
+Study History rail is gone, layout collapses cleanly, detail gains room. Build PASS,
+lint 0 on the file.
+
+Remaining Projects P2 (small follow-up): the "Show advanced" Advanced Options
+toggle in the detail (static/prototype affordance); editable project names +
+archive/restore/data-controls/delete surfacing.
