@@ -1193,3 +1193,24 @@ Remaining CV-P6 (larger separate package): consolidate the Exams screen's own
 with an immutable submitted-answer snapshot the retry-grading consumes and a
 retake that creates a distinct attempt. The honest graded/ungraded/retry lifecycle
 + save boundaries already exist in the screen (S3-004).
+
+## CV-P7 float-machinery removal — precise plan (user item 4; do as a focused pass)
+
+Directive P4 ("Remove independent float/fullscreen machinery for multiple support
+cards") + user item 4 (the collapsed-rail Float button "does nothing"). The float
+machinery is woven through StudySupportRail in StudyWorkspacePrimitives.jsx; remove
+it as ONE careful pass (not at deep context — it is a ~70-line interdependent
+deletion, the shape that caused the single over-deletion this session):
+- StudySupportCard (~3837): drop the `onFloat` prop + the "Float <title>" button
+  (~3855-3862). Keep Expand + Fullscreen (both work).
+- StudySupportRail: remove `floatingCard`/`floatingCardState` (3590-3591),
+  `openFloatingCard` (3637), `closeFloatingCard`/`dockCard`-alias (3645-3646),
+  `startFloatingDrag` + its pointer handlers (3648-3710), `floatFromCollapsedPreview`
+  (3711), `createFloatingCardState` (2414), and the two floating render blocks
+  (3758-3771, 3818-3831). Remove `onFloat=` props at 3755 and 3790. Keep DOCKED /
+  expanded / fullscreen presentation modes.
+- Verify: support rail collapses/expands and fullscreen works with no dead control;
+  Study VR reference states re-baselined only after inspection.
+Alternatively (larger, matches the user's literal ask) make float WORK with a
+dock/close affordance — but the directive's steer is removal, and a dead control is
+the worst option. Prefer removal.
