@@ -1112,3 +1112,25 @@ Verified: 68 data tests pass. Build PASS, lint 0.
 CV-P1 remaining: editable project-name persistence from intake; legacy Exam-key
 migration (Exams already on the canonical store). CV-P5 remaining: wire the shared
 learningState into Research's Needs-revision filter; grounded filter set audit.
+
+## Stage 2 checkpoint 8 (HEAD 47750ee) — CV-P1 substantially complete
+
+Gate green: build · lint 0 · data 68 · behaviour 47/47 · QA production 0 · VR 52/52.
+Tree clean.
+
+CV-P1 spine — 3 of 4 remaining items DONE and verified this session:
+- source-entry draft persists across reload (L, AC-01)
+- durable Study position via project.currentSegmentId (M, AC-03)
+- one shared learningState selector; needs-revision only from validated results;
+  Research/Home consume it, untouched/ungraded never presented as mistakes
+  (N, material problem #2)
+Remaining CV-P1: editable project-name field at intake (persist to source draft
+title + Projects rename — a small UI addition with a VR re-baseline; scoped for a
+focused pass). Legacy Exam data already lives on the canonical store.
+
+Mission remainder toward exit condition: CV-P6 (Exams audit — immutable snapshot /
+retry-grading / retake / library action distinctness on the canonical store),
+CV-P7 (mobile Study/Discussion-as-sheet + float control), CV-P4/P5 finishes
+(takeaways/fix-steps numbered list; Research grounded filter set), CV-EV
+(production-transport interception + AC-01…08 built-product evidence — the largest
+piece). Not Stage-3-ready. No Stage 3 performed. Not pushed.
