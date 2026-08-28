@@ -54,6 +54,9 @@ export const actions = {
   saveAnswer: store.saveAnswer,
   setAttemptPosition: store.setAttemptPosition,
   completeAttempt: store.completeAttempt,
+  exportBackup: store.exportBackup,
+  importBackup: store.importBackup,
+  deleteAllData: store.deleteAllData,
 }
 
 export const select = {

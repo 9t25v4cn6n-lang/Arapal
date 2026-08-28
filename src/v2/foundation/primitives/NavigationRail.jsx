@@ -1,4 +1,4 @@
-import { BookOpen, ClipboardList, FolderGit2, Home, Layers3, Pin, PinOff, Sparkles, SplitSquareVertical, TextSearch } from 'lucide-react'
+import { BookOpen, ClipboardList, FolderGit2, Home, Layers3, Pin, PinOff, ShieldCheck, Sparkles, SplitSquareVertical, TextSearch } from 'lucide-react'
 import { useState } from 'react'
 import { colors, motion, radius, spacing, typography } from '../tokens'
 import { RAIL_MIN_GUTTER_PX, shellSafeArea } from '../layout/shellSizing'
@@ -173,6 +173,27 @@ export function NavigationRailAiSetupControl({ shell }) {
       title="AI provider setup"
       onClick={shell.openAiConfig}
       icon={<Sparkles strokeWidth={1.8} />}
+    />
+  )
+}
+
+/**
+ * Data & privacy control — the local-first trust contract's discoverable entry
+ * (Programme 8). Sits in the utility foot beside AI setup so backup/restore/
+ * delete-all is reachable without a standalone Settings surface.
+ */
+export function NavigationRailDataControl({ shell }) {
+  if (!shell?.showRail || !shell.isNavExpanded) {
+    return null
+  }
+
+  return (
+    <IconActionButton
+      size="utility-sm"
+      label="Data and privacy"
+      title="Data and privacy"
+      onClick={shell.openDataControls}
+      icon={<ShieldCheck strokeWidth={1.8} />}
     />
   )
 }

@@ -6,6 +6,7 @@ import { HeaderCenter, HeaderMeta } from './HeaderBar'
 import {
   getNavigationUtilityAnchorStyle,
   NavigationRailAiSetupControl,
+  NavigationRailDataControl,
   NavigationRailItems,
   NavigationRailPinControl,
 } from './NavigationRail'
@@ -190,6 +191,7 @@ export default function V2ScreenFrame({ contract, route, shell, screenSlots = {}
     Layer1_Navigation_UtilityAnchor: (
       <span style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[8] }}>
         <NavigationRailAiSetupControl shell={shell} />
+        <NavigationRailDataControl shell={shell} />
         <NavigationRailPinControl shell={shell} />
       </span>
     ),

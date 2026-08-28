@@ -7,6 +7,7 @@ import useIsMobileViewport from './foundation/primitives/useIsMobileViewport'
 import MobileNavBar from './foundation/primitives/MobileNavBar'
 import PersistenceBanner from './foundation/primitives/PersistenceBanner'
 import AiConfigDialog from './foundation/primitives/AiConfigDialog'
+import DataControlsDialog from './foundation/primitives/DataControlsDialog'
 
 export default function AppV2({ routeId = defaultRouteId }) {
   // A registry entry is only routable if it can actually render. Rail entries
@@ -28,6 +29,7 @@ export default function AppV2({ routeId = defaultRouteId }) {
   // The BYO-key AI setup dialog is app-level so any screen (via shell) or the
   // navigation rail can open the one instance (IP-09).
   const [aiConfigOpen, setAiConfigOpen] = useState(false)
+  const [dataControlsOpen, setDataControlsOpen] = useState(false)
 
   const railItems = getPrimaryRailRoutes()
   const { isNavPinned, isNavHovered, isNavExpanded } = navigationRailState
@@ -59,6 +61,9 @@ export default function AppV2({ routeId = defaultRouteId }) {
     navigationRail: shellSizing.navigationRail,
     openAiConfig() {
       setAiConfigOpen(true)
+    },
+    openDataControls() {
+      setDataControlsOpen(true)
     },
     navigate(nextRouteId) {
       if (!nextRouteId) {
@@ -126,6 +131,7 @@ export default function AppV2({ routeId = defaultRouteId }) {
       ) : null}
       {introOverlay}
       <AiConfigDialog key={aiConfigOpen ? 'ai-open' : 'ai-closed'} open={aiConfigOpen} onClose={() => setAiConfigOpen(false)} />
+      <DataControlsDialog key={dataControlsOpen ? 'data-open' : 'data-closed'} open={dataControlsOpen} onClose={() => setDataControlsOpen(false)} />
     </>
   )
 }

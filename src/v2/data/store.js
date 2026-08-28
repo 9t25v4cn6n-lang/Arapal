@@ -41,6 +41,53 @@ export function __resetForTests(seed = storage.emptyState()) {
   listeners.forEach((l) => l())
 }
 
+// ── data controls (local-first trust contract, Programme 8) ──────────────────
+
+const EXPORT_VERSION = 1
+const BACKUP_KIND = 'arapal-backup'
+const BACKUP_COLLECTIONS = ['projects', 'sources', 'segments', 'drafts', 'studyRecords', 'notes', 'results', 'exams', 'attempts', 'proposals', 'archives']
+const isObj = (v) => !!v && typeof v === 'object' && !Array.isArray(v)
+
+/** A versioned, timestamped backup of ALL local study data on this device. */
+export function exportBackup() {
+  return { kind: BACKUP_KIND, version: EXPORT_VERSION, exportedAt: new Date().toISOString(), state }
+}
+
+/**
+ * Validate and restore a backup produced by exportBackup(). Never commits a
+ * malformed, foreign, or future-version backup, and never claims success on a
+ * failed local write. Returns { ok, error }.
+ */
+export function importBackup(backup) {
+  try {
+    const data = typeof backup === 'string' ? JSON.parse(backup) : backup
+    if (!isObj(data) || data.kind !== BACKUP_KIND) return { ok: false, error: 'This is not an Arapal backup file.' }
+    if (typeof data.version !== 'number' || data.version > EXPORT_VERSION) {
+      return { ok: false, error: 'This backup was made by a newer version of Arapal.' }
+    }
+    if (!isObj(data.state)) return { ok: false, error: 'The backup contains no data.' }
+    // Merge onto a fresh empty shape and validate every collection, mirroring the
+    // storage read path so an old or partial backup cannot brick the app.
+    const next = { ...storage.emptyState(), ...data.state }
+    if (!BACKUP_COLLECTIONS.every((k) => isObj(next[k]))) return { ok: false, error: 'The backup is malformed.' }
+    commit(next)
+    if (!lastWriteOk) return { ok: false, error: 'Could not save the restored data to this device.' }
+    return { ok: true }
+  } catch {
+    return { ok: false, error: 'The backup could not be read.' }
+  }
+}
+
+/**
+ * Delete every piece of local study data on this device (the store). The AI
+ * key/health is cleared by the caller so the store stays decoupled from the AI
+ * boundary. Irreversible; the caller confirms first.
+ */
+export function deleteAllData() {
+  commit(storage.emptyState())
+  return { ok: lastWriteOk }
+}
+
 // ── selectors ────────────────────────────────────────────────────────────────
 
 export const listProjects = (s = state) =>

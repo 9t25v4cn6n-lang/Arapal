@@ -8,6 +8,51 @@ A finding appears here only when it was independently reproduced on the current 
 
 ---
 
+# Current release decision — 2026-08-28
+
+## PRODUCT REWORK REQUIRED
+
+A fresh customer-led re-entry and transition pass re-opened the release after the
+closure history recorded later in this file. Where this section conflicts with an
+older `RESOLVED` entry or checkpoint below, this section is current.
+
+- **Fresh evidence baseline:** the run began on
+  `5e3ef386cd7909d4b8a866d512d3402555130dd5`; record the actual implementation
+  start SHA because the branch has continued to move.
+- **Widths exercised:** 390×844, 768×1024 and 1440×900, with realistic Arabic
+  source and multi-project/re-entry journeys.
+- **Evidence distinction:** rendered findings below were reproduced in the
+  running product; deletion, commit atomicity, Discussion durability and retry
+  feedback findings were additionally verified in current implementation/runtime.
+- **Concurrency caveat:** unrelated data-control changes appeared in the shared
+  worktree during the pass. They did not affect the rendered routes below and
+  must be preserved by implementation.
+
+Active release blockers:
+
+| ID | Severity | Current evidence-backed outcome required |
+|---|---|---|
+| S3R-001 | P0 | Make source intake, segmentation proposal and approval one durable, atomic project transaction. Source must survive reload/Edit/failure; zero or stale proposals cannot publish; approval cannot hide existing Study work or open another project's content. |
+| S3R-002 | P0 | Replace ambient/stale handoff behaviour with explicit project/segment activation. Research, Study and Exams must never reactivate or mutate a different project after an explicit project selection. |
+| S3R-003 | P0 | Unify production Exams under one project-scoped attempt lifecycle. Library return/re-entry must preserve answers even after `Saved`; submitted-ungraded and grading-failed attempts remain recoverable; Submit has explicit success/failure outcomes. |
+| S3R-004 | P0 | Rebuild core responsive task composition where necessary. At 390/768, Study Focus, fail/retry editor, Discussion composer/actions, Exam navigation/submission and Review recovery actions must remain usable and reachable. |
+| S3R-005 | P0 | Make persistence and deletion truthful. Failed writes cannot mutate committed live state, and deleting “all its work” must cover proposals, archives and every production Exam/attempt path. |
+| S3R-006 | P1 | Make Study PASS/FAIL and provider failure explicit, grounded terminal states; preserve prior fail feedback through retry and forbid unsupported success/completion styling. |
+| S3R-007 | P1 | Rebuild/simplify Research as the searchable durable project record. It must include stored feedback, vocabulary, comparisons, notes and one saved discussion summary, with one truthful shared learning-state taxonomy. Remove the dark blue banner and dead patching action. |
+| S3R-008 | P1 | Keep Home as the resume/attention command centre and Projects as the find/manage library at every project count. Provide distinguishable project identity, truthful progress and an unclipped Arapal logo. |
+| S3R-009 | P1 | Remove or complete dead Study controls. Formatting must work or go; Float must create one true floating surface with Dock/Close; Discussion must not move the editor vertically on desktop or lose its session; duplicate/contradictory result cards must share one result model. |
+| S3R-010 | P1 | Replace shallow route/capture evidence with fail-closed semantic journeys asserting persistence, identity, terminal state and action reachability on the exact built candidate at all required widths. |
+
+The authoritative implementation handoff, product simplification decisions,
+invariants, acceptance journeys and closure evidence are in
+`docs/release/ARAPAL_V1_STAGE2_CONVERGENCE_DIRECTIVE.md`.
+
+No S3R P0/P1 may be marked resolved from code changes, unit tests, screenshots or
+implementation prose alone. Closure evidence must match the claim as defined in
+§H and in the directive.
+
+---
+
 # Evidence header
 
 - **Gate:** Stage 3 independent Product / UX / Visual gate.
@@ -881,3 +926,24 @@ addressed by prior responsive work or specific to an intermediate width.
 Genuine CV-P7 remainder confirmed: mobile Discussion stacks INLINE below the editor
 rather than opening as the full-height reachable sheet/page the directive specifies
 (Programme 7). Tracked under CV-P7, not item 5.
+
+## Package J — Local-first trust contract (CV-P8)
+
+Directive Programme 8. A compact Data & privacy dialog (not a standalone Settings
+app), reachable from the nav rail's utility foot beside AI setup:
+- **Store**: `exportBackup()` (versioned/kinded/timestamped snapshot),
+  `importBackup()` (validates kind + version + collection shape; merges onto a
+  fresh empty state like the read path; never claims success on a failed write;
+  rejects non-Arapal/future-version/malformed), `deleteAllData()` (empty state).
+  Exposed via `actions`.
+- **Dialog**: clear disclosure that all data AND the API key live only in this
+  browser and nothing is sent to an Arapal server; Export (downloads a JSON
+  backup), Restore (file picker → validated import), Delete-all (two-step confirm;
+  also clears the AI key + health so "delete all" is truthful). Honest status line.
+- **Entry**: `NavigationRailDataControl` (ShieldCheck) + `shell.openDataControls`
+  wired in AppV2; per-project delete already lives in Projects' manage bar.
+
+Verified: 7 data-controls unit tests pass (export→delete→import round-trip incl.
+JSON string; rejects non-backup/future-version/malformed without touching current
+data). Dialog rendered + inspected in-browser. Build PASS, lint 0, test:data PASS.
+No shared provider secret; BYO-key boundary unchanged.
