@@ -203,7 +203,10 @@ export default function StudyWorkspaceScreen({ route, shell }) {
 
   const [segmentRecords, setSegmentRecords] = useState(createInitialSegmentRecords)
   const [currentSegmentId, setCurrentSegmentId] = useState(
-    () => context?.segmentId ?? context?.segmentRef ?? readInitialSegmentId(),
+    // An explicit handoff context (From Research / From Exam) wins so a link opens
+    // the exact segment; otherwise a live project resumes its durable position, and
+    // only the reference surface falls back to the local initial (Programme 1 / AC-03).
+    () => context?.segmentId ?? context?.segmentRef ?? (isLive ? project?.currentSegmentId : null) ?? readInitialSegmentId(),
   )
   const [segmentRailCollapsed, setSegmentRailCollapsed] = useState(isCompactViewport)
   const [supportRailCollapsed, setSupportRailCollapsed] = useState(isCompactViewport)
@@ -521,23 +524,32 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     setDiscussionClosing(true)
   }
 
+  // The active segment is the durable Study POSITION, not just local view state:
+  // persisting it to the project (Programme 1 / AC-03) means Previous/Next survive
+  // a reload and Home/Projects resume the exact segment. Reference-surface (non-
+  // live) navigation stays local, since it has no project to own the position.
+  const activateSegment = (segmentId) => {
+    closeDiscussionImmediately()
+    setCurrentSegmentId(segmentId)
+    if (isLive && project) {
+      actions.setCurrentSegment({ projectId: project.id, segmentId })
+    }
+  }
+
   const goToPreviousSegment = () => {
     if (canGoPrevious) {
-      closeDiscussionImmediately()
-      setCurrentSegmentId(activeSegments[currentSegmentIndex - 1].id)
+      activateSegment(activeSegments[currentSegmentIndex - 1].id)
     }
   }
 
   const goToNextSegment = () => {
     if (canGoNext) {
-      closeDiscussionImmediately()
-      setCurrentSegmentId(activeSegments[currentSegmentIndex + 1].id)
+      activateSegment(activeSegments[currentSegmentIndex + 1].id)
     }
   }
 
   const selectSegment = (segmentId) => {
-    closeDiscussionImmediately()
-    setCurrentSegmentId(segmentId)
+    activateSegment(segmentId)
   }
 
   const jumpToStudyAnchor = (anchorName) => {

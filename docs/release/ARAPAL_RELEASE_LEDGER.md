@@ -1061,3 +1061,22 @@ Exams; migrate any legacy Exam keys. Then CV-P6 (Exams audit), CV-P7 (mobile Stu
 Discussion sheet + float), CV-P4/P5 finishes, and CV-EV (production-transport
 interception + AC-01…08 built-product evidence — the largest remaining piece).
 Not Stage-3-ready. No Stage 3 performed. Not pushed.
+
+## Package M — Durable Study position (CV-P1, AC-03)
+
+Directive material problem #1 ("Study position living locally instead of using the
+durable project field") + AC-03 ("Previous/Next persists position"). Study's
+currentSegmentId was local state: navigation didn't persist and reload didn't
+restore the segment.
+- `activateSegment(segmentId)` now sets local state AND, for a live project,
+  persists via `actions.setCurrentSegment` so the active segment is the durable
+  project position. Used by Previous/Next and the segment rail.
+- On mount, a live project resumes `project.currentSegmentId`; an explicit handoff
+  context (From Research/Exam) still wins so a link opens the exact segment; the
+  reference surface keeps local behaviour.
+
+Verified in-browser: navigated sample to 1.3 → store currentSegmentId = 1.3 → full
+reload → Study restored segment 1.3 (3 OF 4), not 1.1. Build PASS, lint 0.
+
+CV-P1 remaining: editable project-name persistence from intake; one shared
+learningState selector; legacy Exam-key migration.
