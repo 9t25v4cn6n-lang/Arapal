@@ -1261,3 +1261,21 @@ Remaining CV-P7 float work (bigger, plan recorded): remove the collapsed-preview
 detached / drag float machinery (StudyDetachedSupportCard preview+drag, openFloating
 Card, startFloatingDrag, floatingCard state, createFloatingCardState) — the path the
 user's collapsed-rail Float button used — as one focused pass.
+
+## Stage 2 checkpoint 11 (HEAD 0f6acfa) — CV-P7 float control (partial)
+
+Gate green: build · lint 0 · data 69 · behaviour 47/47 · QA production 0 · VR 52/52
+(re-confirmed vs the current server; the small icon-button removal is below the VR
+pixel tolerance, so no golden change — confirming earlier small-change non-diffs are
+tolerance, not dev-server staleness). Tree clean.
+
+Continuation a5839ad → 0f6acfa: Packages L–R (7). CV-P1 CLOSED; CV-P6 advanced
+(fabrication path removed); CV-P7 advanced (expanded-card Float control removed);
+release identity (Arapal) + truthful intake language.
+
+Programmes CLOSED: CV-P1, CV-P2, CV-P8. Advanced: CV-P3, CV-P4, CV-P5, CV-P6, CV-P7.
+Remaining: collapsed-preview/detached float-machinery removal (plan recorded) +
+mobile Discussion-as-sheet (CV-P7); larger CV-P6 consolidation (writePersistedAttempt
+→ store attempts + immutable snapshot); CV-P4/P5 finishes; CV-EV (production-transport
+interception + AC-01…08 built-product evidence — the largest, and it moves evidence
+onto built dist). Not Stage-3-ready. No Stage 3 performed. Not pushed.
