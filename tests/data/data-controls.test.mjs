@@ -138,3 +138,49 @@ test('the source draft is not a collection and does not break import/export', ()
   assert.equal(res.ok, true)
   assert.equal(store.getSourceDraft().text, 'in-progress')
 })
+
+// ── learning state (material problem #2 — presentation labels are not truth) ──
+
+function seedProject() {
+  const project = store.addProject({ title: 'P' })
+  const source = store.addSource({ projectId: project.id, rawText: 'a. b. c.' })
+  const segs = store.publishSegments({ projectId: project.id, sourceId: source.id, chunks: ['A.', 'B.', 'C.'] })
+  return { project, segs }
+}
+
+test('learningState is unstarted with no record, and draft with only a draft', () => {
+  const { project, segs } = seedProject()
+  assert.equal(store.learningState(project.id, segs[0].id), 'unstarted')
+  store.saveDraft({ projectId: project.id, segmentId: segs[0].id, text: 'my try' })
+  assert.equal(store.learningState(project.id, segs[0].id), 'draft')
+})
+
+test('learningState treats attempted-but-ungraded as neutral, never a mistake', () => {
+  const { project, segs } = seedProject()
+  // Simulate an ungraded attempt via the store's own submission state.
+  store.__resetForTests({
+    ...store.getSnapshot(),
+    studyRecords: {
+      ...store.getSnapshot().studyRecords,
+      [`${project.id}::${segs[0].id}`]: { projectId: project.id, segmentId: segs[0].id, submissionState: 'attempted', attempts: 1 },
+    },
+  })
+  assert.equal(store.learningState(project.id, segs[0].id), 'attempted-ungraded')
+  assert.equal(store.projectNeedsRevisionCount(project.id), 0, 'attempted-ungraded is not needs-revision')
+})
+
+test('needs-revision derives only from a validated fail; passed is passed', () => {
+  const { project, segs } = seedProject()
+  const snap = store.getSnapshot()
+  store.__resetForTests({
+    ...snap,
+    studyRecords: {
+      ...snap.studyRecords,
+      [`${project.id}::${segs[0].id}`]: { projectId: project.id, segmentId: segs[0].id, submissionState: 'failed', attempts: 1 },
+      [`${project.id}::${segs[1].id}`]: { projectId: project.id, segmentId: segs[1].id, submissionState: 'submitted', attempts: 1 },
+    },
+  })
+  assert.equal(store.learningState(project.id, segs[0].id), 'needs-revision')
+  assert.equal(store.learningState(project.id, segs[1].id), 'passed')
+  assert.equal(store.projectNeedsRevisionCount(project.id), 1)
+})

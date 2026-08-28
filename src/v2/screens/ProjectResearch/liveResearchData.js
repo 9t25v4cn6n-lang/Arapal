@@ -18,7 +18,10 @@
 import { useMemo } from 'react'
 import { useCurrentProject, useSegments, useArapal, select, getSnapshot } from '../../data'
 
-/** statusTone drives the filters/queue; keep it to the values helpers expect. */
+// One domain-level learning state (material problem #2): only a VALIDATED result
+// is a claim about performance. A passed segment is Completed; a validated fail
+// Needs revision. Not-started, draft and attempted-but-ungraded are NEUTRAL — an
+// untouched or provider-unavailable segment is never presented as a mistake.
 function studyStatus(record) {
   if (!record || record.submissionState === 'draft') {
     return { status: 'Not started', statusTone: 'neutral' }
@@ -27,7 +30,8 @@ function studyStatus(record) {
     return { status: 'Completed', statusTone: 'ready' }
   }
   if (record.submissionState === 'attempted') {
-    return { status: 'Attempted', statusTone: 'review' }
+    // Submitted without a validated grade: neutral, not "needs attention".
+    return { status: 'Attempted', statusTone: 'neutral' }
   }
   return { status: 'Needs revision', statusTone: 'weak' }
 }

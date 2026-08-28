@@ -1087,3 +1087,28 @@ Gate green: build · lint 0 · data 65 · behaviour 47/47 · QA production 0 · 
 Tree clean. CV-P1 advanced: source-draft persistence (L, AC-01) + durable Study
 position (M, AC-03), both verified in-browser. Next CV-P1: shared learningState
 selector (material problem #2), then editable name + legacy migration.
+
+## Package N — Shared learningState selector; Research truth fix (CV-P1 + CV-P5, material problem #2)
+
+Directive material problem #2 ("presentation labels are being used as learning
+truth ... ungraded provider failures and untouched segments become claims about
+learner performance"). One domain-level definition added and the tone-based bug fixed.
+- Store: `learningState(projectId, segmentId)` → passed | needs-revision |
+  attempted-ungraded | draft | unstarted. needs-revision derives ONLY from a
+  validated fail; unstarted/draft/attempted-ungraded are neutral. Plus
+  `projectNeedsRevisionCount`. Unit-tested (3 tests).
+- Research truth fix: liveResearchData.studyStatus mapped an ATTEMPTED-ungraded
+  segment to statusTone 'review' (an attention claim); now 'neutral'.
+  getResearchStats.needsAttention counted `statusTone !== 'ready'` — which swept in
+  every neutral (unstarted/attempted) segment; now counts only validated attention
+  states ('weak'/'review'), so untouched/ungraded segments are never presented as
+  mistakes. (Reference demo semantics preserved.)
+- Home attention now consumes the shared selector (projectNeedsRevisionCount /
+  learningState) instead of an ad-hoc submissionState check — the directive's "one
+  definition consumed by Home/Projects/Research/Exams".
+
+Verified: 68 data tests pass. Build PASS, lint 0.
+
+CV-P1 remaining: editable project-name persistence from intake; legacy Exam-key
+migration (Exams already on the canonical store). CV-P5 remaining: wire the shared
+learningState into Research's Needs-revision filter; grounded filter set audit.

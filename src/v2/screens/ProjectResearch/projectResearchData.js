@@ -513,7 +513,11 @@ export const quickRefinements = [
 export function getResearchStats(segments = researchSegments) {
   const vocabularyNotes = segments.reduce((total, item) => total + item.vocabulary.length, 0)
   const notes = segments.reduce((total, item) => total + item.notes.length, 0)
-  const needsAttention = segments.filter((item) => item.statusTone !== 'ready').length
+  // Needs-attention counts ONLY validated attention states ('weak' = needs
+  // revision, 'review' = the reference demo's review items) — never 'neutral'
+  // (unstarted / attempted-ungraded), which the old `!== 'ready'` wrongly swept in
+  // and presented as learner mistakes (material problem #2).
+  const needsAttention = segments.filter((item) => item.statusTone === 'weak' || item.statusTone === 'review').length
   const completed = segments.filter((item) => item.statusTone === 'ready').length
   const missingTranslations = segments.filter((item) => !item.userTranslation).length
 

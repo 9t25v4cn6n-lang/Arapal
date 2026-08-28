@@ -156,6 +156,29 @@ export function getProjectProgress(projectId, s = state) {
   return { total: segments.length, completed, nextSegment }
 }
 
+// ── learning state (one domain-level definition — material problem #2) ─────────
+//
+// The single source of truth for "how is this segment doing", consumed instead of
+// presentation tones (Programme 5). Only a VALIDATED evaluator result is a claim
+// about learner performance: 'passed' from a real grade, 'needs-revision' from a
+// validated fail. Unstarted, draft and attempted-but-ungraded are NEUTRAL — an
+// untouched or provider-unavailable segment is never counted as a mistake.
+export function learningState(projectId, segmentId, s = state) {
+  const record = getStudyRecord(projectId, segmentId, s)
+  const st = record?.submissionState
+  if (st === 'submitted') return 'passed'
+  if (st === 'failed') return 'needs-revision'
+  if (st === 'attempted') return 'attempted-ungraded'
+  const draft = getDraft(projectId, segmentId, s)
+  if (draft && typeof draft.text === 'string' && draft.text.trim()) return 'draft'
+  return 'unstarted'
+}
+
+/** Count of segments whose VALIDATED result needs another pass (never a tone). */
+export function projectNeedsRevisionCount(projectId, s = state) {
+  return listSegments(projectId, s).filter((seg) => learningState(projectId, seg.id, s) === 'needs-revision').length
+}
+
 // ── project + source actions ─────────────────────────────────────────────────
 
 export function addProject({ title, subtitle, reference } = {}) {

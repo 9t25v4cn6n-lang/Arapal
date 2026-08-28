@@ -78,6 +78,8 @@ export const select = {
   getProjectProgress: store.getProjectProgress,
   listArchives: store.listArchives,
   getSourceDraft: store.getSourceDraft,
+  learningState: store.learningState,
+  projectNeedsRevisionCount: store.projectNeedsRevisionCount,
 }
 
 export { subscribe, getSnapshot, persistenceHealthy, __resetForTests } from './store.js'

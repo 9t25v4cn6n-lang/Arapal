@@ -34,15 +34,13 @@ export default function ProjectHomeScreen({ route, shell }) {
   // never a count derived from a presentation tone. Primitives only (a number and
   // a string id), because useArapal compares one level with Object.is and a fresh
   // object every render spins React into an update loop.
-  const attentionCount = useArapal((s) => {
-    if (!currentProject) return 0
-    return select.listSegments(currentProject.id, s)
-      .filter((seg) => select.getStudyRecord(currentProject.id, seg.id, s)?.submissionState === 'failed').length
-  })
+  const attentionCount = useArapal((s) => (
+    currentProject ? select.projectNeedsRevisionCount(currentProject.id, s) : 0
+  ))
   const attentionSegmentId = useArapal((s) => {
     if (!currentProject) return null
     const seg = select.listSegments(currentProject.id, s)
-      .find((seg) => select.getStudyRecord(currentProject.id, seg.id, s)?.submissionState === 'failed')
+      .find((seg) => select.learningState(currentProject.id, seg.id, s) === 'needs-revision')
     return seg?.id ?? null
   })
 
