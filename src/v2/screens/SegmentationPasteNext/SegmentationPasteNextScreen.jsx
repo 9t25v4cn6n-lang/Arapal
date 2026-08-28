@@ -141,7 +141,11 @@ export default function SegmentationPasteNextScreen({ route, shell }) {
           'Paste your source text here...\n\nAraPal will keep the original intact, prepare a proposal, and take you into review.'
         }
         eyebrow="Arapal intake"
-        seal="Preserved source"
+        // Truthful at each point in the transaction (directive P3 / S3-P2-03): the
+        // label claims preservation only once there is text — which the source
+        // draft persists from first input (Package L). Empty means nothing to
+        // preserve yet.
+        seal={hasText ? 'Preserved source' : 'Source'}
         watermark="Arapal"
         shortcutLabel="to paste"
         footerMeta={hasText ? `${wordCount} words` : ''}

@@ -1214,3 +1214,16 @@ deletion, the shape that caused the single over-deletion this session):
 Alternatively (larger, matches the user's literal ask) make float WORK with a
 dock/close affordance — but the directive's steer is removal, and a dead control is
 the worst option. Prefer removal.
+
+## Package Q — Release identity + truthful intake language (S3-P2-01 / S3-P2-03, directive P3)
+
+- Browser identity: index.html <title> "design-sandbox" → "Arapal" (+ a real meta
+  description); package.json name → "arapal". Confirmed in built dist (<title>Arapal).
+- Truthful transaction language: the intake editor seal claimed "PRESERVED SOURCE"
+  on the EMPTY editor before anything existed. Now `hasText ? 'Preserved source' :
+  'Source'` — preservation is claimed only once there is text, which the source
+  draft persists from first input (Package L). Verified in-browser: empty seal reads
+  "SOURCE", tab reads "Arapal".
+
+Build PASS. Only the seg-paste-empty VR golden changes (empty seal text); inspected
+as correct and re-baselined.
