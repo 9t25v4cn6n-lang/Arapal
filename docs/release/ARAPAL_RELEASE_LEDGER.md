@@ -947,3 +947,43 @@ Verified: 7 data-controls unit tests pass (export→delete→import round-trip i
 JSON string; rejects non-backup/future-version/malformed without touching current
 data). Dialog rendered + inspected in-browser. Build PASS, lint 0, test:data PASS.
 No shared provider secret; BYO-key boundary unchanged.
+
+## Stage 2 checkpoint 4 (HEAD 1b0770d) + success/fail-screen plan (CV-P4)
+
+CV-P8 (data controls) landed and verified. Gate green (build/lint/unit/test:data;
+behaviour+VR unchanged since 8efc658 — data-controls is additive, no VR state).
+
+### User hint + directive update — Study PASS/FAIL result screens (CV-P4, next)
+
+Updated directive line 98: "Submit produces an unmistakable success or recoverable
+failure result; it never silently appears to do nothing." User: the LEGACY V1
+study result screen has very valuable working cards/info — reference it, but keep
+our cleaner styling.
+
+Legacy reference located: `src/components/figma/RightPanel.jsx` (result rail).
+Its result-state cards:
+- **PASS (submitted):** Grade (emerald / Award + numeric grade circle), Takeaways
+  (indigo, numbered actionable list), Lexicography (purple, vocabulary).
+- **FAIL (failed):** Grade (rose / Award), Fix-steps (orange, numbered), Lexicography.
+- Draft: Guidance / Lexicography / Phrasing.
+
+V2 gap analysis (verified via ?v2GradeOverride): the V2 PASS result shows Best-in-
+class translation + Your translation + Feedback but NO prominent PASS verdict/grade
+header; the FAIL result already has a clear "This attempt didn't pass" verdict +
+blockers + Submit-again. Vocabulary/guidance/takeaways come from the result adapter
+(StudyResultEvidence).
+
+Planned CV-P4 package (focused fresh pass, verify at PASS+FAIL with the override,
+one VR re-baseline):
+1. Add a prominent, honest VERDICT card at the top of the live result — PASS
+   (success tone) / "Not yet" (review tone) with the real evaluator grade and the
+   one-line reason — porting the legacy grade card's clarity into the clean V2
+   style. No fabricated score (grade is real evaluator output; outcome computed by
+   the app, R-016).
+2. Ensure takeaways (PASS) / prioritised blockers as fix-steps (FAIL) render as a
+   clean numbered list, and vocabulary shows when present — mapping the legacy
+   Takeaways/Fix-steps/Lexicography cards to the current StudyResultEvidence.
+3. Keep Continue dominant on PASS, edit+Retry dominant on FAIL; reload reproduces
+   the exact result (already holds).
+Do NOT copy the legacy float/fullscreen rail machinery or its density — adapt
+content only.
