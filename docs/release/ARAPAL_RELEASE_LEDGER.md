@@ -1043,3 +1043,21 @@ exact text (12 words). Build PASS, lint 0.
 Remaining CV-P1: editable project name persistence from intake; per-project active
 segment as the durable Study position; one shared learningState selector; migrate
 legacy Exam keys.
+
+## Stage 2 checkpoint 6 (HEAD 24d86c7) — CV-P1 source-draft persistence
+
+Cumulative gate green: build PASS · lint 0 · unit/data 65 PASS · behaviour 47/47 ·
+QA production 0 · VR 52/52. Tree clean.
+
+Session (baseline 3cf737b): Packages A–L verified + committed.
+- CLOSED: CV-P2, CV-P8.
+- MATERIALLY ADVANCED: CV-P1 (source-entry draft persists across reload — AC-01
+  first requirement verified in-browser), CV-P3, CV-P4 (incl. PASS verdict), CV-P5.
+
+CV-P1 remaining: editable project-name persistence from intake; per-project active
+segment as the durable Study position (Study position currently local); one shared
+learningState(projectId, segmentId) selector consumed by Home/Projects/Research/
+Exams; migrate any legacy Exam keys. Then CV-P6 (Exams audit), CV-P7 (mobile Study/
+Discussion sheet + float), CV-P4/P5 finishes, and CV-EV (production-transport
+interception + AC-01…08 built-product evidence — the largest remaining piece).
+Not Stage-3-ready. No Stage 3 performed. Not pushed.
