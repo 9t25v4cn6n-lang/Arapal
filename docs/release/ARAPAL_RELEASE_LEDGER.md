@@ -1080,3 +1080,10 @@ reload → Study restored segment 1.3 (3 OF 4), not 1.1. Build PASS, lint 0.
 
 CV-P1 remaining: editable project-name persistence from intake; one shared
 learningState selector; legacy Exam-key migration.
+
+## Stage 2 checkpoint 7 (HEAD 1d3539a) — CV-P1 durable Study position
+
+Gate green: build · lint 0 · data 65 · behaviour 47/47 · QA production 0 · VR 52/52.
+Tree clean. CV-P1 advanced: source-draft persistence (L, AC-01) + durable Study
+position (M, AC-03), both verified in-browser. Next CV-P1: shared learningState
+selector (material problem #2), then editable name + legacy migration.
