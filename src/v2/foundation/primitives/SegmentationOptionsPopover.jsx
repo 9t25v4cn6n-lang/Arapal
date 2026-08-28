@@ -284,20 +284,6 @@ function SplitMenuOption({ icon: Icon, label, meta, selected = false, onClick })
   )
 }
 
-function SplitMenuToggle({ title, meta, active = false, onClick }) {
-  return (
-    <button type="button" className="v2-seg-paste__splitMenuToggle" onClick={onClick}>
-      <span className="v2-seg-paste__splitMenuToggleText">
-        <span className="v2-seg-paste__splitMenuToggleTitle">{title}</span>
-        <span className="v2-seg-paste__splitMenuToggleMeta">{meta}</span>
-      </span>
-      <span className={cx('v2-seg-paste__miniSwitch', active && 'is-active')}>
-        <span className="v2-seg-paste__miniSwitchThumb" />
-      </span>
-    </button>
-  )
-}
-
 const SegmentationOptionsPopover = forwardRef(function SegmentationOptionsPopover(
   {
     methodOptions = segmentationMethodOptions,
@@ -309,8 +295,6 @@ const SegmentationOptionsPopover = forwardRef(function SegmentationOptionsPopove
     granularityOptions = segmentationGranularityOptions,
     granularity,
     onGranularityChange = () => {},
-    showSegmentationTransition = true,
-    onShowSegmentationTransitionChange = () => {},
     containerStyle,
     role,
     ariaLabel,
@@ -362,15 +346,6 @@ const SegmentationOptionsPopover = forwardRef(function SegmentationOptionsPopove
               onClick={() => onGranularityChange(option.id)}
             />
           ))}
-        </SplitMenuSection>
-
-        <SplitMenuSection label="Preferences">
-          <SplitMenuToggle
-            title="Show segmentation animation"
-            meta="Let the text split visually before study"
-            active={showSegmentationTransition}
-            onClick={() => onShowSegmentationTransitionChange(!showSegmentationTransition)}
-          />
         </SplitMenuSection>
       </div>
     </>

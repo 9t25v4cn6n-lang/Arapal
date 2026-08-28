@@ -1020,3 +1020,26 @@ CV-P1 (domain spine), CV-P6 (Exams on canonical store), CV-P7 (mobile Study/
 Discussion-as-sheet + float control), CV-P4/P5 finishes (takeaways/fix-steps
 numbered list; grounded Research filters), CV-EV (production-transport interception
 + AC-01…08 built-product evidence). Not Stage-3-ready. No Stage 3 performed. Not pushed.
+
+## Package L — Source-entry draft persistence (CV-P1, AC-01)
+
+Directive material problem #1 ("source text existing only in component memory
+before processing") + AC-01 ("reload during source entry; verify exact source and
+name remain"). The intake held rawText in component state and persisted it only on
+Segment, so a reload lost it.
+- Store: `sourceDraft` field in emptyState (additive, merge-safe — no migration);
+  `saveSourceDraft`/`getSourceDraft`/`clearSourceDraft` (empty text clears it, never
+  a phantom draft). Exposed via actions/select. Included in export/import (verified).
+- Intake: restores rawText from the stored draft on mount; debounced save (350ms)
+  after the last keystroke (intake reads the store imperatively, so no render churn);
+  clears the draft once the source is committed on Segment.
+- Cleanup: removed the dead animation preference left over from Package A
+  (showSegmentationTransition state/props + the popover toggle + SplitMenuToggle).
+
+Verified: 65 data tests pass (incl. source-draft round-trip + export/import). In-
+browser AC-01: typed a multi-word Arabic source, full reload, textarea restored the
+exact text (12 words). Build PASS, lint 0.
+
+Remaining CV-P1: editable project name persistence from intake; per-project active
+segment as the durable Study position; one shared learningState selector; migrate
+legacy Exam keys.

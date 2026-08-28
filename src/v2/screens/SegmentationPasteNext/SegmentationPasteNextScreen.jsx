@@ -1,5 +1,5 @@
 import { Edit3, Sparkles, SplitSquareVertical } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import BackPill from '../../foundation/primitives/BackPill'
 import EditorSurface from '../../foundation/primitives/EditorSurface'
 import SegmentationOptionsPopover, {
@@ -53,16 +53,23 @@ function deriveProjectTitle(rawText) {
 
 export default function SegmentationPasteNextScreen({ route, shell }) {
   const isMobile = useIsMobileViewport()
-  const [rawText, setRawText] = useState(initialText)
+  // Restore the in-progress source-entry draft so a reload during intake keeps
+  // the exact raw text (Programme 1 / AC-01).
+  const [rawText, setRawText] = useState(() => select.getSourceDraft()?.text || initialText)
   const [method, setMethod] = useState(() => readSegmentationFlowPreferences().method)
   // Seeded from the stored preferences like method is, rather than hard-coded.
   // These were literals, so the popover's own defaults won every mount and the
   // user's choice could not survive a reload even once the store carried it.
   const [style, setStyle] = useState(() => readSegmentationFlowPreferences().style)
   const [granularity, setGranularity] = useState(() => readSegmentationFlowPreferences().granularity)
-  const [showSegmentationTransition, setShowSegmentationTransition] = useState(
-    () => readSegmentationFlowPreferences().showSegmentationTransition,
-  )
+
+  // Persist the draft shortly after the last keystroke (Programme 1). The intake
+  // reads the store imperatively, so this does not churn its own renders; the
+  // debounce keeps localStorage writes off the hot path.
+  useEffect(() => {
+    const id = setTimeout(() => actions.saveSourceDraft({ text: rawText, intent: readSegmentationIntent() }), 350)
+    return () => clearTimeout(id)
+  }, [rawText])
 
   const hasText = rawText.trim().length > 0
   const wordCount = hasText ? rawText.trim().split(/\s+/).length : 0
@@ -213,7 +220,6 @@ export default function SegmentationPasteNextScreen({ route, shell }) {
               method: selectedMethod.id,
               style,
               granularity,
-              showSegmentationTransition,
             })
 
             // Two distinct intents. 'new' always creates a fresh project so a
@@ -229,6 +235,9 @@ export default function SegmentationPasteNextScreen({ route, shell }) {
               ? existing
               : actions.addProject({ title: deriveProjectTitle(rawText), subtitle: 'Pasted source' })
             const source = actions.addSource({ projectId: project.id, rawText, label: 'Pasted source' })
+            // The draft is now a committed source; clear the in-progress draft so a
+            // later fresh intake starts empty (Programme 1).
+            actions.clearSourceDraft()
             clearSegmentationIntent()
 
             if (selectedMethod.id === 'ai') {
@@ -273,8 +282,6 @@ export default function SegmentationPasteNextScreen({ route, shell }) {
               granularityOptions={granularityOptions}
               granularity={granularity}
               onGranularityChange={setGranularity}
-              showSegmentationTransition={showSegmentationTransition}
-              onShowSegmentationTransitionChange={setShowSegmentationTransition}
             />
           }
         />

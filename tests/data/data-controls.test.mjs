@@ -103,3 +103,38 @@ test('importBackup rejects a malformed backup (bad collection shape)', () => {
   assert.equal(res.ok, false)
   assert.match(res.error, /malformed/i)
 })
+
+// ── source-entry draft (Programme 1 / AC-01) ─────────────────────────────────
+
+test('saveSourceDraft persists the raw text; getSourceDraft reads it back', () => {
+  store.saveSourceDraft({ text: 'الحمد لله', title: 'Al-Hamd' })
+  const draft = store.getSourceDraft()
+  assert.equal(draft.text, 'الحمد لله')
+  assert.equal(draft.title, 'Al-Hamd')
+  assert.ok(draft.updatedAt)
+})
+
+test('saveSourceDraft with empty text clears the draft (no phantom draft)', () => {
+  store.saveSourceDraft({ text: 'something' })
+  assert.ok(store.getSourceDraft())
+  store.saveSourceDraft({ text: '   ' })
+  assert.equal(store.getSourceDraft(), null)
+})
+
+test('clearSourceDraft removes the draft after a source is committed', () => {
+  store.saveSourceDraft({ text: 'draft text' })
+  assert.ok(store.getSourceDraft())
+  store.clearSourceDraft()
+  assert.equal(store.getSourceDraft(), null)
+})
+
+test('the source draft is not a collection and does not break import/export', () => {
+  store.saveSourceDraft({ text: 'in-progress' })
+  const backup = store.exportBackup()
+  assert.equal(backup.state.sourceDraft.text, 'in-progress')
+  store.deleteAllData()
+  assert.equal(store.getSourceDraft(), null)
+  const res = store.importBackup(backup)
+  assert.equal(res.ok, true)
+  assert.equal(store.getSourceDraft().text, 'in-progress')
+})

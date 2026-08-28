@@ -57,6 +57,8 @@ export const actions = {
   exportBackup: store.exportBackup,
   importBackup: store.importBackup,
   deleteAllData: store.deleteAllData,
+  saveSourceDraft: store.saveSourceDraft,
+  clearSourceDraft: store.clearSourceDraft,
 }
 
 export const select = {
@@ -75,6 +77,7 @@ export const select = {
   findOpenAttempt: store.findOpenAttempt,
   getProjectProgress: store.getProjectProgress,
   listArchives: store.listArchives,
+  getSourceDraft: store.getSourceDraft,
 }
 
 export { subscribe, getSnapshot, persistenceHealthy, __resetForTests } from './store.js'

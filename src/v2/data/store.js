@@ -88,6 +88,27 @@ export function deleteAllData() {
   return { ok: lastWriteOk }
 }
 
+// ── source-entry draft (Programme 1 / AC-01) ─────────────────────────────────
+
+export const getSourceDraft = (s = state) => s.sourceDraft ?? null
+
+/**
+ * Persist the in-progress source-entry draft so a reload during intake keeps the
+ * exact raw text and the editable title. This is the pre-commit draft, distinct
+ * from a committed source; it is cleared on publish/segment or when emptied.
+ */
+export function saveSourceDraft({ text = '', title = '', intent = 'new' } = {}) {
+  if (!text.trim()) {
+    if (state.sourceDraft) commit({ ...state, sourceDraft: null })
+    return
+  }
+  commit({ ...state, sourceDraft: { text, title, intent, updatedAt: new Date().toISOString() } })
+}
+
+export function clearSourceDraft() {
+  if (state.sourceDraft) commit({ ...state, sourceDraft: null })
+}
+
 // ── selectors ────────────────────────────────────────────────────────────────
 
 export const listProjects = (s = state) =>

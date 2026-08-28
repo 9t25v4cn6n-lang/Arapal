@@ -27,6 +27,10 @@ export const emptyState = () => ({
   attempts: {},
   proposals: {},     // keyed projectId — non-authoritative segmentation, pre-approval
   archives: {},      // keyed projectId — prior canonical study data kept on re-segmentation
+  // The in-progress source-entry draft (raw text + editable title + intent),
+  // persisted from first input so a reload during intake does not lose it
+  // (Programme 1 / AC-01). Cleared once the source is committed.
+  sourceDraft: null,
   currentProjectId: null,
   seededAt: null,
 })
