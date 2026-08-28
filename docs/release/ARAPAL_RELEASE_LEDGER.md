@@ -1003,3 +1003,20 @@ Best-in-class + Your translation + Continue dominant. Build PASS.
 Remaining CV-P4 success/fail work: render takeaways (PASS) / prioritised blockers
 (FAIL) as a clean numbered list mapped from StudyResultEvidence; keep support
 grounded. Larger fresh pass.
+
+## Stage 2 checkpoint 5 (HEAD bbf051e) — CV-P8 done, PASS verdict added
+
+Cumulative gate green: build PASS · lint 0 · unit/data PASS · behaviour 47/47 ·
+QA production 0 · VR 52/52. Tree clean.
+
+Session-to-date (baseline 3cf737b): Packages A–K committed and verified.
+- CLOSED: CV-P2 (Home/Projects IA), CV-P8 (trust contract).
+- ADVANCED: CV-P3 (fold), CV-P4 (no empty support, AI readiness, dev grade override,
+  PASS verdict), CV-P5 (Research masthead).
+- All six user-reported items addressed or verified.
+
+Remaining for the Stage 2 exit condition (multi-session; plan in checkpoints 2 & 4):
+CV-P1 (domain spine), CV-P6 (Exams on canonical store), CV-P7 (mobile Study/
+Discussion-as-sheet + float control), CV-P4/P5 finishes (takeaways/fix-steps
+numbered list; grounded Research filters), CV-EV (production-transport interception
++ AC-01…08 built-product evidence). Not Stage-3-ready. No Stage 3 performed. Not pushed.
