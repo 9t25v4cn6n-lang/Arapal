@@ -3787,7 +3787,6 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state, isRefere
             {...card}
             onExpand={() => openExpandedCard(card.id)}
             onFullscreen={() => openFullscreenCard(card.id)}
-            onFloat={() => openFloatingCard(card.id)}
           />
         ))}
       </div>
@@ -3834,7 +3833,7 @@ export function StudySupportRail({ collapsed, onToggleCollapsed, state, isRefere
   )
 }
 
-function StudySupportCard({ tone, icon, title, body, onExpand, onFullscreen, onFloat }) {
+function StudySupportCard({ tone, icon, title, body, onExpand, onFullscreen }) {
   return (
     <section className="study-v2__supportCard" style={toneStyle(tone)}>
       <div className="study-v2__supportCardHeader">
@@ -3854,13 +3853,6 @@ function StudySupportCard({ tone, icon, title, body, onExpand, onFullscreen, onF
             title={`Open ${title} fullscreen`}
             onClick={onFullscreen}
             icon={<Maximize2 strokeWidth={1.8} />}
-          />
-          <IconActionButton
-            size="utility-sm"
-            label={`Float ${title}`}
-            title={`Float ${title}`}
-            onClick={onFloat}
-            icon={<PictureInPicture2 strokeWidth={1.8} />}
           />
         </div>
       </div>

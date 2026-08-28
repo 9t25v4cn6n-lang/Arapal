@@ -1247,3 +1247,17 @@ store attempts w/ immutable snapshot), CV-P4/P5 finishes, and CV-EV (the largest
 production-transport interception + AC-01…08 built-product evidence; note it also
 fixes VR/evidence running against a dev server instead of built dist). Not
 Stage-3-ready. No Stage 3 performed. Not pushed.
+
+## Package R — Remove Float control from expanded support cards (CV-P7, partial)
+
+Directive P4/P7 + user item 4 (dead float control). Removed the "Float" button from
+the expanded StudySupportCard header (kept Expand + Fullscreen, both working) and
+the dead `onFloat` prop at its render site. The collapsed-preview float path
+(floatFromCollapsedPreview → openFloatingCard) is untouched, so no unused-function
+cascade. Verified in-browser: expanded support cards show two controls, no Float.
+Build PASS, lint 0.
+
+Remaining CV-P7 float work (bigger, plan recorded): remove the collapsed-preview /
+detached / drag float machinery (StudyDetachedSupportCard preview+drag, openFloating
+Card, startFloatingDrag, floatingCard state, createFloatingCardState) — the path the
+user's collapsed-rail Float button used — as one focused pass.
