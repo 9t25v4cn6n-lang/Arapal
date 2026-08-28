@@ -1154,3 +1154,21 @@ CV-P1 spine is now complete for V1: authoritative store ownership of source draf
 canonical segments, per-project active segment, results, exams/attempts, AI state,
 editable project identity; persistence-success honesty; one learningState selector;
 legacy data already migrated onto the store.
+
+## Stage 2 checkpoint 9 (HEAD 495cb3d) — CV-P1 COMPLETE
+
+Gate green: build · lint 0 · data 69 · behaviour 47/47 · QA production 0 · VR 52/52.
+Tree clean.
+
+CV-P1 (authoritative local-first domain spine) CLOSED this session: source-entry
+draft persistence (AC-01), durable Study position (AC-03), one shared learningState
+selector with truthful needs-revision derivation (material problem #2), editable
+project names, on top of the existing canonical store (projects/segments/drafts/
+notes/records/results/exams/attempts/proposals/archives + persistence-success +
+legacy migration). All verified in-browser and unit-tested.
+
+Closed programmes: CV-P1, CV-P2, CV-P8. Advanced: CV-P3, CV-P4 (incl. PASS verdict),
+CV-P5 (Research truth). Remaining toward exit condition: CV-P6 (Exams audit on the
+canonical store), CV-P7 (mobile Study/Discussion sheet + float), CV-P4/P5 finishes,
+CV-EV (production-transport interception + AC-01…08 built-product evidence — the
+largest piece). Not Stage-3-ready. No Stage 3 performed. Not pushed.
