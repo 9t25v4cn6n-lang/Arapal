@@ -656,31 +656,9 @@ export function setAttemptPosition({ attemptId, currentIndex }) {
   commit({ ...state, attempts: { ...state.attempts, [attemptId]: { ...attempt, currentIndex } } })
 }
 
-export function completeAttempt({ attemptId }) {
-  const attempt = state.attempts[attemptId]
-  if (!attempt) return null
-  const exam = state.exams[attempt.examId]
-  const graded = (exam?.questions ?? []).map((q) => {
-    const answer = attempt.answers[q.id] ?? ''
-    const evaluation = evaluateTranslation({ source: q.prompt ?? '', translation: answer, attempt: 0 })
-    return { questionId: q.id, segmentRef: q.segmentRef, concept: q.concept, answer, outcome: evaluation.outcome }
-  })
-  const passCount = graded.filter((g) => g.outcome === 'pass').length
-  const result = createResult({
-    projectId: attempt.projectId,
-    segmentId: null,
-    outcome: passCount === graded.length ? 'pass' : 'review',
-    score: graded.length ? Math.round((passCount / graded.length) * 100) : 0,
-    notes: graded,
-    isSample: true,
-  })
-  commit({
-    ...state,
-    results: { ...state.results, [result.id]: result },
-    attempts: {
-      ...state.attempts,
-      [attemptId]: { ...attempt, completedAt: new Date().toISOString(), resultId: result.id },
-    },
-  })
-  return result
-}
+// completeAttempt was REMOVED (Programme 6): it graded exam answers with the
+// deterministic evaluateTranslation and wrote an isSample score — a mechanical
+// scoring path that fabricates a result. Exam grading goes exclusively through the
+// real provider contract (services/ai gradeExam) in the Exams screen, which
+// returns an honest UNGRADED result when no provider is available and never
+// fabricates a score. The store no longer offers a way to fabricate an exam score.

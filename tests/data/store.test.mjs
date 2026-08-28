@@ -398,20 +398,17 @@ test('attempt answers persist and the attempt resumes rather than duplicating', 
   )
 })
 
-test('completing an attempt produces a result and closes it', () => {
+test('the store offers no mechanical exam-scoring path (Programme 6)', () => {
   const { project } = seedProject()
   const exam = store.addExam({
     projectId: project.id, title: 'Checkpoint', scope: 'prefix-1',
     questions: [{ id: 'q1', prompt: 'One.', segmentRef: '1.1' }],
   })
   const attempt = store.startAttempt({ projectId: project.id, examId: exam.id })
-  store.saveAnswer({ attemptId: attempt.id, questionId: 'q1', answer: 'A complete answer to the question.' })
-  const result = store.completeAttempt({ attemptId: attempt.id })
-
-  assert.ok(result)
-  assert.equal(result.isSample, true)
-  assert.ok(store.getAttempt(attempt.id).completedAt)
-  assert.equal(store.findOpenAttempt(exam.id), null)
+  store.saveAnswer({ attemptId: attempt.id, questionId: 'q1', answer: 'A complete answer.' })
+  // Answers persist immutably; there is no store action that fabricates a score.
+  assert.equal(store.getAttempt(attempt.id).answers.q1, 'A complete answer.')
+  assert.equal(typeof store.completeAttempt, 'undefined', 'the fabricating completeAttempt path is gone')
 })
 
 // ── project lifecycle ────────────────────────────────────────────────────────

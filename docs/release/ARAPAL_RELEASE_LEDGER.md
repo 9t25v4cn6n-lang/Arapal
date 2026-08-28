@@ -1172,3 +1172,24 @@ CV-P5 (Research truth). Remaining toward exit condition: CV-P6 (Exams audit on t
 canonical store), CV-P7 (mobile Study/Discussion sheet + float), CV-P4/P5 finishes,
 CV-EV (production-transport interception + AC-01…08 built-product evidence — the
 largest piece). Not Stage-3-ready. No Stage 3 performed. Not pushed.
+
+## Package P — Remove the mechanical exam-scoring path (CV-P6, partial)
+
+Directive Programme 6 ("Remove or make unreachable any mechanical scoring path that
+fabricates results"; "AI absence or failure never fabricates ... a score").
+- The store's `completeAttempt` graded exam answers with the deterministic
+  `evaluateTranslation` and wrote an `isSample` score — a fabrication path. It was
+  production-dead (the Exams screen grades via the real `gradeExam` contract with an
+  honest UNGRADED result on no provider), kept alive only by a store test. Removed
+  `completeAttempt` from the store + actions; migrated the test to assert the
+  fabrication path is gone and answers persist immutably. `evaluateTranslation`
+  import retained (still used by Study's honest surface check).
+
+Verified: 69 data tests pass. Build PASS, lint 0.
+
+Remaining CV-P6 (larger separate package): consolidate the Exams screen's own
+`writePersistedAttempt` persistence onto the store's canonical attempts collection
+(material problem #1 "Exams maintaining a second persistence/state-machine path"),
+with an immutable submitted-answer snapshot the retry-grading consumes and a
+retake that creates a distinct attempt. The honest graded/ungraded/retry lifecycle
++ save boundaries already exist in the screen (S3-004).
