@@ -1134,3 +1134,23 @@ CV-P7 (mobile Study/Discussion-as-sheet + float control), CV-P4/P5 finishes
 (takeaways/fix-steps numbered list; Research grounded filter set), CV-EV
 (production-transport interception + AC-01…08 built-product evidence — the largest
 piece). Not Stage-3-ready. No Stage 3 performed. Not pushed.
+
+## Package O — Editable project names (CV-P1/P2 — completes CV-P1 spine)
+
+Directive Programme 1/2 ("recognisable, editable names"). Projects were named only
+by auto-derivation from the source with no way to rename.
+- Store: `renameProject(projectId, title)` — trims, no-ops on unknown project /
+  blank / unchanged title (a blank rename can never erase identity). Unit-tested
+  (trim + blank-noop + unknown-noop). Exposed via actions.
+- Projects: a Rename affordance in the project manage bar (inline input, Save/
+  Cancel, Enter/Escape), wired to handleRename → actions.renameProject. Verified in
+  the DOM: manage bar = [Rename, Delete project].
+
+VR unaffected: the empty projects-library VR state shows EmptyLibrary (no project,
+no manage bar), so the Rename control is not in any golden. 69 data tests pass.
+Build PASS, lint 0.
+
+CV-P1 spine is now complete for V1: authoritative store ownership of source draft,
+canonical segments, per-project active segment, results, exams/attempts, AI state,
+editable project identity; persistence-success honesty; one learningState selector;
+legacy data already migrated onto the store.

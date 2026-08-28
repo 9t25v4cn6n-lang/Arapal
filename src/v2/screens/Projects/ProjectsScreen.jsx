@@ -978,14 +978,14 @@ function DashboardDetailIntro({ lesson }) {
   )
 }
 
-function DetailStage({ lesson, onResume, onBrowse, archiveCount = 0, onDelete, onRestore }) {
+function DetailStage({ lesson, onResume, onBrowse, archiveCount = 0, onRename, onDelete, onRestore }) {
   return (
     <main className="study-dashboard study-dashboard__detailStage" data-debug-item="study_dashboard_workspace">
       <div className="study-dashboard__primaryGroup">
         <DashboardDetailIntro lesson={lesson} />
         <ResumeStage lesson={lesson} onResume={onResume} onBrowse={onBrowse} />
       </div>
-      <ProjectManageBar archiveCount={archiveCount} onDelete={onDelete} onRestore={onRestore} />
+      <ProjectManageBar archiveCount={archiveCount} currentTitle={lesson.title} onRename={onRename} onDelete={onDelete} onRestore={onRestore} />
     </main>
   )
 }
@@ -996,11 +996,17 @@ function DetailStage({ lesson, onResume, onBrowse, archiveCount = 0, onDelete, o
  * sample — can be deleted, honouring the first-run promise that the sample can
  * be removed at any time. Delete asks for confirmation because it is destructive.
  */
-function ProjectManageBar({ archiveCount = 0, onDelete, onRestore }) {
+function ProjectManageBar({ archiveCount = 0, currentTitle = '', onRename, onDelete, onRestore }) {
   const [confirming, setConfirming] = useState(false)
+  const [renaming, setRenaming] = useState(false)
+  const [draftName, setDraftName] = useState(currentTitle)
   const linkStyle = {
     border: 'none', background: 'transparent', padding: 0, cursor: 'pointer',
     font: 'inherit', color: colors.textSoft, textDecoration: 'underline',
+  }
+  const commitRename = () => {
+    if (draftName.trim()) onRename?.(draftName.trim())
+    setRenaming(false)
   }
   return (
     <div
@@ -1012,6 +1018,26 @@ function ProjectManageBar({ archiveCount = 0, onDelete, onRestore }) {
         ...typography.metaText,
       }}
     >
+      {renaming ? (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: spacing[8], color: colors.textBody }}>
+          <input
+            type="text"
+            aria-label="Project name"
+            value={draftName}
+            onChange={(e) => setDraftName(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') commitRename(); if (e.key === 'Escape') setRenaming(false) }}
+            autoFocus
+            style={{
+              font: 'inherit', color: colors.textStrong, padding: `${spacing[4]} ${spacing[8]}`,
+              border: `1px solid ${colors.lineStrong}`, borderRadius: radius[8], minWidth: '18ch',
+            }}
+          />
+          <button type="button" style={{ ...linkStyle, color: colors.accentStrong, fontWeight: 600 }} onClick={commitRename}>Save</button>
+          <button type="button" style={linkStyle} onClick={() => setRenaming(false)}>Cancel</button>
+        </span>
+      ) : (
+        <button type="button" style={linkStyle} onClick={() => { setDraftName(currentTitle); setRenaming(true) }}>Rename</button>
+      )}
       {archiveCount > 0 ? (
         <button type="button" style={linkStyle} onClick={onRestore}>
           Restore previous work{archiveCount > 1 ? ` (${archiveCount} kept)` : ''}
@@ -1079,6 +1105,9 @@ export default function ProjectsScreen({ route, shell }) {
   const handleRestore = useCallback(() => {
     if (selectedLesson) actions.restoreArchive(selectedLesson.id)
   }, [selectedLesson])
+  const handleRename = useCallback((title) => {
+    if (selectedLesson) actions.renameProject(selectedLesson.id, title)
+  }, [selectedLesson])
 
   const screenSlots = {
     Layer4_Projects_Hero: <DashboardHero />,
@@ -1100,6 +1129,7 @@ export default function ProjectsScreen({ route, shell }) {
         onResume={handleResume}
         onBrowse={handleBrowse}
         archiveCount={archives.length}
+        onRename={handleRename}
         onDelete={handleDelete}
         onRestore={handleRestore}
       />

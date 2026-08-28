@@ -36,6 +36,7 @@ export { seedSampleProject, SAMPLE_PROJECT_TITLE } from './seed.js'
 export const actions = {
   addProject: store.addProject,
   selectProject: store.selectProject,
+  renameProject: store.renameProject,
   deleteProject: store.deleteProject,
   restoreArchive: store.restoreArchive,
   addSource: store.addSource,

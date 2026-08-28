@@ -197,6 +197,18 @@ export function selectProject(projectId) {
   return state.projects[projectId]
 }
 
+/** Rename a project (Programme 1/2 — recognisable, editable names). No-op on an
+ *  unknown project or an empty title, so a blank rename can never erase identity. */
+export function renameProject(projectId, title) {
+  const project = state.projects[projectId]
+  const next = String(title ?? '').trim()
+  if (!project || !next || next === project.title) return
+  commit({
+    ...state,
+    projects: { ...state.projects, [projectId]: { ...project, title: next, updatedAt: new Date().toISOString() } },
+  })
+}
+
 export function deleteProject(projectId) {
   const next = { ...state, projects: { ...state.projects } }
   delete next.projects[projectId]

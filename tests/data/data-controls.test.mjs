@@ -169,6 +169,16 @@ test('learningState treats attempted-but-ungraded as neutral, never a mistake', 
   assert.equal(store.projectNeedsRevisionCount(project.id), 0, 'attempted-ungraded is not needs-revision')
 })
 
+test('renameProject updates the title; ignores blank or unknown', () => {
+  const { project } = seedProject()
+  store.renameProject(project.id, '  Kitab al-Salah  ')
+  assert.equal(store.getProject(project.id).title, 'Kitab al-Salah', 'trimmed and saved')
+  store.renameProject(project.id, '   ')
+  assert.equal(store.getProject(project.id).title, 'Kitab al-Salah', 'blank rename is a no-op')
+  store.renameProject('no-such-project', 'X') // must not throw
+  assert.equal(store.getProject(project.id).title, 'Kitab al-Salah')
+})
+
 test('needs-revision derives only from a validated fail; passed is passed', () => {
   const { project, segs } = seedProject()
   const snap = store.getSnapshot()
