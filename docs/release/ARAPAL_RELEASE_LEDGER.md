@@ -1227,3 +1227,23 @@ the worst option. Prefer removal.
 
 Build PASS. Only the seg-paste-empty VR golden changes (empty seal text); inspected
 as correct and re-baselined.
+
+## Stage 2 checkpoint 10 (HEAD e34269a) — identity + truthful language; CV-P6 fabrication removed
+
+Gate green: build · lint 0 · data 69 · behaviour 47/47 · QA production 0 · VR 52/52
+(seg-paste-empty re-confirmed against the current server via ARAPAL_BASE_URL — the
+seal pill is below the pixel tolerance, so no golden change; no dev-server staleness).
+Tree clean.
+
+This continuation (a5839ad → e34269a): Packages L–Q. CV-P1 CLOSED (source-draft,
+durable position, learningState, editable names); CV-P6 advanced (mechanical
+scoring fabrication path removed); release identity (Arapal) + truthful intake
+language (S3-P2-01/03) done.
+
+Programmes CLOSED: CV-P1, CV-P2, CV-P8. Advanced: CV-P3, CV-P4, CV-P5, CV-P6.
+Remaining toward exit condition: CV-P7 (float-machinery removal — plan recorded;
+mobile Discussion-as-sheet), larger CV-P6 consolidation (writePersistedAttempt →
+store attempts w/ immutable snapshot), CV-P4/P5 finishes, and CV-EV (the largest —
+production-transport interception + AC-01…08 built-product evidence; note it also
+fixes VR/evidence running against a dev server instead of built dist). Not
+Stage-3-ready. No Stage 3 performed. Not pushed.
