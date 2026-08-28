@@ -16,7 +16,7 @@ import {
 } from '../../foundation/primitives/StudyWorkspacePrimitives'
 import useIsMobileViewport from '../../foundation/primitives/useIsMobileViewport'
 import V2ScreenFrame from '../../foundation/primitives/V2ScreenFrame'
-import { motion } from '../../foundation/tokens'
+import { colors, motion } from '../../foundation/tokens'
 import layoutContract from './StudyWorkspaceScreen.contract'
 import { adaptStudyResult } from './studyResultView'
 import { readAndClearPublishProvenance } from '../../foundation/primitives/segmentationFlowState'
@@ -784,7 +784,7 @@ export default function StudyWorkspaceScreen({ route, shell }) {
     // dropped the handoff for anyone without a project, which is exactly the
     // audience most likely to be exploring from Exams.
     Layer4_Study_ContextRegion:
-      publishBanner || (context && !contextDismissed) || contextSegmentMissing || grading || gradeNotice || (isLive && !aiReadyForGrading && currentState !== 'submitted') || (isLive && lastResult?.isSample) || (currentState === 'failed' && resultView.blockingIssues.length) ? (
+      publishBanner || (context && !contextDismissed) || contextSegmentMissing || grading || gradeNotice || (isLive && !aiReadyForGrading && currentState !== 'submitted') || (isLive && lastResult?.isSample) || (currentState === 'failed' && resultView.blockingIssues.length) || (currentState === 'submitted' && isLive && resultView.passed) ? (
         <div className="study-v2__contextStrip">
           {isLive && !aiReadyForGrading && currentState !== 'submitted' && !grading && !gradeNotice ? (
             <p className="study-v2__sampleNotice" role="note">
@@ -825,6 +825,19 @@ export default function StudyWorkspaceScreen({ route, shell }) {
               {resultView.blockingIssues.map((issue, i) => (
                 <span key={i}>• {issue.fix || issue.text || issue.issueType || 'See feedback'}</span>
               ))}
+            </div>
+          ) : null}
+          {/* PASS verdict — the success counterpart to the FAIL banner, so Submit's
+              outcome is unmistakable (directive). Grade shown only when the
+              evaluator actually returned one; never fabricated. */}
+          {currentState === 'submitted' && isLive && resultView.passed ? (
+            <div className="study-v2__contextBanner" role="status">
+              <span className="study-v2__contextLabel" style={{ color: colors.successStrong }}>
+                Passed{typeof resultView.score === 'number' ? ` · ${resultView.score}/10` : ''}
+              </span>
+              <span className="study-v2__contextDetail">
+                {resultView.feedback || 'This segment is complete — continue to the next one.'}
+              </span>
             </div>
           ) : null}
           {contextSegmentMissing ? (

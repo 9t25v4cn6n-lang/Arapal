@@ -987,3 +987,19 @@ one VR re-baseline):
    the exact result (already holds).
 Do NOT copy the legacy float/fullscreen rail machinery or its density — adapt
 content only.
+
+## Package K — Study PASS verdict card (CV-P4, from legacy reference + directive L98)
+
+The V2 FAIL result had a clear "This attempt didn't pass" verdict but PASS did
+not, so success could read as ambiguous — the gap the user flagged and updated-
+directive line 98 forbids ("unmistakable success or recoverable failure result").
+Added a PASS verdict banner in the Study context region, symmetric with the FAIL
+banner: success-toned "Passed · <grade>/10 · <feedback>", porting the legacy grade
+card's clarity (src/components/figma/RightPanel.jsx) into the clean V2 style. The
+grade is the real evaluator output (shown only when present); nothing fabricated.
+Verified via ?v2GradeOverride=pass: "PASSED · 9.1/10 · Accurate and fluent…" with
+Best-in-class + Your translation + Continue dominant. Build PASS.
+
+Remaining CV-P4 success/fail work: render takeaways (PASS) / prioritised blockers
+(FAIL) as a clean numbered list mapped from StudyResultEvidence; keep support
+grounded. Larger fresh pass.
